@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  *   Loads all `.fn.js` files and exports a cloud function matching the
  *   camelcased file name.
@@ -17,8 +15,9 @@ const files = glob.sync("./**/*.fn.js", {
   ignore: "./node_modules/**"
 });
 
+let fnName = null;
 files.forEach(fnFile => {
-  let fnName = camelCase(
+  fnName = camelCase(
     fnFile
       .slice(0, -6)  // Strip off '.fn.js'
       .split("/")
@@ -26,6 +25,7 @@ files.forEach(fnFile => {
   );
 
   if ((process.env.FUNCTION_NAME || fnName) === fnName) {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
     exports[fnName] = require(fnFile);
   }
 });

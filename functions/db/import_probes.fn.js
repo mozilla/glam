@@ -1,3 +1,5 @@
+// Allow console logs since this isn't in the browser.
+/* eslint-disable no-console */
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 const https = require('https');
