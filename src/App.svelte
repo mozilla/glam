@@ -26,6 +26,13 @@
     };
 </script>
 
+<style>
+:global(body) {
+    background-color: green;
+}
+    
+</style>
+
 {#await promise}
     <p>Querying data...</p>
 {:then data}

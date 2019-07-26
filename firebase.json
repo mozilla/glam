@@ -10,6 +10,10 @@
   },
   "hosting": {
     "public": "public",
+    "predeploy": [
+      "npm install",
+      "npm run build"
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

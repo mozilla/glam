@@ -1,8 +1,12 @@
 {
   "version": 3,
   "file": "bundle.css",
-  "sources": [],
-  "sourcesContent": [],
+  "sources": [
+    "../src/App.svelte"
+  ],
+  "sourcesContent": [
+    "<script>\n    import { db } from './firebase';\n    import Chart from './Chart.svelte';\n\n    let promise = db\n        .collection('release-65')\n        .doc('02415bbe9515d8c1da5cfa072c0b79c9')\n        .get()\n        .then(doc => {\n            console.log(`Queried document: ${doc.id}`);\n            console.log(doc.data());\n            //return (doc.exists ? doc.data() : \"Data not found.\");\n            return doc.data();\n        })\n        .catch(error => {\n            console.log(error);\n            throw(error);\n        });\n\n    let dummyData = {\n        aggregates: [\n            {key:1, value:2},\n            {key:2, value:4},\n            {key:3, value:8},\n        ]\n    };\n</script>\n\n<style>\n:global(body) {\n    background-color: green;\n}\n    \n</style>\n\n{#await promise}\n    <p>Querying data...</p>\n{:then data}\n    <div id=\"charts\"></div>\n    <Chart {data} />\n    <Chart data={dummyData} />\n{:catch error}\n    <p>{error.message}</p>\n{/await}\n"
+  ],
   "names": [],
-  "mappings": ""
+  "mappings": "AA6BQ,IAAI,AAAE,CAAC,AACX,gBAAgB,CAAE,KAAK,AAC3B,CAAC"
 }
