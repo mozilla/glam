@@ -1,3 +1,6 @@
+# GCP app credentials for docker
+docker/gcp-creds.json
+
 # Logs
 logs
 *.log

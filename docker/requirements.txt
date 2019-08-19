@@ -1,0 +1,3 @@
+google-cloud-bigquery==1.17.0
+google-cloud-firestore==1.3.0
+google-cloud-storage==1.18.0
