@@ -1,37 +1,35 @@
 <script>
-    import { db } from './firebase';
-    import Chart from './Chart.svelte';
+  import { queryData } from "./firebase";
+  import { Form, FormGroup } from "sveltestrap";
+  import Navigation from "./Navigation.svelte";
+  import Selector from "./Selector.svelte";
+  import Chart from "./Chart.svelte";
+  import STORE, { DATA, dispatch, options, changeMetric, changeVersion, changeChannel, queryString, serverParams } from "./store";
 
-    let promise = db
-        .collection('release-65')
-        .doc('02415bbe9515d8c1da5cfa072c0b79c9')
-        .get()
-        .then(doc => {
-            console.log(`Queried document: ${doc.id}`);
-            console.log(doc.data());
-            //return (doc.exists ? doc.data() : "Data not found.");
-            return doc.data();
-        })
-        .catch(error => {
-            console.log(error);
-            throw(error);
-        });
+  function updateQueryString(value) {
+    if (history.pushState) {
+      const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?" + value;
+      window.history.pushState({ path: newurl }, "", newurl);
+    }
+  }
+  $: updateQueryString($queryString);
 
-    let dummyData = {
-        aggregates: [
-            {key:1, value:2},
-            {key:2, value:4},
-            {key:3, value:8},
-        ]
-    };
+  $: queryData($serverParams, DATA);
+
 </script>
 
-{#await promise}
-    <p>Querying data...</p>
-{:then data}
-    <div id="charts"></div>
-    <Chart {data} />
-    <Chart data={dummyData} />
-{:catch error}
-    <p>{error.message}</p>
-{/await}
+<div className="App">
+  <Navigation />
+
+  <Form>
+    <FormGroup>
+      <!-- Lots of boiler plate here. Any way to make this better? -->
+      <Selector formId="metric" label={'Select Metric:'} current={$STORE.metric} onChange={metric => dispatch(changeMetric(metric))} options={options.metric} />
+      <Selector formId="channel" label={'Select Channel:'} current={$STORE.channel} onChange={channel => dispatch(changeChannel(channel))} options={options.channel} />
+      <Selector formId="version" label={'Select Version:'} current={$STORE.version} onChange={version => dispatch(changeVersion(version))} options={options.version} />
+    </FormGroup>
+  </Form>
+
+  <Chart />
+
+</div>

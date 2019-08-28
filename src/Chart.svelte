@@ -1,25 +1,30 @@
 <script>
-    import { onMount } from 'svelte';
+import { DATA, serverParams } from './store'
 
-    export let data;
+let chart;
 
-    function drawChart(data) {
-        var chart = document.createElement('div');
-        document.getElementById('charts').appendChild(chart);
-        Plotly.plot(
-            chart,
-            [
-                {
-                    type: 'scatter',
-                    x: data.aggregates.map(d => d.key),
-                    y: data.aggregates.map(d => d.value),
-                }
-            ]
-        );
-    }
+$: renderChart($DATA);
 
-    onMount(() => {
-        console.log(data);
-        drawChart(data);
-    });
+function renderChart(data) {
+    if (!data || !chart) return;
+
+    // create new chart on the fly.
+    Plotly.purge(chart);
+    Plotly.plot(
+        chart, [
+            {
+                type: 'scatter',
+                x: Object.keys(data),
+                y: Object.values(data)
+            }
+        ]
+    );
+}
+
 </script>
+
+<div bind:this={chart}></div>
+
+<p>
+    Query using metric={$serverParams.metric}, channel={$serverParams.channel}, version={$serverParams.version}.
+</p>
