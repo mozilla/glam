@@ -1,4 +1,4 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
 import produce from 'immer';
 import telemetrySearch from './telemetry-search.js';
 
@@ -27,7 +27,7 @@ export const dispatch = func => {
     // works.
     if (func.constructor.name === 'AsyncFunction') {
         // composite update (thunk). Async may or may not be
-        // necessary here, but might as well make all of these async by 
+        // necessary here, but might as well make all of these async by
         // default.
         func(dispatch, () => get(STORE));
     } else {
@@ -77,8 +77,8 @@ export const searchResults = derived([telemetrySearch, searchQuery], ([$telemetr
         candidates = $telemetrySearch.search($query).map((r, searchID) => {
             return {...r, searchID}
         });
-        const candidateIDs = candidates.map(c=>c.id);
-        
+        //const candidateIDs = candidates.map(c=>c.id);
+
         // if same length and same names, then
         // do not update resultSet.
         // const sameLength = resultSet.length === candidates.length;
