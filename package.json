@@ -19,8 +19,7 @@
   "dependencies": {
     "d3-format": "^1.4.1",
     "firebase": "^6.3.0",
-    "flexsearch": "^0.6.30",
-    "plotly.js-basic-dist": "^1.48.3"
+    "flexsearch": "^0.6.30"
   },
   "scripts": {
     "build": "rollup -c",
