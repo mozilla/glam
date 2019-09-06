@@ -1,0 +1,3 @@
+<header>
+    <slot></slot>
+</header>
