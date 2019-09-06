@@ -46,7 +46,7 @@ h2 {
 .fake-app {
     margin: var(--space-4x);
     width: calc(var(--increment) * 8);
-    border: 1px solid var(--gray03);
+    border: 1px solid var(--line-gray-02);
     border-radius: var(--border-radius-base);
     background-color: white;
 }

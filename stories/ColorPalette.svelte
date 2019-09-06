@@ -86,8 +86,10 @@ const tintsAndShades = color => {
     <div class='color role'>UX Grays</div>
     <div class='description'>bodies, lines, texts</div>
     <div style="background-color: var(--bg-gray);" class="color">bg-gray</div>
-    <div style="color: var(--line-gray); outline: 1px solid var(--line-gray);"
-    class="color">line-gray –––––––––––</div>
+    <div style="color: var(--line-gray-01); outline: 1px solid var(--line-gray-01);"
+    class="color">line-gray-01 –––––––––––</div>
+    <div style="color: var(--line-gray-02); outline: 1px solid var(--line-gray-02);"
+    class="color">line-gray-02 –––––––––––</div>
     <div style="background-color: var(--subhead-gray);"
     class="color dark">subhead-gray</div>
     <div style="background-color: var(--body-gray);" class="color dark">body-gray</div>

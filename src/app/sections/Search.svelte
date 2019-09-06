@@ -7,11 +7,6 @@ let value = '';
 
 import { onMount } from 'svelte';
 import { slide, fly } from 'svelte/transition'
-import { writable } from 'svelte/store';
-// import searchOptions from '../store/telemetry-search'
-
-// create the story and update
-const VALUE = writable(value);
 
 let resultSet=[];
 
@@ -105,5 +100,5 @@ input:focus {
         bind:value={$searchQuery} on:input={(evt) => {
             updateSearchQuery(evt.target.value);
         }} />
-    <div class=icon><MoreVertIcon /></div>
+    <!-- <div class=icon><MoreVertIcon /></div> -->
 </div>

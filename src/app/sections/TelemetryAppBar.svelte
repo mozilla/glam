@@ -4,6 +4,7 @@ import Button from '../../components/Button.svelte';
 </script>
 
 <style>
+
 div {
     opacity:.6;
 }

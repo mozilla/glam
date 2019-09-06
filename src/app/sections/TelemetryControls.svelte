@@ -31,6 +31,7 @@ let product;
 let channel;
 let os;
 let version;
+
 function collapseAll() {
     product.expand(false);
     channel.expand(false);
@@ -38,11 +39,10 @@ function collapseAll() {
     version.expand(false);
 }
 
-
 </script>
 
 <LeftDrawer {visible}>
-    <div class=primary-controls-header>
+    <div class=left-drawer__header>
         <h2 class=heading--02>Filters</h2>
         {#if $notDefaultSettings}
             <div transition:fly={{y:-10, duration:200}}
@@ -73,7 +73,7 @@ function collapseAll() {
             </div>
         </span>
     </Accordion>
-    <Accordion  bind:this={channel}>
+    <Accordion bind:this={channel}>
         <span slot="title">Channel</span>
         <span slot="description">{$store.channel}</span>
         <span slot="content">
@@ -87,7 +87,7 @@ function collapseAll() {
             </RadioGroup>
         </span>
     </Accordion>
-    <Accordion  bind:this={os}>
+    <Accordion bind:this={os}>
         <span slot="title">Operating System</span>
         <span slot="description">{$store.os}</span>
         <span slot="content">
@@ -99,29 +99,4 @@ function collapseAll() {
             </RadioGroup>
         </span>
     </Accordion>
-    <!-- <Accordion>
-        <span slot="title">Country</span>
-        <span slot="description">{$store.os}</span>
-        <span slot="content">
-            <RadioGroup onSelect={(value) => updateOS(value)}>
-                {#each new Array(40).fill(null).map(() => 'a') as a, i}
-                    <RadioSelector value={a} group={$store.os} />
-                {/each}
-            </RadioGroup>
-        </span>
-    </Accordion> -->
-    <!-- <Accordion>
-        <span slot="title">Channel</span>
-        <span slot="description">all channels</span>
-        <span slot="content">
-        </span>
-    </Accordion>
-    <Accordion>
-        <span slot="title">Versions</span>
-        <span slot="description">all channels</span>
-        <span slot="content">
-        </span>
-    </Accordion> -->
 </LeftDrawer>
-
-<!-- <button class=fab on:click={() => { visible = !visible; }}>{visible ? "hide" : "show"}</button> -->

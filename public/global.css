@@ -4,7 +4,7 @@
 
     /* IBM Carbon font sizes */
     --text-01: .75rem;
-    --text-q2: .8rem;
+    --text-015: .8125rem; /* nonstandard */
     --text-02: .875rem;
     --text-03: 1rem;
     --text-04: 1.125rem;
@@ -17,6 +17,7 @@
     --text-11: 3rem;
     --text-12: 3.375rem;
 
+    
     --body-font-small-size: var(--text-02);
     --body-font-large-size: var(--text-03);
 
@@ -41,7 +42,6 @@
     --gray14: #364C59;
     --gray16: #23343F;
     
-
     /* spacing variables */
     --column-dp: 8px;
 
@@ -66,7 +66,8 @@
     --cool-gray-dark-40: #111416;
 
     --bg-gray: var(--cool-gray-light-40);
-    --line-gray: var(--cool-gray-light-30);
+    --line-gray-01: var(--cool-gray-light-30);
+    --line-gray-02: var(--gray02);
     --subhead-gray: var(--cool-gray-light-10);
     --subhead-gray-02: var(--gray07); /* cooler-colored gray */
     --body-gray: var(--cool-gray-dark-35);
@@ -338,24 +339,19 @@ header h1 sub {
 }
 
 .drawer {
-    /* border-top-left-radius: var(--pad01); */
     width: var(--drawer-width);
 }
 
 .right-drawer {
-    /* background-color: rgb(241, 241, 252); */
-    border-left: 1px solid var(--gray01);
+    border-left: 1px solid var(--line-gray-02);
     background-color: white;
 }
 
-.primary-controls-header {
-    /* background-color: var(--darkest); */
-    /* background-color: var(--blueslate-dark-20); */
+.left-drawer__header {
     box-sizing: border-box;
     height: var(--header-height);
     padding-left: var(--space-2x);
     padding-right: var(--space-2x);
-    /* border-bottom: 1px solid var(--darker-primary-border); */
     display: grid;
     grid-template-columns: auto max-content;
     align-items: center;
@@ -365,7 +361,6 @@ header h1 sub {
 .drawer h2 {
     padding:0;
     margin: 0;
-    /* font-size:1em; */
     font-weight: 100;
     text-transform: uppercase;
 }
@@ -458,7 +453,7 @@ main .details {
 }
 
 .helper-text--01 {
-    font-size: var(--text-q2);
+    font-size: var(--text-015);
     line-height: 1rem;
     font-weight: 400;
     /* font-style: italic; */
@@ -498,8 +493,8 @@ main .details {
     text-transform: uppercase;
 }
 
-.details__heading--01 {
-    font-size: var(--text-q2);
+.detail__heading--01 {
+    font-size: var(--text-015);
     font-weight: 500;
     color: var(--body-gray-02);
 }

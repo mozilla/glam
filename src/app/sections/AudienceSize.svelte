@@ -26,29 +26,29 @@ $: displayPopulation.set(population || 0);
 
 <style>
 
-.audience-size-numbers {
+.audience-size__numbers {
     display: grid;
     grid-template-columns: auto auto;
     margin-bottom: var(--space-base);
     color: var(--body-gray);
 }
 
-.audience-total {
+.audience-size__total {
     justify-self: end;
     text-align:right;
     font-weight: 300;
 }
 
-.audience-total span {
+.audience-size__total span {
     font-weight: 300;
 }
 
 </style>
 
 <div>
-    <div class='audience-size-numbers label-text--01'>
+    <div class='audience-size__numbers label-text--01'>
         <div class='audience-percentage'>{formatPercentage($displayPercentage)}</div>
-        <div class='audience-total'>
+        <div class='audience-size__total'>
             <span>{formatTotal($displayTotal)}</span> of {formatTotal($displayPopulation)}</div>
         </div>
         <SparkBar value={$displayPercentage} />
