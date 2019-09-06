@@ -34,7 +34,7 @@
 </style>
 
 {#await promise}
-    <p>Querying data...</p>
+    <p>Querying data ...</p>
 {:then data}
     <div id="charts"></div>
     <Chart {data} />
