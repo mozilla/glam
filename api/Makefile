@@ -23,7 +23,7 @@ shell:
    /bin/bash
 
 gcrbuild:
-   gcloud builds submit --tag gcr.io/mdv2-test-244418/mdv2-api
+	gcloud builds submit --tag gcr.io/mdv2-test-244418/mdv2-api
 
 gcrdeploy:
-   gcloud beta run deploy --image gcr.io/mdv2-test-244418/mdv2-api --platform managed
+	gcloud beta run deploy --image gcr.io/mdv2-test-244418/mdv2-api --platform managed
