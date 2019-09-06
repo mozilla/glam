@@ -71,81 +71,26 @@ const tintsAndShades = color => {
 
 <h1>Telemetry Colors</h1>
 <div class=swatches>
-{#each families as {color, role, d}, i}
-<div>
-    <div class="color role">{role}</div>
-    <div class='description'>{d}</div>
-    {#each tintsAndShades(color) as c, j}
-        <div style="background-color: var(--{c});" class="color
-        {c.includes('light') ? '' : 'dark'}">{c}</div>
+    {#each families as {color, role, d}, i}
+        <div>
+            <div class="color role">{role}</div>
+            <div class='description'>{d}</div>
+            {#each tintsAndShades(color) as c, j}
+                <div style="background-color: var(--{c});" class="color
+                {c.includes('light') ? '' : 'dark'}">{c}</div>
+            {/each}
+        </div>
     {/each}
-</div>  
-
-{/each}
-<div>
-    <div class='color role'>UX Grays</div>
-    <div class='description'>bodies, lines, texts</div>
-    <div style="background-color: var(--bg-gray);" class="color">bg-gray</div>
-    <div style="color: var(--line-gray-01); outline: 1px solid var(--line-gray-01);"
-    class="color">line-gray-01 –––––––––––</div>
-    <div style="color: var(--line-gray-02); outline: 1px solid var(--line-gray-02);"
-    class="color">line-gray-02 –––––––––––</div>
-    <div style="background-color: var(--subhead-gray);"
-    class="color dark">subhead-gray</div>
-    <div style="background-color: var(--body-gray);" class="color dark">body-gray</div>
-</div>
-<!-- 
-<div>
-    <div style="background-color: var(--blueslate-light-40);" class="color">light-40</div>
-    <div style="background-color: var(--blueslate-light-30);" class="color">light-30</div>
-    <div style="background-color: var(--blueslate-light-20);" class="color">light-20</div>
-    <div style="background-color: var(--blueslate-light-10);" class="color
-    dark">light-10</div>
-        <div style="background-color: var(--blueslate);" class="color
-    dark main">blue slate</div>
-    <div style="background-color: var(--blueslate-dark-10);" class="color
-    dark">dark-10</div>
-    <div style="background-color: var(--blueslate-dark-20);" class="color
-    dark">dark-20</div>
-    <div style="background-color: var(--blueslate-dark-30);" class="color
-    dark">dark-30</div>
-    <div style="background-color: var(--blueslate-dark-40);" class="color
-    dark"></div>
-</div>  
-
-<div>
-    <div style="background-color: var(--raspberry-light-40);" class="color">light-40</div>
-    <div style="background-color: var(--raspberry-light-30);" class="color">light-30</div>
-    <div style="background-color: var(--raspberry-light-20);" class="color">light-20</div>
-    <div style="background-color: var(--raspberry-light-10);" class="color
-    dark">light-10</div>
-        <div style="background-color: var(--raspberry);" class="color
-    dark main">raspberry</div>
-    <div style="background-color: var(--raspberry-dark-10);" class="color
-    dark">dark-10</div>
-    <div style="background-color: var(--raspberry-dark-20);" class="color
-    dark">dark-20</div>
-    <div style="background-color: var(--raspberry-dark-30);" class="color
-    dark">dark-30</div>
-    <div style="background-color: var(--raspberry-dark-40);" class="color
-    dark">dark-40</div>
-</div>  
-
-<div>
-    <div style="background-color: var(--lightcrimson-light-40);" class="color"></div>
-    <div style="background-color: var(--lightcrimson-light-30);" class="color">light-30</div>
-    <div style="background-color: var(--lightcrimson-light-20);" class="color">light-20</div>
-    <div style="background-color: var(--lightcrimson-light-10);" class="color
-    dark">light-10</div>
-        <div style="background-color: var(--lightcrimson);" class="color
-    dark main">lightcrimson</div>
-    <div style="background-color: var(--lightcrimson-dark-10);" class="color
-    dark">dark-10</div>
-    <div style="background-color: var(--lightcrimson-dark-20);" class="color
-    dark">dark-20</div>
-    <div style="background-color: var(--lightcrimson-dark-30);" class="color
-    dark">dark-30</div>
-    <div style="background-color: var(--lightcrimson-dark-40);" class="color
-    dark">dark-40</div>
-</div>   -->
+    <div>
+        <div class='color role'>UX Grays</div>
+        <div class='description'>bodies, lines, texts</div>
+        <div style="background-color: var(--bg-gray);" class="color">bg-gray</div>
+        <div style="color: var(--line-gray-01); outline: 1px solid var(--line-gray-01);"
+        class="color">line-gray-01 –––––––––––</div>
+        <div style="color: var(--line-gray-02); outline: 1px solid var(--line-gray-02);"
+        class="color">line-gray-02 –––––––––––</div>
+        <div style="background-color: var(--subhead-gray);"
+        class="color dark">subhead-gray</div>
+        <div style="background-color: var(--body-gray);" class="color dark">body-gray</div>
+    </div>
 </div>
