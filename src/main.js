@@ -1,10 +1,7 @@
-import App from './App.svelte';
+import TelemetryApp from './app/TelemetryApp.svelte';
 
-const app = new App({
+const telemetryApp = new TelemetryApp({
 	target: document.body,
-	props: {
-		name: 'mdv2'
-	}
 });
 
-export default app;
+export default telemetryApp;
