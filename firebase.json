@@ -17,6 +17,12 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "run": {
+          "serviceId": "mdv2-api"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
