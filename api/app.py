@@ -1,8 +1,10 @@
 from firebase_admin import firestore, initialize_app
 from flask import Flask, jsonify
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 
 
 # Set up Firestore DB client.
