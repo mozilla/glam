@@ -115,21 +115,20 @@ li:hover {
     </div>
     {#if $searchResults.results.length}
         <ul>
-        {#each $searchResults.results as { name, probeType, description, id, searchID,
-        firstRelease, firstReleaseName }, i (id)}
+        {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
             <li on:click={(evt) => {
-                updateProbe({name, description, probeType});
+                updateProbe({id, name, type, description, versions});
             }}>
                 <div class=name>{name}</div>
-                <div class="probe-type label label-text--01 label--{probeType}">{probeType}</div>
+                <div class="probe-type label label-text--01 label--{type}">{type}</div>
                 <div class=description>{@html description}</div>
                 <div class=first-release>
-                    <div>first in</div>
-                    <div>{firstReleaseName} {firstRelease}</div>
+                    <div>first version</div>
+                    <div>{versions.nightly[0] || versions.beta[0]}</div>
                 </div>
             </li>
         {/each}
-    </ul>
+        </ul>
     {/if}
 </div>
 {/if}
