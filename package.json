@@ -31,7 +31,7 @@
     "dev": "run-p start:dev autobuild",
     "start": "sirv public --single",
     "start:dev": "sirv public --single --dev",
-    "lint": "eslint src/",
+    "lint": "eslint rollup.config.js src/",
     "storybook": "start-storybook"
   }
 }
