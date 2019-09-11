@@ -1,0 +1,19 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "globals": {
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+        "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["draft"] }]
+    }
+}
