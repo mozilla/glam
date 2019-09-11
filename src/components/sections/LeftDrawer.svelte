@@ -1,6 +1,7 @@
 <script>
-import { leftDrawer } from '../../drawer-transitions'
-export let visible=true;
+import { leftDrawer } from '../../drawer-transitions';
+
+export let visible = true;
 </script>
 
 <style>
@@ -8,7 +9,7 @@ export let visible=true;
 </style>
 
 {#if visible}
-<div transition:leftDrawer={{duration: 200}} class="drawer left-drawer">
+<div transition:leftDrawer={{ duration: 200 }} class="drawer left-drawer">
     <slot></slot>
 </div>
 {/if}

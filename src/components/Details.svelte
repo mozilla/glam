@@ -1,7 +1,8 @@
 <script>
 import { fly } from 'svelte/transition';
-import { store } from '../store/store.js';
+import { store } from '../app/store/store';
 import DetailSection from './DetailSection.svelte';
+
 let visible = true;
 </script>
 
@@ -20,12 +21,12 @@ let visible = true;
 </style>
 
 {#if !visible}
-    <button class=show transition:fly={{x: 200, duration: 200}} on:click={()=> { visible = true;}}>show details</button>
+    <button class=show transition:fly={{ x: 200, duration: 200 }} on:click={() => { visible = true; }}>show details</button>
 {/if}
 
 {#if visible}
-<div transition:fly={{x: 200, duration: 200}} class=details>
-    <button on:click={() => { visible = false }}>hide details</button>
+<div transition:fly={{ x: 200, duration: 200 }} class=details>
+    <button on:click={() => { visible = false; }}>hide details</button>
     <!-- <h3>Details</h3> -->
 
     <DetailSection>

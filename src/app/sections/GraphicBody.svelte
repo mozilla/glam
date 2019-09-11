@@ -1,6 +1,6 @@
 <script>
 import { setContext } from 'svelte';
-import { searchQuery, store, updateProbe } from '../store/store.js';
+import { store, updateProbe } from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
 // updateProbe could easily just be put into TelemetrySearchResults since

@@ -1,5 +1,4 @@
 <script>
-import { onMount } from 'svelte';
 import { fly } from 'svelte/transition';
 import Button from '../../components/Button.svelte';
 import LeftDrawer from '../../components/sections/LeftDrawer.svelte';
@@ -8,44 +7,44 @@ import Cancel from '../../components/icons/Cancel.svelte';
 
 import RadioGroup from '../../components/RadioGroup.svelte';
 import RadioSelector from '../../components/RadioSelector.svelte';
-import ListDivider from '../../components/ListDivider.svelte';
-import { 
-    store, 
-    notDefaultSettings,
-    updateProduct as updateProductAction,
-    updateChannel as updateChannelAction,
-    resetFilters as resetFiltersAction,
-    updateOS as updateOSAction } from '../store/store'
+// import ListDivider from '../../components/ListDivider.svelte';
+import {
+  store,
+  notDefaultSettings,
+  updateProduct as updateProductAction,
+  updateChannel as updateChannelAction,
+  resetFilters as resetFiltersAction,
+  updateOS as updateOSAction,
+} from '../store/store';
 
-const updateProduct = store.connect(updateProductAction);
-const updateChannel = store.connect(updateChannelAction);
-const updateOS = store.connect(updateOSAction);
-const resetFilters = () => {
-    let reset = store.connect(resetFiltersAction)
-    reset();
-    collapseAll();
-};
 let visible = true;
-
 let product;
 let channel;
 let os;
 let version;
 
 function collapseAll() {
-    product.expand(false);
-    channel.expand(false);
-    os.expand(false);
-    version.expand(false);
+  product.expand(false);
+  channel.expand(false);
+  os.expand(false);
+  version.expand(false);
 }
 
+const updateProduct = store.connect(updateProductAction);
+const updateChannel = store.connect(updateChannelAction);
+const updateOS = store.connect(updateOSAction);
+const resetFilters = () => {
+  const reset = store.connect(resetFiltersAction);
+  reset();
+  collapseAll();
+};
 </script>
 
 <LeftDrawer {visible}>
     <div class=left-drawer__header>
         <h2 class=heading--02>Filters</h2>
         {#if $notDefaultSettings}
-            <div transition:fly={{y:-10, duration:200}}
+            <div transition:fly={{ y: -10, duration: 200 }}
             href='#whatever'>
                 <Button on:click={resetFilters} level='medium' compact
                 dark>reset filters <Cancel /></Button>
