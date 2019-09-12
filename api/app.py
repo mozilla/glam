@@ -33,4 +33,6 @@ def get_probe(name):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    import os
+
+    app.run(debug=True, host="0.0.0.0", port=os.environ.get("PORT", "8000"))

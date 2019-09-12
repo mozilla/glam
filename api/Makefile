@@ -3,24 +3,13 @@
 export PORT=8000
 
 build:
-	docker build -t mdv2-api:latest .
+	docker-compose build
 
 run:
-	docker run -ti --rm \
-   -p 8000:${PORT} \
-   -e PORT=${PORT} \
-   -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-app-creds.json \
-   -v ${PWD}/gcp-app-creds.json:/tmp/gcp-app-creds.json:ro \
-   mdv2-api
+	docker-compose up
 
 shell:
-	docker run -ti --rm \
-   -p 8000:${PORT} \
-   -e PORT=${PORT} \
-   -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-app-creds.json \
-   -v ${PWD}/gcp-app-creds.json:/tmp/gcp-app-creds.json:ro \
-   mdv2-api \
-   /bin/bash
+	docker-compose run api /bin/bash
 
 gcrbuild:
 	gcloud builds submit --tag gcr.io/mdv2-test-244418/mdv2-api
