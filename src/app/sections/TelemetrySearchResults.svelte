@@ -82,6 +82,7 @@ afterUpdate(() => {
     border:1px solid gainsboro;
     background-color: white;
     width: calc(100vw - var(--drawer-width) * 2 - var(--space-base) - 40px * 2);
+    max-width: calc(var(--increment) * 16);
     box-shadow: 0px 0px 30px rgba(0,0,0,.2);
     border-bottom-right-radius: var(--border-radius-base);
     position: absolute;
@@ -144,10 +145,6 @@ li {
     color: var(--body-gray);
 }
 
-/* li:hover {
-    background-color: var(--bg-gray);
-} */
-
 .name {
     grid-area: title;
     word-break: break-all;
@@ -187,7 +184,7 @@ li {
     <div class=header-container>
         {#if $searchResults.total}
         <div class="header header--loaded" in:fly={{x: -5, duration: 200}}>
-            <div>matching {$searchResults.results.length} of
+            <div>found {$searchResults.results.length} of
                 {formatTotal($searchResults.total)} probes
             </div>
         </div>
