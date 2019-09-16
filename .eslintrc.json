@@ -10,9 +10,9 @@
     "extends": [
         "airbnb-base"
     ],
-    "plugins": [
-        "svelte3"
-    ],
+    "globals": {
+    },
+    "plugins": ["jest", "svelte3"],
     "rules": {
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
         "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["draft"] }]
