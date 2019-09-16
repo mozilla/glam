@@ -11,6 +11,10 @@ export let updateProbe = getContext('updateProbe');
 export let updateSearchQuery = getContext('updateSearchQuery');
 export let updateSearchIsActive = getContext('updateSearchIsActive');
 
+// when search query changes for any reason, always center back to first item,
+// even if the result set is the exact same (for now, potential FIXME)
+$: if($searchQuery) { focusedItem = 0 }
+
 let searchListElement;
 let formatTotal = format(',.4d');
 let focusedItem = 0;
@@ -146,7 +150,6 @@ li {
 
 .name {
     grid-area: title;
-    font-weight:900;
     word-break: break-all;
 }
 
@@ -206,7 +209,7 @@ li {
                 updateProbe({id, name, type, description, versions});
             }}
                 on:mouseover={() => { focusedItem = i; }}>
-                <div class=name>{name}</div>
+                <div class="name heading--02">{name}</div>
                 <div class="probe-type label label-text--01 label--{type}">{type}</div>
                 <div class=description>{@html description}</div>
                 <div class=first-release>
