@@ -2,7 +2,8 @@
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
 import { getContext, afterUpdate } from 'svelte'
-import { searchResults, store } from '../store/store.js'
+import { searchResults, store, searchQuery } from '../store/store.js'
+import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.
@@ -32,6 +33,7 @@ const handleKeypress = (event) => {
         }
         if (key === 'Escape') {
             updateSearchIsActive(false);
+            // reset focused element
             focusedItem = 0;
         }
         if (key === 'Home') {
@@ -44,19 +46,13 @@ const handleKeypress = (event) => {
 }
 
 const keyUp = () => {
-    // get id of current hovered
-    // const activeResult = resultSet.find(r=>r.searchID === hovered);
     if (!focusedItem) focusedItem = 0;
     if (focusedItem > 0) {
-        // do something
         focusedItem -= 1;
-        // look for focusedItem elem, and scroll into view.
-
     }
 }
 
 const keyDown = () => {
-    // const activeResult = resultSet.find(r=>r.searchID === hovered);
     if (!focusedItem) focusedItem = 0;
     if (focusedItem < $searchResults.results.length-1) {
         focusedItem += 1;
@@ -90,17 +86,32 @@ afterUpdate(() => {
     overflow: hidden;
 }
 
-.header {
+.header-container {
     background: linear-gradient(to left, var(--header-bg-color), var(--gray02));
-    /* background-color: var(--header-bg-color); */
-    padding:var(--space-base);
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
+    --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
     font-size:.8em;
     color: var(--gray16);
     font-style: italic;
-    height: 20px;
+    height: var(--height);
+    max-height: var(--height);
     display: grid;
+    align-items: stretch;
+}
+
+.header {
+    padding:var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items:center;
+    grid-column-gap: var(--space-base);
+    position:relative;
+}
+
+.header--loaded {
+    grid-template-columns: auto;
+    grid-column-gap: 0px;
     align-items:center;
 }
 
@@ -168,14 +179,22 @@ li {
 
 <svelte:window on:keydown={handleKeypress} />
 
-{#if $store.searchIsActive}
-<div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
-    <div class=header>
+{#if $store.searchIsActive && $searchQuery.length}
+<div transition:fly={{duration:100, y:-10}} class=telemetry-results>
+    <div class=header-container>
         {#if $searchResults.total}
-            matching {$searchResults.results.length} of
-            {formatTotal($searchResults.total)} probes
+        <div class="header header--loaded" in:fly={{x: -5, duration: 200}}>
+            <div>matching {$searchResults.results.length} of
+                {formatTotal($searchResults.total)} probes
+            </div>
+        </div>
         {:else}
-            getting the probes – one second!
+        <div class=header out:fly={{x: 5, duration: 200}}>
+            <LineSegSpinner color={'var(--subhead-gray-02)'} />
+            <div>
+                getting the probes – one second!
+            </div>
+        </div>
         {/if}
         
     </div>
