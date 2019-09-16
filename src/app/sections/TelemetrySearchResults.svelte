@@ -1,13 +1,74 @@
 <script>
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import { getContext } from 'svelte';
-import { searchResults, store } from '../store/store';
+import { getContext, afterUpdate } from 'svelte'
+import { searchResults, store } from '../store/store.js'
 
+// FIXME: Unless we generalize the search results in some way, I'm not sure
+// these shouldn't just be imported directly into this component.
 export let updateProbe = getContext('updateProbe');
 export let updateSearchQuery = getContext('updateSearchQuery');
+export let updateSearchIsActive = getContext('updateSearchIsActive');
 
+let searchListElement;
 let formatTotal = format(',.4d');
+let focusedItem = 0;
+let focusedElement;
+$: if (searchListElement) focusedElement =
+searchListElement.querySelector(`li:nth-child(${focusedItem+1})`);
+
+const handleKeypress = (event) => {
+    const key = event.key;
+    const keyCode = event.keyCode;
+    if ($searchResults.results && $store.searchIsActive && $searchResults.results.length > 1) {
+        if (key === 'ArrowUp') keyUp(event.target);
+        if (key === 'ArrowDown') keyDown(event.target);
+        if (key === 'Enter') {
+            const {id, name, type, description, versions} = $searchResults.results[focusedItem];
+            updateProbe({id, name, type, description, versions});
+            updateSearchIsActive(false);
+            // reset focused element
+            focusedItem = 0;
+        }
+        if (key === 'Escape') {
+            updateSearchIsActive(false);
+            focusedItem = 0;
+        }
+        if (key === 'Home') {
+            focusedItem = 0;
+        }
+        if (key === 'End') {
+            focusedItem = $searchResults.results.length - 1;
+        }
+    }
+}
+
+const keyUp = () => {
+    // get id of current hovered
+    // const activeResult = resultSet.find(r=>r.searchID === hovered);
+    if (!focusedItem) focusedItem = 0;
+    if (focusedItem > 0) {
+        // do something
+        focusedItem -= 1;
+        // look for focusedItem elem, and scroll into view.
+
+    }
+}
+
+const keyDown = () => {
+    // const activeResult = resultSet.find(r=>r.searchID === hovered);
+    if (!focusedItem) focusedItem = 0;
+    if (focusedItem < $searchResults.results.length-1) {
+        focusedItem += 1;
+    }
+}
+
+afterUpdate(() => {
+    if (focusedElement) {
+        focusedElement.scrollIntoView({block: "nearest", behavior: "smooth"});
+    }
+})
+
 </script>
 
 <style>
@@ -68,9 +129,9 @@ li {
     color: var(--body-gray);
 }
 
-li:hover {
+/* li:hover {
     background-color: var(--bg-gray);
-}
+} */
 
 .name {
     grid-area: title;
@@ -99,7 +160,13 @@ li:hover {
     line-height:1.4;
 }
 
+.focused {
+    background-color: var(--bg-gray);
+}
+
 </style>
+
+<svelte:window on:keydown={handleKeypress} />
 
 {#if $store.searchIsActive}
 <div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
@@ -113,13 +180,13 @@ li:hover {
         
     </div>
     {#if $searchResults.results.length}
-        <ul>
+        <ul bind:this={searchListElement}>
         {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-            <li on:click={() => {
-                updateProbe({
-                    id, name, type, description, versions,
-                });
-            }}>
+            <li 
+                class:focused={focusedItem === i} on:click={(evt) => {
+                updateProbe({id, name, type, description, versions});
+            }}
+                on:mouseover={() => { focusedItem = i; }}>
                 <div class=name>{name}</div>
                 <div class="probe-type label label-text--01 label--{type}">{type}</div>
                 <div class=description>{@html description}</div>

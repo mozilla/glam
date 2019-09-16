@@ -16,46 +16,35 @@ let resultSet = [];
 let timeout;
 let hovered;
 
-// const handleKeypress = (event) => {
-//     const key = event.key;
-//     const keyCode = event.keyCode;
-//     if ($searchOptions && resultSet.length > 1) {
-//         if (key === 'ArrowUp') keyUp();
-//         if (key === 'ArrowDown') keyDown();
-//     }
-
-// }
-
-// const keyUp = () => {
-//     // get id of current hovered
-//     const activeResult = resultSet.find(r=>r.searchID === hovered);
-//     if (activeResult.searchID > 0) {
-//         // do something
-//         hovered -= 1;
-//     }
-// }
-
-// const keyDown = () => {
-//     const activeResult = resultSet.find(r=>r.searchID === hovered);
-//     if (activeResult.searchID < resultSet.length-1) {
-//         hovered += 1;
-//     }
-// }
-
 let visible = false;
-
+let inputElement;
 onMount(() => {
-  visible = true;
+    visible = true;
 });
 
-const turnOnSearch = () => {
-  store.dispatch(updateSearchIsActive(true));
-};
-const turnOffSearch = () => {
-  setTimeout(() => {
-    store.dispatch(updateSearchIsActive(false));
-  }, 50);
-};
+function turnOnSearch() {
+    store.dispatch(updateSearchIsActive(true));
+}
+
+function turnOffSearch() {
+    setTimeout(() => {
+        store.dispatch(updateSearchIsActive(false));
+    }, 50);
+}
+
+function unfocus() {
+    inputElement.blur();
+}
+
+function onKeypress(event) {
+    if ($store.searchIsActive) {
+        const key = event.key;
+        if (key === 'Escape' || key === 'Enter') {
+            unfocus();
+        }
+    }
+}
+
 </script>
 
 <style>
@@ -93,17 +82,15 @@ const turnOffSearch = () => {
   }
 </style>
 
-<div class="search-container">
-  <div class="icon">
-    <SearchIcon />
-  </div>
-  <input
-    on:focus={turnOnSearch}
-    placeholder="search for a telemetry probe"
-    on:blur={turnOffSearch}
-    bind:value={$searchQuery}
-    on:input={(evt) => {
-      updateSearchQuery(evt.target.value);
-    }} />
-  <!-- <div class=icon><MoreVertIcon /></div> -->
+<svelte:window on:keydown={onKeypress} />
+
+<div class=search-container>
+    <div class=icon><SearchIcon /></div>
+    <input on:focus={turnOnSearch}
+        bind:this={inputElement}
+        placeholder="search for a telemetry probe"
+        on:blur={turnOffSearch}
+        bind:value={$searchQuery} on:input={(evt) => {
+            updateSearchQuery(evt.target.value);
+        }} />
 </div>

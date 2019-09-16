@@ -1,12 +1,12 @@
 <script>
 import { setContext } from 'svelte';
-import { store, updateProbe } from '../store/store';
+import { searchQuery, store, updateProbe, updateSearchIsActive } from '../store/store.js';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
 // updateProbe could easily just be put into TelemetrySearchResults since
 // it is a consumer
 setContext('updateProbe', store.connect(updateProbe));
-
+setContext('updateSearchIsActive', store.connect(updateSearchIsActive))
 </script>
 
 <style>
