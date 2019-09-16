@@ -1,10 +1,10 @@
 <script>
-import { writable } from 'svelte/store';
 import { setContext } from 'svelte';
+
 export let onSelect;
 
 if (onSelect) {
-    setContext('onSelect', onSelect);
+  setContext('onSelect', onSelect);
 }
 
 </script>

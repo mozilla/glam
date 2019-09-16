@@ -1,16 +1,16 @@
 <script>
 import Search from './sections/Search.svelte';
-//import Details from '../components/Details.svelte';
+// import Details from '../components/Details.svelte';
 import GraphicBody from './sections/GraphicBody.svelte';
 
 import App from '../components/sections/App.svelte';
 import Main from '../components/sections/Main.svelte';
-import MainActionBar from '../components/sections/MainActionBar.svelte'
+import MainActionBar from '../components/sections/MainActionBar.svelte';
 import Content from '../components/sections/Content.svelte';
 
 import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
 import TelemetryControls from './sections/TelemetryControls.svelte';
-import ProbeDetails from './sections/ProbeDetails.svelte'
+import ProbeDetails from './sections/ProbeDetails.svelte';
 </script>
 
 <style>

@@ -1,7 +1,8 @@
 <script>
-import { getContext, createEventDispatcher  } from 'svelte';
+import { getContext } from 'svelte';
 import RadioChecked from './icons/RadioChecked.svelte';
-import RadioUnchecked from './icons/RadioUnchecked.svelte'
+import RadioUnchecked from './icons/RadioUnchecked.svelte';
+
 export let value;
 export let label;
 export let group;
@@ -12,8 +13,8 @@ $: isSelected = value === group;
 const parentCallback = getContext('onSelect');
 
 export let onSelect = () => {
-    parentCallback(value);
-}
+  parentCallback(value);
+};
 
 </script>
 

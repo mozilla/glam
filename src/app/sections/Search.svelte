@@ -1,17 +1,19 @@
 <script>
-import { searchQuery, updateSearchQuery, store, updateSearchIsActive } from '../store/store.js';
+import { onMount } from 'svelte';
+import {
+  searchQuery,
+  updateSearchQuery,
+  store,
+  updateSearchIsActive,
+} from '../store/store';
 import SearchIcon from '../../components/icons/Search.svelte';
-import MoreVertIcon from '../../components/icons/MoreVert.svelte';
+// import MoreVertIcon from '../../components/icons/MoreVert.svelte';
 
 let value = '';
 
-import { onMount } from 'svelte';
-import { slide, fly } from 'svelte/transition'
 
-let resultSet=[];
-
+let resultSet = [];
 let timeout;
-
 let hovered;
 
 // const handleKeypress = (event) => {
@@ -42,40 +44,40 @@ let hovered;
 
 let visible = false;
 
-onMount(() => { visible = true });
+onMount(() => {
+  visible = true;
+});
 
-const turnOnSearch = () =>{
-    store.dispatch(updateSearchIsActive(true));
-}
+const turnOnSearch = () => {
+  store.dispatch(updateSearchIsActive(true));
+};
 const turnOffSearch = () => {
-    setTimeout(() => {
-        store.dispatch(updateSearchIsActive(false));
-    }, 50);
-}
-
+  setTimeout(() => {
+    store.dispatch(updateSearchIsActive(false));
+  }, 50);
+};
 </script>
 
 <style>
-
-.search-container {
+  .search-container {
     height: var(--increment);
-    box-shadow: 0px 0px var(--space-1h) rgba(0,0,0,.2);
-    display:grid;
+    box-shadow: 0px 0px var(--space-1h) rgba(0, 0, 0, 0.2);
+    display: grid;
     grid-template-columns: [icon] 40px [input] auto [help] 40px;
     padding-left: var(--space-base);
     padding-right: var(--space-base);
     align-items: stretch;
     background-color: white;
-}
+  }
 
-.icon {
-    display:grid;
+  .icon {
+    display: grid;
     align-items: center;
     justify-items: center;
-    opacity:.5;
-}
+    opacity: 0.5;
+  }
 
-input {
+  input {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -84,21 +86,24 @@ input {
     border: none;
     color: var(--gray10);
     background-color: white;
-}
+  }
 
-input:focus {
+  input:focus {
     color: var(--gray16);
-}
-
+  }
 </style>
 
-<div class=search-container>
-    <div class=icon><SearchIcon /></div>
-    <input on:focus={turnOnSearch} 
-        placeholder="search for a telemetry probe"
-        on:blur={turnOffSearch}
-        bind:value={$searchQuery} on:input={(evt) => {
-            updateSearchQuery(evt.target.value);
-        }} />
-    <!-- <div class=icon><MoreVertIcon /></div> -->
+<div class="search-container">
+  <div class="icon">
+    <SearchIcon />
+  </div>
+  <input
+    on:focus={turnOnSearch}
+    placeholder="search for a telemetry probe"
+    on:blur={turnOffSearch}
+    bind:value={$searchQuery}
+    on:input={(evt) => {
+      updateSearchQuery(evt.target.value);
+    }} />
+  <!-- <div class=icon><MoreVertIcon /></div> -->
 </div>

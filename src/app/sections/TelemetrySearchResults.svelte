@@ -1,14 +1,13 @@
 <script>
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import { getContext } from 'svelte'
-import { searchResults, store } from '../store/store.js'
+import { getContext } from 'svelte';
+import { searchResults, store } from '../store/store';
 
 export let updateProbe = getContext('updateProbe');
 export let updateSearchQuery = getContext('updateSearchQuery');
 
 let formatTotal = format(',.4d');
-
 </script>
 
 <style>
@@ -103,7 +102,7 @@ li:hover {
 </style>
 
 {#if $store.searchIsActive}
-<div transition:fly={{duration:100, y:-10}} class=telemetry-results>
+<div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
     <div class=header>
         {#if $searchResults.total}
             matching {$searchResults.results.length} of
@@ -116,8 +115,10 @@ li:hover {
     {#if $searchResults.results.length}
         <ul>
         {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-            <li on:click={(evt) => {
-                updateProbe({id, name, type, description, versions});
+            <li on:click={() => {
+                updateProbe({
+                    id, name, type, description, versions,
+                });
             }}>
                 <div class=name>{name}</div>
                 <div class="probe-type label label-text--01 label--{type}">{type}</div>

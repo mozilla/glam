@@ -1,8 +1,6 @@
 <script>
 import { onMount } from 'svelte';
-import { tweened } from 'svelte/motion';
 import { format } from 'd3-format';
-import { cubicOut as easing } from 'svelte/easing';
 
 export let value = 0;
 export let height = 30;
@@ -11,7 +9,6 @@ export let labels = true;
 let formatPercentage = format('.0%');
 
 let spark;
-let barWidth = 0;
 let r = 2.5;
 let margin = r * 4;
 
@@ -24,10 +21,10 @@ let mounted = false;
 let width = 0;
 
 onMount(() => {
-    mounted = true;
-    // calculate rect max width
-    width = spark.getBoundingClientRect().width - margin * 3;
-})
+  mounted = true;
+  // calculate rect max width
+  width = spark.getBoundingClientRect().width - margin * 3;
+});
 
 </script>
 
@@ -58,15 +55,14 @@ text {
 
 <div>
     <svg bind:this={spark} class=spark-bar width="100%" height={height}>
-        {#each [0, .25, .5, .75, 1] as tick, i}
+        {#each [0, 0.25, 0.5, 0.75, 1] as tick, i}
             <line class=tick
                 stroke-width={i === 0 ? 1.5 : 1} 
                 x1={margin + tick * width} 
                 x2={margin + tick * width}
                 y1={i === 0 ? topMargin - tickHeight * 2 : topMargin - tickHeight}
-                y2={i === 0 ? topMargin + tickHeight * 2 : topMargin +
-                tickHeight} />
-            {#if labels && i % 2 ==0}
+                y2={i === 0 ? topMargin + tickHeight * 2 : topMargin + tickHeight} />
+            {#if labels && i % 2 === 0}
             <text 
                 font-size={tickLabelSize} 
                 text-anchor="middle"

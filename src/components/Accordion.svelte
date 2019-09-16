@@ -1,12 +1,12 @@
 <script>
 import { slide } from 'svelte/transition';
 import CaratIcon from './icons/Carat.svelte';
+
 let revealed = false;
 
 export const expand = (v = false) => {
-    revealed = v;
-}
-
+  revealed = v;
+};
 </script>
 
 <style>
@@ -98,7 +98,7 @@ section {
 
 
 {#if revealed}
-    <div transition:slide={{duration: 100}} class=expanded-content>
+    <div transition:slide={{ duration: 100 }} class=expanded-content>
         <slot name='content'></slot>
     </div>
 {/if}

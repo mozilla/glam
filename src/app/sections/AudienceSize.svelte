@@ -1,10 +1,9 @@
 <script>
 import { format } from 'd3-format';
-import { onMount } from 'svelte';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 
-import SparkBar from '../../components/data-graphics/SparkBar.svelte'
+import SparkBar from '../../components/data-graphics/SparkBar.svelte';
 
 export let percentage;
 export let total;
@@ -13,7 +12,7 @@ export let population;
 let formatTotal = format(',.4d');
 let formatPercentage = format('.0%');
 
-const tweenParams = {duration: 600, easing};
+const tweenParams = { duration: 600, easing };
 
 const displayPercentage = tweened(0, tweenParams);
 const displayTotal = tweened(0, tweenParams);

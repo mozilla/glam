@@ -1,8 +1,5 @@
 <script>
-import { fly, fade } from 'svelte/transition';
 import RightDrawer from '../../components/sections/RightDrawer.svelte';
-import Accordion from '../../components/Accordion.svelte';
-import Button from '../../components/Button.svelte';
 
 import AudienceSize from './AudienceSize.svelte';
 
@@ -16,11 +13,11 @@ let audiencePerc;
 
 let currentProbeName = $store.probe.name;
 
-$: if(currentProbeName !== $store.probe.name) {
-    currentProbeName = $store.probe.name;
-    audienceCount = 500000 + Math.random() * 500000;
-    populationCount = 1200000 + Math.random() * 1000000;
-    audiencePerc = audienceCount / populationCount;
+$: if (currentProbeName !== $store.probe.name) {
+  currentProbeName = $store.probe.name;
+  audienceCount = 500000 + Math.random() * 500000;
+  populationCount = 1200000 + Math.random() * 1000000;
+  audiencePerc = audienceCount / populationCount;
 }
 
 </script>

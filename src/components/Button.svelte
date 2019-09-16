@@ -1,6 +1,7 @@
 <script>
 
 import { getContext } from 'svelte';
+
 export let level = 'high';
 export let compact = false;
 export let pale = false;
@@ -8,7 +9,7 @@ export let pale = false;
 export let size = compact ? 'compact' : 'standard';
 export let dark = getContext('appDarkMode') || false;
 
-const paleness = pale ? 'pale' : 'normal-saturation'
+const paleness = pale ? 'pale' : 'normal-saturation';
 
 </script>
 
