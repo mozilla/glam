@@ -4,8 +4,8 @@ import LineSegSpinner from '../src/components/LineSegSpinner.svelte';
 
 <style>
 
-.story {
-    margin: var(--space-4x);
+.set {
+    margin-bottom: var(--space-4x);
     border-radius: var(--space-base);
     max-width: calc(var(--increment) * 6);
     padding: var(--space-base);
@@ -34,28 +34,31 @@ import LineSegSpinner from '../src/components/LineSegSpinner.svelte';
 
 </style>
 
-<div class="story dark">
-    <div class="text">
-        <div class=overline-text--01>
-            default
+<div class=story>
+    <h1 class=story__title>Line Segment Spinners</h1>
+    <div class="set dark">
+        <div class="text">
+            <div class=overline-text--01>
+                default
+            </div>
+            <div class=body-text--short-01>
+                size=24, color=white
+            </div>
         </div>
-        <div class=body-text--short-01>
-            size=24, color=white
+        <LineSegSpinner />
+    </div>
+
+    <div class="set dark">
+        <div class="text body-text--short-01">
+            size=64
         </div>
+        <LineSegSpinner size=64 />
     </div>
-    <LineSegSpinner />
-</div>
 
-<div class="story dark">
-    <div class="text body-text--short-01">
-        size=64
+    <div class="set">
+        <div class="text body-text--short-01">
+            color=digital blue
+        </div>
+        <LineSegSpinner size=64 color='var(--digital-blue)' />
     </div>
-    <LineSegSpinner size=64 />
-</div>
-
-<div class="story">
-    <div class="text body-text--short-01">
-        color=digital blue
-    </div>
-    <LineSegSpinner size=64 color='var(--digital-blue)' />
 </div>

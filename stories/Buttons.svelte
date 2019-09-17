@@ -5,10 +5,6 @@ import Button from '../src/components/Button.svelte';
 </script>
 <style>
 
-:global(body) {
-    background-color: var(--background-gray);
-}
-
 h2 {
     padding-left: var(--space-2x);
     font-size: 1.25rem;
@@ -16,7 +12,6 @@ h2 {
 }
 
 .button-set {
-    margin: var(--space-4x);
     display: grid;
     grid-template-columns: max-content max-content;
     align-content: center;
@@ -71,6 +66,8 @@ h2 {
 
 </style>
 
+<div class=story>
+<h1 class=story__title>Buttons</h1>
 <div class=button-set>
     <div class=default>
         <h2>Prime</h2>
@@ -136,4 +133,5 @@ h2 {
     <div class=fake-body>
         <Button level="high">Activate</Button>
     </div>
+</div>
 </div>

@@ -1,35 +1,35 @@
 <script>
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 import SparkBar from '../src/components/data-graphics/SparkBar.svelte';
 import Button from '../src/components/Button.svelte';
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing} from 'svelte/easing';
 
 const t = 500;
-let v1 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v1 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v1.set(Math.random() * 3 / 4);
 
-let v2 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v2 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v2.set(Math.random() * 3 / 4);
 
-let v3 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v3 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v3.set(Math.random() * 3 / 4);
 
-let v4 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v4 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v4.set(Math.random() * 3 / 4);
 
-let v5 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v5 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v5.set(Math.random() * 3 / 4);
 
-let v6 = tweened(0, {duration: t + Math.random() * 300, easing});
+let v6 = tweened(0, { duration: t + Math.random() * 300, easing });
 $: v6.set(Math.random() * 3 / 4);
 
 function randomize() {
-    v1.set(Math.random() * 3 / 4);
-    v2.set(Math.random() * 3 / 4);
-    v3.set(Math.random() * 3 / 4);
-    v4.set(Math.random() * 3 / 4);
-    v5.set(Math.random() * 3 / 4);
-    v6.set(Math.random() * 3 / 4);
+  v1.set(Math.random() * 3 / 4);
+  v2.set(Math.random() * 3 / 4);
+  v3.set(Math.random() * 3 / 4);
+  v4.set(Math.random() * 3 / 4);
+  v5.set(Math.random() * 3 / 4);
+  v6.set(Math.random() * 3 / 4);
 }
 
 </script>
@@ -51,30 +51,30 @@ function randomize() {
      margin-left: var(--space-4x);
  }
 </style>
+<div class=story>
+    <h1 class=story__title>SparkBar</h1>
 
-<h1>SparkBar</h1>
+    <p>
+        Conforms to the width of whatever container it is in.
+    </p>
 
-<p>
-    Conforms to the width of whatever container it is in.
-</p>
+    <div class=controls>
+        <Button level=medium compact on:click={randomize}>randomize</Button>
+    </div>
 
-<div class=controls>
-    <Button level=medium compact on:click={randomize}>randomize</Button>
-</div>
+    <h2>With Labels (default)</h2>
 
-<h2>With Labels (default)</h2>
+    <div class=sparks >
+        <SparkBar value={$v1} />
+        <SparkBar value={$v2} />
+        <SparkBar value={$v3} />
+        <SparkBar value={$v4} />
+    </div>
 
-<div class=sparks >
-    <SparkBar value={$v1} />
-    <SparkBar value={$v2} />
-    <SparkBar value={$v3} />
-    <SparkBar value={$v4} />
-</div>
+    <h2>Without Labels</h2>
 
-<h2>Without Labels</h2>
-
-
-<div class=sparks >
-    <SparkBar labels={false} value={$v5} />
-    <SparkBar value={$v6} />
+    <div class=sparks >
+        <SparkBar labels={false} value={$v5} />
+        <SparkBar value={$v6} />
+    </div>
 </div>

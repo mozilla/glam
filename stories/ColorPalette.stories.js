@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/svelte';
-import ColorPalette from './ColorPalette.svelte'
+import ColorPalette from './ColorPalette.svelte';
 
-import '../public/global.css'
+import '../public/global.css';
 
-storiesOf('ColorPalette', module)
-  .add('swatches', () => ({
+storiesOf('Basics|Color', module)
+  .add('Telemetry', () => ({
     Component: ColorPalette,
   }));

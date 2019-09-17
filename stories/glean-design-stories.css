@@ -1,0 +1,21 @@
+body  {
+  /* background-color: var(--gray01); */
+  background: linear-gradient(to right, var(--gray00), var(--gray01));
+}
+
+.story {
+  width: calc(100vw - var(--increment) * 3);
+  margin: auto;
+  margin-top: var(--space-4x);
+  min-height: 100vh;
+  background-color: white;
+  padding: var(--space-4x);
+  border: 1px solid  var(--line-gray-02);
+  border-radius: var(--space-base);
+}
+
+.story__title {
+  margin:0;
+  padding:0;
+  margin-bottom: var(--space-4x);
+}
