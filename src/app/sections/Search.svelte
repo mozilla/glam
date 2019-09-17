@@ -1,5 +1,4 @@
 <script>
-import { onMount } from 'svelte';
 import {
   searchQuery,
   updateSearchQuery,
@@ -7,42 +6,30 @@ import {
   updateSearchIsActive,
 } from '../store/store';
 import SearchIcon from '../../components/icons/Search.svelte';
-// import MoreVertIcon from '../../components/icons/MoreVert.svelte';
 
-let value = '';
-
-
-let resultSet = [];
-let timeout;
-let hovered;
-
-let visible = false;
 let inputElement;
-onMount(() => {
-    visible = true;
-});
 
 function turnOnSearch() {
-    store.dispatch(updateSearchIsActive(true));
+  store.dispatch(updateSearchIsActive(true));
 }
 
 function turnOffSearch() {
-    setTimeout(() => {
-        store.dispatch(updateSearchIsActive(false));
-    }, 50);
+  setTimeout(() => {
+    store.dispatch(updateSearchIsActive(false));
+  }, 50);
 }
 
 function unfocus() {
-    inputElement.blur();
+  inputElement.blur();
 }
 
 function onKeypress(event) {
-    if ($store.searchIsActive) {
-        const key = event.key;
-        if (key === 'Escape' || key === 'Enter') {
-            unfocus();
-        }
+  if ($store.searchIsActive) {
+    const { key } = event;
+    if (key === 'Escape' || key === 'Enter') {
+      unfocus();
     }
+  }
 }
 
 </script>
@@ -85,12 +72,12 @@ function onKeypress(event) {
 <svelte:window on:keydown={onKeypress} />
 
 <div class=search-container>
-    <div class=icon><SearchIcon /></div>
-    <input on:focus={turnOnSearch}
-        bind:this={inputElement}
-        placeholder="search for a telemetry probe"
-        on:blur={turnOffSearch}
-        bind:value={$searchQuery} on:input={(evt) => {
-            updateSearchQuery(evt.target.value);
-        }} />
+  <div class=icon><SearchIcon /></div>
+  <input on:focus={turnOnSearch}
+      bind:this={inputElement}
+      placeholder="search for a telemetry probe"
+      on:blur={turnOffSearch}
+      bind:value={$searchQuery} on:input={(evt) => {
+          updateSearchQuery(evt.target.value);
+      }} />
 </div>

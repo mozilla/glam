@@ -22,25 +22,6 @@ export function orderedNumbers(values, valueof) {
   return Float64Array.from(values.map(valueof)).sort(ascending);
 }
 
-export function weightTable(inputValues, weights) {
-  // returns an array of new objects of unique values + total weighted values.
-  // meant to be used internally only.
-  const zipped = inputValues.map((v, i) => [v, weights[i]]);
-  const altogether = zipped.reduce((acc, [value, weight]) => {
-    const index = acc.findIndex((obj) => obj.value === value);
-    if (index === -1) {
-      acc.push({ value, sumOfWeights: weight });
-    } else {
-      acc[index].sumOfWeights += weight;
-    }
-    return acc;
-  }, []);
-  altogether.sort(byKey('value'));
-  const values = altogether.map((obj) => obj.value);
-  const sumOfWeights = altogether.map((obj) => obj.sumOfWeights);
-  return { values, sumOfWeights };
-}
-
 export function cumSum(values, valueof = (v) => v) {
   return values.map(valueof).reduce((acc, v, i) => {
     if (i === 0) {
@@ -69,8 +50,10 @@ export function nnInterp(x, y, xOut) {
   });
 }
 
-export function weightedQuantile(probs = [.05, .25,.5,.75,.95], values, weights = values.map(() => 1)) {
-  // rough port of Hmisc's wtd.quantile function. https://github.com/harrelfe/Hmisc/blob/master/R/wtd.stats.s  
+export function weightedQuantile(probs = [0.05, 0.25, 0.5, 0.75, 0.95],
+  values,
+  weights = values.map(() => 1)) {
+  // rough port of Hmisc's wtd.quantile function. https://github.com/harrelfe/Hmisc/blob/master/R/wtd.stats.s
   const n = sum(weights);
   // in the case where n === values.length, I believe this is just R-7
   const order = probs.map((p) => 1 + (n - 1) * p);

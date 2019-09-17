@@ -10,8 +10,7 @@
     "extends": [
         "airbnb-base"
     ],
-    "globals": {
-    },
+    "globals": {},
     "plugins": ["jest", "svelte3"],
     "rules": {
         "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
@@ -24,7 +23,8 @@
             "rules": {
                 "import/first": "off",
                 "import/no-mutable-exports": "off",
-                "prefer-const": "off"
+                "prefer-const": "off",
+                "import/prefer-default-export": "off"
             }
         }
     ]

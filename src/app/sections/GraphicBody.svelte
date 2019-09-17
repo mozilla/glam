@@ -1,12 +1,12 @@
 <script>
 import { setContext } from 'svelte';
-import { searchQuery, store, updateProbe, updateSearchIsActive } from '../store/store.js';
+import { store, updateProbe, updateSearchIsActive } from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
 // updateProbe could easily just be put into TelemetrySearchResults since
 // it is a consumer
 setContext('updateProbe', store.connect(updateProbe));
-setContext('updateSearchIsActive', store.connect(updateSearchIsActive))
+setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 </script>
 
 <style>
@@ -14,8 +14,6 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive))
 .graphic-body-container {
     padding: var(--space-2x);
 }
-
-
 
 .graphic-body__graphic-header {
     display: grid;
@@ -30,20 +28,6 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive))
     width: 100%;
     word-break: break-all;
 }
-
-/* .label {
-    border-radius: var(--border-radius-1h);
-    font-size:.75em;
-    text-transform: uppercase;
-    color: white;
-    display:grid;
-    align-items: center;
-    align-self: start;
-    background-color: var(--subhead-gray);
-    padding: var(--space-1h);
-    padding-left: var(--space-base);
-    padding-right: var(--space-base);
-} */
 
 </style>
 

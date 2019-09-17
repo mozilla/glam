@@ -1,8 +1,8 @@
 <script>
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import { getContext, afterUpdate } from 'svelte'
-import { searchResults, store, searchQuery } from '../store/store.js'
+import { getContext, afterUpdate } from 'svelte';
+import { searchResults, store, searchQuery } from '../store/store';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
@@ -13,61 +13,67 @@ export let updateSearchIsActive = getContext('updateSearchIsActive');
 
 // when search query changes for any reason, always center back to first item,
 // even if the result set is the exact same (for now, potential FIXME)
-$: if($searchQuery) { focusedItem = 0 }
 
 let searchListElement;
 let formatTotal = format(',.4d');
 let focusedItem = 0;
 let focusedElement;
-$: if (searchListElement) focusedElement =
-searchListElement.querySelector(`li:nth-child(${focusedItem+1})`);
 
-const handleKeypress = (event) => {
-    const key = event.key;
-    const keyCode = event.keyCode;
-    if ($searchResults.results && $store.searchIsActive && $searchResults.results.length > 1) {
-        if (key === 'ArrowUp') keyUp(event.target);
-        if (key === 'ArrowDown') keyDown(event.target);
-        if (key === 'Enter') {
-            const {id, name, type, description, versions} = $searchResults.results[focusedItem];
-            updateProbe({id, name, type, description, versions});
-            updateSearchIsActive(false);
-            // reset focused element
-            focusedItem = 0;
-        }
-        if (key === 'Escape') {
-            updateSearchIsActive(false);
-            // reset focused element
-            focusedItem = 0;
-        }
-        if (key === 'Home') {
-            focusedItem = 0;
-        }
-        if (key === 'End') {
-            focusedItem = $searchResults.results.length - 1;
-        }
-    }
+$: if ($searchQuery) { focusedItem = 0; }
+
+$: if (searchListElement) {
+  focusedElement = searchListElement.querySelector(`li:nth-child(${focusedItem + 1})`);
 }
 
 const keyUp = () => {
-    if (!focusedItem) focusedItem = 0;
-    if (focusedItem > 0) {
-        focusedItem -= 1;
-    }
-}
+  if (!focusedItem) focusedItem = 0;
+  if (focusedItem > 0) {
+    focusedItem -= 1;
+  }
+};
 
 const keyDown = () => {
-    if (!focusedItem) focusedItem = 0;
-    if (focusedItem < $searchResults.results.length-1) {
-        focusedItem += 1;
+  if (!focusedItem) focusedItem = 0;
+  if (focusedItem < $searchResults.results.length - 1) {
+    focusedItem += 1;
+  }
+};
+
+const handleKeypress = (event) => {
+  const { key } = event;
+  if ($searchResults.results && $store.searchIsActive && $searchResults.results.length > 1) {
+    if (key === 'ArrowUp') keyUp(event.target);
+    if (key === 'ArrowDown') keyDown(event.target);
+    if (key === 'Enter') {
+      const {
+        id, name, type, description, versions,
+      } = $searchResults.results[focusedItem];
+      updateProbe({
+        id, name, type, description, versions,
+      });
+      updateSearchIsActive(false);
+      // reset focused element
+      focusedItem = 0;
     }
-}
+    if (key === 'Escape') {
+      updateSearchIsActive(false);
+      // reset focused element
+      focusedItem = 0;
+    }
+    if (key === 'Home') {
+      focusedItem = 0;
+    }
+    if (key === 'End') {
+      focusedItem = $searchResults.results.length - 1;
+    }
+  }
+};
 
 afterUpdate(() => {
-    if (focusedElement) {
-        focusedElement.scrollIntoView({block: "nearest", behavior: "smooth"});
-    }
-})
+  if (focusedElement) {
+    focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+});
 
 </script>
 
@@ -180,16 +186,16 @@ li {
 <svelte:window on:keydown={handleKeypress} />
 
 {#if $store.searchIsActive && $searchQuery.length}
-<div transition:fly={{duration:100, y:-10}} class=telemetry-results>
+<div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
     <div class=header-container>
         {#if $searchResults.total}
-        <div class="header header--loaded" in:fly={{x: -5, duration: 200}}>
+        <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
             <div>found {$searchResults.results.length} of
                 {formatTotal($searchResults.total)} probes
             </div>
         </div>
         {:else}
-        <div class=header out:fly={{x: 5, duration: 200}}>
+        <div class=header out:fly={{ x: 5, duration: 200 }}>
             <LineSegSpinner color={'var(--subhead-gray-02)'} />
             <div>
                 getting the probes – one second!
@@ -202,8 +208,10 @@ li {
         <ul bind:this={searchListElement}>
         {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
             <li 
-                class:focused={focusedItem === i} on:click={(evt) => {
-                updateProbe({id, name, type, description, versions});
+                class:focused={focusedItem === i} on:click={() => {
+                updateProbe({
+                    id, name, type, description, versions,
+                });
             }}
                 on:mouseover={() => { focusedItem = i; }}>
                 <div class="name heading--02">{name}</div>
