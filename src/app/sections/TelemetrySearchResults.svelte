@@ -1,13 +1,80 @@
 <script>
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import { getContext } from 'svelte';
-import { searchResults, store } from '../store/store';
+import { getContext, afterUpdate } from 'svelte';
+import { searchResults, store, searchQuery } from '../store/store';
+import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
+// FIXME: Unless we generalize the search results in some way, I'm not sure
+// these shouldn't just be imported directly into this component.
 export let updateProbe = getContext('updateProbe');
 export let updateSearchQuery = getContext('updateSearchQuery');
+export let updateSearchIsActive = getContext('updateSearchIsActive');
 
+// when search query changes for any reason, always center back to first item,
+// even if the result set is the exact same (for now, potential FIXME)
+
+let searchListElement;
 let formatTotal = format(',.4d');
+let focusedItem = 0;
+let focusedElement;
+
+$: if ($searchQuery) { focusedItem = 0; }
+
+$: if (searchListElement) {
+  focusedElement = searchListElement.querySelector(`li:nth-child(${focusedItem + 1})`);
+}
+
+const keyUp = () => {
+  if (!focusedItem) focusedItem = 0;
+  if (focusedItem > 0) {
+    focusedItem -= 1;
+  }
+};
+
+const keyDown = () => {
+  if (!focusedItem) focusedItem = 0;
+  if (focusedItem < $searchResults.results.length - 1) {
+    focusedItem += 1;
+  }
+};
+
+const handleKeypress = (event) => {
+  const { key } = event;
+  if ($searchResults.results && $store.searchIsActive && $searchResults.results.length > 1) {
+    if (key === 'ArrowUp') keyUp(event.target);
+    if (key === 'ArrowDown') keyDown(event.target);
+    if (key === 'Enter') {
+      const {
+        id, name, type, description, versions,
+      } = $searchResults.results[focusedItem];
+      updateProbe({
+        id, name, type, description, versions,
+      });
+      updateSearchIsActive(false);
+      // reset focused element
+      focusedItem = 0;
+    }
+    if (key === 'Escape') {
+      updateSearchIsActive(false);
+      // reset focused element
+      focusedItem = 0;
+    }
+    if (key === 'Home') {
+      focusedItem = 0;
+    }
+    if (key === 'End') {
+      focusedItem = $searchResults.results.length - 1;
+    }
+  }
+};
+
+afterUpdate(() => {
+  if (focusedElement) {
+    focusedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+});
+
 </script>
 
 <style>
@@ -21,6 +88,7 @@ let formatTotal = format(',.4d');
     border:1px solid gainsboro;
     background-color: white;
     width: calc(100vw - var(--drawer-width) * 2 - var(--space-base) - 40px * 2);
+    max-width: calc(var(--increment) * 16);
     box-shadow: 0px 0px 30px rgba(0,0,0,.2);
     border-bottom-right-radius: var(--border-radius-base);
     position: absolute;
@@ -29,17 +97,32 @@ let formatTotal = format(',.4d');
     overflow: hidden;
 }
 
-.header {
+.header-container {
     background: linear-gradient(to left, var(--header-bg-color), var(--gray02));
-    /* background-color: var(--header-bg-color); */
-    padding:var(--space-base);
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
+    --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
     font-size:.8em;
     color: var(--gray16);
     font-style: italic;
-    height: 20px;
+    height: var(--height);
+    max-height: var(--height);
     display: grid;
+    align-items: stretch;
+}
+
+.header {
+    padding:var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items:center;
+    grid-column-gap: var(--space-base);
+    position:relative;
+}
+
+.header--loaded {
+    grid-template-columns: auto;
+    grid-column-gap: 0px;
     align-items:center;
 }
 
@@ -68,13 +151,8 @@ li {
     color: var(--body-gray);
 }
 
-li:hover {
-    background-color: var(--bg-gray);
-}
-
 .name {
     grid-area: title;
-    font-weight:900;
     word-break: break-all;
 }
 
@@ -99,28 +177,44 @@ li:hover {
     line-height:1.4;
 }
 
+.focused {
+    background-color: var(--bg-gray);
+}
+
 </style>
 
-{#if $store.searchIsActive}
+<svelte:window on:keydown={handleKeypress} />
+
+{#if $store.searchIsActive && $searchQuery.length}
 <div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
-    <div class=header>
+    <div class=header-container>
         {#if $searchResults.total}
-            matching {$searchResults.results.length} of
-            {formatTotal($searchResults.total)} probes
+        <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
+            <div>found {$searchResults.results.length} of
+                {formatTotal($searchResults.total)} probes
+            </div>
+        </div>
         {:else}
-            getting the probes – one second!
+        <div class=header out:fly={{ x: 5, duration: 200 }}>
+            <LineSegSpinner color={'var(--subhead-gray-02)'} />
+            <div>
+                getting the probes – one second!
+            </div>
+        </div>
         {/if}
         
     </div>
     {#if $searchResults.results.length}
-        <ul>
+        <ul bind:this={searchListElement}>
         {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-            <li on:click={() => {
+            <li 
+                class:focused={focusedItem === i} on:click={() => {
                 updateProbe({
                     id, name, type, description, versions,
                 });
-            }}>
-                <div class=name>{name}</div>
+            }}
+                on:mouseover={() => { focusedItem = i; }}>
+                <div class="name heading--02">{name}</div>
                 <div class="probe-type label label-text--01 label--{type}">{type}</div>
                 <div class=description>{@html description}</div>
                 <div class=first-release>

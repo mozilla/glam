@@ -17,11 +17,9 @@ let topMargin = tickHeight * 2;
 let buffer = 3;
 let tickLabelSize = 10;
 
-let mounted = false;
 let width = 0;
 
 onMount(() => {
-  mounted = true;
   // calculate rect max width
   width = spark.getBoundingClientRect().width - margin * 3;
 });
