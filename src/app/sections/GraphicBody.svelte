@@ -1,6 +1,8 @@
 <script>
 import { setContext } from 'svelte';
-import { store, updateProbe, updateSearchIsActive } from '../store/store';
+import {
+  store, updateProbe, updateSearchIsActive, dataset,
+} from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
 // updateProbe could easily just be put into TelemetrySearchResults since
@@ -44,5 +46,14 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
         <h2 class='heading--04'>Telemetry Prototype</h2>
     {/if}
     </div>
+
+    ok so
+    {#await $dataset}
+        SUP!!!!!
+    {:then value}
+        {JSON.stringify(value)}
+    {:catch err}
+        ummm {err}
+    {/await}
 
 </div>

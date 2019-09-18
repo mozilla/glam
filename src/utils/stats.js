@@ -1,5 +1,3 @@
-// import produce from 'immer';
-
 function sum(vs) { return vs.reduce((a, b) => a + b, 0); }
 
 export function ascending(a, b) {

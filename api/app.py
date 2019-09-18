@@ -98,7 +98,7 @@ def get_data():
 
     collection = "{channel}-{version}".format(**q)
     query = db.collection(collection)
-
+    print(q)
     if q.get("probe"):
         query = query.where("metric", "==", q.get("probe"))
     if q.get("os"):
