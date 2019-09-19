@@ -5,8 +5,6 @@ import {
 } from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
-// updateProbe could easily just be put into TelemetrySearchResults since
-// it is a consumer
 setContext('updateProbe', store.connect(updateProbe));
 setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 
@@ -51,15 +49,15 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
     {/if}
     </div>
 
-    ok so
-    {#await $dataset}
-        running now
-    {:then value}
-        <pre>
-            {JSON.stringify(value, null, 2)}
-        </pre>
-    {:catch err}
-        An error was caught: {err}
-    {/await}
-
+    <div>
+        {#await $dataset}
+            running now
+        {:then value}
+            <pre>
+                {JSON.stringify(value, null, 2)}
+            </pre>
+        {:catch err}
+            An error was caught: {err}
+        {/await}
+    </div>
 </div>
