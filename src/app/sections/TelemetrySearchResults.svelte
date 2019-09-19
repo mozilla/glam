@@ -48,7 +48,6 @@ const handleKeypress = (event) => {
       const {
         id, name, type, description, versions, apiName,
       } = $searchResults.results[focusedItem];
-      console.log('we made it here', $searchResults.results[focusedItem]);
       updateProbe({
         id, name, apiName, type, description, versions,
       });

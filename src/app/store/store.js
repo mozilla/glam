@@ -1,7 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import produce from 'immer';
 import telemetrySearch from './telemetry-search';
-import { getProbe } from './api';
+import { getProbeData } from './api';
 
 import CONFIG from '../config.json';
 
@@ -125,11 +125,6 @@ function toQueryString(params) {
   return keys.map((k) => `${k}=${params[k]}`).join('&');
 }
 
-
-function fetchData(params) {
-  return getProbe(params);
-}
-
 function paramsAreValid(params) {
   return Object.entries(params)
     .filter(([k]) => isField(k))
@@ -151,7 +146,7 @@ export const dataset = derived(store, ($store) => {
     return Promise.reject(new Error('parameters not valid'));
   }
   if (!(qs in cache)) {
-    cache[qs] = fetchData(params);
+    cache[qs] = getProbeData(params);
   }
 
   return cache[qs];
