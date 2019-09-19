@@ -48,6 +48,12 @@ export function nnInterp(x, y, xOut) {
   });
 }
 
+export function nearestBelow(value, neighbors) {
+  const below = neighbors.filter((n) => n <= value);
+  if (!below.length) return neighbors[neighbors.length - 1];
+  return Math.max(...below);
+}
+
 export function weightedQuantile(probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   values,
   weights = values.map(() => 1)) {
@@ -57,6 +63,7 @@ export function weightedQuantile(probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   const order = probs.map((p) => 1 + (n - 1) * p);
   const low = order.map((o) => Math.max(Math.floor(o), 1));
   const high = low.map((l) => Math.min(l + 1, n));
+  console.log(low, high);
   const modOrder = order.map((o) => o % 1);
   // here is where approx comes in handy, but our specific use-case is easy to recreate
   const lowStats = nnInterp(cumSum(weights), values, low);

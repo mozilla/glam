@@ -20,7 +20,7 @@ const telemetrySearch = readable({ loaded: false }, async (set) => {
     resolution: 3,
     doc: {
       id: 'id',
-      field: ['name', 'description', 'type'],
+      field: ['name', 'apiName', 'description', 'type'],
     },
   });
   search.add(data);

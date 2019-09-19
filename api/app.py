@@ -88,7 +88,7 @@ def get_data():
         raise APIException("Missing JSON body or proper mimetype")
 
     q = body["query"]
-
+    print(q)
     if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())

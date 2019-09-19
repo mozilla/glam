@@ -9,12 +9,16 @@ import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 // it is a consumer
 setContext('updateProbe', store.connect(updateProbe));
 setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
+
 </script>
 
 <style>
 
 .graphic-body-container {
     padding: var(--space-2x);
+    overflow-y: auto;
+    height: calc(100vh - var(--header-height) * 2 - var(--space-4x));
+    outline: 1px solid black;
 }
 
 .graphic-body__graphic-header {
@@ -51,7 +55,9 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
     {#await $dataset}
         SUP!!!!!
     {:then value}
-        {JSON.stringify(value)}
+        <pre>
+            {JSON.stringify(value, null, 2)}
+        </pre>
     {:catch err}
         ummm {err}
     {/await}

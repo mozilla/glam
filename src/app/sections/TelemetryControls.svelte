@@ -8,14 +8,18 @@ import Cancel from '../../components/icons/Cancel.svelte';
 import RadioGroup from '../../components/RadioGroup.svelte';
 import RadioSelector from '../../components/RadioSelector.svelte';
 // import ListDivider from '../../components/ListDivider.svelte';
+
 import {
   store,
-  notDefaultSettings,
+  getFieldValueLabel,
+  hasDefaultControlFields,
   updateProduct as updateProductAction,
   updateChannel as updateChannelAction,
   resetFilters as resetFiltersAction,
   updateOS as updateOSAction,
 } from '../store/store';
+
+import CONFIG from '../config.json';
 
 let visible = true;
 let product;
@@ -43,7 +47,7 @@ const resetFilters = () => {
 <LeftDrawer {visible}>
     <div class=left-drawer__header>
         <h2 class=heading--02>Filters</h2>
-        {#if $notDefaultSettings}
+        {#if !$hasDefaultControlFields}
             <div transition:fly={{ y: -10, duration: 200 }}
             href='#whatever'>
                 <Button on:click={resetFilters} level='medium' compact
@@ -51,7 +55,7 @@ const resetFilters = () => {
             </div>
         {/if}
     </div>
-    <Accordion bind:this={product}>
+    <!-- <Accordion bind:this={product}>
         <span slot="title">Product</span>
         <span slot="description">{$store.product}</span>
         <span slot="content">
@@ -61,7 +65,7 @@ const resetFilters = () => {
                 <RadioSelector value={'fennec'} label={'Fennec for Android'} group={$store.product} />
             </RadioGroup>
         </span>
-    </Accordion>
+    </Accordion> -->
     <Accordion bind:this={version}>
         <span slot="title">Version / Build</span>
         <span slot="description">Latest (69)</span>
@@ -74,27 +78,23 @@ const resetFilters = () => {
     </Accordion>
     <Accordion bind:this={channel}>
         <span slot="title">Channel</span>
-        <span slot="description">{$store.channel}</span>
+        <span slot="description">{getFieldValueLabel('channel', $store.channel)}</span>
         <span slot="content">
             <RadioGroup onSelect={(value) => updateChannel(value)}>
-                <RadioSelector value={'all'} label={'all products'}
-                group={$store.channel} />
-                <!-- <ListDivider /> -->
-                <RadioSelector value={'nightly'} label={'Nightly'} group={$store.channel} />
-                <RadioSelector value={'beta'} label={'Beta'} group={$store.channel} />
-                <RadioSelector value={'release'} label={'Release'} group={$store.channel} />
+                {#each CONFIG.fields.channel.values as {key, label}, i (key)}
+                    <RadioSelector value={key} label={label} group={$store.channel} />
+                {/each}
             </RadioGroup>
         </span>
     </Accordion>
     <Accordion bind:this={os}>
         <span slot="title">Operating System</span>
-        <span slot="description">{$store.os}</span>
+        <span slot="description">{getFieldValueLabel('os', $store.os)}</span>
         <span slot="content">
             <RadioGroup onSelect={(value) => updateOS(value)}>
-                <RadioSelector value={'all'} label={'all OSes'} group={$store.os} />
-                <RadioSelector value={'Windows'} label={'Windows'} group={$store.os} />
-                <RadioSelector value={'Mac'} label={'Mac'} group={$store.os} />
-                <RadioSelector value={'Linux'} label={'Linux'} group={$store.os} />
+                    {#each CONFIG.fields.os.values as {key, label}, i (key) }
+                        <RadioSelector value={key} label={label} group={$store.os} /> 
+                    {/each}
             </RadioGroup>
         </span>
     </Accordion>

@@ -3,19 +3,46 @@ import produce from 'immer';
 import telemetrySearch from './telemetry-search';
 import { getProbe } from './api';
 
+import CONFIG from '../config.json';
+
 import { weightedQuantile } from '../../utils/stats';
+
+export function getFieldValues(fieldKey) {
+  return CONFIG.fields[fieldKey].values;
+}
+
+export function isField(fieldKey) {
+  return Object.keys(CONFIG.fields).includes(fieldKey);
+}
+
+export function getFieldValueMetadata(fieldKey, valueKey) {
+  return getFieldValues(fieldKey).find((v) => v.key === valueKey);
+}
+
+export function isValidFieldValue(fieldKey, valueKey) {
+  return getFieldValues(fieldKey).map((fv) => fv.key).includes(valueKey);
+}
+
+export function getFieldValueLabel(fieldKey, valueKey) {
+  return getFieldValueMetadata(fieldKey, valueKey).label;
+}
+
+export function getDefaultFieldValue(fieldKey) {
+  return getFieldValues(fieldKey)[0].key;
+}
 
 const initStore = {
   probe: {
     name: undefined,
+    apiName: undefined,
     description: undefined,
     audienceSize: 0,
     totalSize: 0,
   },
   product: 'Firefox',
-  channel: 'nightly',
-  os: 'Windows',
-  version: 70,
+  channel: getDefaultFieldValue('channel'),
+  os: getDefaultFieldValue('os'),
+  version: 69,
   searchIsActive: false,
   result: Promise.resolve(undefined),
 };
@@ -45,21 +72,12 @@ export const connect = (func) => (...args) => dispatch(func(...args));
 
 export const store = { subscribe: STORE.subscribe, dispatch, connect };
 
-export const notDefaultSettings = derived(store, ($store) => {
-  const validFields = ['product', 'channel', 'os'];
-  return !validFields.every((f) => $store[f] === 'all');
-});
+export const updateField = (field, value) => (draft) => { draft[field] = value; };
 
-// const getNextId = (arr) => {
-//     if (!arr.length) return 0;
-//     return Math.max(...arr.map(it => it.id), 0) + 1;
-// }
-
-
-export const updateProbe = (probe) => (draft) => { draft.probe = probe; };
-export const updateProduct = (product) => (draft) => { draft.product = product; };
-export const updateChannel = (channel) => (draft) => { draft.channel = channel; };
-export const updateOS = (os) => (draft) => { draft.os = os; };
+export const updateProbe = (probe) => updateField('probe', probe);
+export const updateProduct = (product) => updateField('product', product);
+export const updateChannel = (channel) => updateField('channel', channel);
+export const updateOS = (os) => updateField('os', os);
 
 // search
 export const updateSearchIsActive = (tf) => (draft) => { draft.searchIsActive = tf; };
@@ -83,15 +101,26 @@ export const searchResults = derived(
   },
 );
 
-// ///// probe querying infrastructure.
+// further derivations from the store
 
+export const hasDefaultControlFields = derived(store, ($store) => Object.values(CONFIG.fields)
+  .every((field) => field.values[0].key === $store[field.key]));
+
+// ///// probe querying infrastructure.
 
 // hook into store here.
 
 function getParamsForDataAPI(obj) {
   return {
-    version: `${obj.version}`, probe: obj.probe.name ? obj.probe.name.toLowerCase() : undefined, channel: obj.channel, os: obj.os,
+    version: `${obj.version}`,
+    channel: obj.channel,
+    probe: obj.probe.apiName,
+    os: obj.os,
   };
+  // return CONFIG.queryFields.reduce((acc, f) => {
+  //   acc[f] = obj[f]; // eslint-disable-line no-param-reassign
+  //   return acc;
+  // }, {});
 }
 
 function toQueryString(params) {
@@ -106,42 +135,10 @@ function fetchData(params) {
   return getProbe(params);
 }
 
-// V1: subscribe to the store. If a query param changes,
-// "run the query" by dispatching a change to draft.result
-// which also caches the result value. This implementation is incomplete.
-// We still need a way of updating the query params and retrieving the cache,
-// which this does not do. Perhaps another store or something else can
-// accomplish this.
-// STORE.subscribe((state) => {
-//   const params = getParamsForDataAPI(state);
-//   const qs = toQueryString(params);
-//   if (!(qs in cache)) {
-//     cache[qs] = fetchData(qs);
-//     store.dispatch((draft) => {
-//       draft.result = cache[qs];
-//     });
-//   }
-// });
-
-// V2: don't make this another subscription that responds to
-// store changes. Instead, when a query param updates in the atomic action,
-// also update draft.result w/ either the cached promise or otherwise.
-
-/* eslint-disable no-param-reassign */
-// function returnCacheOrNewQuery(draftState) {
-//   const params = getParamsForDataAPI(draftState);
-//   const queryString = toQueryString(params);
-//   if (!((queryString) in cache)) {
-//     cache[queryString] = fetchData(queryString);
-//   }
-//   draftState.result = cache[queryString];
-// }
-
-// V3: create a derived store that reads from the cache, and simply leave it at
-// that.
-
 function paramsAreValid(params) {
-  return params.os !== 'all' && params.version !== undefined && params.probe !== undefined;
+  return Object.entries(params)
+    .filter(([k]) => isField(k))
+    .every(([fieldKey, valueKey]) => isValidFieldValue(fieldKey, valueKey));
 }
 
 const cache = {};
@@ -161,5 +158,6 @@ export const dataset = derived(store, ($store) => {
   if (!(qs in cache)) {
     cache[qs] = fetchData(params);
   }
-  return cache[qs].then(toWeightedQuantiles);
+
+  return cache[qs].then((d) => { console.log(d); return d; });// .then(toWeightedQuantiles);
 });
