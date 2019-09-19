@@ -108,11 +108,9 @@ export const hasDefaultControlFields = derived(store, ($store) => Object.values(
 
 // ///// probe querying infrastructure.
 
-// hook into store here.
-
 function getParamsForDataAPI(obj) {
   return {
-    version: `${obj.version}`,
+    version: obj.version,
     channel: obj.channel,
     probe: obj.probe.apiName,
     os: obj.os,
