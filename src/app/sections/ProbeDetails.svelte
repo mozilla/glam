@@ -1,24 +1,24 @@
 <script>
 import RightDrawer from '../../components/sections/RightDrawer.svelte';
 
-import AudienceSize from './AudienceSize.svelte';
+// import AudienceSize from './AudienceSize.svelte';
 
 import { store } from '../store/store';
 
 let visible = true; // this is unused for the time being.
 
-let audienceCount;
-let populationCount;
-let audiencePerc;
+// let audienceCount;
+// let populationCount;
+// let audiencePerc;
 
-let currentProbeName = $store.probe.name;
+// let currentProbeName = $store.probe.name;
 
-$: if (currentProbeName !== $store.probe.name) {
-  currentProbeName = $store.probe.name;
-  audienceCount = 500000 + Math.random() * 500000;
-  populationCount = 1200000 + Math.random() * 1000000;
-  audiencePerc = audienceCount / populationCount;
-}
+// $: if (currentProbeName !== $store.probe.name) {
+//   currentProbeName = $store.probe.name;
+//   audienceCount = 500000 + Math.random() * 500000;
+//   populationCount = 1200000 + Math.random() * 1000000;
+//   audiencePerc = audienceCount / populationCount;
+// }
 
 </script>
 
@@ -82,11 +82,10 @@ h2 {
 <RightDrawer {visible}>
 {#if $store.probe.name}
 <div class="drawer-section-container probe-details">
-    <div class="drawer-section">
+    <!-- <div class="drawer-section">
             <h2 class=detail__heading--01>Audience Size</h2>
-            <!-- <div class='drawer-section-description label-text--01'>perc. of channel</div> -->
             <AudienceSize percentage={audiencePerc} total={audienceCount} population={populationCount} />
-    </div>
+    </div> -->
     <div class=drawer-section>
         {#if $store.probe.description}
             <h2 class=detail__heading--01>description</h2>

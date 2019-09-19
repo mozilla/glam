@@ -46,10 +46,10 @@ const handleKeypress = (event) => {
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
       const {
-        id, name, type, description, versions,
+        id, name, type, description, versions, apiName,
       } = $searchResults.results[focusedItem];
       updateProbe({
-        id, name, type, description, versions,
+        id, name, apiName, type, description, versions,
       });
       updateSearchIsActive(false);
       // reset focused element
@@ -206,11 +206,11 @@ li {
     </div>
     {#if $searchResults.results.length}
         <ul bind:this={searchListElement}>
-        {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
+        {#each $searchResults.results as {id, name, apiName, type, description, versions}, i (id)}
             <li 
                 class:focused={focusedItem === i} on:click={() => {
                 updateProbe({
-                    id, name, type, description, versions,
+                    id, name, type, description, versions, apiName,
                 });
             }}
                 on:mouseover={() => { focusedItem = i; }}>

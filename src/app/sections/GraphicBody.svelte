@@ -1,18 +1,22 @@
 <script>
 import { setContext } from 'svelte';
-import { store, updateProbe, updateSearchIsActive } from '../store/store';
+import {
+  store, updateProbe, updateSearchIsActive, dataset,
+} from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
-// updateProbe could easily just be put into TelemetrySearchResults since
-// it is a consumer
 setContext('updateProbe', store.connect(updateProbe));
 setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
+
 </script>
 
 <style>
 
 .graphic-body-container {
     padding: var(--space-2x);
+    overflow-y: auto;
+    height: calc(100vh - var(--header-height) * 2 - var(--space-4x));
+    outline: 1px solid black;
 }
 
 .graphic-body__graphic-header {
@@ -45,4 +49,15 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
     {/if}
     </div>
 
+    <div>
+        {#await $dataset}
+            running now
+        {:then value}
+            <pre>
+                {JSON.stringify(value, null, 2)}
+            </pre>
+        {:catch err}
+            An error was caught: {err}
+        {/await}
+    </div>
 </div>

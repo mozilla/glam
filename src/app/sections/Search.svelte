@@ -1,35 +1,37 @@
 <script>
+  import { tick } from 'svelte';
 import {
-  searchQuery,
-  updateSearchQuery,
-  store,
-  updateSearchIsActive,
+    searchQuery,
+    updateSearchQuery,
+    store,
+    updateSearchIsActive,
 } from '../store/store';
 import SearchIcon from '../../components/icons/Search.svelte';
 
 let inputElement;
 
 function turnOnSearch() {
-  store.dispatch(updateSearchIsActive(true));
+    store.dispatch(updateSearchIsActive(true));
 }
 
 function turnOffSearch() {
-  setTimeout(() => {
-    store.dispatch(updateSearchIsActive(false));
-  }, 50);
+    setTimeout(() => {
+      store.dispatch(updateSearchIsActive(false));
+    }, 50);
 }
 
 function unfocus() {
-  inputElement.blur();
+    inputElement.blur();
 }
 
-function onKeypress(event) {
-  if ($store.searchIsActive) {
-    const { key } = event;
-    if (key === 'Escape' || key === 'Enter') {
-      unfocus();
+async function onKeypress(event) {
+    if ($store.searchIsActive) {
+      const { key } = event;
+      if (key === 'Escape') {
+        await tick();
+        unfocus();
+      }
     }
-  }
 }
 
 </script>

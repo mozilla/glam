@@ -1,18 +1,51 @@
 import { writable, derived, get } from 'svelte/store';
 import produce from 'immer';
 import telemetrySearch from './telemetry-search';
+import { getProbeData } from './api';
 
+import CONFIG from '../config.json';
+
+import { weightedQuantile } from '../../utils/stats';
+
+export function getFieldValues(fieldKey) {
+  return CONFIG.fields[fieldKey].values;
+}
+
+export function isField(fieldKey) {
+  return Object.keys(CONFIG.fields).includes(fieldKey);
+}
+
+export function getFieldValueMetadata(fieldKey, valueKey) {
+  return getFieldValues(fieldKey).find((v) => v.key === valueKey);
+}
+
+export function isValidFieldValue(fieldKey, valueKey) {
+  return getFieldValues(fieldKey).map((fv) => fv.key).includes(valueKey);
+}
+
+export function getFieldValueLabel(fieldKey, valueKey) {
+  return getFieldValueMetadata(fieldKey, valueKey).label;
+}
+
+export function getDefaultFieldValue(fieldKey) {
+  return getFieldValues(fieldKey)[0].key;
+}
+
+// TODO: get latest version for whatever the default channel is.
 const initStore = {
   probe: {
     name: undefined,
+    apiName: undefined,
     description: undefined,
     audienceSize: 0,
     totalSize: 0,
   },
-  product: 'all',
-  channel: 'all',
-  os: 'all',
+  product: 'Firefox',
+  channel: getDefaultFieldValue('channel'),
+  os: getDefaultFieldValue('os'),
+  version: 69,
   searchIsActive: false,
+  result: Promise.resolve(undefined),
 };
 
 const STORE = writable(initStore);
@@ -40,21 +73,12 @@ export const connect = (func) => (...args) => dispatch(func(...args));
 
 export const store = { subscribe: STORE.subscribe, dispatch, connect };
 
-export const notDefaultSettings = derived(store, ($store) => {
-  const validFields = ['product', 'channel', 'os'];
-  return !validFields.every((f) => $store[f] === 'all');
-});
+export const updateField = (field, value) => (draft) => { draft[field] = value; };
 
-// const getNextId = (arr) => {
-//     if (!arr.length) return 0;
-//     return Math.max(...arr.map(it => it.id), 0) + 1;
-// }
-
-
-export const updateProbe = (probe) => (draft) => { draft.probe = probe; };
-export const updateProduct = (product) => (draft) => { draft.product = product; };
-export const updateChannel = (channel) => (draft) => { draft.channel = channel; };
-export const updateOS = (os) => (draft) => { draft.os = os; };
+export const updateProbe = (probe) => updateField('probe', probe);
+export const updateProduct = (product) => updateField('product', product);
+export const updateChannel = (channel) => updateField('channel', channel);
+export const updateOS = (os) => updateField('os', os);
 
 // search
 export const updateSearchIsActive = (tf) => (draft) => { draft.searchIsActive = tf; };
@@ -69,27 +93,60 @@ export const resetFilters = () => async () => {
 
 export const searchResults = derived(
   [telemetrySearch, searchQuery], ([$telemetrySearch, $query]) => {
-    let candidates;
     let resultSet = [];
     if ($telemetrySearch.loaded) {
-      // , {limit:30}
-      candidates = $telemetrySearch.search($query).map((r, searchID) => ({ ...r, searchID }));
-      // const candidateIDs = candidates.map(c=>c.id);
-
-      // if same length and same names, then
-      // do not update resultSet.
-      // const sameLength = resultSet.length === candidates.length;
-      // const sameNames = candidates.every((c,i) => {
-      //     return resultSet[i] && resultSet[i].id && resultSet[i].id === c.id;
-      // })
-
-      // if (!sameLength || !sameNames) {
-      //     resultSet = candidates;
-      //     hovered = resultSet[0].searchID;
-      // }
-      resultSet = candidates;
+      resultSet = $telemetrySearch.search($query).map((r, searchID) => ({ ...r, searchID }));
     }
 
     return { results: resultSet, total: $telemetrySearch.length };
   },
 );
+
+// further derivations from the store
+
+export const hasDefaultControlFields = derived(store, ($store) => Object.values(CONFIG.fields)
+  .every((field) => field.values[0].key === $store[field.key]));
+
+// ///// probe querying infrastructure.
+
+function getParamsForDataAPI(obj) {
+  return {
+    version: obj.version,
+    channel: obj.channel,
+    probe: obj.probe.apiName,
+    os: obj.os,
+  };
+}
+
+function toQueryString(params) {
+  const keys = Object.keys(params);
+  keys.sort();
+  return keys.map((k) => `${k}=${params[k]}`).join('&');
+}
+
+function paramsAreValid(params) {
+  return Object.entries(params)
+    .filter(([k]) => isField(k))
+    .every(([fieldKey, valueKey]) => isValidFieldValue(fieldKey, valueKey));
+}
+
+const cache = {};
+
+function toWeightedQuantiles(probe, q = [0.05, 0.25, 0.5, 0.75, 0.95]) {
+  const values = Object.keys(probe.histogram).map((v) => +v);
+  const weights = Object.values(probe.histogram);
+  return weightedQuantile(q, values, weights);
+}
+
+export const dataset = derived(store, ($store) => {
+  const params = getParamsForDataAPI($store);
+  const qs = toQueryString(params);
+  if (!paramsAreValid(params)) {
+    return Promise.reject(new Error('parameters not valid'));
+  }
+  if (!(qs in cache)) {
+    cache[qs] = getProbeData(params);
+  }
+
+  return cache[qs];
+});
