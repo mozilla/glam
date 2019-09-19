@@ -31,6 +31,7 @@ export function getDefaultFieldValue(fieldKey) {
   return getFieldValues(fieldKey)[0].key;
 }
 
+// TODO: get latest version for whatever the default channel is.
 const initStore = {
   probe: {
     name: undefined,
