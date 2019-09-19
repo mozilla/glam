@@ -53,13 +53,13 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 
     ok so
     {#await $dataset}
-        SUP!!!!!
+        running now
     {:then value}
         <pre>
             {JSON.stringify(value, null, 2)}
         </pre>
     {:catch err}
-        ummm {err}
+        An error was caught: {err}
     {/await}
 
 </div>

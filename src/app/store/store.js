@@ -117,10 +117,6 @@ function getParamsForDataAPI(obj) {
     probe: obj.probe.apiName,
     os: obj.os,
   };
-  // return CONFIG.queryFields.reduce((acc, f) => {
-  //   acc[f] = obj[f]; // eslint-disable-line no-param-reassign
-  //   return acc;
-  // }, {});
 }
 
 function toQueryString(params) {
@@ -131,7 +127,6 @@ function toQueryString(params) {
 
 
 function fetchData(params) {
-  // return new Promise((r) => setTimeout(() => r(qs), 3000));
   return getProbe(params);
 }
 
@@ -159,5 +154,5 @@ export const dataset = derived(store, ($store) => {
     cache[qs] = fetchData(params);
   }
 
-  return cache[qs].then((d) => { console.log(d); return d; });// .then(toWeightedQuantiles);
+  return cache[qs];
 });
