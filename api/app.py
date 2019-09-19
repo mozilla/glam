@@ -42,7 +42,7 @@ def handle_api_exception(error):
 # API ROUTES
 
 
-REQUIRED_QUERY_PARAMETERS = ["channel", "version", "probe"]
+REQUIRED_QUERY_PARAMETERS = ["channel", "versions", "probe"]
 
 
 @app.route("/api/v1/data", methods=["POST"])
@@ -55,27 +55,40 @@ def get_data():
         {
             "query": {
                 "channel": "nightly",
-                "version": "70",
-                "probe": "gc_ms"
+                "versions": ["70"],  # OR ["70", "69", "68"]
+                "probe": "gc_ms",
+
+                # TODO:
+                "build_id": {
+                    "from": "20190901",
+                    "to": "20190915"
+                }
             }
         }
 
     Returns a JSON object containing the histogram data and metadata, e.g.::
 
         {
-            "histogram": {
-                "0": 0.0,
-                "1": 0.0038,
+            "data": [
+                {
+                    "histogram": {
+                        "0": 0.0,
+                        "1": 0.0028,
+                        ...
+                    },
+                    "metadata": {
+                        "agg_type": "summed-histogram",
+                        "build_id": "20190901",
+                        "channel": "nightly",
+                        "key": "",
+                        "metric": "gc_ms",
+                        "metric_type": "histogram-exponential",
+                        "os": "Windows",
+                        "version": "70"
+                    }
+                },
                 ...
-            },
-            "metadata": {
-                "agg_type": "summed-histogram",
-                "build_id": "20190709153742",
-                "key": "",
-                "metric": "gc_ms",
-                "metric_type": "histogram-exponential",
-                "os": "Windows"
-            }
+            ]
         }
 
     """
@@ -96,27 +109,39 @@ def get_data():
             "Missing required query parameters: {}".format(", ".join(missing))
         )
 
-    collection = "{channel}-{version}".format(**q)
-    query = db.collection(collection)
+    resp = {"data": []}
+    not_found = True
 
-    if q.get("probe"):
-        query = query.where("metric", "==", q.get("probe"))
-    if q.get("os"):
-        query = query.where("os", "==", q.get("os"))
-    else:
-        query = query.where("os", "==", None)
+    for version in q.get("versions"):
 
-    # TODO: Remove the `limit(1)` when the BQ table contains NULL values for
-    # specific dimensions.
-    query = query.limit(1).stream()
-    docs = [doc.to_dict() for doc in query]
+        collection = "{channel}-{version}".format(channel=q["channel"], version=version)
+        query = db.collection(collection)
 
-    if not docs:
+        if q.get("probe"):
+            query = query.where("metric", "==", q.get("probe"))
+        if q.get("os"):
+            query = query.where("os", "==", q.get("os"))
+        else:
+            query = query.where("os", "==", None)
+        if q.get("build_id"):
+            query = query.where("build_id", "==", q.get("build_id"))
+        else:
+            query = query.where("build_id", "==", None)
+
+        docs = [doc.to_dict() for doc in query.stream()]
+
+        for doc in docs:
+            not_found = False
+            resp["data"].append(
+                {
+                    "histogram": doc.pop("aggregates", None),
+                    "metadata": dict(**doc, version=version, channel=q["channel"]),
+                }
+            )
+
+    if not_found:
         raise APIException("No documents found for the given parameters.", 404)
 
-    doc = docs[0]
-
-    resp = {"histogram": doc.pop("aggregates", None), "metadata": dict(**doc)}
     return jsonify(resp)
 
 
