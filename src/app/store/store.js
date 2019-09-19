@@ -43,7 +43,7 @@ const initStore = {
   product: 'Firefox',
   channel: getDefaultFieldValue('channel'),
   os: getDefaultFieldValue('os'),
-  version: 69,
+  versions: [70, 69, 68],
   searchIsActive: false,
   result: Promise.resolve(undefined),
 };
@@ -111,7 +111,7 @@ export const hasDefaultControlFields = derived(store, ($store) => Object.values(
 
 function getParamsForDataAPI(obj) {
   return {
-    version: obj.version,
+    versions: obj.versions,
     channel: obj.channel,
     probe: obj.probe.apiName,
     os: obj.os,
