@@ -1,4 +1,20 @@
 {
   "indexes": [],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "nightly-*",
+      "fieldPath": "aggregates",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "beta-*",
+      "fieldPath": "aggregates",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "release-*",
+      "fieldPath": "aggregates",
+      "indexes": []
+    }
+  ]
 }
