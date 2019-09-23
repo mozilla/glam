@@ -107,7 +107,7 @@ def extract(query):
         SparkSession.builder.appName("export_to_firestore")
         .getOrCreate()
         .read.format("bigquery")
-        .option("parallelism", 6)
+        .option("parallelism", 0)
         .option("dataset", job.destination.dataset_id)
         .option("table", job.destination.table_id)
         .load()
