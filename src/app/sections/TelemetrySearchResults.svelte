@@ -41,7 +41,7 @@ const keyDown = () => {
 
 const handleKeypress = (event) => {
   const { key } = event;
-  if ($searchResults.results && $store.searchIsActive && $searchResults.results.length > 1) {
+  if ($searchResults.results && $store.searchIsActive && $searchResults.results.length >= 1) {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {

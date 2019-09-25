@@ -18,7 +18,7 @@ export async function getFirefoxVersionDates() {
   const out = { nightly: {}, beta: {}, release: {} };
   Object.keys(releases)
     .filter((r) => (releases[r].category === 'major' && +releases[r].version > 50) && !r.includes('esr'))
-    .forEach((r, i) => {
+    .forEach((r) => {
       const release = releases[r];
       const v = +releases[r].version;
       out.release[v] = {};

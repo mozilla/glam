@@ -13,7 +13,6 @@ import {
   store,
   getFieldValueLabel,
   hasDefaultControlFields,
-  updateProduct as updateProductAction,
   updateChannel as updateChannelAction,
   resetFilters as resetFiltersAction,
   updateOS as updateOSAction,
@@ -22,19 +21,16 @@ import {
 import CONFIG from '../config.json';
 
 let visible = true;
-let product;
 let channel;
 let os;
-let version;
+// let version;
 
 function collapseAll() {
-  product.expand(false);
   channel.expand(false);
   os.expand(false);
-  version.expand(false);
+//   version.expand(false);
 }
 
-const updateProduct = store.connect(updateProductAction);
 const updateChannel = store.connect(updateChannelAction);
 const updateOS = store.connect(updateOSAction);
 const resetFilters = () => {
@@ -66,7 +62,7 @@ const resetFilters = () => {
             </RadioGroup>
         </span>
     </Accordion> -->
-    <Accordion bind:this={version}>
+    <!-- <Accordion bind:this={version}>
         <span slot="title">Version / Build</span>
         <span slot="description">Latest (69)</span>
         <span slot="content">
@@ -75,7 +71,7 @@ const resetFilters = () => {
                 (coming soon)
             </div>
         </span>
-    </Accordion>
+    </Accordion> -->
     <Accordion bind:this={channel}>
         <span slot="title">Channel</span>
         <span slot="description">{getFieldValueLabel('channel', $store.channel)}</span>

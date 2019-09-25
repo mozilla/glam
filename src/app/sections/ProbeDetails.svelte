@@ -1,12 +1,21 @@
 <script>
+import { onMount } from 'svelte';
+import { fly, fade } from 'svelte/transition';
 import RightDrawer from '../../components/sections/RightDrawer.svelte';
+import LineSegSpinner from '../../components/LineSegSpinner.svelte';
+import telemetrySearch from '../store/telemetry-search';
+
+import { downloadString } from '../../utils/download';
+
+import Button from '../../components/Button.svelte';
 
 // import AudienceSize from './AudienceSize.svelte';
+const rightDrawerTransition = { x: 10, duration: 300 };
+import { store, dataset } from '../store/store';
 
-import { store } from '../store/store';
-
-let visible = true; // this is unused for the time being.
-
+let paneVisible = true;
+let visible = false; // this is unused for the time being.
+onMount(() => { visible = true; });
 // let audienceCount;
 // let populationCount;
 // let audiencePerc;
@@ -36,13 +45,18 @@ let visible = true; // this is unused for the time being.
     color: var(--body-gray);
 } */
 
+.drawer-section--end {
+    align-self: end;
+    min-height: calc(var(--increment)*2);
+}
+
 .drawer-section-container {
     display: grid;
-    grid-template-rows: auto;
+    grid-template-rows: max-content;
 }
 
 .probe-details {
-    grid-template-rows: max-content max-content auto auto;
+    grid-template-rows: max-content;
     height: 100%;
 }
 
@@ -77,11 +91,38 @@ h2 {
     color: var(--body-gray);
 }
 
+.bug-list {
+    display: flex;
+}
+
+.bug-list a {
+    display: block;
+    margin-right: var(--space-2x);
+}
+
+.spinner-and-text {
+    text-align:center;
+    color: var(--subhead-gray);
+}
+
+.spinner-and-text div {
+    margin-top: var(--space-base);
+}
+
 </style>
 
-<RightDrawer {visible}>
-{#if $store.probe.name}
-<div class="drawer-section-container probe-details">
+<RightDrawer visible={paneVisible}>
+{#if !$telemetrySearch.loaded}
+    {#if visible}
+    <div in:fly={rightDrawerTransition} class=drawer-section>
+        <div class=spinner-and-text>
+            <LineSegSpinner size={48} color={'var(--subhead-gray)'} /> 
+            <div in:fade={{ duration: rightDrawerTransition.duration * 2 }}>Loading Probes</div>
+        </div>
+    </div>
+    {/if}
+{:else if $store.probe.name}
+<div in:fly={rightDrawerTransition} class="drawer-section-container probe-details">
     <!-- <div class="drawer-section">
             <h2 class=detail__heading--01>Audience Size</h2>
             <AudienceSize percentage={audiencePerc} total={audienceCount} population={populationCount} />
@@ -94,8 +135,31 @@ h2 {
             </div>
         {/if}
     </div>
+    {#if $store.probe.bugs && $store.probe.bugs.length}
     <div class="drawer-section">
             <h2 class=detail__heading--01>associated bugs</h2>
+            <div class="bug-list helper-text--01">
+            {#each $store.probe.bugs as bugID, i (bugID)}
+                <a
+                href='https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}'
+                target="_blank">{bugID}</a>
+            {/each}
+            </div>
+    </div>
+    {/if}
+    <div class='drawer-section drawer-section--end'>
+        <h2 class=detail__heading--01>export</h2>
+        {#await $dataset}
+            <div>
+                <LineSegSpinner size={36} color={'var(--subhead-gray)'} />
+            </div>
+        {:then value}
+            <div in:fly={rightDrawerTransition}>
+            <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }} level=medium compact>to JSON</Button>
+            </div>
+        {:catch err}
+            {err.message}
+        {/await}
     </div>
 </div>
 {:else}

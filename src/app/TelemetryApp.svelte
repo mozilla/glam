@@ -1,4 +1,5 @@
 <script>
+import { onMount } from 'svelte';
 import Search from './sections/Search.svelte';
 // import Details from '../components/Details.svelte';
 import GraphicBody from './sections/GraphicBody.svelte';
@@ -11,13 +12,28 @@ import Content from '../components/sections/Content.svelte';
 import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
 import TelemetryControls from './sections/TelemetryControls.svelte';
 import ProbeDetails from './sections/ProbeDetails.svelte';
+
+import { currentQuery } from './store/store';
+
+let visible = false;
+
+function updateQueryString() {
+  if (window.history.pushState) {
+    const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?${$currentQuery}`;
+    window.history.pushState({ path: newurl }, '', newurl);
+  }
+}
+
+$: if (visible) {
+  updateQueryString($currentQuery);
+}
+
+onMount(() => { visible = true; });
+
 </script>
 
 <style>
 
-:global(:root) {
-    
-}
 
 div.inner-body {
     display: grid;
@@ -25,7 +41,6 @@ div.inner-body {
 }
 
 </style>
-
 <App>
     <TelemetryAppBar />
     <Main>

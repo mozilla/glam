@@ -1,10 +1,14 @@
 {
   "fields": {
+    "probe": {
+      "title": "Probe Name",
+      "skipValidation": true
+    },
     "os" : {
       "title": "Operating System",
       "key": "os",
       "values": [
-        {"key": null, "label": "All"},
+        {"key": "ALL", "label": "All", "keyTransform": "NULL"},
         {"key": "Windows", "label": "Windows"},
         {"key": "Mac", "label": "Mac"},
         {"key": "Linux", "label": "Linux"}
@@ -13,6 +17,17 @@
     "channel" : {
       "title": "Channel",
       "key": "channel",
+      "values": [
+        {"key": "nightly", "label": "Nightly"},
+        {"key": "beta", "label": "Beta"},
+        {"key": "release", "label": "release"}
+      ]
+    },
+    "versions" : {
+      "title": "Versions",
+      "key": "version",
+      "type": "multi",
+      "skipValidation": true,
       "values": [
         {"key": "nightly", "label": "Nightly"},
         {"key": "beta", "label": "Beta"},
