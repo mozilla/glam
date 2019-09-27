@@ -60,6 +60,70 @@ def commit_batch(batch):
     batch.commit()
 
 
+def transform(row):
+    """
+    Takes a BigQuery result `Row` and returns a Python dict representing
+    the document to store in Firestore.
+
+    The document looks like the following::
+
+        {
+            "build_id": "20190901",
+            "metric": "gc_ms",
+            "metric_type": "histogram",
+            "os": "Windows",
+            "data": [
+                {
+                    "key": ...,
+                    "agg_type": ...,
+                    "aggregates: {
+                        "0": 0.123,
+                        ...
+                    },
+                    "quantiles: {
+                        "q05": 0.234,
+                        ...
+                    }
+                }
+            ]
+        }
+
+    """
+    # Create the document we will store from the columns selected.
+    doc = row.asDict()
+
+    agg_type = doc.pop("agg_type")
+    if agg_type not in ["histogram", "percentiles"]:
+        return
+
+    # Pop and remap the `aggregates` instead of ``Row`` objects.
+    aggregates = {
+        d["key"]: round(d["value"], 4)
+        for d in map(lambda x: x.asDict(), doc.pop("aggregates"))
+    }
+
+    # If there's a `key` or `client_agg_type`, we are nesting the aggregates.
+    # If both exist, we double nest, with `key` as the outside layer.
+    key = doc.pop("key")
+    client_agg_type = doc.pop("client_agg_type")
+
+    data = {agg_type: aggregates}
+    if key:
+        data["key"] = key
+    if client_agg_type:
+        data["client_agg_type"] = client_agg_type
+
+    # Note: We're adding the dict key here so Firestore can merge these in a sane way.
+    doc["data"] = {f"{key}-{client_agg_type}": data}
+
+    # Generate a document ID so this can be updated each run.
+    doc["doc_id"] = hashlib.blake2b(
+        "{metric}-{build_id}-{os}".format(**doc).encode()
+    ).hexdigest()
+
+    return doc
+
+
 def batch_insert(group):
     firestore_client = firestore.Client()
 
@@ -67,25 +131,23 @@ def batch_insert(group):
 
     batch = firestore_client.batch()
     for row in group[1]:
-        # Create the document we will store from the columns selected.
-        doc = row.asDict()
-        # Remap the aggregates instead of ``Row`` objects.
-        doc["aggregates"] = {
-            d["key"]: round(d["value"], 4)
-            for d in map(lambda x: x.asDict(), doc["aggregates"])
-        }
-        # Pop the `channel` and `app_version` for use in the collection.
+        doc = transform(row)
+
+        if not doc:
+            continue
+
+        # Pop these from the dict: doc_id, channel, version.
+        # We use these to store the data and don't need them in the document itself.
+        doc_id = doc.pop("doc_id")
         channel = doc.pop("channel")
-        app_version = doc.pop("app_version")
-        # Generate a document ID so this can be updated each run.
-        doc_id = hashlib.blake2b(
-            "{metric}-{build_id}-{os}-{agg_type}-{key}".format(**doc).encode()
-        ).hexdigest()
+        version = doc.pop("app_version")
+
         # Store this document in the collection by channel+version.
-        collection = "{channel}-{app_version}".format(
-            channel=channel, app_version=app_version
+        collection = f"{channel}-{version}"
+
+        batch.set(
+            firestore_client.collection(collection).document(doc_id), doc, merge=True
         )
-        batch.set(firestore_client.collection(collection).document(doc_id), doc)
 
     commit_batch(batch)
 
@@ -159,9 +221,16 @@ if __name__ == "__main__":
             metric_type,
             key,
             agg_type,
+            client_agg_type,
             aggregates
         FROM `{SOURCE_BIGQUERY_TABLE}`
-        WHERE {where}
+        WHERE
+            metric NOT IN (
+                "webext_extension_startup_ms_by_addonid",
+                "webext_background_page_load_ms_by_addonid",
+                "webext_browseraction_popup_preload_result_count_by_addonid"
+            )
+            AND {where}
     """
 
     extract(query)

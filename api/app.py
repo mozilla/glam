@@ -1,3 +1,5 @@
+import hashlib
+
 from firebase_admin import firestore, initialize_app
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -69,25 +71,32 @@ def get_data():
     Returns a JSON object containing the histogram data and metadata, e.g.::
 
         {
-            "data": [
+            "response": [
                 {
-                    "histogram": {
-                        "0": 0.0,
-                        "1": 0.0028,
-                        ...
-                    },
+                    "data": [
+                        {
+                            "client_agg_type": "summed-histogram",
+                            "histogram": {
+                                "0": 0.0,
+                                "1": 1920.963,
+                                ...
+                            },
+                            "percentiles": {
+                                "0": 1.0,
+                                "10": 1.0259,
+                                ...
+                            }
+                        }
+                    ],
                     "metadata": {
-                        "agg_type": "summed-histogram",
-                        "build_id": "20190901",
+                        "build_id": null,
                         "channel": "nightly",
-                        "key": "",
                         "metric": "gc_ms",
                         "metric_type": "histogram-exponential",
-                        "os": "Windows",
+                        "os": "Linux",
                         "version": "70"
                     }
-                },
-                ...
+                }
             ]
         }
 
@@ -109,7 +118,7 @@ def get_data():
             "Missing required query parameters: {}".format(", ".join(missing))
         )
 
-    resp = {"data": []}
+    resp = {"response": []}
     not_found = True
 
     for version in q.get("versions"):
@@ -117,24 +126,22 @@ def get_data():
         collection = "{channel}-{version}".format(channel=q["channel"], version=version)
         query = db.collection(collection)
 
-        if q.get("probe"):
-            query = query.where("metric", "==", q.get("probe"))
-        if q.get("os"):
-            query = query.where("os", "==", q.get("os"))
-        else:
-            query = query.where("os", "==", None)
-        if q.get("build_id"):
-            query = query.where("build_id", "==", q.get("build_id"))
-        else:
-            query = query.where("build_id", "==", None)
+        # Try to get the document by document ID hash.
+        doc_key = "{metric}-{build_id}-{os}".format(
+            metric=q.get("probe"), build_id=q.get("build_id"), os=q.get("os")
+        )
+        doc_id = hashlib.blake2b(doc_key.encode()).hexdigest()
+        results = query.document(doc_id).get()
+        if not results.exists:
+            continue
 
-        docs = [doc.to_dict() for doc in query.stream()]
+        docs = [results.to_dict()]
 
         for doc in docs:
             not_found = False
-            resp["data"].append(
+            resp["response"].append(
                 {
-                    "histogram": doc.pop("aggregates", None),
+                    "data": list(doc.pop("data", {}).values()),
                     "metadata": dict(**doc, version=version, channel=q["channel"]),
                 }
             )
