@@ -329,7 +329,7 @@ header h1 sub {
 
 .left-drawer {
     grid-column: left-drawer;
-    border-right: 1px solid gainsboro;
+    /* border-right: 1px solid gainsboro; */
     min-height: var(--nav-drawer-height);
     box-sizing: border-box;
     background-color: var(--darker);
@@ -355,7 +355,7 @@ header h1 sub {
     display: grid;
     grid-template-columns: auto max-content;
     align-items: center;
-    border-bottom: 1px solid black;
+    /* border-bottom: 1px solid black; */
 }
 
 .drawer h2 {

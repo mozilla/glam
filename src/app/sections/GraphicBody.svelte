@@ -5,6 +5,8 @@ import {
 } from '../store/store';
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 
+// import Spinner from '../../components/Spinner.svelte';
+
 setContext('updateProbe', store.connect(updateProbe));
 setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 
@@ -51,7 +53,8 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 
     <div>
         {#await $dataset}
-            running now
+            running query
+            <!-- <Spinner /> -->
         {:then value}
             <pre>
                 {JSON.stringify(value, null, 2)}

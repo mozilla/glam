@@ -20,7 +20,7 @@
       "values": [
         {"key": "nightly", "label": "Nightly"},
         {"key": "beta", "label": "Beta"},
-        {"key": "release", "label": "release"}
+        {"key": "release", "label": "Release"}
       ]
     },
     "versions" : {
