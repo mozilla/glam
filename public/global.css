@@ -19,29 +19,8 @@
 
     --body-font-small-size: var(--text-02);
     --body-font-large-size: var(--text-03);
-
-    --background-gray: #f8f8f8;
-
-    --gradient01-01: rgb(255, 254, 182);
-    --gradient01-02: rgb(239, 228, 206);
-    --gradient01-03: rgb(202, 198, 195);
-    --gradient01-04: rgb(157, 160, 169);
-    --gradient01-05: rgb(116, 122, 142);
-    --gradient01-06: rgb(80, 93, 119);
-    --gradient01: linear-gradient(to top, var(--gradient01-01),var(--gradient01-02),var(--gradient01-03),var(--gradient01-04),var(--gradient01-05), var(--gradient01-06));
-
-    --gray00: rgb(244, 247, 250);
-    --gray01: #EBEFF2;
-    --gray02: #E2E8ED;
-    --gray03: #D8E0E5;
-    --gray05: #B6C3CC;
-    --gray07: #96A8B2;
-    --gray10: #677E8C;
-    --gray12: #4C6472;
-    --gray14: #364C59;
-    --gray16: #23343F;
     
-    /* spacing variables */
+    /* spacing system */
     --column-dp: 8px;
 
     --space-1q: calc(var(--space-base) / 4);
@@ -64,128 +43,105 @@
     --drawer-width: var(--space-32x);
     --header-height: var(--increment);
 
-    --cool-gray: #677e8C;
-    --cool-gray-light-10: #8397a3;
-    --cool-gray-light-20: #a0b0b9;
-    --cool-gray-light-30: #bdc8cf;
-    --cool-gray-light-40: #dbe1e4;
-    --cool-gray-light-50: #f8f9fa;
-    --cool-gray-dark-10: #51646f;
-    --cool-gray-dark-20: #3c4951;
-    --cool-gray-dark-30: #262f34;
-    --cool-gray-dark-35: #1b2125;
-    --cool-gray-dark-40: #111416;
+    /* Color Systems */
 
-    --bg-gray: var(--cool-gray-light-40);
-    --line-gray-01: var(--cool-gray-light-30);
-    --line-gray-02: var(--gray02);
-    --subhead-gray: var(--cool-gray-light-10);
-    --subhead-gray-02: var(--gray07); /* cooler-colored gray */
-    --body-gray: var(--cool-gray-dark-35);
-    --body-gray-02: var(--gray12);
+    /* Basic colors: a bluish grayish color, bluer than the UX colors, grayer
+    than the digital blues we use for buttons etc. */
+    --blue-slate-100: hsl(209, 75%, 87%);
+    --blue-slate-200: hsl(220, 64%, 82%);
+    --blue-slate-300: hsl(225, 48%, 77%);
+    --blue-slate-400: hsl(229, 25%, 56%);
+    --blue-slate-500: hsl(231, 18%, 36%);
+    --blue-slate-600: hsl(233, 21%, 30%);
+    --blue-slate-700: hsl(235, 25%, 23%);
+    --blue-slate-800: hsl(237, 25%, 14%);
+    --blue-slate-900: hsl(240, 25%, 9%);
 
-    --mantis-green: #74C365;
-    --mantis-green-light-10: #95d18a;
-    --mantis-green-light-20: #b6e0ae;
-    --mantis-green-light-30: #d7eed3;
-    --mantis-green-light-40: #f9fcf8;
-    --mantis-green-dark-10: #56b045;
-    --mantis-green-dark-20: #448c36;
-    --mantis-green-dark-30: #326728;
-    --mantis-green-dark-40: #20421a;
+    /* UX GRAYS – use the cool gray variables. */
+    --cool-gray-100: hsl(203, 55%, 96%);
+    --cool-gray-200: hsl(203, 45%, 89%);
+    --cool-gray-300: hsl(203, 35%, 82%);
+    --cool-gray-400: hsl(203, 25%, 71%);
+    --cool-gray-500: hsl(203, 15%, 42%);
+    --cool-gray-600: hsl(203, 16%, 30%);
+    --cool-gray-700: hsl(203, 17%, 22%);
+    --cool-gray-800: hsl(203, 18%, 18%);
+    --cool-gray-900: hsl(203, 22%, 13%);
 
-    --pantone-red: #ED2939;
-    --pantone-red-light-10: #f15865;
-    --pantone-red-light-20: #f58790;
-    --pantone-red-light-30: #f9b6bc;
-    --pantone-red-light-40: #fde5e7;
-    --pantone-red-dark-10: #d11221;
-    --pantone-red-dark-20: #a20e1a;
-    --pantone-red-dark-30: #730a12;
-    --pantone-red-dark-40: #44060b;
+    /* UX gray shorthands */
+    --bg-gray-01: var(--cool-gray-100);
+    --bg-gray-02: var(--cool-gray-300);
+    --line-gray-01: var(--cool-gray-200);
+    --line-gray-02: var(--cool-gray-400);
+    --subhead-gray-01: var(--cool-gray-500);
+    --subhead-gray-02: var(--cool-gray-600); /* cooler-colored gray */
+    --body-gray-01: var(--cool-gray-800);
+    --body-gray-02: var(--cool-gray-900);
+
 
     /* use digital blue as link + button color for accessibility */
-    --digital-blue: #0067C5;
-    --digital-blue-dark-10: #004c92;
-    --digital-blue-dark-20: #00325f;
-    --digital-blue-dark-30: #00172c;
-    --digital-blue-dark-40: #000000;
-    --digital-blue-light-10: #0082f8;
-    --digital-blue-light-20: #2c9aff;
-    --digital-blue-light-30: #5fb3ff;
-    --digital-blue-light-40: #92cbff;
+    --digital-blue-100: hsl(209, 70%, 93%);
+    --digital-blue-200: hsl(209, 75%, 87%);
+    --digital-blue-300: hsl(209, 85%, 75%);
+    --digital-blue-400: hsl(209, 95%, 60%);
+    --digital-blue-500: hsl(209, 100%, 39%);
+    --digital-blue-600: hsl(209, 100%, 34%);
+    --digital-blue-700: hsl(209, 100%, 29%);
+    --digital-blue-800: hsl(209, 100%, 24%);
+    --digital-blue-900: hsl(209, 100%, 19%);
 
-    /* easy shorthands for digital-blue */
-    --digital-blue-darker: var(--digital-blue-dark-10);
-    --digital-blue-lighter: var(--digital-blue-light-20);
-    --digital-blue-lightest: var(--digital-blue-light-40);
-    --digital-blue-pale: #d6e3ee;
+    /* use pantone red for errors */
+    --pantone-red-100: hsl(355, 100%, 95%);
+    --pantone-red-200: hsl(355, 96%, 85%);
+    --pantone-red-300: hsl(355, 91%, 75%);
+    --pantone-red-400: hsl(355, 88%, 65%);
+    --pantone-red-500: hsl(355, 84%, 55%);
+    --pantone-red-600: hsl(355, 84%, 35%);
+    --pantone-red-700: hsl(355, 90%, 23%);
+    --pantone-red-800: hsl(355, 100%, 18%);
+    --pantone-red-900: hsl(355, 100%, 14%);
 
-    --goldenrod: #302a1d;
-    --goldenrod-light-10: #e2b547;
-    --goldenrod-light-20: #e9c673;
-    --goldenrod-light-30: #f0d89f;
-    --goldenrod-light-40: #f7eacb;
-    --goldenrod-dark-10: #a97f1a;
-    --goldenrod-dark-20: #7d5e13;
-    --goldenrod-dark-30: #513c0c;
-    --goldenrod-dark-40: #241b06;
+    /* use mantis green for success states */
+    --mantis-green-100: hsl(110, 74%, 92%);
+    --mantis-green-200: hsl(110, 66%, 86%);
+    --mantis-green-300: hsl(110, 60%, 78%);
+    --mantis-green-400: hsl(110, 52%, 68%);
+    --mantis-green-500: hsl(110, 44%, 58%);
+    --mantis-green-600: hsl(110, 48%, 42%);
+    --mantis-green-700: hsl(110, 52%, 33%);
+    --mantis-green-800: hsl(110, 56%, 24%);
+    --mantis-green-900: hsl(110, 64%, 18%);
 
-    --raspberry: #96616b;
-    --raspberry-dark-10: #774d55;
-    --raspberry-dark-20: #58393f;
-    --raspberry-dark-30: #392529;
-    --raspberry-dark-40: #1a1113;
-    --raspberry-light-10: #ac7e87; 
-    --raspberry-light-20: #c09da4;
-    --raspberry-light-30: #d4bcc1;
-    --raspberry-light-40: #e8dbde;
-
-    --lightcrimson: #f76f8e;
-    --lightcrimson-dark-10: #f43f68;
-    --lightcrimson-dark-20:#f20e42;
-    --lightcrimson-dark-30: #c20b35;
-    --lightcrimson-dark-40: #920828;
-    --lightcrimson-dark-50: #62051a;
-    --lightcrimson-light-10: #fa9fb4;
-    --lightcrimson-light-20: #fcd0da;
-    --lightcrimson-light-30: #ffffff;
-    
-    --blueslate: #3a3c53;
-    --blueslate-dark-10: #252635;
-    --blueslate-dark-20: #101117;
-    --blueslate-dark-30: #000000;
-    --blueslate-light-10: #4f5271;
-    --blueslate-light-20: #64678f;
-    --blueslate-light-30: #8083a6;
-    --blueslate-light-40: #9ea0bb;
+    /* use bright yellows for warnings */
+    --bright-yellow-100: hsl(53, 100%, 95%);
+    --bright-yellow-200: hsl(50, 100%, 80%);
+    --bright-yellow-300: hsl(44, 100%, 73%);
+    --bright-yellow-400: hsl(40, 100%, 67%);
+    --bright-yellow-500: hsl(37, 100%, 56%);
+    --bright-yellow-600: hsl(35, 100%, 37%);
+    --bright-yellow-700: hsl(33, 100%, 25%);
+    --bright-yellow-800: hsl(27, 100%, 20%);
+    --bright-yellow-900: hsl(20, 100%, 16%);
 
     /* probe type colors */
 
-    --histogram-color: var(--raspberry-dark-10);
-    --scalar-color: var(--raspberry-light-20);
-    --event-color: var(--blueslate-light-40);
+    --histogram-color: var(--mantis-green-800);
+    --scalar-color: var(--pantone-red-700);
+    --event-color: var(--blue-slate-300);
 
     /* Payne's Gray (approx.) */
-    --base-blue-slate: var(--blueslate);
-    --blue-darker-20: var(--blueslate-dark-20);
+    --base-blue-slate: var(--blue-slate-500);
+    --blue-darker-20: var(--blue-slate-700);
 
-    --base-primary: var(--base-blue-slate);
     --primary-text: white;
 
 
 
-    --elevation-base: 0px 0px var(--space-base) var(--gray10);
-    --elevation-1h: 0px 0px var(--space-1h) var(--gray10);
-    --elevation-2x: 0px 0px var(--space-2x) var(--gray10);
-
-    --darker: rgb(35, 36, 51);
-    --darker-primary-border: rgba(255,255,255,.2);
-
-    --mid-dark: rgb(18,18,26);
+    --elevation-base: 0px var(--space-1q) var(--space-base) var(--cool-gray-600);
+    --elevation-1h: 0px 0px var(--space-1h) var(--cool-gray-600);
+    --elevation-2x: 0px 0px var(--space-2x) var(--cool-gray-600);
 
     /* --darkest: rgb(25, 26, 36); */
-    --darkest: var(--blue-darker-20);
     
     /* --column-grid: [left] var(--drawer-width) [body] auto; */
     --column-grid: [left] max-content [body] auto;
@@ -211,7 +167,7 @@ html, body {
 
 body {
     font-size: var(--root-font-size);
-    background-color: var(--background-gray);
+    background-color: var(--bg-gray-01);
 	color: #333;
 	margin: 0;
     box-sizing: border-box;
@@ -273,7 +229,6 @@ button:focus {
 /*  START OF USER DASHBOARD STUFF */
 
 .container {
-    background-color: var(--base-primary);
 
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -287,9 +242,8 @@ button:focus {
 header {
     width: 100%;
     height: var(--header-height);
-    background-color: var(--darker);
+    background-color: var(--blue-slate-800);
     box-sizing: border-box;
-    border-bottom: 1px solid var(--darker);
     color: var(--primary-text);
     display: grid;
     grid-template-columns: var(--column-grid);
@@ -303,12 +257,14 @@ header :last-child {
 }
 
 header h1 {
-    width: calc(100% - var(--space-2x) * 2);
     padding:0;
     margin:0;
     margin-left: var(--space-2x);
     font-size:1.5em;
     font-weight: normal;
+    text-align: center;
+    color: var(--cool-gray-100);
+    text-transform: uppercase;
 }
 
 header h1 sub {
@@ -317,13 +273,14 @@ header h1 sub {
     padding:0;
     font-size:.9rem;
     color: tomato;
+    font-weight: normal;
 }
 
 .left-drawer {
     grid-column: left;
     min-height: var(--nav-drawer-height);
     box-sizing: border-box;
-    background-color: var(--darker);
+    background-color: var(--blue-slate-800);
 
     color: var(--primary-text);
     max-height: var(--nav-drawer-height);
@@ -335,7 +292,7 @@ header h1 sub {
 }
 
 .right-drawer {
-    border-left: 1px solid var(--line-gray-02);
+    border-left: 1px solid var(--line-gray-01);
     background-color: white;
 }
 
@@ -363,7 +320,7 @@ header h1 sub {
 }
 
 main {
-    background-color: var(--background-gray);
+    background-color: var(--bg-gray-01);
 }
 
 main .main-content {

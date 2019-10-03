@@ -62,12 +62,12 @@ async function onKeypress(event) {
     height: 100%;
     font-size: 1em;
     border: none;
-    color: var(--gray10);
+    color: var(--cool-gray-500);
     background-color: white;
   }
 
   input:focus {
-    color: var(--gray16);
+    color: var(--cool-gray-900);
   }
 </style>
 

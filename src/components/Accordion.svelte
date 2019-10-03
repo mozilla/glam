@@ -42,7 +42,7 @@ section {
 }
 
 .accordion-summary:hover {
-    background-color: black;
+    background-color: var(--blue-slate-700);
 }
 
 .title { 
@@ -76,7 +76,7 @@ section {
 }
 
 .revealed {
-    background-color: var(--mid-dark);
+    background-color: var(--blue-slate-900);
 }
 
 </style>

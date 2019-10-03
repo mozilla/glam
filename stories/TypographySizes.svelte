@@ -24,7 +24,7 @@ let headings = ['01', '02', '03', '04', '05', '06', '07'];
 .component {
     padding: var(--space-base);
     border-radius: var(--space-1h);
-    background-color: var(--digital-blue);
+    background-color: var(--digital-blue-500);
     color: white;
     width: max-content;
 }

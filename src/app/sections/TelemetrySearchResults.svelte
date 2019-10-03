@@ -81,7 +81,7 @@ afterUpdate(() => {
 
 /* FIXME: move toward BEM */
 .telemetry-results {
-    --header-bg-color: var(--gray01);
+    --header-bg-color: var(--cool-gray-200);
     --list-border-color: gainsboro;
     --list-border: 1px solid var(--list-border-color);
     max-height: calc(100vh - var(--header-height) * 3);
@@ -98,10 +98,11 @@ afterUpdate(() => {
 }
 
 .header-container {
-    background: linear-gradient(to left, var(--header-bg-color), var(--gray02));
+  background-color: var(--cool-gray-200);
+    /* background: linear-gradient(to left, var(--header-bg-color), var(--bg-gray-01)); */
     --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
     font-size:.8em;
-    color: var(--gray16);
+    color: var(--body-gray-01);
     font-style: italic;
     height: var(--height);
     max-height: var(--height);
@@ -148,7 +149,7 @@ li {
     grid-template-areas: "title probe-type"
                          "description versions";
     cursor: pointer;
-    color: var(--body-gray);
+    color: var(--body-gray-01);
 }
 
 .name {
@@ -178,7 +179,7 @@ li {
 }
 
 .focused {
-    background-color: var(--bg-gray);
+    background-color: var(--bg-gray-01);
 }
 
 </style>

@@ -22,13 +22,6 @@ fieldset {
     flex-direction: column;
 } */
 
-/* legend {
-    text-transform: uppercase;
-    padding-bottom: var(--space-1h);
-    color: var(--subhead-gray);
-    padding-left: var(--space-base);
-} */
-
 </style>
 
 <fieldset>

@@ -15,7 +15,7 @@ let groupedBasic = groupRadioSelectorOpts[0];
 <style>
 
 .set {
-    background-color: var(--gray16);
+    background-color: var(--cool-gray-800);
     padding: var(--space-4x);
     width: calc(var(--increment) * 5);
     border-radius: var(--space-base);
