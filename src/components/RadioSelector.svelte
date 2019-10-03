@@ -37,7 +37,7 @@ export let onSelect = () => {
 }
 
 .radio:hover {
-    background-color: var(--subhead-gray-01);
+    background-color: var(--blue-slate-700);
 }
 
 .radio--selected {
