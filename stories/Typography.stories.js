@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/svelte';
-import Typography from './Typography.svelte';
+import TypographySizes from './TypographySizes.svelte';
 
 import '../public/global.css';
 
 storiesOf('Basics|Typography', module)
-  .add('Typography', () => ({
-    Component: Typography,
+  .add('Sizes', () => ({
+    Component: TypographySizes,
   }));

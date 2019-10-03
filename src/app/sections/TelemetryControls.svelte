@@ -9,6 +9,8 @@ import RadioGroup from '../../components/RadioGroup.svelte';
 import RadioSelector from '../../components/RadioSelector.svelte';
 // import ListDivider from '../../components/ListDivider.svelte';
 
+import TelemetryAppBar from './TelemetryAppBar.svelte';
+
 import {
   store,
   getFieldValueLabel,
@@ -41,6 +43,7 @@ const resetFilters = () => {
 </script>
 
 <LeftDrawer {visible}>
+    <TelemetryAppBar />
     <div class=left-drawer__header>
         <h2 class=heading--02>Filters</h2>
         {#if !$hasDefaultControlFields}

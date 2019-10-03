@@ -17,8 +17,7 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 .graphic-body-container {
     padding: var(--space-2x);
     overflow-y: auto;
-    height: calc(100vh - var(--header-height) * 2 - var(--space-4x));
-    outline: 1px solid black;
+    height: calc(100vh - var(--header-height) - var(--space-4x));
 }
 
 .graphic-body__graphic-header {

@@ -5,19 +5,19 @@ import Button from '../../components/Button.svelte';
 
 <style>
 
-div {
+/* div {
     opacity:.6;
 }
 
 div:hover {
     opacity: 1;
-}
+} */
 
 </style>
 
 <Header>
     <h1>Telemetry<sub>v2</sub></h1>
-    <div>
+    <!-- <div>
         <Button pale compact dark level='low'>go to docs</Button>
-    </div>
+    </div> -->
 </Header>

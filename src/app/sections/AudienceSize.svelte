@@ -28,7 +28,7 @@ $: displayPopulation.set(population || 0);
 .audience-size__numbers {
     display: grid;
     grid-template-columns: auto auto;
-    margin-bottom: var(--space-base);
+    margin-bottom: var(--space-1h);
     color: var(--body-gray);
 }
 

@@ -15,7 +15,7 @@ let bodies = [
   { cl: 'label-text--01 component', body: componentText },
   { cl: 'overline-text--01', body: componentText },
 ];
-let headings = ['02', '03', '04', '05', '06', '07'];
+let headings = ['01', '02', '03', '04', '05', '06', '07'];
 
 </script>
 
@@ -23,7 +23,7 @@ let headings = ['02', '03', '04', '05', '06', '07'];
 
 .component {
     padding: var(--space-base);
-    border-radius: var(--space-1q);
+    border-radius: var(--space-1h);
     background-color: var(--digital-blue);
     color: white;
     width: max-content;
@@ -57,7 +57,7 @@ let headings = ['02', '03', '04', '05', '06', '07'];
 
 </style>
 <div class=story>
-    <h1 class='story__title'>Typography</h1>
+    <h1 class='story__title'>Typography Sizes</h1>
     <section>
         {#each ['button-text--standard', 'button-text--compact'] as cl}
             <div class=display>

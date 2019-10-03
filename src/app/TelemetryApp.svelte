@@ -42,19 +42,22 @@ div.inner-body {
 
 </style>
 <App>
-    <TelemetryAppBar />
+    <!-- <TelemetryAppBar /> -->
+    <TelemetryControls />
+
     <Main>
-        <TelemetryControls />
-        <Content>
-            <MainActionBar>
+        <MainActionBar>
                 <Search />
-            </MainActionBar>
+        </MainActionBar>
+        <Content>
+
             <div class=inner-body>
                 <GraphicBody />
-                <ProbeDetails />
             </div>
-            
+            <ProbeDetails />
+
         </Content>
+
         <!-- <div class=details>
             <Details />
         </div> -->

@@ -17,7 +17,6 @@
     --text-11: 3rem;
     --text-12: 3.375rem;
 
-    
     --body-font-small-size: var(--text-02);
     --body-font-large-size: var(--text-03);
 
@@ -45,13 +44,25 @@
     /* spacing variables */
     --column-dp: 8px;
 
-    --space-base: var(--column-dp);
     --space-1q: calc(var(--space-base) / 4);
     --space-1h: calc(var(--space-base) / 2);
+    --space-base: var(--column-dp);
     --space-2x: calc(var(--space-base) * 2);
     --space-4x: calc(var(--space-base) * 4);
+    --space-6x: calc(var(--space-base) * 6);
+    --space-8x: calc(var(--space-base) * 8);
+    --space-12x: calc(var(--space-base) * 12);
+    --space-16x: calc(var(--space-base) * 16);
+    --space-24x: calc(var(--space-base) * 24);
+    --space-32x: calc(var(--space-base) * 32);
+    --space-40x: calc(var(--space-base) * 40);
+    --space-48x: calc(var(--space-base) * 48);
+    --space-72x: calc(var(--space-base) * 72);
+    --space-96x: calc(var(--space-base) * 96);
 
-    --increment: calc(var(--column-dp) * 6); /* eg. 48dp. */
+    --increment: var(--space-6x); /* eg. 48dp. */
+    --drawer-width: var(--space-32x);
+    --header-height: var(--increment);
 
     --cool-gray: #677e8C;
     --cool-gray-light-10: #8397a3;
@@ -162,8 +173,7 @@
     --base-primary: var(--base-blue-slate);
     --primary-text: white;
 
-    --drawer-width: calc(var(--column-dp) * 32);
-    --header-height: var(--increment);
+
 
     --elevation-base: 0px 0px var(--space-base) var(--gray10);
     --elevation-1h: 0px 0px var(--space-1h) var(--gray10);
@@ -180,7 +190,8 @@
     /* --column-grid: [left] var(--drawer-width) [body] auto; */
     --column-grid: [left] max-content [body] auto;
 
-    --nav-drawer-height: calc(100vh - var(--header-height));
+    /* --nav-drawer-height: calc(100vh - var(--header-height)); */
+    --nav-drawer-height: 100vh;
     --details-draw-height: calc(100vh - var(--header-height) * 2);
 
     /* curves and pads for small elements */
@@ -261,43 +272,24 @@ button:focus {
 
 /*  START OF USER DASHBOARD STUFF */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 .container {
     background-color: var(--base-primary);
 
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     display: grid;
-
-    /* grid-template-columns: var(--column-grid); */
-    /* grid-template-rows: max-content auto; */
-    grid-template-rows: [app-bar] max-content [main] auto;
-
+    grid-template-columns: [left] max-content [main] auto [right] max-content;
+    align-items: stretch;
     max-width: 100vw;
     overflow-x: hidden;
 }
 
 header {
-    grid-row: app-bar;
     width: 100%;
     height: var(--header-height);
-    background-color: var(--base-primary);
+    background-color: var(--darker);
     box-sizing: border-box;
-    /* padding: var(--pad02); */
-    /* padding-left: var(--pad02);
-    padding-right: var(--pad02); */
+    border-bottom: 1px solid var(--darker);
     color: var(--primary-text);
     display: grid;
     grid-template-columns: var(--column-grid);
@@ -328,11 +320,11 @@ header h1 sub {
 }
 
 .left-drawer {
-    grid-column: left-drawer;
-    /* border-right: 1px solid gainsboro; */
+    grid-column: left;
     min-height: var(--nav-drawer-height);
     box-sizing: border-box;
     background-color: var(--darker);
+
     color: var(--primary-text);
     max-height: var(--nav-drawer-height);
     overflow: auto;
@@ -355,7 +347,6 @@ header h1 sub {
     display: grid;
     grid-template-columns: auto max-content;
     align-items: center;
-    /* border-bottom: 1px solid black; */
 }
 
 .drawer h2 {
@@ -372,29 +363,19 @@ header h1 sub {
 }
 
 main {
-    /* border-top-right-radius: var(--pad01); */
-    grid-row: main;
-    align-self: stretch;
     background-color: var(--background-gray);
-    display: grid;
-    grid-template-columns: [left-drawer] max-content [main-content] auto;
-    /* grid-template-rows: var(--header-height) auto;
-    grid-template-areas: "body-action body-action"
-                         "graphic-body details"; */
 }
 
 main .main-content {
-    grid-column: main-content;
     width: 100%;
-    height: 100%;
     align-self: stretch;
     justify-self: stretch;
     display: grid;
-    grid-template-rows: [main-action] max-content [main-body] auto;
+    grid-template-columns: auto max-content;
 }
 
 main .main-action {
-    /* grid-area: body-action; */
+    position: relative;
     width: 100%;
     z-index:1000;
 }
@@ -405,7 +386,6 @@ main .details {
 
 .label {
     border-radius: var(--border-radius-1h);
-    /* font-size:.75em; */
     text-transform: uppercase;
     color: white;
     display:grid;
