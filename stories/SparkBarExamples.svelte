@@ -44,7 +44,7 @@ function randomize() {
 
  h1, h2, p {
     margin-left: var(--space-4x);
-    color: var(--body-gray);
+    color: var(--body-gray-01);
  }
 
  .controls {

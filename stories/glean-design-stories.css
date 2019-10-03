@@ -1,6 +1,5 @@
 body  {
-  /* background-color: var(--gray01); */
-  background: linear-gradient(to right, var(--gray00), var(--gray01));
+  background-color: var(--cool-gray-100);
 }
 
 .story {
@@ -9,13 +8,21 @@ body  {
   margin-top: var(--space-4x);
   min-height: 100vh;
   background-color: white;
-  padding: var(--space-4x);
-  border: 1px solid  var(--line-gray-02);
-  border-radius: var(--space-base);
+  padding: var(--space-6x);
+  border: 1px solid  var(--line-gray-01);
+  border-radius: var(--space-2x);
+  box-shadow: 0px var(--space-base) var(--space-2x) rgba(0,0,0,.1);
 }
 
 .story__title {
   margin:0;
   padding:0;
   margin-bottom: var(--space-4x);
+  color: var(--subhead-gray-02);
+}
+
+.story__subtitle {
+  margin-top: calc(var(--space-4x) * -1);
+  margin-bottom: var(--space-4x);
+  color: var(--subhead-gray-01);
 }

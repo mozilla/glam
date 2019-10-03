@@ -28,7 +28,7 @@ onMount(() => {
 
 <style>
 svg {
-    --data-color: var(--digital-blue-light-10);
+    --data-color: var(--digital-blue-400);
 }
 
 .bar {
@@ -38,11 +38,11 @@ svg {
     fill: var(--data-color);
 }
 text {
-    fill: var(--subhead-gray);
+    fill: var(--subhead-gray-01);
 }
 
 .tick {
-    stroke: var(--subhead-gray);
+    stroke: var(--subhead-gray-01);
 } 
 
 .guide {

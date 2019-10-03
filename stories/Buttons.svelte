@@ -15,7 +15,7 @@ h2 {
     display: grid;
     grid-template-columns: max-content max-content;
     align-content: center;
-    outline: 1px solid var(--gray03);
+    outline: 1px solid var(--line-gray-02);
     width: max-content;
     background-color: white;
 }
@@ -31,7 +31,7 @@ h2 {
 /* DARK MODE BUTTONS */
 
 .dark {
-    background-color: var(--gray16);
+    background-color: var(--blue-slate-800);
 }
 
 .dark h2 {
@@ -41,14 +41,14 @@ h2 {
 .fake-app {
     margin: var(--space-4x);
     width: calc(var(--increment) * 8);
-    border: 1px solid var(--line-gray-02);
+    border: 1px solid var(--line-gray-01);
     border-radius: var(--border-radius-base);
     background-color: white;
 }
 
 .fake-bar {
     height: var(--increment);
-    background-color: var(--base-primary);
+    background-color: var(--blue-slate-700);
     color: white;
     display: grid;
     font-size: 1.25rem;

@@ -35,7 +35,7 @@ onMount(() => { visible = true; });
 
 .drawer-section {
     padding: var(--space-2x);
-    border-bottom: 1px solid var(--line-gray-02);
+    border-bottom: 1px solid var(--line-gray-01);
 }
 
 /* .drawer-section-description {
@@ -84,11 +84,11 @@ h2 {
     font-size: 1.2em;
     text-align:center;
     padding: var(--space-2x);
-    color: var(--gray05);
+    color: var(--cool-gray-400);
 }
 
 .probe__description {
-    color: var(--body-gray);
+    color: var(--subhead-gray-02);
 }
 
 .bug-list {
@@ -102,7 +102,7 @@ h2 {
 
 .spinner-and-text {
     text-align:center;
-    color: var(--subhead-gray);
+    color: var(--cool-gray-400);
 }
 
 .spinner-and-text div {
@@ -116,7 +116,7 @@ h2 {
     {#if visible}
     <div in:fly={rightDrawerTransition} class=drawer-section>
         <div class=spinner-and-text>
-            <LineSegSpinner size={48} color={'var(--subhead-gray)'} /> 
+            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} /> 
             <div in:fade={{ duration: rightDrawerTransition.duration * 2 }}>Loading Probes</div>
         </div>
     </div>
@@ -151,7 +151,7 @@ h2 {
         <h2 class=detail__heading--01>export</h2>
         {#await $dataset}
             <div>
-                <LineSegSpinner size={36} color={'var(--subhead-gray)'} />
+                <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
             </div>
         {:then value}
             <div in:fly={rightDrawerTransition}>

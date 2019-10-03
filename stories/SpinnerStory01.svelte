@@ -16,7 +16,7 @@ import LineSegSpinner from '../src/components/LineSegSpinner.svelte';
     border: 1px solid var(--line-gray-01);
     background-color: white;
     box-shadow: 0px 0px var(--space-base) rgba(0,0,0,.1);
-    color: var(--subhead-gray);
+    color: var(--subhead-gray-01);
     font-weight:300;
 }
 
@@ -27,7 +27,7 @@ import LineSegSpinner from '../src/components/LineSegSpinner.svelte';
 }
 
 .dark {
-    background-color: var(--blueslate);
+    background-color: var(--blue-slate-500);
     color: white;
     border: 1px solid transparent;
 }
@@ -59,6 +59,6 @@ import LineSegSpinner from '../src/components/LineSegSpinner.svelte';
         <div class="text body-text--short-01">
             color=digital blue
         </div>
-        <LineSegSpinner size=64 color='var(--digital-blue)' />
+        <LineSegSpinner size=64 color='var(--digital-blue-500)' />
     </div>
 </div>
