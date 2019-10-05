@@ -38,4 +38,5 @@ body  {
   padding-top: var(--space-base);
   padding-bottom: var(--space-base);
   margin-bottom: var(--space-2x);
+  line-height: 1.5;
 }
