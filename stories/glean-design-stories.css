@@ -15,9 +15,11 @@ body  {
 }
 
 .story__section {
-  margin-bottom: var(--space-16x);
   border-top: 1px solid var(--line-gray-01);
+  padding: var(--space-8x);
   padding-top: var(--space-2x);
+  padding-bottom: var(--space-16x);
+
 }
 
 .story__title {
@@ -36,7 +38,7 @@ body  {
 .story__description {
   max-width: var(--space-72x);
   padding-top: var(--space-base);
-  padding-bottom: var(--space-base);
-  margin-bottom: var(--space-2x);
+  padding-bottom: var(--space-4x);
+  /* margin-bottom: var(--space-2x); */
   line-height: 1.5;
 }
