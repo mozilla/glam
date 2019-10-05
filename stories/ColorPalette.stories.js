@@ -3,7 +3,7 @@ import ColorPalette from './ColorPalette.svelte';
 
 import '../public/global.css';
 
-storiesOf('Basics|Color', module)
+storiesOf('Principles|Color', module)
   .add('Telemetry', () => ({
     Component: ColorPalette,
   }));
