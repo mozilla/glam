@@ -72,13 +72,26 @@ h2 {
     <div class=default>
         <h2>Prime</h2>
         <div class=set>
-            <Button level="high">High Button</Button>
+            <Button level="high">High</Button>
         </div>
         <div class=set>
-            <Button level="medium">Medium Button</Button>
+            <Button level="medium">Medium</Button>
         </div>
         <div class=set>
-            <Button level="low">Low Button</Button>
+            <Button level="low">Low</Button>
+        </div>
+    </div>
+
+    <div class=default>
+        <h2>Prime Compact</h2>
+        <div class=set>
+            <Button level='high' compact>High Button</Button>
+        </div>
+        <div class=set>
+            <Button level='medium' compact>Medium Button</Button>
+        </div>
+        <div class=set>
+            <Button level='low' compact>Low Button</Button>
         </div>
     </div>
 
@@ -96,18 +109,7 @@ h2 {
     </div>
 
     <!-- compact variant -->
-    <div class=default>
-        <h2>Prime Compact</h2>
-        <div class=set>
-            <Button level='high' compact>High Button</Button>
-        </div>
-        <div class=set>
-            <Button level='medium' compact>Medium Button</Button>
-        </div>
-        <div class=set>
-            <Button level='low' compact>Low Button</Button>
-        </div>
-    </div>
+
 
     <div class="default dark">
         <h2>Prime Compact Dark</h2>

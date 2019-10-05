@@ -2,14 +2,11 @@
 
 const families = [
   { color: 'blue-slate', role: 'primary', d: 'toolbar / sidebar' },
-  //   { color: 'raspberry', role: 'secondary', d: 'accents' },
-  //   { color: 'lightcrimson', role: 'sparing accent', d: 'sparing accents' },
-  { color: 'digital-blue', role: 'button/link', d: 'accessible buttons / links' },
   { color: 'cool-gray', role: 'UX Grays', d: 'bodies, lines, text' },
+  { color: 'digital-blue', role: 'secondary', d: 'accessible buttons / links' },
   { color: 'pantone-red', role: 'error', d: 'dialogs, button states' },
   { color: 'mantis-green', role: 'success', d: 'success buttons, etc.' },
   { color: 'bright-yellow', role: 'warning / alert', d: 'warning messages, etc.' },
-  // {color: 'goldenrod', role: "left-field"},
 ];
 
 // const tintsAndShades = (color) => [`${color}-100`, `${color}-200`, `${color}-300`,

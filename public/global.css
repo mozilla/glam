@@ -59,9 +59,9 @@
 
     /* UX GRAYS – use the cool gray variables. */
     --cool-gray-100: hsl(203, 55%, 96%);
-    --cool-gray-200: hsl(203, 45%, 89%);
-    --cool-gray-300: hsl(203, 35%, 82%);
-    --cool-gray-400: hsl(203, 25%, 71%);
+    --cool-gray-200: hsl(203, 40%, 89%);
+    --cool-gray-300: hsl(203, 30%, 82%);
+    --cool-gray-400: hsl(203, 20%, 71%);
     --cool-gray-500: hsl(203, 15%, 42%);
     --cool-gray-600: hsl(203, 16%, 30%);
     --cool-gray-700: hsl(203, 17%, 22%);
@@ -248,7 +248,7 @@ header {
     display: grid;
     grid-template-columns: var(--column-grid);
     align-items: center;
-    justify-items: start;
+    border-bottom: 1px solid var(--blue-slate-700);
 }
 
 header :last-child {
@@ -262,7 +262,6 @@ header h1 {
     margin-left: var(--space-2x);
     font-size:1.5em;
     font-weight: normal;
-    text-align: center;
     color: var(--cool-gray-100);
     text-transform: uppercase;
 }

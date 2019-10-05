@@ -14,6 +14,12 @@ body  {
   box-shadow: 0px var(--space-base) var(--space-2x) rgba(0,0,0,.1);
 }
 
+.story__section {
+  margin-bottom: var(--space-16x);
+  border-top: 1px solid var(--line-gray-01);
+  padding-top: var(--space-2x);
+}
+
 .story__title {
   margin:0;
   padding:0;
@@ -25,4 +31,11 @@ body  {
   margin-top: calc(var(--space-4x) * -1);
   margin-bottom: var(--space-4x);
   color: var(--subhead-gray-01);
+}
+
+.story__description {
+  max-width: var(--space-72x);
+  padding-top: var(--space-base);
+  padding-bottom: var(--space-base);
+  margin-bottom: var(--space-2x);
 }
