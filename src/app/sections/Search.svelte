@@ -38,14 +38,30 @@ async function onKeypress(event) {
 
 <style>
   .search-container {
+    --input-background-color: var(--blue-slate-500);
+    --input-blur-border-color: var(--line-gray-01);
+    --input-blur: var(--line-gray-01);
+    --input-focus-border-color: var(--blue-slate-300);
+    --input-focus: var(--line-gray-01);
+    --width: var(--space-72x);
+
+    background-color: var(--blue-slate-700);
     height: var(--increment);
-    box-shadow: 0px 0px var(--space-1h) rgba(0, 0, 0, 0.2);
     display: grid;
-    grid-template-columns: [icon] 40px [input] auto [help] 40px;
-    padding-left: var(--space-base);
-    padding-right: var(--space-base);
+    align-items: center;
+  }
+
+  .inner-container {
+    max-width: var(--width);
+    height: calc(var(--space-base) * 4);
+    box-shadow: 0px 4px var(--space-1h) rgba(0, 0, 0, 0.2);
+    display: grid;
+    grid-template-columns: [icon] 40px [input] auto;
+    /* padding-left: var(--space-base); */
     align-items: stretch;
-    background-color: white;
+    background-color: var(--input-background-color);
+    /* background-color: white; */
+    border-radius: var(--space-1h);
   }
 
   .icon {
@@ -56,30 +72,45 @@ async function onKeypress(event) {
   }
 
   input {
+    border: 2px solid transparent;
+    /* background-color: var(--input-background-color); */
+    background: var(--input-background-color);
     display: block;
     box-sizing: border-box;
-    width: 100%;
+    width: calc(var(--width) + var(--space-2x));
     height: 100%;
     font-size: 1em;
-    border: none;
-    color: var(--cool-gray-500);
-    background-color: white;
+    padding-left: 40px;
+    margin-left: -40px;
+    padding-right: 54px;
+    /* margin-left: calc(-48px - var(--space-base));
+    padding-left: 48px;
+    padding-right: 48px; */
+    /* color: var(--cool-gray-500); */
+    color: var(--input-blur);
+    border-radius: var(--space-1h);
+
+    /* background-color: white; */
   }
 
   input:focus {
-    color: var(--cool-gray-900);
+    color: var(--input-focus);
+    border: 2px solid var(--input-focus-border-color);
+    transition: border 200ms;
   }
 </style>
 
 <svelte:window on:keydown={onKeypress} />
 
 <div class=search-container>
-  <div class=icon><SearchIcon /></div>
-  <input on:focus={turnOnSearch}
+  <div class=inner-container>
+    <div class=icon><SearchIcon  /></div>
+    <input on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}
       bind:value={$searchQuery} on:input={(evt) => {
           updateSearchQuery(evt.target.value);
       }} />
+    </div>
 </div>
