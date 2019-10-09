@@ -128,6 +128,7 @@ def transform(probe):
         "description": latest_history["description"],
         "type": probe["type"],
         "kind": latest_history["details"].get("kind"),
+        "labels": latest_history["details"].get("labels"),
         "versions": {
             "nightly": nightly_versions,
             "beta": get_versions("beta", probe),
