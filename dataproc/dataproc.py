@@ -9,7 +9,7 @@ import time
 import urllib
 from functools import wraps
 
-from google.api_core.exceptions import DeadlineExceeded, ServiceUnavailable
+from google.api_core.exceptions import Aborted, DeadlineExceeded, ServiceUnavailable
 from google.cloud import bigquery, firestore
 from pyspark.sql import SparkSession
 
@@ -19,13 +19,14 @@ logger = logging.getLogger(__name__)
 
 
 # The channels this script will import.
-CHANNELS = ["nightly", "beta", "release"]
+# CHANNELS = ["nightly", "beta", "release"]
+CHANNELS = ["beta"]
 # The number of historical versions to import for each channel.
-NUM_VERSIONS = 3
+NUM_VERSIONS = 2
 
 
 PRODUCT_DETAILS_URL = "https://product-details.mozilla.org/1.0/firefox_versions.json"
-SOURCE_BIGQUERY_TABLE = "moz-fx-data-derived-datasets.telemetry.client_probe_counts_v2"
+SOURCE_BIGQUERY_TABLE = "moz-fx-data-derived-datasets.telemetry.client_probe_counts_v1"
 
 
 def retry(exceptions, tries=3, delay=1, backoff=2):
@@ -55,7 +56,7 @@ def retry(exceptions, tries=3, delay=1, backoff=2):
     return fn
 
 
-@retry((DeadlineExceeded, ServiceUnavailable), tries=8, delay=1, backoff=2)
+@retry((Aborted, DeadlineExceeded, ServiceUnavailable), tries=8, delay=1, backoff=2)
 def commit_batch(batch):
     batch.commit()
 
@@ -75,14 +76,16 @@ def transform(row):
             "data": [
                 {
                     "key": ...,
-                    "agg_type": ...,
+                    "client_agg_type": ...,
+                    "total_users": ...,
                     "aggregates: {
                         "0": 0.123,
                         ...
                     },
                     "quantiles: {
-                        "q05": 0.234,
-                        ...
+                        "5": 0.234,
+                        ...,
+                        "95": 0.432,
                     }
                 }
             ]
@@ -102,12 +105,16 @@ def transform(row):
         for d in map(lambda x: x.asDict(), doc.pop("aggregates"))
     }
 
-    # If there's a `key` or `client_agg_type`, we are nesting the aggregates.
-    # If both exist, we double nest, with `key` as the outside layer.
+    data = {agg_type: aggregates}
+
+    # Only grab `total_users` if this is a histogram.
+    total_users = doc.pop("total_users")
+    if agg_type == "histogram":
+        data["total_users"] = total_users
+
     key = doc.pop("key")
     client_agg_type = doc.pop("client_agg_type")
 
-    data = {agg_type: aggregates}
     if key:
         data["key"] = key
     if client_agg_type:
@@ -222,15 +229,85 @@ if __name__ == "__main__":
             key,
             agg_type,
             client_agg_type,
+            total_users,
             aggregates
         FROM `{SOURCE_BIGQUERY_TABLE}`
         WHERE
-            metric NOT IN (
-                "webext_extension_startup_ms_by_addonid",
-                "webext_background_page_load_ms_by_addonid",
-                "webext_browseraction_popup_preload_result_count_by_addonid"
+            metric IN (
+                "a11y_backplate",
+                "a11y_consumers",
+                "a11y_iatable_usage_flag",
+                "a11y_instantiated_flag",
+                "a11y_isimpledom_usage_flag",
+                "a11y_theme",
+                "a11y_tree_update_timing_ms",
+                "browser_engagement_active_ticks",
+                "browser_engagement_max_concurrent_tab_count",
+                "browser_engagement_max_concurrent_tab_pinned_count",
+                "browser_engagement_max_concurrent_window_count",
+                "browser_engagement_navigation_about_home",
+                "browser_engagement_navigation_about_newtab",
+                "browser_engagement_navigation_contextmenu",
+                "browser_engagement_navigation_searchbar",
+                "browser_engagement_navigation_urlbar",
+                "browser_engagement_navigation_webextension",
+                "browser_engagement_tab_open_event_count",
+                "browser_engagement_tab_pinned_event_count",
+                "browser_engagement_total_uri_count",
+                "browser_engagement_unfiltered_uri_count",
+                "browser_engagement_unique_domains_count",
+                "browser_engagement_window_open_event_count",
+                "cryptominers_blocked_count",
+                "devtools_browserconsole_opened_count",
+                "devtools_onboarding_is_devtools_user",
+                "fxa_configured",
+                "gc_ms",
+                "http_scheme_upgrade_type",
+                "scalar_parent_timestamps_first_paint",
+                "ssl_auth_algorithm_full",
+                "ssl_auth_ecdsa_curve_full",
+                "ssl_auth_rsa_key_size_full",
+                "ssl_bytes_before_cert_callback",
+                "ssl_cert_error_overrides",
+                "ssl_cert_verification_errors",
+                "ssl_cipher_suite_full",
+                "ssl_cipher_suite_resumed",
+                "ssl_ct_policy_compliant_connections_by_ca",
+                "ssl_ct_policy_non_compliant_connections_by_ca",
+                "ssl_handshake_result",
+                "ssl_handshake_type",
+                "ssl_handshake_version",
+                "ssl_initial_failed_cert_validation_time_mozillapkix",
+                "ssl_kea_dhe_key_size_full",
+                "ssl_kea_ecdhe_curve_full",
+                "ssl_kea_rsa_key_size_full",
+                "ssl_key_exchange_algorithm_full",
+                "ssl_key_exchange_algorithm_resumed",
+                "ssl_npn_type",
+                "ssl_ocsp_stapling",
+                "ssl_permanent_cert_error_overrides",
+                "ssl_reasons_for_not_false_starting",
+                "ssl_resumed_session",
+                "ssl_scts_origin",
+                "ssl_scts_per_connection",
+                "ssl_scts_verification_status",
+                "ssl_server_auth_eku",
+                "ssl_succesful_cert_validation_time_mozillapkix",
+                "ssl_symmetric_cipher_full",
+                "ssl_symmetric_cipher_resumed",
+                "ssl_time_until_handshake_finished_keyed_by_ka",
+                "ssl_time_until_ready",
+                "ssl_tls12_intolerance_reason_pre",
+                "ssl_tls13_intolerance_reason_post",
+                "ssl_tls13_intolerance_reason_pre",
+                "ssl_version_fallback_inappropriate",
+                "wr_framebuild_time",
+                "wr_render_time",
+                "wr_scenebuild_time",
+                "wr_sceneswap_time"
             )
-            AND {where}
+            AND channel="beta"
+            AND app_version IN ("69", "68")
     """
 
     extract(query)
