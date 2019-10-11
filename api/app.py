@@ -15,6 +15,14 @@ initialize_app()
 db = firestore.client()
 
 
+# Get the labeled probes for categorical histograms.
+LABELED_PROBES = {}
+for probe in db.collection("firefox-probes").stream():
+    doc = probe.to_dict()
+    if doc["labels"] is not None:
+        LABELED_PROBES[doc["name"]] = doc["labels"]
+
+
 # HELPERS
 
 
@@ -161,12 +169,21 @@ def get_data():
         raise APIException("No documents found for the given parameters.", 404)
 
     for doc in docs:
-        resp["response"].append(
-            {
-                "data": list(doc.pop("data", {}).values()),
-                "metadata": dict(**doc, version=version, channel=q["channel"]),
-            }
-        )
+        data = list(doc.pop("data", {}).values())
+        metadata = dict(**doc, version=version, channel=q["channel"])
+
+        if metadata["metric"] in LABELED_PROBES:
+            labels = LABELED_PROBES[metadata["metric"]]
+            hist = {}
+            for i, item in enumerate(data):
+                for k, v in item.get("histogram", {}).items():
+                    try:
+                        hist[labels[int(k)]] = v
+                    except IndexError:
+                        pass
+                data[i]["histogram"] = hist
+
+        resp["response"].append({"data": data, "metadata": metadata})
 
     return jsonify(resp)
 
