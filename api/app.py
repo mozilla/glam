@@ -44,7 +44,7 @@ def handle_api_exception(error):
 # API ROUTES
 
 
-REQUIRED_QUERY_PARAMETERS = ["channel", "versions", "probe"]
+REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
 
 @app.route("/api/v1/data", methods=["POST"])
@@ -57,14 +57,9 @@ def get_data():
         {
             "query": {
                 "channel": "nightly",
-                "versions": ["70"],  # OR ["70", "69", "68"]
                 "probe": "gc_ms",
-
-                # TODO:
-                "build_id": {
-                    "from": "20190901",
-                    "to": "20190915"
-                }
+                "versions": ["70"],  # OR ["70", "69", "68"]
+                "aggregationLevel": "version"  # OR "build_id"
             }
         }
 
@@ -119,35 +114,59 @@ def get_data():
         )
 
     resp = {"response": []}
-    not_found = True
+    docs = []
 
-    for version in q.get("versions"):
+    agg_level = q["aggregationLevel"]
 
-        collection = "{channel}-{version}".format(channel=q["channel"], version=version)
-        query = db.collection(collection)
+    if agg_level == "version":
 
-        # Try to get the document by document ID hash.
-        doc_key = "{metric}-{build_id}-{os}".format(
-            metric=q.get("probe"), build_id=q.get("build_id"), os=q.get("os")
-        )
-        doc_id = hashlib.blake2b(doc_key.encode()).hexdigest()
-        results = query.document(doc_id).get()
-        if not results.exists:
-            continue
-
-        docs = [results.to_dict()]
-
-        for doc in docs:
-            not_found = False
-            resp["response"].append(
-                {
-                    "data": list(doc.pop("data", {}).values()),
-                    "metadata": dict(**doc, version=version, channel=q["channel"]),
-                }
+        for version in q.get("versions"):
+            collection = "{channel}-{version}".format(
+                channel=q["channel"], version=version
             )
+            query = db.collection(collection)
 
-    if not_found:
+            # Try to get the document by document ID hash.
+            doc_key = "{metric}-{build_id}-{os}".format(
+                metric=q.get("probe"), build_id=q.get("build_id"), os=q.get("os")
+            )
+            doc_id = hashlib.blake2b(doc_key.encode()).hexdigest()
+            results = query.document(doc_id).get()
+
+            if not results.exists:
+                continue
+
+            docs.append(results.to_dict())
+
+    elif agg_level == "build_id":
+
+        for version in q.get("versions"):
+            collection = "{channel}-{version}".format(
+                channel=q["channel"], version=version
+            )
+            query = db.collection(collection)
+
+            query = query.where("metric", "==", q["probe"])
+            if q.get("os"):
+                query = query.where("os", "==", q.get("os"))
+            else:
+                query = query.where("os", "==", None)
+
+            for result in query.stream():
+                doc = result.to_dict()
+                if doc["build_id"] is not None:
+                    docs.append(doc)
+
+    if not docs:
         raise APIException("No documents found for the given parameters.", 404)
+
+    for doc in docs:
+        resp["response"].append(
+            {
+                "data": list(doc.pop("data", {}).values()),
+                "metadata": dict(**doc, version=version, channel=q["channel"]),
+            }
+        )
 
     return jsonify(resp)
 
