@@ -144,7 +144,10 @@ def get_data():
             if not results.exists:
                 continue
 
-            docs.append(results.to_dict())
+            doc = results.to_dict()
+            doc["channel"] = q["channel"]
+            doc["version"] = version
+            docs.append(doc)
 
     elif agg_level == "build_id":
 
@@ -162,7 +165,11 @@ def get_data():
 
             for result in query.stream():
                 doc = result.to_dict()
+                # Since we can't query Firestore by `build_id != None`, we
+                # iterate and skip it instead.
                 if doc["build_id"] is not None:
+                    doc["channel"] = q["channel"]
+                    doc["version"] = version
                     docs.append(doc)
 
     if not docs:
@@ -170,7 +177,7 @@ def get_data():
 
     for doc in docs:
         data = list(doc.pop("data", {}).values())
-        metadata = dict(**doc, version=version, channel=q["channel"])
+        metadata = doc
 
         if metadata["metric"] in LABELED_PROBES:
             labels = LABELED_PROBES[metadata["metric"]]
