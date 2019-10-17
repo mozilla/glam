@@ -77,6 +77,7 @@ const initStore = {
     audienceSize: 0,
     totalSize: 0,
   },
+  aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryStringOrDefault('os'),
@@ -115,12 +116,15 @@ export const store = {
   subscribe: STORE.subscribe, dispatch, connect, getState,
 };
 
-export const updateField = (field, value) => (draft) => { draft[field] = value; };
+export const updateField = (field, value) => (draft) => {
+  draft[field] = value;
+};
 
 export const updateProbe = (probe) => updateField('probe', probe);
 export const updateProduct = (product) => updateField('product', product);
 export const updateChannel = (channel) => updateField('channel', channel);
 export const updateOS = (os) => updateField('os', os);
+export const updateAggregationLevel = (aggregationLevel) => updateField('aggregationLevel', aggregationLevel);
 
 // search
 export const updateSearchIsActive = (tf) => (draft) => { draft.searchIsActive = tf; };
@@ -128,8 +132,9 @@ export const searchQuery = writable('');
 export const updateSearchQuery = (s) => { searchQuery.set(s); };
 
 export const resetFilters = () => async () => {
-  dispatch(updateChannel('nightly'));
-  dispatch(updateOS('ALL'));
+  dispatch(updateChannel(getDefaultFieldValue('channel')));
+  dispatch(updateOS(getDefaultFieldValue('os')));
+  dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
 };
 
 export const searchResults = derived(
@@ -157,6 +162,7 @@ function getParamsForQueryString(obj) {
     channel: obj.channel,
     probe: obj.probe.apiName,
     os: obj.os,
+    aggregationLevel: obj.aggregationLevel,
   };
 }
 

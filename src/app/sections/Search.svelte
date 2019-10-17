@@ -1,14 +1,23 @@
 <script>
-  import { tick } from 'svelte';
+  import { tick, setContext } from 'svelte';
+import { fly } from 'svelte/transition';
 import {
     searchQuery,
     updateSearchQuery,
     store,
     updateSearchIsActive,
+    updateProbe,
 } from '../store/store';
+import telemetrySearch from '../store/telemetry-search';
+
+import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
 
+setContext('updateProbe', store.connect(updateProbe));
+setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
+
 let inputElement;
+let searchContainer;
 
 function turnOnSearch() {
     store.dispatch(updateSearchIsActive(true));
@@ -17,7 +26,7 @@ function turnOnSearch() {
 function turnOffSearch() {
     setTimeout(() => {
       store.dispatch(updateSearchIsActive(false));
-    }, 50);
+    }, 100);
 }
 
 function unfocus() {
@@ -54,7 +63,7 @@ async function onKeypress(event) {
   .inner-container {
     max-width: var(--width);
     height: calc(var(--space-base) * 4);
-    box-shadow: 0px 4px var(--space-1h) rgba(0, 0, 0, 0.2);
+    box-shadow: var(--depth-medium);
     display: grid;
     grid-template-columns: [icon] 40px [input] auto;
     /* padding-left: var(--space-base); */
@@ -62,9 +71,19 @@ async function onKeypress(event) {
     background-color: var(--input-background-color);
     /* background-color: white; */
     border-radius: var(--space-1h);
+
+  }
+
+  .icon-container {
+    position: relative;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+
   }
 
   .icon {
+    position: absolute;
     display: grid;
     align-items: center;
     justify-items: center;
@@ -73,7 +92,6 @@ async function onKeypress(event) {
 
   input {
     border: 2px solid transparent;
-    /* background-color: var(--input-background-color); */
     background: var(--input-background-color);
     display: block;
     box-sizing: border-box;
@@ -103,8 +121,18 @@ async function onKeypress(event) {
 <svelte:window on:keydown={onKeypress} />
 
 <div class=search-container>
-  <div class=inner-container>
-    <div class=icon><SearchIcon  /></div>
+  <div class=inner-container bind:this={searchContainer}>
+      <div class=icon-container>
+      {#if $telemetrySearch.loaded}
+      <div class=icon in:fly={{ y: -10, duration: 100 }}>
+        <SearchIcon  />
+      </div>
+      {:else}
+        <div class=icon out:fly={{ y: -10, duration: 100 }}>
+          uh..
+        </div>
+      {/if}
+    </div>
     <input on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
@@ -114,3 +142,5 @@ async function onKeypress(event) {
       }} />
     </div>
 </div>
+
+<TelemetrySearchResults parentElement={searchContainer} />

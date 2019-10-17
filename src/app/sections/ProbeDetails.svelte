@@ -16,18 +16,6 @@ import { store, dataset } from '../store/store';
 let paneVisible = true;
 let visible = false; // this is unused for the time being.
 onMount(() => { visible = true; });
-// let audienceCount;
-// let populationCount;
-// let audiencePerc;
-
-// let currentProbeName = $store.probe.name;
-
-// $: if (currentProbeName !== $store.probe.name) {
-//   currentProbeName = $store.probe.name;
-//   audienceCount = 500000 + Math.random() * 500000;
-//   populationCount = 1200000 + Math.random() * 1000000;
-//   audiencePerc = audienceCount / populationCount;
-// }
 
 </script>
 
@@ -37,13 +25,6 @@ onMount(() => { visible = true; });
     padding: var(--space-2x);
     border-bottom: 1px solid var(--line-gray-01);
 }
-
-/* .drawer-section-description {
-    font-style: italic;
-    padding-bottom: var(--space-base);
-    margin-top: calc(var(--space-base) * -1);
-    color: var(--body-gray);
-} */
 
 .drawer-section--end {
     align-self: end;
@@ -60,21 +41,10 @@ onMount(() => { visible = true; });
     height: 100%;
 }
 
-/* .align-end {
-    align-self: end;
-    margin-bottom: calc(var(--header-height) + var(--space-3x));
-    border-bottom: none;
-} */
 
 h2 {
     padding-bottom: var(--space-base);
 }
-
-/* .export-buttons {
-    display:grid;
-    grid-template-rows: auto;
-    grid-row-gap: var(--space-base);
-} */
 
 .empty-details {
     height: 200px;
@@ -109,6 +79,12 @@ h2 {
     margin-top: var(--space-base);
 }
 
+.probe-labels {
+    display:grid;
+    grid-auto-flow:column;
+    align-items: baseline;
+}
+
 </style>
 
 <RightDrawer visible={paneVisible}>
@@ -123,10 +99,20 @@ h2 {
     {/if}
 {:else if $store.probe.name}
 <div in:fly={rightDrawerTransition} class="drawer-section-container probe-details">
-    <!-- <div class="drawer-section">
-            <h2 class=detail__heading--01>Audience Size</h2>
-            <AudienceSize percentage={audiencePerc} total={audienceCount} population={populationCount} />
-    </div> -->
+    {#if $store.probe.type}
+        <div class="drawer-section probe-labels">
+            <div>
+                <span
+                    style="display: inline-block;"
+                    class='label label-text--01 label--{$store.probe.type}'>{$store.probe.type}</span>
+            </div>
+            {#if $store.probe.kind}
+                <div class="probe-kind label-text--01">
+                    {$store.probe.kind}
+                </div>
+            {/if}
+        </div>
+    {/if}
     <div class=drawer-section>
         {#if $store.probe.description}
             <h2 class=detail__heading--01>description</h2>

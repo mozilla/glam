@@ -3,7 +3,7 @@ import Sizes01 from './Sizes01.svelte';
 
 import '../public/global.css';
 
-storiesOf('Principles|Layout', module)
+storiesOf('Principles|Spacing', module)
   .add('Spacing', () => ({
     Component: Sizes01,
   }));

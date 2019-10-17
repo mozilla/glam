@@ -76,6 +76,7 @@
     --space-1h: calc(var(--space-base) / 2);
     --space-base: var(--column-dp);
     --space-2x: calc(var(--space-base) * 2);
+    --space-3x: calc(var(--space-base) * 3);
     --space-4x: calc(var(--space-base) * 4);
     --space-6x: calc(var(--space-base) * 6);
     --space-8x: calc(var(--space-base) * 8);
@@ -91,6 +92,23 @@
     --increment: var(--space-6x); /* eg. 48dp. */
     --drawer-width: var(--space-32x);
     --header-height: var(--increment);
+
+    /* Shadow system */
+
+    --shadow: hsla(0,0%,0%, .2);
+    --lighter-shadow: hsla(0, 0%, 0%, .08);
+    --depth-tiny: 0px var(--space-1q) var(--space-1h) var(--shadow);
+    --depth-small: 0px var(--space-1h) var(--space-base) var(--shadow);
+    --depth-medium: 0px var(--space-base) var(--space-2x) var(--shadow);
+    --depth-large: 0px var(--space-2x) var(--space-4x) var(--shadow);
+    --depth-jumbo: 0px var(--space-4x) var(--space-8x) var(--shadow);
+
+    --depth-5l: 
+        0px var(--space-1q) var(--space-1h) var(--lighter-shadow), 
+        0px var(--space-1h) var(--space-base) var(--lighter-shadow), 
+        0px var(--space-base) var(--space-2x) var(--lighter-shadow), 
+        0px var(--space-2x) var(--space-4x) var(--shadow), 
+        0px var(--space-4x) var(--space-8x) var(--shadow);
 
     /* Color Systems */
 
@@ -174,9 +192,12 @@
 
     /* probe type colors */
 
-    --histogram-color: var(--mantis-green-800);
+    --histogram-color: var(--digital-blue-800);
+    --histogram-bg: var(--digital-blue-200);
     --scalar-color: var(--pantone-red-700);
-    --event-color: var(--blue-slate-300);
+    --scalar-bg: var(--pantone-red-200);
+    --event-color: var(--blue-slate-400);
+    --event-color: var(--blue-slate-100);
 
     --primary-text: white;
 
@@ -375,7 +396,6 @@ main .main-content {
 main .main-action {
     position: relative;
     width: 100%;
-    z-index:1000;
 }
 
 main .details {
@@ -390,20 +410,23 @@ main .details {
     align-items: center;
     align-self: start;
     padding: var(--space-1h);
-    padding-left: var(--space-base);
-    padding-right: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
 }
 
 .label--histogram {
-    background-color: var(--histogram-color);
+    background-color: var(--histogram-bg);
+    color: var(--histogram-color)
 }
 
 .label--event {
-    background-color: var(--event-color);
+    color: var(--event-color);
+    background-color: var(--event-bg);
 }
 
 .label--scalar {
-    background-color: var(--scalar-color);
+    color: var(--scalar-color);
+    background-color: var(--scalar-bg);
 }
 
 /* TYPOGRAPHY - this is a rough draft. */

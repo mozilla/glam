@@ -4,12 +4,9 @@ import { getContext } from 'svelte';
 
 export let level = 'high';
 export let compact = false;
-// export let pale = false;
 
 export let size = compact ? 'compact' : 'standard';
 export let dark = getContext('appDarkMode') || false;
-
-// const paleness = pale ? 'pale' : 'normal-saturation';
 
 </script>
 
@@ -44,7 +41,7 @@ button {
 }
 
 .button--high:hover {
-    box-shadow: var(--elevation-base);
+    box-shadow: var(--depth-small);
 }
 
 .button--high:active {
@@ -78,7 +75,7 @@ button {
 }
 
 .dark.button--high:hover {
-    box-shadow: var(--elevation-base);
+    box-shadow: var(--depth-small);
 }
 
 .dark.button--high:active {

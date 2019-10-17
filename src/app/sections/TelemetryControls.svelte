@@ -18,23 +18,26 @@ import {
   updateChannel as updateChannelAction,
   resetFilters as resetFiltersAction,
   updateOS as updateOSAction,
+  updateAggregationLevel as updateAggregationLevelAction,
 } from '../store/store';
 
 import CONFIG from '../config.json';
 
 let visible = true;
 let channel;
+let aggregationLevel;
 let os;
 // let version;
 
 function collapseAll() {
   channel.expand(false);
   os.expand(false);
-//   version.expand(false);
+  aggregationLevel.expand(false);
 }
 
 const updateChannel = store.connect(updateChannelAction);
 const updateOS = store.connect(updateOSAction);
+const updateAggregationLevel = store.connect(updateAggregationLevelAction);
 const resetFilters = () => {
   const reset = store.connect(resetFiltersAction);
   reset();
@@ -45,7 +48,7 @@ const resetFilters = () => {
 <LeftDrawer {visible}>
     <TelemetryAppBar />
     <div class=left-drawer__header>
-        <h2 class=heading--02>Filters</h2>
+        <h2 class=heading--02>Explore</h2>
         {#if !$hasDefaultControlFields}
             <div transition:fly={{ y: -10, duration: 200 }}
             href='#whatever'>
@@ -94,6 +97,17 @@ const resetFilters = () => {
                     {#each CONFIG.fields.os.values as {key, label}, i (key) }
                         <RadioSelector value={key} label={label} group={$store.os} /> 
                     {/each}
+            </RadioGroup>
+        </span>
+    </Accordion>
+    <Accordion bind:this={aggregationLevel}>
+        <span slot="title">Aggregate By</span>
+        <span slot="description">{getFieldValueLabel('aggregationLevel', $store.aggregationLevel)}</span>
+        <span slot="content">
+            <RadioGroup onSelect={(value) => updateAggregationLevel(value)}>
+                {#each CONFIG.fields.aggregationLevel.values as {key, label}, i (key)}
+                    <RadioSelector value={key} label={label} group={$store.aggregationLevel} />
+                {/each}
             </RadioGroup>
         </span>
     </Accordion>

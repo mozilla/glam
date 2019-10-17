@@ -1,19 +1,11 @@
 <script>
-import { setContext } from 'svelte';
 import {
-  store, updateProbe, updateSearchIsActive, dataset,
+  store, dataset,
 } from '../store/store';
-import TelemetrySearchResults from './TelemetrySearchResults.svelte';
-
-// import Spinner from '../../components/Spinner.svelte';
-
-setContext('updateProbe', store.connect(updateProbe));
-setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
 
 </script>
 
 <style>
-
 .graphic-body-container {
     padding: var(--space-2x);
     overflow-y: auto;
@@ -33,11 +25,7 @@ setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
     width: 100%;
     word-break: break-all;
 }
-
 </style>
-
-
-<TelemetrySearchResults />
 
 <div class=graphic-body-container>
 

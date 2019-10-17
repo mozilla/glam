@@ -2,14 +2,20 @@
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
 import { getContext, afterUpdate } from 'svelte';
-import { searchResults, store, searchQuery } from '../store/store';
+import {
+  searchResults, store, searchQuery,
+} from '../store/store';
+
+import Portal from '../../components/Portal.svelte';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.
-export let updateProbe = getContext('updateProbe');
+// export let updateProbe = getContext('updateProbe');
 export let updateSearchQuery = getContext('updateSearchQuery');
+export let updateProbe = getContext('updateProbe');
 export let updateSearchIsActive = getContext('updateSearchIsActive');
+export let parentElement;
 
 // when search query changes for any reason, always center back to first item,
 // even if the result set is the exact same (for now, potential FIXME)
@@ -45,12 +51,10 @@ const handleKeypress = (event) => {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
-      const {
-        id, name, type, description, versions, apiName,
-      } = $searchResults.results[focusedItem];
-      updateProbe({
-        id, name, apiName, type, description, versions,
-      });
+      // const {
+      //   id, name, type, description, versions, apiName,
+      // } = $searchResults.results[focusedItem];
+      updateProbe($searchResults.results[focusedItem]);
       updateSearchIsActive(false);
       // reset focused element
       focusedItem = 0;
@@ -75,6 +79,18 @@ afterUpdate(() => {
   }
 });
 
+let x;
+let y;
+let width;
+
+// update the location once parentElement is defined (that is, the parentElement's component mounts)
+$: if (parentElement) {
+  const bounds = parentElement.getBoundingClientRect();
+  y = bounds.top + bounds.height;
+  x = bounds.left;
+  width = bounds.width;
+}
+
 </script>
 
 <style>
@@ -85,21 +101,28 @@ afterUpdate(() => {
     --list-border-color: gainsboro;
     --list-border: 1px solid var(--list-border-color);
     max-height: calc(100vh - var(--header-height) * 3);
-    border:1px solid gainsboro;
+    border:1px solid var(--line-gray-02);
     background-color: white;
-    width: calc(100vw - var(--drawer-width) * 2 - var(--space-base) - 40px * 2);
+    /* width: calc(100vw - var(--drawer-width) * 2 - var(--space-base) - 40px * 2); */
     max-width: calc(var(--increment) * 16);
-    box-shadow: 0px 0px 30px rgba(0,0,0,.2);
+    box-shadow: var(--depth-5l);
+    /* box-shadow: 
+      0 1px 1px rgba(0,0,0,0.12),
+      0 var(--space-1q) var(--space-1q) rgba(0,0,0,0.06),
+      0 var(--space-1h) var(--space-1h) rgba(0,0,0,0.08),
+      0 var(--space-base) var(--space-base) rgba(0,0,0,0.12),
+      0 var(--space-2x) var(--space-2x) rgba(0,0,0,0.16),
+      0 var(--space-4x) var(--space-4x) rgba(0,0,0,0.20); */
     border-bottom-right-radius: var(--border-radius-base);
+    border-bottom-left-radius: var(--border-radius-base);
     position: absolute;
+    left:0;top:0;
     /* 40px is icon width */
-    transform: translateX(calc(var(--space-base) + 40px));
     overflow: hidden;
 }
 
 .header-container {
-  background-color: var(--cool-gray-200);
-    /* background: linear-gradient(to left, var(--header-bg-color), var(--bg-gray-01)); */
+  background-color: var(--cool-gray-300);
     --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
     font-size:.8em;
     color: var(--body-gray-01);
@@ -155,6 +178,7 @@ li {
 .name {
     grid-area: title;
     word-break: break-all;
+    font-weight:bold;
 }
 
 .probe-type, .first-release {
@@ -176,6 +200,12 @@ li {
     grid-area: description;
     font-size:.8em;
     line-height:1.4;
+    outline: 1px;
+    max-height: 2.6em;
+    overflow: hidden;
+    color: var(--subhead-gray-02);
+    font-style: italic;
+    padding-bottom: var(--space-1h);
 }
 
 .focused {
@@ -186,45 +216,49 @@ li {
 
 <svelte:window on:keydown={handleKeypress} />
 
+<Portal>
 {#if $store.searchIsActive && $searchQuery.length}
-<div transition:fly={{ duration: 100, y: -10 }} class=telemetry-results>
-    <div class=header-container>
-        {#if $searchResults.total}
-        <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
-            <div>found {$searchResults.results.length} of
-                {formatTotal($searchResults.total)} probes
-            </div>
-        </div>
-        {:else}
-        <div class=header out:fly={{ x: 5, duration: 200 }}>
-            <LineSegSpinner color={'var(--subhead-gray-02)'} />
-            <div>
-                getting the probes – one second!
-            </div>
-        </div>
-        {/if}
-        
-    </div>
-    {#if $searchResults.results.length}
-        <ul bind:this={searchListElement}>
-        {#each $searchResults.results as {id, name, apiName, type, description, versions}, i (id)}
-            <li 
-                class:focused={focusedItem === i} on:click={() => {
-                updateProbe({
-                    id, name, type, description, versions, apiName,
-                });
-            }}
-                on:mouseover={() => { focusedItem = i; }}>
-                <div class="name heading--02">{name}</div>
-                <div class="probe-type label label-text--01 label--{type}">{type}</div>
-                <div class=description>{@html description}</div>
-                <div class=first-release>
-                    <div>first version</div>
-                    <div>{versions.nightly[0] || versions.beta[0]}</div>
-                </div>
-            </li>
-        {/each}
-        </ul>
-    {/if}
-</div>
+  <div 
+  style="left: calc({x}px + var(--space-base)); top: {y}px; width:
+  calc({width}px - var(--space-base));"
+    transition:fly={{ duration: 20, y: -10 }}
+    class=telemetry-results>
+      <div class=header-container>
+          {#if $searchResults.total}
+          <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
+              <div>found {$searchResults.results.length} of
+                  {formatTotal($searchResults.total)} probes
+              </div>
+          </div>
+          {:else}
+          <div class=header out:fly={{ x: 5, duration: 200 }}>
+              <LineSegSpinner color={'var(--subhead-gray-02)'} />
+              <div>
+                  getting the probes – one second!
+              </div>
+          </div>
+          {/if}
+          
+      </div>
+      {#if $searchResults.results.length}
+          <ul bind:this={searchListElement}>
+          {#each $searchResults.results.slice(0, 30) as {id, name, apiName, type, description, versions}, i (id)}
+              <li 
+                  class:focused={focusedItem === i} on:click={(e) => {
+                  updateProbe($searchResults.results[focusedItem]);
+              }}
+                  on:mouseover={() => { focusedItem = i; }}>
+                  <div class="name body-text--short-01">{name}</div>
+                  <div class="probe-type label label-text--01 label--{type}">{type}</div>
+                  <div class="description body-text--short-01">{@html description}</div>
+                  <!-- <div class=first-release>
+                      <div>first version</div>
+                      <div>{versions.nightly[0] || versions.beta[0]}</div>
+                  </div> -->
+              </li>
+          {/each}
+          </ul>
+      {/if}
+  </div>
 {/if}
+</Portal>
