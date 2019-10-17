@@ -145,6 +145,8 @@ $: if (mounted) initiateRollovers(rollover);
 
 <DataGraphic
   data={data}
+  width={width}
+  height={height}
   xDomain={getLabels(data)}
   yDomain={getBins(data[0].histogram)}
   xType="scalePoint"
@@ -191,9 +193,10 @@ $: if (mounted) initiateRollovers(rollover);
           <g in:fly={DEFAULTS.flyParams} class=bars>
               {#each histogramValues as {histogram, label}, i (label)}
                 <Violin opacity={($rolloverValues !== undefined && label
-                  === $rolloverValues.hoverKey) ? 1 : 0.6} 
+                  === $rolloverValues.hoverKey) ? 0.9 : 0.4} 
                   x={label} 
                   y={histogram}
+                  areaColor="var(--digital-blue-400)"
                   valueAccessor="bin"
                   densityAccessor="value" />
               {/each}

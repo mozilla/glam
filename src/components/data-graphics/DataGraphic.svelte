@@ -1,6 +1,6 @@
 <script>
 import { setContext, getContext, onMount } from 'svelte';
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import { scalePoint } from 'd3-scale';
 
 export let data = getContext('data');
@@ -35,15 +35,41 @@ const DEFAULTS = {
 setContext('defaults', DEFAULTS);
 setContext('margins', margins);
 
-export let width = getContext('width') || Math.min(DEFAULTS.elementWidth * data.length + margins.left + margins.right, 800);
-export let height = getContext('height') || 300;
-let bodyWidth = writable(width);
+export let dataGraphic = writable({});
 
-$: $bodyWidth = width - margins.left - margins.right;
-let bodyHeight = writable(height - margins.top - margins.bottom);
+function updateDG(k, v) {
+  const next = { ...$dataGraphic };
+  next[k] = v;
+  $dataGraphic = next;
+}
+
+export let width = getContext('width') || 800;
+export let height = getContext('height') || 300;
+
+// graphic width, graphic height, body width, body height
+export let graphicWidth = writable(width);
+$: $graphicWidth = width;
+
+export let graphicHeight = writable(height);
+$: $graphicHeight = height;
+
+let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
+export let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
+
+// set the locations of the plot bounds
+export let leftPlot = derived(graphicWidth, () => margins.left);
+export let rightPlot = derived(graphicWidth, ($width) => $width - margins.right);
+
+export let topPlot = derived(graphicHeight, () => margins.top);
+export let bottomPlot = derived(graphicHeight, ($height) => $height - margins.bottom);
 
 setContext('bodyWidth', bodyWidth);
 setContext('bodyHeight', bodyHeight);
+
+setContext('leftPlot', leftPlot);
+setContext('rightPlot', rightPlot);
+setContext('topPlot', topPlot);
+setContext('bottomPlot', bottomPlot);
 
 // const xScaleType = xType === 'scalePoint' ? scalePoint : scaleLinear;
 // const yScaleType = yType === 'scalePoint' ? scalePoint : scaleLinear;
@@ -51,14 +77,14 @@ setContext('bodyHeight', bodyHeight);
 function createXPointScale(values) {
   const scale = scalePoint()
     .domain([...values])
-    .range([margins.left, width - margins.right])
+    .range([$leftPlot, $rightPlot])
     .padding(0.5);
   scale.type = 'scalePoint';
   return scale;
 }
 
 function createYPointScale(values) {
-  const scale = scalePoint().domain(values).range([margins.top + $bodyHeight, margins.top]);
+  const scale = scalePoint().domain(values).range([$bottomPlot, $topPlot]);
   scale.type = 'scalePoint';
   return scale;
 }
@@ -98,7 +124,7 @@ function createMouseStore(parentSVG) {
       if (xScale.type === 'scalePoint') {
         const step = xScale.step();
         const xCandidates = xScale.domain()
-          .filter((d) => (xScale(d) - step / 2) < actualX && xScale(d) < margins.left + $bodyWidth);
+          .filter((d) => (xScale(d) - step / 2) < actualX && xScale(d) < $rightPlot);
         x = xCandidates[xCandidates.length - 1];
       }
       if (yScale.type === 'scalePoint') {
@@ -143,11 +169,11 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 </style>
 
-<div class=quantile-plot style="width: {width}px; height: {height}px;">
+<div class=quantile-plot style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
   <svg
     bind:this={svg}
     shape-rendering="geometricPrecision"
-    viewbox='0 0 {width} {height}'
+    viewbox='0 0 {$graphicWidth} {$graphicHeight}'
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
   >

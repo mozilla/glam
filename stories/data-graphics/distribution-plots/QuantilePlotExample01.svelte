@@ -36,13 +36,37 @@ gcmsBuild.sort(sortByLabel);
 const v = gcmsBuild[0];
 </script>
 
+<style>
+h2 {
+  margin:0;
+  padding:0;
+  padding-left: 50px;
+}
+
+.plot {
+  margin-top: var(--space-4x);
+  margin-bottom: var(--space-4x);
+}
+
+hr {
+  border: 1px solid var(--cool-gray-200);
+}
+
+
+</style>
+
 <div class=story>
   <h1 class="story__title">probe / <span class=probe-head>gc_ms</span></h1>
-  <div class=plot-set>
-    <QuantilePlot data={gcmsVersion01} />
+  <hr />
+
+  <div class=plot>
+    <h2>By Version</h2>
+    <QQPlot data={gcmsVersion01} />
   </div>
-  <div class=plot-set>
-      <LinePlot data={gcmsBuild.slice(100)} />
+  <hr />
+  <div class=plot>
+      <h2>By Build ID</h2>
+      <LinePlot width={800} height={400} data={gcmsBuild.slice(70)} units="ms" />
     </div>
   <!-- <div class=plot-set>
     <QuantilePlot data={gcmsVersion01} />

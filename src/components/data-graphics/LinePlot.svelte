@@ -52,16 +52,12 @@ const DEFAULTS = {
 setContext('defaults', DEFAULTS);
 setContext('margins', margins);
 
-export let width = getContext('width') || DEFAULTS.elementWidth * data.length + margins.left + margins.right;
+export let width = getContext('width') || Math.min(DEFAULTS.elementWidth * data.length + margins.left + margins.right, 800);
 export let height = getContext('height') || 300;
-let bodyWidth = writable(width);
+export let units = 'ms';
 
-$: $bodyWidth = width - margins.left - margins.right;
-
-let bodyHeight = writable(height - margins.top - margins.bottom);
-
-setContext('bodyWidth', bodyWidth);
-setContext('bodyHeight', bodyHeight);
+let bodyHeight = writable(0);
+let bodyWidth = writable(0);
 
 // /////////////////////////////////////////////////////////////////////////
 
@@ -106,12 +102,24 @@ let yScale;
 let dataGraphicMounted;
 let mounted = false;
 
+let rightPlot;
+let topPlot;
+
+let rpValue = 0;
+let tpValue = 0;
+
 onMount(() => {
   mounted = true;
 });
 
 $: if (dataGraphicMounted) {
   initiateRollovers(rollover);
+  rightPlot.subscribe((rp) => {
+    rpValue = rp;
+  });
+  topPlot.subscribe((rp) => {
+    tpValue = rp;
+  });
 }
 const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
   let out = [];
@@ -148,22 +156,30 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
   </g>
 </DataGraphic> -->
 
-<DataGraphic 
+<DataGraphic
+    width={width}
+    height={height}
     data={data} 
     xDomain={data.map((d) => d.label)}
     yDomain={data[0].histogram.map((h) => h.bin)}
     xType="scalePoint"
     yType="scalePoint"
+
+    bind:rightPlot={rightPlot}
+    bind:topPlot={topPlot}
     bind:xScale={xScale}
     bind:yScale={yScale}
     bind:rollover={rollover}
     bind:dataGraphicMounted={dataGraphicMounted}
   >
-  <LeftAxis every=8 />
-  <BottomAxis every=50 />
+
 
   <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
   heatRange={[0.1, 0.7]} />
+
+  <LeftAxis every=8 />
+  <BottomAxis every=50 />
+
   {#if dataGraphicMounted && $rolloverValues}
     <g class=rollover-body-under>
       <rect 
@@ -188,7 +204,7 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
           color={i === 2 ? 'var(--digital-blue-500)' : 'var(--digital-blue-400)'}
            data={percentile} />
 
-           {#if dataGraphicMounted}
+           <!-- {#if dataGraphicMounted}
             <g transform="translate({xScale(percentile[percentile.length
             - 1].label) + margins.buffer}, {yScale(percentile[percentile.length
               - 1].value)})"
@@ -205,7 +221,7 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
                 fill="var(--pantone-red-500)"
               >{PERCENTILES[i]}%</text>
             </g>
-         {/if}
+         {/if} -->
 
       {/each}
   </g>
@@ -218,10 +234,14 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
           {/each}
         {/if} -->
     </g>
-    <g class='rollover-top-margin' style="transform: translate({700}px, {margins.top / 2}px);">
-      <text text-anchor='end' x=0 y=0>
+    <g class='rollover-top-margin' style="transform: translate({rpValue}px,
+    {tpValue / 2}px);">
+      <text text-anchor='end' x=0 y=0  font-size=12>
         {#each $rolloverValues.percentiles as perc, i}
-          <tspan font-size=12>{perc.value} – {perc.bin}% {' '}</tspan>
+          <tspan fill="var(--pantone-red-500)" font-size=11
+            > {'  '} {perc.bin}%</tspan> {'    '}
+          <tspan font-weight=500 fill="var(--cool-gray-500)">{perc.value}{i
+          === 0 ? units : '  '} {'   '}     </tspan>
         {/each}
       </text>
     </g>
