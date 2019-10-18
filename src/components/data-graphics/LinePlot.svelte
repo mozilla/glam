@@ -1,21 +1,6 @@
 <script>
-
-function sortByKey(key) {
-  return (a, b) => {
-    if (a[key] < b[key]) return -1;
-    if (a[key] > b[key]) return 1;
-    return 0;
-  };
-}
-
-// ///////////////////////////////////////////////////////
-
 import { setContext, getContext, onMount } from 'svelte';
-import { tweened } from 'svelte/motion';
 import { writable, derived } from 'svelte/store';
-import {
-  line, curveStep,
-} from 'd3-shape';
 import { nearestBelow } from '../../utils/stats';
 
 import DataGraphic from './DataGraphic.svelte';
@@ -56,28 +41,26 @@ export let width = getContext('width') || Math.min(DEFAULTS.elementWidth * data.
 export let height = getContext('height') || 300;
 export let units = 'ms';
 
-let bodyHeight = writable(0);
-let bodyWidth = writable(0);
+let bodyHeight = writable(0); // eslint-disable-line
+let bodyWidth = writable(0); // eslint-disable-line
 
 // /////////////////////////////////////////////////////////////////////////
 
 const getHistogram = (label) => data.find((v) => v.label === label);
 
 const percentiles = PERCENTILES
-  .map((percentile) => data.map(({ label, percentiles, histogram }) => {
+  .map((percentile) => data.map(({ label, percentiles: percs, histogram }) => {
     const histKeys = histogram.map((h) => h.bin);
     return {
       label,
       value:
-        nearestBelow(percentiles.find((p) => p.bin === percentile).value, histKeys),
+        nearestBelow(percs.find((p) => p.bin === percentile).value, histKeys),
     };
   }));
 
 
 let rollover;
 let rolloverValues = writable(undefined);
-
-const rolloverHistInflator = tweened(0, { duration: 300 });
 
 function initiateRollovers(rolloverStore) {
   if (rolloverStore === undefined) return;
@@ -88,10 +71,10 @@ function initiateRollovers(rolloverStore) {
     const hist = getHistogram(x);
     if (!hist) return undefined;
     const histKeys = hist.histogram.map((h) => h.bin);
-    const percentiles = hist.percentiles
+    const toNearest = hist.percentiles
       .map((p) => ({ ...p, value: nearestBelow(p.value, histKeys) }));
     return {
-      x, y, percentiles, histogram: hist.histogram,
+      x, y, percentiles: toNearest, histogram: hist.histogram,
     };
   });
 }
@@ -125,13 +108,13 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
   let out = [];
   dataset.forEach((h) => {
     const x = h.label;
-    let hists = h.histogram.map((h) => ({ ...h })).filter((h) => h.value > 0.0);
+    let hists = h.histogram.map((hi) => ({ ...hi })).filter((hi) => hi.value > 0.0);
     if (normalize) {
-      const heats = hists.map((h) => h.value);
+      const heats = hists.map((hi) => hi.value);
       const maxHeat = Math.max(...heats, 1);
       const minHeat = Math.min(...heats, 0);
-      hists.forEach((h) => {
-        h.value = (h.value - minHeat) / (maxHeat - minHeat);
+      hists.forEach((hi) => {
+        hi.value = (hi.value - minHeat) / (maxHeat - minHeat); // eslint-disable-line
       });
     }
     hists.forEach(({ bin, value }) => {

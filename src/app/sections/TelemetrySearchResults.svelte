@@ -244,17 +244,13 @@ li {
           <ul bind:this={searchListElement}>
           {#each $searchResults.results.slice(0, 30) as {id, name, apiName, type, description, versions}, i (id)}
               <li 
-                  class:focused={focusedItem === i} on:click={(e) => {
+                  class:focused={focusedItem === i} on:click={() => {
                   updateProbe($searchResults.results[focusedItem]);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>
                   <div class="probe-type label label-text--01 label--{type}">{type}</div>
                   <div class="description body-text--short-01">{@html description}</div>
-                  <!-- <div class=first-release>
-                      <div>first version</div>
-                      <div>{versions.nightly[0] || versions.beta[0]}</div>
-                  </div> -->
               </li>
           {/each}
           </ul>

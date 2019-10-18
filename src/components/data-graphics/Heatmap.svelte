@@ -1,7 +1,7 @@
 <script>
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
-import { interpolateViridis, interpolateRdPu } from 'd3-scale-chromatic';
+import { interpolateRdPu } from 'd3-scale-chromatic';
 import { scaleLog, scaleLinear } from 'd3-scale';
 
 export let data;
@@ -18,7 +18,11 @@ const scaleFunction = scaleType === 'linear' ? scaleLinear : scaleLog;
 
 const heatValues = data.map((d) => d[heatAccessor]);
 const heatCorrection = scaleType === 'linear' ? 0 : 1;
-const scale = scaleFunction().domain([Math.min(...heatValues) + heatCorrection, Math.max(...heatValues) + heatCorrection]).range(heatRange);
+const scale = scaleFunction()
+  .domain([
+    Math.min(...heatValues) + heatCorrection,
+    Math.max(...heatValues) + heatCorrection])
+  .range(heatRange);
 
 // for a single histogram, plot a row of values?
 </script>

@@ -1,6 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import produce from 'immer';
-import telemetrySearch from './telemetry-search';
+// FIXME: take care of this dependency cycle.
+import telemetrySearch from './telemetry-search'; // eslint-disable-line
 import { getProbeData } from './api';
 
 import CONFIG from '../config.json';

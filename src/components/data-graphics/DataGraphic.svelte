@@ -37,12 +37,6 @@ setContext('margins', margins);
 
 export let dataGraphic = writable({});
 
-function updateDG(k, v) {
-  const next = { ...$dataGraphic };
-  next[k] = v;
-  $dataGraphic = next;
-}
-
 export let width = getContext('width') || 800;
 export let height = getContext('height') || 300;
 
@@ -116,7 +110,7 @@ function createMouseStore(parentSVG) {
       pt.x = clientX;
       pt.y = clientY;
       let svgP = pt
-        .matrixTransform(parentSVG.getScreenCTM().inverse()); // pt.matrixTransform(svg.getScreenCTM().inverse());
+        .matrixTransform(parentSVG.getScreenCTM().inverse());
       let actualX = svgP.x;
       let actualY = svgP.y;
       let x;
