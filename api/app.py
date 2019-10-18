@@ -1,12 +1,14 @@
 import hashlib
 
 from firebase_admin import firestore, initialize_app
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from werkzeug import exceptions
 
 
-app = Flask(__name__)
+app = Flask(
+    __name__, static_folder="public", static_url_path="", template_folder="public"
+)
 CORS(app)
 
 
@@ -213,6 +215,11 @@ def get_probe(name):
         return jsonify({"probe": doc.to_dict()})
     else:
         return APIException("Probe not found", 404)
+
+
+@app.route("/")
+def hello():
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
