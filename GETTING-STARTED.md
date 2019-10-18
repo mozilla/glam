@@ -12,8 +12,9 @@ To get up and running with a dev environment,
 1. Take that json file and rename it to `gcp-app-creds.json`. Then put `gcp-app-creds.json` into `api/`
 1. go into `api/` and run `make build`.
 1. to start the dev server, run `make run` from the same directory.
-1. from the top level directory (the one right above `api/`) run `npm run dev`
-   to build the frontend.
+1. 1. from the top level directory (the one right above `api/`) run `npm install`
+   to install the front-end dependencies
+1. from the same directory as above run `npm run dev` to build the frontend.
 1. (optional) to run the storybook, run `npm run storybook` from the same
    top-level directory as (7).
 
