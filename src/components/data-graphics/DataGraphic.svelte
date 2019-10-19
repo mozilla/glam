@@ -171,6 +171,8 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
   >
-    <slot></slot>
+    {#if dataGraphicMounted}
+      <slot></slot>
+    {/if}
   </svg>
 </div>

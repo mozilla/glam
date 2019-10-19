@@ -68,6 +68,14 @@ hr {
       <h2>By Build ID</h2>
       <LinePlot width={800} height={400} data={gcmsBuild.slice(70)} units="ms" />
     </div>
+    <div class=plot>
+      <h2>By Build ID</h2>
+      <LinePlot width={800} height={400} data={gcmsBuild.slice(gcmsBuild.length - 7)} units="ms" />
+    </div>
+    <div class=plot>
+      <h2>By Build ID</h2>
+      <LinePlot width={800} height={400} data={gcmsBuild.slice(gcmsBuild.length - 30)} units="ms" />
+    </div>
   <!-- <div class=plot-set>
     <QuantilePlot data={gcmsVersion01} />
     <QuantilePlot width=500 data={gcmsVersion01} />

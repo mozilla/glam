@@ -30,7 +30,7 @@ const scale = scaleFunction()
   {#each data as datum, i}
     <rect 
       fill={interpolateRdPu(scale(datum[heatAccessor]))}
-      x={xScale(datum[xAccessor]) + xScale.step() / 2}
+      x={xScale(datum[xAccessor]) - xScale.step() / 2}
       y={yScale(datum[yAccessor])}
       width={xScale.step()}
       height={yScale.step()}
