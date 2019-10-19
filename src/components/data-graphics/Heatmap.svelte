@@ -1,6 +1,7 @@
 <script>
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
+import { easeOut } from 'svelte/easing';
 import { interpolateRdPu } from 'd3-scale-chromatic';
 import { scaleLog, scaleLinear } from 'd3-scale';
 
@@ -26,11 +27,11 @@ const scale = scaleFunction()
 
 // for a single histogram, plot a row of values?
 </script>
-<g in:fade={{ duration: 600, delay: 400 }}>
+<g transition:fade={{ duration: 200, easing: easeOut }}>
   {#each data as datum, i}
     <rect 
       fill={interpolateRdPu(scale(datum[heatAccessor]))}
-      x={xScale(datum[xAccessor]) + xScale.step() / 2}
+      x={xScale(datum[xAccessor]) - xScale.step() / 2}
       y={yScale(datum[yAccessor])}
       width={xScale.step()}
       height={yScale.step()}

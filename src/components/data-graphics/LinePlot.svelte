@@ -11,6 +11,11 @@ import Line from './LineMultiple.svelte';
 import Heatmap from './Heatmap.svelte';
 import Violin from './ViolinPlotMultiple.svelte';
 
+import {
+  dateToBuildID, firstOfMonth, getFirstBuildOfDays, mondays,
+  buildIDToMonth,
+} from './utils/build-id-utils';
+
 export let data;
 
 
@@ -87,9 +92,11 @@ let mounted = false;
 
 let rightPlot;
 let topPlot;
+let bottomPlot;
 
 let rpValue = 0;
 let tpValue = 0;
+let btValue = 0;
 
 onMount(() => {
   mounted = true;
@@ -102,6 +109,9 @@ $: if (dataGraphicMounted) {
   });
   topPlot.subscribe((rp) => {
     tpValue = rp;
+  });
+  bottomPlot.subscribe((bp) => {
+    btValue = bp;
   });
 }
 const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
@@ -126,6 +136,11 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
   return out;
 };
 
+let last = Infinity;
+let xDomain = data.map((d) => d.label);
+
+let showHeatmap = false;
+
 </script>
 
 {#if mounted}
@@ -138,6 +153,11 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
 
   </g>
 </DataGraphic> -->
+<div style='margin-top: var(--space-4x)'>
+  <div style='margin-left: 100px;'>
+    <input type=checkbox bind:checked={showHeatmap} /> heatmap
+  </div>
+</div>
 
 <DataGraphic
     width={width}
@@ -150,19 +170,26 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
 
     bind:rightPlot={rightPlot}
     bind:topPlot={topPlot}
+    bind:bottomPlot={bottomPlot}
     bind:xScale={xScale}
     bind:yScale={yScale}
     bind:rollover={rollover}
     bind:dataGraphicMounted={dataGraphicMounted}
   >
 
-
-  <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
-  heatRange={[0.1, 0.7]} />
-
+  {#if showHeatmap}
+    <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
+    heatRange={[0.1, 0.7]} />
+  {/if}
   <LeftAxis every=8 />
-  <BottomAxis every=50 />
-
+  <!-- {#if dataGraphicMounted} -->
+  <!-- <g>
+    {#each firstOfMonth(xScale) as tick, i}
+      <text x={xScale(tick)} y={btValue}>{buildIDToMonth(tick)}</text>
+    {/each}
+  </g>
+  {/if} -->
+  <BottomAxis ticks={firstOfMonth(xScale)} tickFormatter={buildIDToMonth} />
   {#if dataGraphicMounted && $rolloverValues}
     <g class=rollover-body-under>
       <rect 
