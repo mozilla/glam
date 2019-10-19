@@ -139,6 +139,8 @@ const telemetryHistogramToHeatmap = (dataset, normalize = false) => {
 let last = Infinity;
 let xDomain = data.map((d) => d.label);
 
+let showHeatmap = false;
+
 </script>
 
 {#if mounted}
@@ -151,10 +153,11 @@ let xDomain = data.map((d) => d.label);
 
   </g>
 </DataGraphic> -->
-<button>all time</button>
-<button>last month</button>
-<button>last week</button>
-
+<div style='margin-top: var(--space-4x)'>
+  <div style='margin-left: 100px;'>
+    <input type=checkbox bind:checked={showHeatmap} /> heatmap
+  </div>
+</div>
 
 <DataGraphic
     width={width}
@@ -174,10 +177,10 @@ let xDomain = data.map((d) => d.label);
     bind:dataGraphicMounted={dataGraphicMounted}
   >
 
-
-  <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
-  heatRange={[0.1, 0.7]} />
-
+  {#if showHeatmap}
+    <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
+    heatRange={[0.1, 0.7]} />
+  {/if}
   <LeftAxis every=8 />
   <!-- {#if dataGraphicMounted} -->
   <!-- <g>
