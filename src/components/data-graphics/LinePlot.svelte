@@ -2,6 +2,7 @@
 import { setContext, getContext, onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
 import { nearestBelow } from '../../utils/stats';
+import { extractPercentiles } from './utils/percentiles';
 
 import DataGraphic from './DataGraphic.svelte';
 
@@ -53,16 +54,20 @@ let bodyWidth = writable(0); // eslint-disable-line
 
 const getHistogram = (label) => data.find((v) => v.label === label);
 
-const percentiles = PERCENTILES
-  .map((percentile) => data.map(({ label, percentiles: percs, histogram }) => {
-    const histKeys = histogram.map((h) => h.bin);
-    return {
-      label,
-      value:
-        nearestBelow(percs.find((p) => p.bin === percentile).value, histKeys),
-    };
-  }));
+// const percentiles = PERCENTILES
+//   .map((percentile) => data.map(({ label, percentiles: percs, histogram }) => {
+//     const histKeys = histogram.map((h) => h.bin);
+//     const originalPercentileValue = percs.find((p) => p.bin === percentile).value;
+//     return {
+//       label,
+//       value:
+//         nearestBelow(percs.find(originalPercentileValue, histKeys)),
+//       originalPercentileValue,
+//     };
+//   }));
 
+
+const percentiles = extractPercentiles(PERCENTILES, data);
 
 let rollover;
 let rolloverValues = writable(undefined);

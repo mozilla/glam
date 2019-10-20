@@ -1,15 +1,15 @@
 <script>
 import { setContext, getContext, onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
-import { scalePoint } from 'd3-scale';
+import { scalePoint, scaleLinear } from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
 
 export let xDomain;
 export let yDomain;
-export let xType;
-export let yType;
+export let xType = 'scalePoint';
+export let yType = 'scalePoint';
 
 // if x is a function, use that to get xMin / xMax.
 // if xMin / xMax is a function, use that to calculate xMin / xMax.
@@ -69,17 +69,20 @@ setContext('bottomPlot', bottomPlot);
 // const yScaleType = yType === 'scalePoint' ? scalePoint : scaleLinear;
 
 function createXPointScale(values) {
-  const scale = scalePoint()
+  const scaleFunction = xType === 'scalePoint' ? scalePoint : scaleLinear;
+  const scale = scaleFunction()
     .domain([...values])
     .range([$leftPlot, $rightPlot])
     .padding(0.5);
-  scale.type = 'scalePoint';
+  scale.type = xType;
   return scale;
 }
 
 function createYPointScale(values) {
-  const scale = scalePoint().domain(values).range([$bottomPlot, $topPlot]);
-  scale.type = 'scalePoint';
+  const scaleFunction = yType === 'scalePoint' ? scalePoint : scaleLinear;
+
+  const scale = scaleFunction().domain(values).range([$bottomPlot, $topPlot]);
+  scale.type = yType;
   return scale;
 }
 
