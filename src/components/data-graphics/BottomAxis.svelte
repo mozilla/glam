@@ -2,22 +2,41 @@
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 
-const defaults = getContext('defaults');
-const margins = getContext('margins');
+import SimpleAxis from './SimpleAxis.svelte';
 
-export let fadeValues = defaults.fadeParams;
+// const defaults = getContext('defaults');
+// const margins = getContext('margins');
 
-export let height = getContext('bodyHeight');
-export let bottomPlot = getContext('bottomPlot');
-export let fontSize = defaults.axisTickFontSize;
-export let xScale = getContext('xScale');
-export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
-export let tickFormatter = (t) => t;
-export let every = 1;
+// export let fadeValues = defaults.fadeParams;
+
+// export let height = getContext('bodyHeight');
+// export let bottomPlot = getContext('bottomPlot');
+// export let fontSize = defaults.axisTickFontSize;
+// export let xScale = getContext('xScale');
+// export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
+
+// let _ticks;
+// if (Array.isArray(ticks)) {
+//   _ticks = ticks;
+// } else if (typeof ticks === 'function') {
+//   // if you pass in a function, the function operates
+//   // on the xScale accordingly and returns whatever it needs
+//   // to be an array
+//   _ticks = ticks(xScale);
+// }
+
+// export let tickFormatter = (t) => t;
+// export let every = 1;
 </script>
 
-<g in:fade={fadeValues} class=bottom-axis>
-  {#each ticks as tick, i (tick)}
+<SimpleAxis 
+  {...$$props}
+  side='bottom'
+  mainScaleName='xScale'
+/>
+
+<!-- <g in:fade={fadeValues} class=bottom-axis>
+  {#each _ticks as tick, i (tick)}
     {#if i % every === 0}
       <line
         x1={xScale(tick)}
@@ -34,4 +53,4 @@ export let every = 1;
         x={xScale(tick)}>{tickFormatter(tick)}</text>
       {/if}
   {/each}
-</g>
+</g> -->

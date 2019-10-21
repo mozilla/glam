@@ -13,11 +13,6 @@ const gcmsByBuild = GCMS_BY_BUILD.response;
 
 let gcmsVersion01 = makeDataset(gcmsByVersion);
 
-function sortByBuildID(a, b) {
-  if (a.metadata.build_id < b.metadata.build_id) return -1;
-  if (a.metadata.build_id >= b.metadata.build_id) return 1;
-  return 0;
-}
 
 function sortByLabel(a, b) {
   if (a.label < b.label) return -1;

@@ -321,13 +321,21 @@ header h1 {
     font-family: var(--brand-font);
     padding:0;
     margin:0;
-    margin-left: var(--space-2x);
     font-size:1.5em;
     color: var(--cool-gray-100);
     transform: translateY(.05em);
+    display: grid;
+    align-items: center;
+    justify-content: start;
+    font-weight: normal;
+    grid-column-gap: var(--space-base);
+    padding-left: var(--space-2x);
+    grid-auto-flow: column;
 }
 
-header h1 span {
+
+
+header h1 div span {
     opacity: .8;
     margin:0;
     padding:0;
