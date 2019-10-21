@@ -2,32 +2,40 @@
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 
-const defaults = getContext('defaults');
-const margins = getContext('margins');
+import SimpleAxis from './SimpleAxis.svelte';
 
-export let fadeValues = defaults.fadeParams;
+// const defaults = getContext('defaults');
+// const margins = getContext('margins');
 
-export let height = getContext('bodyHeight');
-export let bottomPlot = getContext('bottomPlot');
-export let fontSize = defaults.axisTickFontSize;
-export let xScale = getContext('xScale');
-export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
+// export let fadeValues = defaults.fadeParams;
 
-let _ticks;
-if (Array.isArray(ticks)) {
-  _ticks = ticks;
-} else if (typeof ticks === 'function') {
-  // if you pass in a function, the function operates
-  // on the xScale accordingly and returns whatever it needs
-  // to be an array
-  _ticks = ticks(xScale);
-}
+// export let height = getContext('bodyHeight');
+// export let bottomPlot = getContext('bottomPlot');
+// export let fontSize = defaults.axisTickFontSize;
+// export let xScale = getContext('xScale');
+// export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
 
-export let tickFormatter = (t) => t;
-export let every = 1;
+// let _ticks;
+// if (Array.isArray(ticks)) {
+//   _ticks = ticks;
+// } else if (typeof ticks === 'function') {
+//   // if you pass in a function, the function operates
+//   // on the xScale accordingly and returns whatever it needs
+//   // to be an array
+//   _ticks = ticks(xScale);
+// }
+
+// export let tickFormatter = (t) => t;
+// export let every = 1;
 </script>
 
-<g in:fade={fadeValues} class=bottom-axis>
+<SimpleAxis 
+  {...$$props}
+  side='bottom'
+  mainScaleName='xScale'
+/>
+
+<!-- <g in:fade={fadeValues} class=bottom-axis>
   {#each _ticks as tick, i (tick)}
     {#if i % every === 0}
       <line
@@ -45,4 +53,4 @@ export let every = 1;
         x={xScale(tick)}>{tickFormatter(tick)}</text>
       {/if}
   {/each}
-</g>
+</g> -->

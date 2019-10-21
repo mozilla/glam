@@ -186,7 +186,7 @@ let showHeatmap = false;
     <Heatmap data={telemetryHistogramToHeatmap(data)} scaleType='log'
     heatRange={[0.1, 0.7]} />
   {/if}
-  <LeftAxis every=8 />
+  <LeftAxis tickCount={4} />
   <!-- {#if dataGraphicMounted} -->
   <!-- <g>
     {#each firstOfMonth(xScale) as tick, i}

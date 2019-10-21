@@ -36,6 +36,8 @@ import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graph
   >
     <LeftAxis />
     <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
+    <!-- <TopAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
+    <RightAxis /> -->
     {#each extractPercentiles([50], dataset) as percentile, i}
       <Line
       curve="curveStep"
