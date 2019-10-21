@@ -15,20 +15,32 @@ const aggs = Object
 
 // //////////////////////////////////////////////////////////////////////////////
 
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
-import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
+// import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
+// import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
+// import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
+// import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
+// import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
+
+// let domain = aggs[0][1].map((d) => d.label);
+// function setDomain(str) {
+//   if (str === 'WEEK') domain = aggs[0][1].slice(aggs[0][1].length - 7).map((d) => d.label);
+//   if (str === 'MONTH') domain = aggs[0][1].slice(aggs[0][1].length - 30).map((d) => d.label);
+//   if (str === 'ALL_TIME') domain = aggs[0][1].map((d) => d.label);
+//   console.log(domain);
+}
 </script>
 
 <div class=story>
+
+<button on:click={() => { setDomain('WEEK'); }}>last week</button>
+<button on:click={() => { setDomain('MONTH'); }}>last month</button>
+<button on:click={() => { setDomain('ALL_TIME'); }}>all time</button>
 
 {#each aggs as [aggType, dataset], i (aggType)}
   <h4>{aggType}</h4>
   <DataGraphic
     data={dataset}
-    xDomain={dataset.map((d) => d.label)}
+    xDomain={domain}
     yDomain={[0, 1000]}
     yType="numeric"
     width=600

@@ -101,9 +101,6 @@ td input {
       {/each}
     </tr>
   {/each}
-  <!-- <div><input type=checkbox bind:checked={right}>Right Axis</div>
-  <div><input type=checkbox bind:checked={top}>Top Axis</div>
-  <div><input type=checkbox bind:checked={bottom}>Bottom Axis</div> -->
   </tbody>
 </table>
 
@@ -121,14 +118,14 @@ height=250
       showLabels={sides.left.labels}
       showTicks={sides.left.ticks}
       showBorder={sides.left.border}
-      style={sides.left.long ? 'long' : 'short'} />
+      lineStyle={sides.left.long ? 'long' : 'short'} />
   {/if}
   {#if sides.right.all}
     <RightAxis
       showLabels={sides.right.labels}
       showTicks={sides.right.ticks}
       showBorder={sides.right.border}
-      style={sides.right.long ? 'long' : 'short'}
+      lineStyle={sides.right.long ? 'long' : 'short'}
     />
   {/if}
   {#if sides.bottom.all}
@@ -138,7 +135,7 @@ height=250
       showLabels={sides.bottom.labels}
       showTicks={sides.bottom.ticks}
       showBorder={sides.bottom.border}
-      style={sides.bottom.long ? 'long' : 'short'}
+      lineStyle={sides.bottom.long ? 'long' : 'short'}
     />
   {/if}
   {#if sides.top.all}

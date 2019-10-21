@@ -77,23 +77,8 @@ let secondaryDim = (side === 'left' || side === 'right') ? 'y' : 'x';
 // for left / right, we need additional buffer. for top / bottom, we need to move down tickFontSize.
 let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 
-let tickParams = (t) => {
-  const out = {};
-  out[`${mainDim}1`] = $bodyDimension + tickDirection * margins.buffer;
-  out[`${mainDim}2`] = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
-  out[`${secondaryDim}1`] = mainScale(t);
-  out[`${secondaryDim}2`] = mainScale(t);
-  return out;
-};
-
-let borderParams = () => {
-  const out = {};
-  out[`${secondaryDim}1`] = mainScale.range()[0]; // eslint-disable-line
-  out[`${secondaryDim}2`] = mainScale.range()[1]; // eslint-disable-line
-  out[`${mainDim}1`] = $bodyDimension;
-  out[`${mainDim}2`] = $bodyDimension;
-  return out;
-};
+let tickEnd;
+$: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
 
 let textParams = (t) => {
   const out = {};
@@ -112,20 +97,34 @@ let textParams = (t) => {
       {#if showTicks}
         <line
           class=tick
-          {...tickParams(tick)}
+          {...{
+            [`${mainDim}1`]: $bodyDimension + tickDirection * margins.buffer,
+            [`${mainDim}2`]: tickEnd,
+            [`${secondaryDim}1`]: mainScale(tick),
+            [`${secondaryDim}2`]: mainScale(tick),
+          }}
           stroke='var(--line-gray-01)'
           stroke-width=1
         />
       {/if}
       {#if showBorder}
         <line 
-          {...borderParams()}           
+          {...{
+            [`${secondaryDim}1`]: mainScale.range()[0],
+            [`${secondaryDim}2`]: mainScale.range()[1],
+            [`${mainDim}1`]: $bodyDimension,
+            [`${mainDim}2`]: $bodyDimension,
+          }}           
           stroke='var(--line-gray-01)'
           stroke-width=1 />
       {/if}
       {#if showLabels}
         <text 
-          {...textParams(tick)}
+          {...{
+            [`${mainDim}`]: $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector,
+            [`${secondaryDim}`]: mainScale(tick),
+            dy: secondaryDim === 'y' ? '.35em' : undefined,
+          }}
           text-anchor={textAnchor}
           font-size={tickFontSize}
         >{tickFormatter(tick)}</text>
