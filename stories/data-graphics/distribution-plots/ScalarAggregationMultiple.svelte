@@ -12,15 +12,22 @@ import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte'
 import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
 import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
 
-import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
+import {
+  buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
+} from '../../../src/components/data-graphics/utils/build-id-utils';
 import { extractPercentiles } from '../../../src/components/data-graphics/utils/percentiles';
 
 let domain = writable(data.map((d) => d.label));
 
 function setDomain(str) {
-  if (str === 'WEEK') domain.set(data.slice(data.length - 7).map((d) => d.label));
-  if (str === 'MONTH') domain.set(data.slice(data.length - 30).map((d) => d.label));
-  if (str === 'ALL_TIME') domain.set(data.map((d) => d.label));
+  const start = buildIDToDate(data[data.length - 1].label);
+  let filtered = data;
+  let daysAgo = str === 'WEEK' ? 7 : 30;
+  if (str !== 'ALL_TIME') {
+    start.setDate(start.getDate() - daysAgo);
+    filtered = data.filter((d) => buildIDToDate(d.label) >= start);
+  }
+  domain.set(filtered.map((d) => d.label));
 }
 
 $: setDomain(resolution);
@@ -28,6 +35,20 @@ let percentileData = [];
 
 $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
   .map((ps, i) => [ps, percentiles[i]]);
+
+let tickFormatter = buildIDToMonth;
+let ticks = firstOfMonth;
+
+$: if (resolution === 'ALL_TIME') {
+  tickFormatter = buildIDToMonth;
+  ticks = firstOfMonth;
+} else if (resolution === 'MONTH') {
+  tickFormatter = buildIDToMonth;
+  ticks = mondays;
+} else {
+  tickFormatter = buildIDToMonth;
+  ticks = getFirstBuildOfDays;
+}
 
 </script>
 
@@ -42,7 +63,7 @@ $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.i
     height=150
   >
     <LeftAxis />
-    <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
+    <BottomAxis ticks={ticks} tickFormatter={tickFormatter} />
 
     <GraphicBody>
       {#each percentileData as
