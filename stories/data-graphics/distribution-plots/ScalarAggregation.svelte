@@ -46,6 +46,8 @@ function togglePercentile(p) {
   else {
     percentiles = [...percentiles, p];
   }
+  percentiles.sort();
+  percentiles.reverse();
 }
 
 </script>

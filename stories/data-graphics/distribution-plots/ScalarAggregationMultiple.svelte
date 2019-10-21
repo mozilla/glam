@@ -1,3 +1,7 @@
+<script context=module>
+const largestPercentile = writable(0);
+</script>
+
 <script>
 import { writable, derived } from 'svelte/store';
 
@@ -35,6 +39,11 @@ let percentileData = [];
 
 $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
   .map((ps, i) => [ps, percentiles[i]]);
+
+$: $largestPercentile = Math.max(...data.map((d) => d.percentiles.find((di) => di.bin === 50).value), $largestPercentile);
+
+let largestPercentileValue = 0;
+largestPercentile.subscribe((lp) => { largestPercentileValue = lp; });
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
@@ -89,16 +98,34 @@ let latest = data[data.length - 1];
 }
 
 .summary {
-  outline: 1px solid black;
+  margin-top: 20px;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-column-gap: var(--space-2x);
 }
 
-.percentile {
+.summary-percentiles {
   display: grid;
-  grid-template-columns: max-content max-content;
+  grid-template-columns: max-content auto;
   grid-column-gap: var(--space-base);
-  justify-content: start;
+  font-size: var(--text-01);
+  align-content: start;
+}
+
+.summary-percentile--full {
+  grid-column: 1 / 3;
+}
+
+.summary-percentile--bin {
+  text-align: right;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.summary-percentile--value {
+  justify-self: stretch;
+  text-align: right;
+  width: 100%;
 }
 </style>
 
@@ -113,13 +140,13 @@ let latest = data[data.length - 1];
     key={key}
     data={data}
     xDomain={$domain}
-    yDomain={[0, 1000]}
+    yDomain={[0, largestPercentileValue]}
     yType="numeric"
-    width=600
+    width=550
     height=150
     bind:dataGraphicMounted={dataGraphicMounted}
   >
-    <LeftAxis />
+    <LeftAxis showBorder=true />
     <BottomAxis ticks={ticks} tickFormatter={tickFormatter} />
 
     <GraphicBody>
@@ -142,6 +169,7 @@ let latest = data[data.length - 1];
       x={xScale(rollover.x)} 
       y={topPlot - margins.buffer}
       text-anchor='middle'
+      font-family="var(--main-mono-font)"
       font-size='12'>
       <tspan fill="var(--cool-gray-500)" font-weight=bold>
         {rollover.datum.label.slice(0, 4)}-{rollover.datum.label.slice(4,
@@ -155,13 +183,43 @@ let latest = data[data.length - 1];
 
 
   <div class=summary style="padding-top:{margins ? margins.top : 0}">
-    {#if rollover.datum && xScale}
-      <div class=percentile>
+
+    {#each [rollover.datum, latest] as focus, i}
+      <div class=summary-percentiles>
+        {#if focus}
+          <div class='summary-percentile--full'>
+
+              <span style="text-align: right;font-family: var(--main-mono-font); color: var(--cool-gray-500); font-weight: bold" >
+                  {focus.label.slice(0, 4)}-{focus.label.slice(4,
+                  6)}-{focus.label.slice(6, 8)}{' '}</span> 
+                <span> {focus.label.slice(8, 10)}:</span>
+                <span>{focus.label.slice(10, 12)}:</span>
+                <span>{focus.label.slice(12, 14)}</span>
+          </div>
+          <div class=summary-percentile--bin>
+              # profiles
+            </div>
+            <div class=summary-percentile--value>
+              {focus.audienceSize}
+            </div>
+          {#each percentiles as percentile, i}
+            <div class=summary-percentile--bin>
+                {percentile}th %
+              </div>
+              <div class=summary-percentile--value>
+                {focus.percentiles.find((p) => p.bin === percentile).value}
+              </div>
+          {/each}
+        {/if}
+      </div>
+    {/each}
+    <!-- {#if rollover.datum && xScale}
+      <div class=summary-percentiles>
       {#each percentiles as percentile, i}
-          <div>
+          <div class=summary-percentile--bin>
             {percentile}th %
           </div>
-          <div>
+          <div class=summary-percentile--value>
             {rollover.datum.percentiles.find((p) => p.bin === percentile).value}
           </div>
       {/each}
@@ -169,15 +227,15 @@ let latest = data[data.length - 1];
     {:else}
       <div class=percentile></div>
     {/if}
-      <div class=percentile>
+      <div class=summary-percentiles>
         {#each percentiles as percentile, i}
-            <div>
+            <div class=summary-percentile--bin>
               {percentile}th %
             </div>
-            <div>
+            <div class=summary-percentile--value>
               {latest.percentiles.find((p) => p.bin === percentile).value}
             </div>
         {/each}
-        </div>
+        </div> -->
   </div>
 </div>

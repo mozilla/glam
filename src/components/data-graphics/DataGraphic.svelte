@@ -18,8 +18,8 @@ export let yType = 'scalePoint';
 
 export let margins = {
   left: 50,
-  right: 50,
-  top: 50,
+  right: 16,
+  top: 20,
   bottom: 20,
   laneGap: 30,
   buffer: 5,
