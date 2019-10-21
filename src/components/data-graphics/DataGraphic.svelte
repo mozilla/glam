@@ -5,7 +5,7 @@ import { scalePoint, scaleLinear } from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
-
+export let key;
 export let xDomain;
 export let yDomain;
 export let xType = 'scalePoint';
@@ -35,6 +35,8 @@ const DEFAULTS = {
 setContext('defaults', DEFAULTS);
 setContext('margins', margins);
 
+setContext('key', key);
+
 export let dataGraphic = writable({});
 
 export let width = getContext('width') || 800;
@@ -48,7 +50,8 @@ export let graphicHeight = writable(height);
 $: $graphicHeight = height;
 
 let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
-export let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
+let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
+
 
 // set the locations of the plot bounds
 export let leftPlot = derived(graphicWidth, () => margins.left);
@@ -174,8 +177,17 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
   >
+  <clipPath id='graphic-body-{key}'>
+      <rect
+        x={$leftPlot}
+        y={$topPlot}
+        width={$bodyWidth}
+        height={$bodyHeight}
+      />
+    </clipPath>
     {#if dataGraphicMounted}
       <slot></slot>
     {/if}
+    <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
   </svg>
 </div>

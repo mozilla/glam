@@ -22,6 +22,7 @@ export const makeDataset = (probeData, key = 'version') => probeData.map((probe)
   label: probe.metadata[key],
   histogram: responseHistogramToGraphicFormat(probe.data[0].histogram),
   percentiles: responseHistogramToGraphicFormat(probe.data[0].percentiles),
+  audienceSize: probe.data[0].total_users,
 }));
 
 
