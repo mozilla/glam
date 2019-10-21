@@ -49,8 +49,8 @@ $: $graphicWidth = width;
 export let graphicHeight = writable(height);
 $: $graphicHeight = height;
 
-let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
-let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
+export let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
+export let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
 
 
 // set the locations of the plot bounds
@@ -126,10 +126,16 @@ function createMouseStore(parentSVG) {
         const xCandidates = xScale.domain()
           .filter((d) => (xScale(d) - step / 2) < actualX && xScale(d) < $rightPlot);
         x = xCandidates[xCandidates.length - 1];
+      } else {
+        x = xScale.invert(actualX);
       }
       if (yScale.type === 'scalePoint') {
         const yCandidates = yScale.domain().filter((d) => yScale(d) < actualY);
         [y] = yCandidates;
+      } else {
+        // here, we need to inform a y for scaleLinear.
+        // but this shoudl be easy. just reverse the value and return it as y.
+        y = yScale.invert(actualY);
       }
       set({
         x, y, px: actualX, py: actualY,

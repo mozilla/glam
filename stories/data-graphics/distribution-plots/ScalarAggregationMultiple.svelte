@@ -1,5 +1,5 @@
 <script>
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
 export let data;
 export let key;
@@ -50,10 +50,66 @@ $: if (resolution === 'ALL_TIME') {
   ticks = getFirstBuildOfDays;
 }
 
+let dgRollover;
+let rollover = {};
+function initiateRollover(rolloverStore) {
+  if (!rolloverStore) return undefined;
+  derived(rolloverStore, ({ x, y }) => {
+    // we need the whole data point?
+    // use only x to fetch the data point.
+    const datum = data.find((d) => d.label === x);
+    return { x, y, datum };
+  }).subscribe((st) => {
+    rollover = st;
+  });
+}
+
+let margins;
+let dataGraphicMounted = false;
+let xScale;
+let T;
+let H;
+let topPlot;
+let bodyHeight;
+
+$: if (dataGraphicMounted) {
+  initiateRollover(dgRollover);
+  T.subscribe((t) => { topPlot = t; });
+  H.subscribe((h) => { bodyHeight = h; });
+}
+
+let latest = data[data.length - 1];
+
 </script>
+
+<style>
+.graphic-and-summary {
+  display: grid;
+  grid-template-columns: max-content auto;
+}
+
+.summary {
+  outline: 1px solid black;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.percentile {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-column-gap: var(--space-base);
+  justify-content: start;
+}
+</style>
+
 
 <div class=graphic-and-summary>
   <DataGraphic
+    bind:margins={margins}
+    bind:rollover={dgRollover}
+    bind:xScale={xScale}
+    bind:bodyHeight={H}
+    bind:topPlot={T}
     key={key}
     data={data}
     xDomain={$domain}
@@ -61,6 +117,7 @@ $: if (resolution === 'ALL_TIME') {
     yType="numeric"
     width=600
     height=150
+    bind:dataGraphicMounted={dataGraphicMounted}
   >
     <LeftAxis />
     <BottomAxis ticks={ticks} tickFormatter={tickFormatter} />
@@ -78,5 +135,49 @@ $: if (resolution === 'ALL_TIME') {
         {/each}
     </GraphicBody>
 
+    {#if rollover.x && xScale && topPlot && bodyHeight}
+      <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+     fill="var(--cool-gray-700)" opacity=.2 />
+     <text 
+      x={xScale(rollover.x)} 
+      y={topPlot - margins.buffer}
+      text-anchor='middle'
+      font-size='12'>
+      <tspan fill="var(--cool-gray-500)" font-weight=bold>
+        {rollover.datum.label.slice(0, 4)}-{rollover.datum.label.slice(4,
+        6)}-{rollover.datum.label.slice(6, 8)}{' '}</tspan> 
+      <tspan> {rollover.datum.label.slice(8, 10)}:</tspan>
+      <tspan>{rollover.datum.label.slice(10, 12)}:</tspan>
+      <tspan>{rollover.datum.label.slice(12, 14)}</tspan>
+    </text>
+    {/if}
   </DataGraphic>
+
+
+  <div class=summary style="padding-top:{margins ? margins.top : 0}">
+    {#if rollover.datum && xScale}
+      <div class=percentile>
+      {#each percentiles as percentile, i}
+          <div>
+            {percentile}th %
+          </div>
+          <div>
+            {rollover.datum.percentiles.find((p) => p.bin === percentile).value}
+          </div>
+      {/each}
+      </div>
+    {:else}
+      <div class=percentile></div>
+    {/if}
+      <div class=percentile>
+        {#each percentiles as percentile, i}
+            <div>
+              {percentile}th %
+            </div>
+            <div>
+              {latest.percentiles.find((p) => p.bin === percentile).value}
+            </div>
+        {/each}
+        </div>
+  </div>
 </div>
