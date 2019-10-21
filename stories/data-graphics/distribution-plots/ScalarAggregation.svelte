@@ -1,11 +1,9 @@
 <script>
-import { writable } from 'svelte/store';
 
 import { zipByAggregationType, makeDataset } from './shared';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;
-import { extractPercentiles } from '../../../src/components/data-graphics/utils/percentiles';
 
 const aggs = Object
   .entries(zipByAggregationType(activeTicksBuild))
@@ -26,24 +24,13 @@ const aggs = Object
 
 // //////////////////////////////////////////////////////////////////////////////
 
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
+import ScalarAggregationMultiple from './ScalarAggregationMultiple.svelte';
 import Button from '../../../src/components/Button.svelte';
 
-import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
 
-let D = 'WEEK';
-let domain = writable(aggs[0][1].map((d) => d.label));
+let D = 'ALL_TIME';
 
-function setDomain(str) {
-  D = str;
-  if (str === 'WEEK') domain.set(aggs[0][1].slice(aggs[0][1].length - 7).map((d) => d.label));
-  if (str === 'MONTH') domain.set(aggs[0][1].slice(aggs[0][1].length - 30).map((d) => d.label));
-  if (str === 'ALL_TIME') domain.set(aggs[0][1].map((d) => d.label));
-}
+function setDomain(str) { D = str; }
 
 let readableAggs = {
   avg: 'Average',
@@ -51,6 +38,15 @@ let readableAggs = {
   max: 'Largest Value (per client)',
   sum: 'Sum (per client)',
 };
+
+let percentiles = [50];
+
+function togglePercentile(p) {
+  if (percentiles.includes(p)) percentiles = [...percentiles.filter((pi) => pi !== p)];
+  else {
+    percentiles = [...percentiles, p];
+  }
+}
 
 </script>
 
@@ -72,44 +68,25 @@ let readableAggs = {
 <div class=story>
 
 <div class=time-horizon>
-  <!-- FIXME: this don't work. -->
   <Button compact level=medium on:click={() => { setDomain('WEEK'); }}>last week</Button>
   <Button compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
   <Button compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all time</Button>
 </div>
-{#if $domain}
+
+<div class=time-horizon>
+  {#each [5, 25, 50, 75, 95] as p, i (p)}
+    <Button compact level=low on:click={() => { togglePercentile(p); }}>{p}%
+    {percentiles.includes(p) ? 'on' : 'off'}</Button>
+  {/each}
+</div>
+
 {#each aggs as [aggType, dataset], i (aggType + D)}
   <h4>{readableAggs[aggType]}</h4>
-
-<div class=graphic-and-summary>
-  <DataGraphic
-    key={aggType + D}
+  <ScalarAggregationMultiple
     data={dataset}
-    xDomain={$domain}
-    yDomain={[0, 1000]}
-    yType="numeric"
-    width=600
-    height=150
-  >
-      <!-- <Heatmap data={telemetryHistogramToHeatmap(dataset)} scaleType='log'
-      heatRange={[0.1, 0.7]} /> -->
-    <LeftAxis />
-    <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
-      <GraphicBody>
-      {#each extractPercentiles([50], dataset.filter((d) => $domain.includes(d.label))) as
-      percentile, i (percentile)}
-        <Line
-        curve="curveStep"
-        lineDrawAnimation={{ duration: 400, delay: ((i + 1) % 2 === 0) * 400 }} 
-        xAccessor="label"
-        yAccessor="originalPercentileValue"
-        color={i === 2 ? 'var(--digital-blue-500)' : 'var(--digital-blue-400)'}
-        data={percentile} />
-      {/each}
-    </GraphicBody>
-
-  </DataGraphic>
-</div>
+    key={aggType + D}
+    resolution={D}
+    percentiles={percentiles}
+  />
 {/each}
-{/if}
 </div>

@@ -1,6 +1,6 @@
 <script>
 import { getContext } from 'svelte';
-import { draw } from 'svelte/transition';
+import { draw, fade } from 'svelte/transition';
 import * as SHAPE from 'd3-shape';
 
 
@@ -28,6 +28,7 @@ const lineGenerator = SHAPE.line()
     stroke={color} 
     stroke-width={strokeWidth}
     fill=none 
-    in:draw={lineDrawAnimation} 
+    in:draw={lineDrawAnimation}
+    out:fade={{ duration: lineDrawAnimation.duration / 8 }}
     d={lineGenerator(data)} />
 </g>
