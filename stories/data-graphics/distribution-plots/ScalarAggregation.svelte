@@ -1,4 +1,6 @@
 <script>
+import { writable } from 'svelte/store';
+
 import { zipByAggregationType, makeDataset } from './shared';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
@@ -32,11 +34,14 @@ import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
 import Button from '../../../src/components/Button.svelte';
 import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
 
-let domain = aggs[0][1].map((d) => d.label);
+let D = 'WEEK';
+let domain = writable(aggs[0][1].map((d) => d.label));
+
 function setDomain(str) {
-  if (str === 'WEEK') domain = aggs[0][1].slice(aggs[0][1].length - 7).map((d) => d.label);
-  if (str === 'MONTH') domain = aggs[0][1].slice(aggs[0][1].length - 30).map((d) => d.label);
-  if (str === 'ALL_TIME') domain = aggs[0][1].map((d) => d.label);
+  D = str;
+  if (str === 'WEEK') domain.set(aggs[0][1].slice(aggs[0][1].length - 7).map((d) => d.label));
+  if (str === 'MONTH') domain.set(aggs[0][1].slice(aggs[0][1].length - 30).map((d) => d.label));
+  if (str === 'ALL_TIME') domain.set(aggs[0][1].map((d) => d.label));
 }
 
 let readableAggs = {
@@ -69,12 +74,13 @@ let readableAggs = {
   <Button compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
   <Button compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all time</Button>
 </div>
-{#each aggs as [aggType, dataset], i (aggType)}
+{#if $domain}
+{#each aggs as [aggType, dataset], i (aggType + D)}
   <h4>{readableAggs[aggType]}</h4>
   <DataGraphic
-    key={aggType}
-    data={dataset.slice(dataset.length - 10)}
-    xDomain={dataset.slice(dataset.length - 10).map((d) => d.label)}
+    key={aggType + D}
+    data={dataset}
+    xDomain={$domain}
     yDomain={[0, 1000]}
     yType="numeric"
     width=600
@@ -83,7 +89,7 @@ let readableAggs = {
     <LeftAxis />
     <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
       <GraphicBody>
-      {#each extractPercentiles([50], dataset.slice(dataset.length - 10)) as
+      {#each extractPercentiles([50], dataset.filter((d) => $domain.includes(d.label))) as
       percentile, i (percentile)}
         <Line
         curve="curveStep"
@@ -97,5 +103,5 @@ let readableAggs = {
 
   </DataGraphic>
 {/each}
-
+{/if}
 </div>
