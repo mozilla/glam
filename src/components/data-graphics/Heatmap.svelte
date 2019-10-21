@@ -29,12 +29,20 @@ const scale = scaleFunction()
 </script>
 <g transition:fade={{ duration: 200, easing: easeOut }}>
   {#each data as datum, i}
-    <rect 
+    <!-- <rect 
       fill={interpolateRdPu(scale(datum[heatAccessor]))}
       x={xScale(datum[xAccessor]) - xScale.step() / 2}
       y={yScale(datum[yAccessor])}
       width={xScale.step()}
       height={yScale.step()}
-    />
+    /> -->
+
+    <rect 
+    fill={interpolateRdPu(scale(datum[heatAccessor]))}
+    x={xScale(datum[xAccessor])}
+    y={yScale(datum[yAccessor])}
+    width={5}
+    height={5}
+  />
   {/each}
 </g>

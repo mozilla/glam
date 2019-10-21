@@ -32,6 +32,7 @@ import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte'
 import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
 import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
 import Button from '../../../src/components/Button.svelte';
+
 import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
 
 let D = 'WEEK';
@@ -55,7 +56,9 @@ let readableAggs = {
 
 <style>
   h4 {
+    margin:0;
     margin-left: 50px;
+    margin-top:50px;
   }
 
   .time-horizon {
@@ -77,6 +80,8 @@ let readableAggs = {
 {#if $domain}
 {#each aggs as [aggType, dataset], i (aggType + D)}
   <h4>{readableAggs[aggType]}</h4>
+
+<div class=graphic-and-summary>
   <DataGraphic
     key={aggType + D}
     data={dataset}
@@ -86,6 +91,8 @@ let readableAggs = {
     width=600
     height=150
   >
+      <!-- <Heatmap data={telemetryHistogramToHeatmap(dataset)} scaleType='log'
+      heatRange={[0.1, 0.7]} /> -->
     <LeftAxis />
     <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
       <GraphicBody>
@@ -102,6 +109,7 @@ let readableAggs = {
     </GraphicBody>
 
   </DataGraphic>
+</div>
 {/each}
 {/if}
 </div>
