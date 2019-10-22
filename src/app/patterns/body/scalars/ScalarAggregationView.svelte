@@ -1,6 +1,6 @@
 <script>
 
-import { zipByAggregationType, makeDataset } from '../../../utils/probe-utils';
+import { zipByAggregationType, makeDataset, topKBuildsPerDay } from '../../../utils/probe-utils';
 
 export let data;
 
@@ -12,13 +12,15 @@ const aggs = Object
   ]).map(([aggType, dataset]) => {
     const newData = dataset.map((d) => {
       let { percentiles } = d;
-      if (d.audienceSize < 3) {
+      if (d.audienceSize < 10) {
         percentiles = percentiles.map((p) => ({ ...p, value: 0 }));
       }
       return { ...d, percentiles };
     });
-    return [aggType, newData];
+    return [aggType, topKBuildsPerDay(newData)];
   });
+
+let first = aggs[0][1];
 
 import ScalarAggregationSmallMultiple from './ScalarAggregationSmallMultiple.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';

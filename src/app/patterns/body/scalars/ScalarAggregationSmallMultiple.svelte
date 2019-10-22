@@ -1,7 +1,3 @@
-<script context=module>
-const largestPercentile = writable(0);
-</script>
-
 <script>
 import { writable, derived } from 'svelte/store';
 
@@ -42,10 +38,9 @@ let percentileData = [];
 $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
   .map((ps, i) => [ps, percentiles[i]]);
 
-$: $largestPercentile = Math.max(...data.map((d) => d.percentiles.find((di) => di.bin === 50).value), $largestPercentile);
 
-let largestPercentileValue = 0;
-largestPercentile.subscribe((lp) => { largestPercentileValue = lp; });
+let [upperDomain] = extractPercentiles([95], data.filter((d) => $domain.includes(d.label)));
+upperDomain = Math.max(...upperDomain.map((o) => o.originalPercentileValue));
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
@@ -106,11 +101,10 @@ let latest = data[data.length - 1];
   <DataGraphic
     data={data}
     xDomain={$domain}
-    yDomain={[0, largestPercentileValue]}
-    yType="numeric"
+    yDomain={[0, upperDomain]}
+    yType="log"
     width=400
     height=150
-    
     bind:dataGraphicMounted={dataGraphicMounted}
     bind:margins={margins}
     bind:rollover={dgRollover}

@@ -1,7 +1,7 @@
 <script>
 import { setContext, getContext, onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
-import { scalePoint, scaleLinear } from 'd3-scale';
+import { scalePoint, scaleLinear, scaleSymlog } from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
@@ -73,8 +73,15 @@ setContext('bottomPlot', bottomPlot);
 // const xScaleType = xType === 'scalePoint' ? scalePoint : scaleLinear;
 // const yScaleType = yType === 'scalePoint' ? scalePoint : scaleLinear;
 
+function getScaleFunction(type) {
+  if (type === 'scalePoint') return scalePoint;
+  if (type === 'numeric' || type === 'linear') return scaleLinear;
+  if (type === 'log') return scaleSymlog;
+  return scalePoint;
+}
+
 function createXPointScale(values) {
-  const scaleFunction = xType === 'scalePoint' ? scalePoint : scaleLinear;
+  const scaleFunction = getScaleFunction(xType);// xType === 'scalePoint' ? scalePoint : scaleLinear;
   const scale = scaleFunction()
     .domain([...values])
     .range([$leftPlot, $rightPlot])
@@ -84,7 +91,8 @@ function createXPointScale(values) {
 }
 
 function createYPointScale(values) {
-  const scaleFunction = yType === 'scalePoint' ? scalePoint : scaleLinear;
+  // const scaleFunction = yType === 'scalePoint' ? scalePoint : scaleLinear;
+  const scaleFunction = getScaleFunction(yType);
 
   const scale = scaleFunction().domain(values).range([$bottomPlot, $topPlot]);
   scale.type = yType;
