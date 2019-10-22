@@ -4,6 +4,7 @@ const largestPercentile = writable(0);
 
 <script>
 import { writable, derived } from 'svelte/store';
+import { slide } from 'svelte/transition';
 
 export let data;
 export let key;
@@ -15,6 +16,7 @@ import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelt
 import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
 import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
 import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
+import ComparisonSummary from '../../../src/components/data-graphics/ComparisonSummary.svelte';
 
 import {
   buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
@@ -96,37 +98,6 @@ let latest = data[data.length - 1];
   display: grid;
   grid-template-columns: max-content auto;
 }
-
-.summary {
-  margin-top: 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: var(--space-2x);
-}
-
-.summary-percentiles {
-  display: grid;
-  grid-template-columns: max-content auto;
-  grid-column-gap: var(--space-base);
-  font-size: var(--text-01);
-  align-content: start;
-}
-
-.summary-percentile--full {
-  grid-column: 1 / 3;
-}
-
-.summary-percentile--bin {
-  text-align: right;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.summary-percentile--value {
-  justify-self: stretch;
-  text-align: right;
-  width: 100%;
-}
 </style>
 
 
@@ -143,7 +114,7 @@ let latest = data[data.length - 1];
     yDomain={[0, largestPercentileValue]}
     yType="numeric"
     width=550
-    height=150
+    height=250
     bind:dataGraphicMounted={dataGraphicMounted}
   >
     <LeftAxis showBorder=true />
@@ -180,62 +151,8 @@ let latest = data[data.length - 1];
     </text>
     {/if}
   </DataGraphic>
-
-
-  <div class=summary style="padding-top:{margins ? margins.top : 0}">
-
-    {#each [rollover.datum, latest] as focus, i}
-      <div class=summary-percentiles>
-        {#if focus}
-          <div class='summary-percentile--full'>
-
-              <span style="text-align: right;font-family: var(--main-mono-font); color: var(--cool-gray-500); font-weight: bold" >
-                  {focus.label.slice(0, 4)}-{focus.label.slice(4,
-                  6)}-{focus.label.slice(6, 8)}{' '}</span> 
-                <span> {focus.label.slice(8, 10)}:</span>
-                <span>{focus.label.slice(10, 12)}:</span>
-                <span>{focus.label.slice(12, 14)}</span>
-          </div>
-          <div class=summary-percentile--bin>
-              # profiles
-            </div>
-            <div class=summary-percentile--value>
-              {focus.audienceSize}
-            </div>
-          {#each percentiles as percentile, i}
-            <div class=summary-percentile--bin>
-                {percentile}th %
-              </div>
-              <div class=summary-percentile--value>
-                {focus.percentiles.find((p) => p.bin === percentile).value}
-              </div>
-          {/each}
-        {/if}
-      </div>
-    {/each}
-    <!-- {#if rollover.datum && xScale}
-      <div class=summary-percentiles>
-      {#each percentiles as percentile, i}
-          <div class=summary-percentile--bin>
-            {percentile}th %
-          </div>
-          <div class=summary-percentile--value>
-            {rollover.datum.percentiles.find((p) => p.bin === percentile).value}
-          </div>
-      {/each}
-      </div>
-    {:else}
-      <div class=percentile></div>
-    {/if}
-      <div class=summary-percentiles>
-        {#each percentiles as percentile, i}
-            <div class=summary-percentile--bin>
-              {percentile}th %
-            </div>
-            <div class=summary-percentile--value>
-              {latest.percentiles.find((p) => p.bin === percentile).value}
-            </div>
-        {/each}
-        </div> -->
-  </div>
+  <ComparisonSummary 
+    left={rollover.datum} 
+    right={latest} 
+    percentiles={percentiles} />
 </div>
