@@ -15,6 +15,7 @@ import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelt
 import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
 import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
 import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
+import BuildIDRollover from '../../../src/components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../src/components/data-graphics/ComparisonSummary.svelte';
 
@@ -134,21 +135,12 @@ let latest = data[data.length - 1];
     </GraphicBody>
 
     {#if rollover.x && xScale && topPlot && bodyHeight}
+      <BuildIDRollover 
+        x={rollover.x}
+        label={rollover.datum.label}
+      />
       <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
      fill="var(--cool-gray-700)" opacity=.2 />
-     <text 
-      x={xScale(rollover.x)} 
-      y={topPlot - margins.buffer}
-      text-anchor='middle'
-      font-family="var(--main-mono-font)"
-      font-size='12'>
-      <tspan fill="var(--cool-gray-500)" font-weight=bold>
-        {rollover.datum.label.slice(0, 4)}-{rollover.datum.label.slice(4,
-        6)}-{rollover.datum.label.slice(6, 8)}{' '}</tspan> 
-      <tspan> {rollover.datum.label.slice(8, 10)}:</tspan>
-      <tspan>{rollover.datum.label.slice(10, 12)}:</tspan>
-      <tspan>{rollover.datum.label.slice(12, 14)}</tspan>
-    </text>
     {/if}
   </DataGraphic>
   <ComparisonSummary 

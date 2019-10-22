@@ -60,6 +60,8 @@ export let rightPlot = derived(graphicWidth, ($width) => $width - margins.right)
 export let topPlot = derived(graphicHeight, () => margins.top);
 export let bottomPlot = derived(graphicHeight, ($height) => $height - margins.bottom);
 
+setContext('graphicWidth', graphicWidth);
+setContext('graphicHeight', graphicHeight);
 setContext('bodyWidth', bodyWidth);
 setContext('bodyHeight', bodyHeight);
 
