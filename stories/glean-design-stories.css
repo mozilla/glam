@@ -41,3 +41,8 @@ body  {
   /* margin-bottom: var(--space-2x); */
   line-height: 1.5;
 }
+
+
+hr {
+  border: 1px solid var(--cool-gray-200);
+}
