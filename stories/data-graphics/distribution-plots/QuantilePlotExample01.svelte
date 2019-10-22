@@ -5,7 +5,7 @@ import QQPlot from '../../../src/components/data-graphics/QQPlot.svelte';
 import LinePlot from '../../../src/components/data-graphics/LinePlot.svelte';
 import GCMS_BY_VERSION from '../../../tests/data/gc_ms_version.json';
 import GCMS_BY_BUILD from '../../../tests/data/gc_ms_build_id.json';
-import { makeDataset } from './shared';
+import { makeDataset } from '../../../src/app/utils/probe-utils';
 
 const gcmsByVersion = GCMS_BY_VERSION.response;
 const gcmsByBuild = GCMS_BY_BUILD.response;
