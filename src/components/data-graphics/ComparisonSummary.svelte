@@ -5,16 +5,10 @@ export let left;
 export let right;
 export let percentiles;
 export let compareTo = 'left-right';
-console.log(left, right, percentiles);
+
 </script>
 
 <style>
-
-.summary {
-  /* display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: var(--space-base); */
-}
 
 table {
   font-size: var(--text-02);

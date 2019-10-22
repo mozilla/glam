@@ -25,6 +25,7 @@ const aggs = Object
 // //////////////////////////////////////////////////////////////////////////////
 
 import ScalarAggregationMultiple from './ScalarAggregationMultiple.svelte';
+import ButtonGroup from '../../../src/components/ButtonGroup.svelte';
 import Button from '../../../src/components/Button.svelte';
 
 
@@ -64,22 +65,27 @@ function togglePercentile(p) {
     grid-auto-flow: column;
     grid-column-gap: var(--space-base);
     width: max-content;
+    margin-bottom: var(--space-base);
   }
 </style>
 
 <div class=story>
 
 <div class=time-horizon>
-  <Button compact level=medium on:click={() => { setDomain('WEEK'); }}>last week</Button>
-  <Button compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
-  <Button compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all time</Button>
+  <ButtonGroup>
+    <Button toggled={D === 'WEEK'} compact level=medium on:click={() => { setDomain('WEEK'); }}>last week</Button>
+    <Button toggled={D === 'MONTH'} compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
+    <Button toggled={D === 'ALL_TIME'} compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all
+    time</Button>
+  </ButtonGroup>
 </div>
 
 <div class=time-horizon>
+  <ButtonGroup>
   {#each [5, 25, 50, 75, 95] as p, i (p)}
-    <Button compact level=low on:click={() => { togglePercentile(p); }}>{p}%
-    {percentiles.includes(p) ? 'on' : 'off'}</Button>
+    <Button toggled={percentiles.includes(p)} compact level=low on:click={() => { togglePercentile(p); }}>{p}%</Button>
   {/each}
+  </ButtonGroup>
 </div>
 
 {#each aggs as [aggType, dataset], i (aggType + D)}
