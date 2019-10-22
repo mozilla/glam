@@ -1,12 +1,13 @@
-import { scalePoint } from 'd3-scale';
 import { timeFormat, timeParse } from 'd3-time-format';
 
 const dtFormatter = timeFormat('%Y%m%d');
 const dtParser = timeParse('%Y%m%d');
 const parse = (build) => dtParser(build.slice(0, 8));
+
 const toBuildObj = (build) => ({ build, truncated: build.slice(0, 8), dt: parse(build) });
+
 export function buildIDToDate(buildID) {
-  return dtParser(buildID);
+  return parse(buildID);
 }
 
 export function dateToBuildID(scale, dt) {

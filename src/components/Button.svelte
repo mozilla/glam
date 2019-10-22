@@ -5,6 +5,8 @@ import { getContext } from 'svelte';
 export let level = 'high';
 export let compact = false;
 
+export let toggled = false;
+
 export let size = compact ? 'compact' : 'standard';
 export let dark = getContext('appDarkMode') || false;
 
@@ -44,7 +46,7 @@ button {
     box-shadow: var(--depth-small);
 }
 
-.button--high:active {
+.button--high:active, .button--high.toggled {
     box-shadow: none;
     background-color: var(--primary-color-dark);
 }
@@ -58,7 +60,10 @@ button {
     background-color: rgba(0,0,0,.1);
 }
 
-.button--medium:active, .button--low:active {
+.button--medium:active,
+.button--medium.toggled, 
+.button--low:active,
+.button--low.toggled {
     background-color: rgba(0,0,0,.2);
 }
 
@@ -78,7 +83,7 @@ button {
     box-shadow: var(--depth-small);
 }
 
-.dark.button--high:active {
+.dark.button--high:active, .dark.button--high.toggled {
     box-shadow: none;
     background-color: var(--primary-color-lightest);
     border-color: var(--primary-color-lightest);
@@ -94,12 +99,15 @@ button {
     background-color: var(--primary-color-dark);
 }
 
-.dark.button--medium:active, .dark.button--low:active {
+.dark.button--medium:active, 
+.dark.button--medium.toggled, 
+.dark.button--low:active,
+.dark.button--low.toggled {
     background-color: rgba(0,0,0,.2);
     color: var(--primary-color-lightest);
 }
 
-.dark.button--medium:active {
+.dark.button--medium:active, .dark.button--medium.toggled {
     border-color: var(--primary-color-lightest);
 }
 
@@ -137,6 +145,6 @@ button {
 
 </style>
 
-<button class="button--{level} button--{size} button-text--{size}" class:dark on:click>
+<button class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>
     <slot></slot>
 </button>

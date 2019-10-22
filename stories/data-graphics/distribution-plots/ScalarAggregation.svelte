@@ -1,9 +1,9 @@
 <script>
+
 import { zipByAggregationType, makeDataset } from './shared';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;
-import { extractPercentiles } from '../../../src/components/data-graphics/utils/percentiles';
 
 const aggs = Object
   .entries(zipByAggregationType(activeTicksBuild))
@@ -11,43 +11,90 @@ const aggs = Object
     aggType,
     makeDataset(payload, 'build_id'),
     payload,
-  ]);
+  ]).map(([aggType, dataset, payload]) => {
+    const newData = dataset.map((d) => {
+      let { percentiles } = d;
+      if (d.audienceSize < 3) {
+        percentiles = percentiles.map((p) => ({ ...p, value: 0 }));
+      }
+      return { ...d, percentiles };
+    });
+    return [aggType, newData, payload];
+  });
 
 // //////////////////////////////////////////////////////////////////////////////
 
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
-import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
+import ScalarAggregationMultiple from './ScalarAggregationMultiple.svelte';
+import ButtonGroup from '../../../src/components/ButtonGroup.svelte';
+import Button from '../../../src/components/Button.svelte';
+
+
+let D = 'ALL_TIME';
+
+function setDomain(str) { D = str; }
+
+let readableAggs = {
+  avg: 'Average',
+  min: 'Smallest Value (per client)',
+  max: 'Largest Value (per client)',
+  sum: 'Sum (per client)',
+};
+
+let percentiles = [50];
+
+function togglePercentile(p) {
+  if (percentiles.includes(p)) percentiles = [...percentiles.filter((pi) => pi !== p)];
+  else {
+    percentiles = [...percentiles, p];
+  }
+  percentiles.sort();
+  percentiles.reverse();
+}
+
 </script>
+
+<style>
+  h4 {
+    margin:0;
+    margin-left: 50px;
+    margin-top:50px;
+  }
+
+  .time-horizon {
+    display: grid;
+    grid-auto-flow: column;
+    grid-column-gap: var(--space-base);
+    width: max-content;
+    margin-bottom: var(--space-base);
+  }
+</style>
 
 <div class=story>
 
-{#each aggs as [aggType, dataset], i (aggType)}
-  <h4>{aggType}</h4>
-  <DataGraphic
-    data={dataset}
-    xDomain={dataset.map((d) => d.label)}
-    yDomain={[0, 1000]}
-    yType="numeric"
-    width=600
-    height=150
-  >
-    <LeftAxis />
-    <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
-    <!-- <TopAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth} />
-    <RightAxis /> -->
-    {#each extractPercentiles([50], dataset) as percentile, i}
-      <Line
-      curve="curveStep"
-      lineDrawAnimation={{ duration: 400, delay: ((i + 1) % 2 === 0) * 400 }} 
-      xAccessor="label"
-      yAccessor="originalPercentileValue"
-      color={i === 2 ? 'var(--digital-blue-500)' : 'var(--digital-blue-400)'}
-      data={percentile} />
-    {/each}
-  </DataGraphic>
-{/each}
+<div class=time-horizon>
+  <ButtonGroup>
+    <Button toggled={D === 'WEEK'} compact level=medium on:click={() => { setDomain('WEEK'); }}>last week</Button>
+    <Button toggled={D === 'MONTH'} compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
+    <Button toggled={D === 'ALL_TIME'} compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all
+    time</Button>
+  </ButtonGroup>
+</div>
 
+<div class=time-horizon>
+  <ButtonGroup>
+  {#each [5, 25, 50, 75, 95] as p, i (p)}
+    <Button toggled={percentiles.includes(p)} compact level=low on:click={() => { togglePercentile(p); }}>{p}%</Button>
+  {/each}
+  </ButtonGroup>
+</div>
+
+{#each aggs as [aggType, dataset], i (aggType + D)}
+  <h4>{readableAggs[aggType]}</h4>
+  <ScalarAggregationMultiple
+    data={dataset}
+    key={aggType + D}
+    resolution={D}
+    percentiles={percentiles}
+  />
+{/each}
 </div>

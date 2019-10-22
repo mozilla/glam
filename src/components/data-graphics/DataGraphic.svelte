@@ -5,7 +5,7 @@ import { scalePoint, scaleLinear } from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
-
+export let key;
 export let xDomain;
 export let yDomain;
 export let xType = 'scalePoint';
@@ -18,8 +18,8 @@ export let yType = 'scalePoint';
 
 export let margins = {
   left: 50,
-  right: 50,
-  top: 50,
+  right: 16,
+  top: 20,
   bottom: 20,
   laneGap: 30,
   buffer: 5,
@@ -35,6 +35,8 @@ const DEFAULTS = {
 setContext('defaults', DEFAULTS);
 setContext('margins', margins);
 
+setContext('key', key);
+
 export let dataGraphic = writable({});
 
 export let width = getContext('width') || 800;
@@ -47,8 +49,9 @@ $: $graphicWidth = width;
 export let graphicHeight = writable(height);
 $: $graphicHeight = height;
 
-let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
+export let bodyWidth = derived(graphicWidth, ($width) => $width - margins.left - margins.right);
 export let bodyHeight = derived(graphicHeight, ($height) => $height - margins.top - margins.bottom);
+
 
 // set the locations of the plot bounds
 export let leftPlot = derived(graphicWidth, () => margins.left);
@@ -57,6 +60,8 @@ export let rightPlot = derived(graphicWidth, ($width) => $width - margins.right)
 export let topPlot = derived(graphicHeight, () => margins.top);
 export let bottomPlot = derived(graphicHeight, ($height) => $height - margins.bottom);
 
+setContext('graphicWidth', graphicWidth);
+setContext('graphicHeight', graphicHeight);
 setContext('bodyWidth', bodyWidth);
 setContext('bodyHeight', bodyHeight);
 
@@ -123,10 +128,16 @@ function createMouseStore(parentSVG) {
         const xCandidates = xScale.domain()
           .filter((d) => (xScale(d) - step / 2) < actualX && xScale(d) < $rightPlot);
         x = xCandidates[xCandidates.length - 1];
+      } else {
+        x = xScale.invert(actualX);
       }
       if (yScale.type === 'scalePoint') {
         const yCandidates = yScale.domain().filter((d) => yScale(d) < actualY);
         [y] = yCandidates;
+      } else {
+        // here, we need to inform a y for scaleLinear.
+        // but this shoudl be easy. just reverse the value and return it as y.
+        y = yScale.invert(actualY);
       }
       set({
         x, y, px: actualX, py: actualY,
@@ -174,8 +185,17 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
   >
+  <clipPath id='graphic-body-{key}'>
+      <rect
+        x={$leftPlot}
+        y={$topPlot}
+        width={$bodyWidth}
+        height={$bodyHeight}
+      />
+    </clipPath>
     {#if dataGraphicMounted}
       <slot></slot>
     {/if}
+    <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
   </svg>
 </div>
