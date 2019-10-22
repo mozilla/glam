@@ -1,15 +1,19 @@
 <script>
+import { fade } from 'svelte/transition';
 import {
   store, dataset,
 } from '../store/store';
+
+import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationView.svelte';
 
 </script>
 
 <style>
 .graphic-body-container {
-    padding: var(--space-2x);
+    padding: var(--space-4x);
     overflow-y: auto;
     height: calc(100vh - var(--header-height) - var(--space-4x));
+    background-color: white;
 }
 
 .graphic-body__graphic-header {
@@ -25,6 +29,12 @@ import {
     width: 100%;
     word-break: break-all;
 }
+
+.TEMP {
+    background-color: white;
+    padding: var(--space-2x)
+}
+
 </style>
 
 <div class=graphic-body-container>
@@ -32,20 +42,22 @@ import {
     <div class=graphic-body__graphic-header>
     {#if $store.probe.name}
         <h2 class='heading--03'>{$store.probe.name}</h2>
-        <div class='label label--{$store.probe.probeType} label-text--01'>{$store.probe.probeType}</div>
     {:else}
         <h2 class='heading--04'>Telemetry Prototype</h2>
     {/if}
     </div>
 
-    <div>
+    <div class=TEMP>
         {#await $dataset}
             running query
             <!-- <Spinner /> -->
         {:then value}
-            <pre>
+            <div in:fade>
+                <ScalarAggregationView data={value.response} />
+            </div>
+            <!-- <pre>
                 {JSON.stringify(value, null, 2)}
-            </pre>
+            </pre> -->
         {:catch err}
             An error was caught: {err}
         {/await}

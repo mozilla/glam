@@ -139,8 +139,8 @@ let latest = data[data.length - 1];
       fill="var(--cool-gray-700)" opacity=.2 />
     {/if}
   </DataGraphic>
-  <ComparisonSummary 
+  <!-- <ComparisonSummary 
     left={rollover.datum} 
     right={latest} 
-    percentiles={percentiles} />
+    percentiles={percentiles} /> -->
 </div>

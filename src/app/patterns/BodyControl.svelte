@@ -16,7 +16,6 @@ function toggle(v) {
     }
     selected.sort();
     selected.reverse();
-    // console.log(selected);
   } else {
     selected = v;
   }

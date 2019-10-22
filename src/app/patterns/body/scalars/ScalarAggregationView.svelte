@@ -56,6 +56,19 @@ let readableAggs = {
   .body-content {
     margin-top: var(--space-4x);
   }
+
+  /* .data-graphics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    
+    grid-column-gap: var(--space-2x);
+  } */
+
+  /* @media (max-width: 1500px) {
+    .data-graphics {
+      grid-template-columns: auto;
+    }
+  } */
 </style>
 
 <div class=body-content>
@@ -67,13 +80,17 @@ let readableAggs = {
     <PercentileSelectionControl bind:percentiles={percentiles} />
   </div>
 
-  {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
-    <h4>{readableAggs[aggType]}</h4>
-    <ScalarAggregationSmallMultiple
-      data={dataset}
-      key={aggType + timeHorizon}
-      resolution={timeHorizon}
-      percentiles={percentiles}
-    />
-  {/each}
+  <div class=data-graphics>
+    {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
+      <div>
+        <h4>{readableAggs[aggType]}</h4>
+        <ScalarAggregationSmallMultiple
+          data={dataset}
+          key={aggType + timeHorizon}
+          resolution={timeHorizon}
+          percentiles={percentiles}
+        />
+    </div>
+    {/each}
+  </div>
 </div>

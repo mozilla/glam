@@ -107,16 +107,6 @@ let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 let tickEnd;
 $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
 
-let textParams = (t) => {
-  const out = {};
-  // reasoning:       placement      + tick dir      * length * extra + space correction
-  out[`${mainDim}`] = $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector;
-  out[`${secondaryDim}`] = mainScale(t);
-  // correct for vertical text spacing
-  if (secondaryDim === 'y') out.dy = '.35em';
-  return out;
-};
-
 </script>
 
 <g in:fade={fadeValues} class="{side}-axis">
