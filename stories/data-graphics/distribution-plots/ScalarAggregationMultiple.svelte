@@ -98,6 +98,7 @@ let latest = data[data.length - 1];
 .graphic-and-summary {
   display: grid;
   grid-template-columns: max-content auto;
+  grid-column-gap: var(--space-2x);
 }
 </style>
 
@@ -114,8 +115,8 @@ let latest = data[data.length - 1];
     xDomain={$domain}
     yDomain={[0, largestPercentileValue]}
     yType="numeric"
-    width=550
-    height=250
+    width=400
+    height=150
     bind:dataGraphicMounted={dataGraphicMounted}
   >
     <LeftAxis showBorder=true />

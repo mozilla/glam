@@ -31,7 +31,7 @@ export let percentiles;
   justify-self: stretch;
   text-align: right;
   width: 100%;
-  height: calc(var(--text-01) * 2  * 1.5);
+  /* height: calc(var(--text-01) * 2  * 1.5); */
 }
 </style>
 
@@ -62,9 +62,6 @@ export let percentiles;
             <div>
               {datum.percentiles.find((p) => p.bin === percentile).value}
             </div>
-            <div>
-                {datum.percentiles.find((p) => p.bin === percentile).value}
-              </div>
           </div>
       {/each}
     {/if}
