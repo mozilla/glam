@@ -25,13 +25,11 @@ const aggs = Object
 // //////////////////////////////////////////////////////////////////////////////
 
 import ScalarAggregationMultiple from './ScalarAggregationMultiple.svelte';
-import ButtonGroup from '../../../src/components/ButtonGroup.svelte';
-import Button from '../../../src/components/Button.svelte';
+import PercentileSelectionControl from '../../../src/app/patterns/PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../../../src/app/patterns/TimeHorizonControl.svelte';
 
-
-let D = 'ALL_TIME';
-
-function setDomain(str) { D = str; }
+let timeHorizon = 'ALL_TIME';
+let percentiles = [50];
 
 let readableAggs = {
   avg: 'Average',
@@ -39,17 +37,6 @@ let readableAggs = {
   max: 'Largest Value (per client)',
   sum: 'Sum (per client)',
 };
-
-let percentiles = [50];
-
-function togglePercentile(p) {
-  if (percentiles.includes(p)) percentiles = [...percentiles.filter((pi) => pi !== p)];
-  else {
-    percentiles = [...percentiles, p];
-  }
-  percentiles.sort();
-  percentiles.reverse();
-}
 
 </script>
 
@@ -79,28 +66,19 @@ function togglePercentile(p) {
 
   <div class=body-content>
     <div class=time-horizon>
-      <ButtonGroup>
-        <Button toggled={D === 'WEEK'} compact level=medium on:click={() => { setDomain('WEEK'); }}>last week</Button>
-        <Button toggled={D === 'MONTH'} compact level=medium on:click={() => { setDomain('MONTH'); }}>last month</Button>
-        <Button toggled={D === 'ALL_TIME'} compact level=medium on:click={() => { setDomain('ALL_TIME'); }}>all
-        time</Button>
-      </ButtonGroup>
+      <TimeHorizonControl bind:horizon={timeHorizon} />
     </div>
 
     <div class=time-horizon>
-      <ButtonGroup>
-      {#each [5, 25, 50, 75, 95] as p, i (p)}
-        <Button toggled={percentiles.includes(p)} compact level=low on:click={() => { togglePercentile(p); }}>{p}%</Button>
-      {/each}
-      </ButtonGroup>
+      <PercentileSelectionControl bind:percentiles={percentiles} />
     </div>
 
-    {#each aggs as [aggType, dataset], i (aggType + D)}
+    {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
       <h4>{readableAggs[aggType]}</h4>
       <ScalarAggregationMultiple
         data={dataset}
-        key={aggType + D}
-        resolution={D}
+        key={aggType + timeHorizon}
+        resolution={timeHorizon}
         percentiles={percentiles}
       />
     {/each}
