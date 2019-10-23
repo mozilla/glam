@@ -1,3 +1,4 @@
+# FRONTEND IMAGE
 FROM node:lts-slim AS frontend
 
 WORKDIR /app
@@ -6,8 +7,10 @@ COPY package.json /app/
 RUN npm install
 COPY . /app/
 RUN npm run build
+# END FRONTEND BUILDER IMAGE
 
-FROM python:3.7-slim
+# FINAL IMAGE
+FROM python:3.7-slim AS final
 
 WORKDIR /app
 
@@ -26,3 +29,4 @@ CMD exec /usr/local/bin/gunicorn \
     --log-file - \
     --access-logfile - \
     app:app
+# END FINAL IMAGE
