@@ -20,8 +20,6 @@ const aggs = Object
     return [aggType, topKBuildsPerDay(newData)];
   });
 
-let first = aggs[0][1];
-
 import ScalarAggregationSmallMultiple from './ScalarAggregationSmallMultiple.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
@@ -72,12 +70,17 @@ let readableAggs = {
 </style>
 
 <div class=body-content>
-  <div class=time-horizon>
-    <TimeHorizonControl bind:horizon={timeHorizon} />
-  </div>
 
-  <div class=time-horizon>
-    <PercentileSelectionControl bind:percentiles={percentiles} />
+  <div class=body-control-row>
+    <div class=body-control-set>
+      <label class=body-control-set--label>Time Horizon  </label>
+      <TimeHorizonControl bind:horizon={timeHorizon} />
+    </div>
+  
+    <div class=body-control-set>
+        <label class=body-control-set--label>Probe Value Percentiles</label>
+      <PercentileSelectionControl bind:percentiles={percentiles} />
+    </div>
   </div>
 
   <div class=data-graphics>

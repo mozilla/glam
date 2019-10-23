@@ -39,8 +39,8 @@ $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.i
   .map((ps, i) => [ps, percentiles[i]]);
 
 
-let [upperDomain] = extractPercentiles([95], data.filter((d) => $domain.includes(d.label)));
-upperDomain = Math.max(...upperDomain.map((o) => o.originalPercentileValue));
+// let [upperDomain] = extractPercentiles([95], data.filter((d) => $domain.includes(d.label)));
+// upperDomain = Math.max(...upperDomain.map((o) => o.originalPercentileValue));
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
@@ -84,8 +84,6 @@ $: if (dataGraphicMounted) {
   H.subscribe((h) => { bodyHeight = h; });
 }
 
-let latest = data[data.length - 1];
-
 </script>
 
 <style>
@@ -101,8 +99,8 @@ let latest = data[data.length - 1];
   <DataGraphic
     data={data}
     xDomain={$domain}
-    yDomain={[0, upperDomain]}
-    yType="log"
+    yDomain={data[0].histogram.map((d) => d.bin)}
+    yType="scalePoint"
     width=600
     height=250
     bind:dataGraphicMounted={dataGraphicMounted}
@@ -124,7 +122,7 @@ let latest = data[data.length - 1];
           curve="curveStep"
           lineDrawAnimation={{ duration: 300 }} 
           xAccessor="label"
-          yAccessor="originalPercentileValue"
+          yAccessor="value"
           color={pi === 50 ? 'var(--digital-blue-400)' : 'var(--digital-blue-300)'}
           data={percentile} />
         {/each}
@@ -144,3 +142,4 @@ let latest = data[data.length - 1];
     right={latest} 
     percentiles={percentiles} /> -->
 </div>
+    

@@ -56,19 +56,6 @@ let bodyWidth = writable(0); // eslint-disable-line
 
 const getHistogram = (label) => data.find((v) => v.label === label);
 
-// const percentiles = PERCENTILES
-//   .map((percentile) => data.map(({ label, percentiles: percs, histogram }) => {
-//     const histKeys = histogram.map((h) => h.bin);
-//     const originalPercentileValue = percs.find((p) => p.bin === percentile).value;
-//     return {
-//       label,
-//       value:
-//         nearestBelow(percs.find(originalPercentileValue, histKeys)),
-//       originalPercentileValue,
-//     };
-//   }));
-
-
 const percentiles = extractPercentiles(PERCENTILES, data);
 
 let rollover;

@@ -1,10 +1,24 @@
 <script>
+import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import {
   store, dataset,
 } from '../store/store';
 
 import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationView.svelte';
+import NumericHistogramView from '../patterns/body/histograms/NumericHistogramView.svelte';
+
+function isScalarData(data) {
+  return data[0].metadata.metric_type === 'scalar';
+}
+
+function isNumericHistogramData(data) {
+  return data[0].metadata.metric_type === 'histogram-exponential' || data[0].metadata.metric_type
+    === 'histogram-linear';
+}
+
+let container;
+let width;
 
 </script>
 
@@ -12,7 +26,7 @@ import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationVie
 .graphic-body-container {
     padding: var(--space-4x);
     overflow-y: auto;
-    height: calc(100vh - var(--header-height) - var(--space-4x));
+    height: calc(100vh - var(--header-height) - var(--space-4x) * 2);
     background-color: white;
 }
 
@@ -32,12 +46,13 @@ import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationVie
 
 .TEMP {
     background-color: white;
-    padding: var(--space-2x)
 }
 
 </style>
 
-<div class=graphic-body-container>
+<svelte:window bind:innerWidth={width} />
+
+<div bind:this={container} class=graphic-body-container>
 
     <div class=graphic-body__graphic-header>
     {#if $store.probe.name}
@@ -51,13 +66,19 @@ import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationVie
         {#await $dataset}
             running query
             <!-- <Spinner /> -->
-        {:then value}
+        {:then data}
             <div in:fade>
-                <ScalarAggregationView data={value.response} />
+                {#if isScalarData(data.response)}
+                    <ScalarAggregationView data={data.response} />
+                {:else if isNumericHistogramData(data.response)}
+                    <NumericHistogramView data={data.response} />
+                {:else}
+                    <pre>
+                        {JSON.stringify(data, null, 2)}
+                    </pre>
+                {/if}
             </div>
-            <!-- <pre>
-                {JSON.stringify(value, null, 2)}
-            </pre> -->
+
         {:catch err}
             An error was caught: {err}
         {/await}
