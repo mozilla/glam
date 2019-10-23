@@ -13,6 +13,9 @@ RUN npm run build
 FROM python:3-slim AS final
 
 # Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV PATH="/venv/bin:$PATH"
 
 RUN python -m venv /venv
