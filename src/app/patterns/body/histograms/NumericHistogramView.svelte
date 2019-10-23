@@ -24,17 +24,18 @@ const aggs = Object
     return [aggType, topKBuildsPerDay(newData)];
   });
 
-let timeHorizon = 'ALL_TIME';
+let timeHorizon = 'MONTH';
 let percentiles = [5, 25, 50, 75, 95];
 
 </script>
   
   <style>
-  
-
-  
     .body-content {
       margin-top: var(--space-2x);
+    }
+
+    .data-graphics {
+      margin-top: var(--space-4x);
     }
 
   </style>
@@ -56,9 +57,9 @@ let percentiles = [5, 25, 50, 75, 95];
 
     <div class=data-graphics>
       {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
-        <h4>{[aggType]}</h4>
         <div>
           <NumericHistogramSmallMultiple
+            title={[aggType]}
             data={dataset}
             key={aggType + timeHorizon}
             resolution={timeHorizon}

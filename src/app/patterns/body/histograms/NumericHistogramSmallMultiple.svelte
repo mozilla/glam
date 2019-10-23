@@ -3,6 +3,7 @@ import { writable, derived } from 'svelte/store';
 import { format } from 'd3-format';
 
 export let data;
+export let title;
 export let key;
 export let resolution = 'ALL_TIME';
 export let percentiles = [50];
@@ -14,6 +15,8 @@ import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+import FiveNum from '../rollovers/FiveNum.svelte';
+import { nearestBelow } from '../../../../utils/stats';
 
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -78,6 +81,8 @@ let dataGraphicMounted = false;
 let xScale;
 let T;
 let H;
+let GW;
+let graphicWidth;
 let topPlot;
 let bodyHeight;
 
@@ -85,10 +90,19 @@ $: if (dataGraphicMounted) {
   initiateRollover(dgRollover);
   T.subscribe((t) => { topPlot = t; });
   H.subscribe((h) => { bodyHeight = h; });
+  GW.subscribe((gw) => { graphicWidth = gw; });
 }
 
 let latest = data[data.length - 1];
 let fmt = format(',.2r');
+
+function tidyToObject(tidy) {
+  let out = {};
+  tidy.forEach((t) => {
+    out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
+  });
+  return out;
+}
 </script>
 
 <style>
@@ -100,6 +114,8 @@ let fmt = format(',.2r');
 
 table {
   border-spacing: 0px;
+  font-size: 16px;
+  justify-self: end;
 }
 
 th {
@@ -107,7 +123,7 @@ th {
 }
 
 td, th {
-  font-size: 11px;
+  font-size: 12px;
   text-align: right;
   min-width: var(--space-6x);
 }
@@ -127,8 +143,9 @@ td, th {
 .summary {
   display:grid;
   grid-auto-flow:column;
-  width: max-content;
-  font-size: 11px;
+  /* width: max-content; */
+  justify-content: end;
+  font-size: 14px;
 }
 
 .summary-miniature {
@@ -138,9 +155,28 @@ td, th {
   outline:1px solid black;
 }
 
+h4 {
+  padding: 0px;
+  margin:0px;
+  text-transform: uppercase;
+  color: var(--cool-gray-500);
+}
+
+.title-and-summary {
+  display:grid;
+  grid-template-columns: auto max-content;
+  justify-content: stretch;
+  width: 100%;
+}
 </style>
 
-<!-- <table>
+
+<div class='title-and-summary' style='width: {graphicWidth}px;'>
+<div style="padding-left:{margins ? margins.left : 0}px;">
+  <h4>{title}</h4>
+</div>
+
+<table>
   <thead>
     <tr>
         <th></th>
@@ -165,7 +201,8 @@ td, th {
     {/if}
     </tr>
   </tbody>
-</table> -->
+</table>
+</div>
 
 <!-- <div class=summary>
   {#each percentiles as perc, i}
@@ -188,6 +225,7 @@ td, th {
 
 <div class=graphic-and-summary>
   <DataGraphic
+  
     data={data}
     xDomain={$domain}
     yDomain={data[0].histogram.map((d) => d.bin)}
@@ -200,6 +238,7 @@ td, th {
     bind:xScale={xScale}
     bind:bodyHeight={H}
     bind:topPlot={T}
+    bind:graphicWidth={GW}
     key={key}
 
   >
@@ -227,7 +266,16 @@ td, th {
       />
       <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
       fill="var(--cool-gray-700)" opacity=.2 />
+      <!-- <FiveNum numbers={rollover.datum.percentiles}
+      numberAccessor={'value'} x={rollover.x} /> -->
+      <!-- <FiveNum 
+      {...tidyToObject(rollover.datum.percentiles)} 
+         x={rollover.datum.label} /> -->
+
     {/if}
+    <!-- <FiveNum 
+    {...tidyToObject(latest.percentiles)} 
+       x={latest.label} /> -->
   </DataGraphic>
   <!-- <ComparisonSummary 
     left={rollover.datum} 

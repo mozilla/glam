@@ -24,7 +24,7 @@ import ScalarAggregationSmallMultiple from './ScalarAggregationSmallMultiple.sve
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 
-let timeHorizon = 'ALL_TIME';
+let timeHorizon = 'MONTH';
 let percentiles = [50];
 
 let readableAggs = {
