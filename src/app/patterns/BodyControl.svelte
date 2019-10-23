@@ -23,10 +23,24 @@ function toggle(v) {
 
 </script>
 
+<style>
+.label-color {
+  border-radius: var(--space-1q);
+  width: calc(var(--space-base) * 1.5);
+  height: calc(var(--space-base) * 1.5);
+  align-self: center;
+}
+</style>
+
 <ButtonGroup>
-  {#each options as {label, value}, i (label)}
+  {#each options as {label, value, labelColor}, i (label)}
     <Button level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }
-    }>{label}</Button>
+    }>
+      {#if labelColor}
+        <div class='label-color' style="background-color: {labelColor};" />
+      {/if}
+      {label}
+  </Button>
   {/each}
 </ButtonGroup>

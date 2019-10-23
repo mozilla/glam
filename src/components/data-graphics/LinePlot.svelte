@@ -156,13 +156,6 @@ let showHeatmap = false;
     heatRange={[0.1, 0.7]} />
   {/if}
   <LeftAxis tickCount={4} />
-  <!-- {#if dataGraphicMounted} -->
-  <!-- <g>
-    {#each firstOfMonth(xScale) as tick, i}
-      <text x={xScale(tick)} y={btValue}>{buildIDToMonth(tick)}</text>
-    {/each}
-  </g>
-  {/if} -->
   <BottomAxis ticks={firstOfMonth(xScale)} tickFormatter={buildIDToMonth} />
   {#if dataGraphicMounted && $rolloverValues}
     <g class=rollover-body-under>

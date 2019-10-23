@@ -14,6 +14,8 @@ import BuildIDRollover from '../../../../components/data-graphics/rollovers/Buil
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
 
+import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+
 import {
   buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
 } from '../../../../components/data-graphics/utils/build-id-utils';
@@ -125,7 +127,7 @@ let latest = data[data.length - 1];
           lineDrawAnimation={{ duration: 300 }} 
           xAccessor="label"
           yAccessor="originalPercentileValue"
-          color={pi === 50 ? 'var(--digital-blue-400)' : 'var(--digital-blue-300)'}
+          color={percentileLineColorMap(pi)}
           data={percentile} />
         {/each}
     </GraphicBody>
