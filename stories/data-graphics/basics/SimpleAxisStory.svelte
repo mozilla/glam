@@ -1,5 +1,5 @@
 <script>
-import { zipByAggregationType, makeDataset } from '../distribution-plots/shared';
+import { zipByAggregationType, makeDataset } from '../../../src/app/utils/probe-utils';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;

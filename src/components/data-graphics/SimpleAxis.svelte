@@ -29,9 +29,33 @@ const margins = getContext('margins');
 
 export let tickCount = 5;
 
-export let ticks = mainScale.ticks !== undefined
-  ? mainScale.ticks(tickCount)
-  : mainScale.domain().reduce((acc, v, i, source) => {
+function orderMagnitude(n) {
+  let order = Math.floor(Math.log(n) / Math.LN10
+                       + 0.000000001); // because float math sucks like that
+  return Math.pow(10, order);
+}
+
+function symLogTicks(topVal) {
+  // symLogTicks is needed until https://github.com/d3/d3-scale/issues/162 is resolved.
+  const upper = orderMagnitude(topVal);
+  let current = upper;
+  const ticks = [upper];
+  while (current > 1) {
+    current /= 10;
+    ticks.push(current);
+  }
+  ticks.reverse();
+  return ticks;
+}
+
+
+function getDefaultTicks() {
+  if (mainScale.type === 'numeric' || mainScale.type === 'linear') {
+    return mainScale.ticks(tickCount);
+  } if (mainScale.type === 'log') {
+    return symLogTicks(mainScale.domain()[1]);
+  }
+  return mainScale.domain().reduce((acc, v, i, source) => {
     // let's filter to get the right number of ticks.
     const every = Math.floor(source.length / tickCount);
     if (i % every === 0) {
@@ -39,6 +63,9 @@ export let ticks = mainScale.ticks !== undefined
     }
     return acc;
   }, []);
+}
+
+export let ticks = getDefaultTicks();
 
 // we will need to internally calculate TICKS depending on the passed value
 // of ticks.
@@ -79,16 +106,6 @@ let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 
 let tickEnd;
 $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
-
-let textParams = (t) => {
-  const out = {};
-  // reasoning:       placement      + tick dir      * length * extra + space correction
-  out[`${mainDim}`] = $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector;
-  out[`${secondaryDim}`] = mainScale(t);
-  // correct for vertical text spacing
-  if (secondaryDim === 'y') out.dy = '.35em';
-  return out;
-};
 
 </script>
 

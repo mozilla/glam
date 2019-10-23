@@ -1,7 +1,7 @@
 <script>
 import QuantilePlot from '../../../src/components/data-graphics/QuantilePlot.svelte';
 import ENGAGEMENT from '../../../tests/data/scalar_parent_browser_engagement_tab_open_event_count.json';
-import { makeDataset } from './shared';
+import { makeDataset } from '../../../src/app/utils/probe-utils';
 
 const eng = ENGAGEMENT.response;
 

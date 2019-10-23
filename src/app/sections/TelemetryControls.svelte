@@ -48,7 +48,6 @@ const resetFilters = () => {
 <LeftDrawer {visible}>
     <TelemetryAppBar />
     <div class=left-drawer__header>
-        <h2 class=heading--02>Explore</h2>
         {#if !$hasDefaultControlFields}
             <div transition:fly={{ y: -10, duration: 200 }}
             href='#whatever'>

@@ -1,28 +1,25 @@
-<script context=module>
-const largestPercentile = writable(0);
-</script>
-
 <script>
 import { writable, derived } from 'svelte/store';
-import { slide } from 'svelte/transition';
 
 export let data;
 export let key;
 export let resolution = 'ALL_TIME';
 export let percentiles = [50];
 
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import BuildIDRollover from '../../../src/components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
-import ComparisonSummary from '../../../src/components/data-graphics/ComparisonSummary.svelte';
+import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
+import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
+import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
+import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
+import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
+import Line from '../../../../components/data-graphics/LineMultiple.svelte';
+import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+
+import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 import {
   buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
-} from '../../../src/components/data-graphics/utils/build-id-utils';
-import { extractPercentiles } from '../../../src/components/data-graphics/utils/percentiles';
+} from '../../../../components/data-graphics/utils/build-id-utils';
+import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
 
 let domain = writable(data.map((d) => d.label));
 
@@ -43,10 +40,9 @@ let percentileData = [];
 $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
   .map((ps, i) => [ps, percentiles[i]]);
 
-$: $largestPercentile = Math.max(...data.map((d) => d.percentiles.find((di) => di.bin === 50).value), $largestPercentile);
 
-let largestPercentileValue = 0;
-largestPercentile.subscribe((lp) => { largestPercentileValue = lp; });
+let [upperDomain] = extractPercentiles([95], data.filter((d) => $domain.includes(d.label)));
+upperDomain = Math.max(...upperDomain.map((o) => o.originalPercentileValue));
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
@@ -105,22 +101,23 @@ let latest = data[data.length - 1];
 
 <div class=graphic-and-summary>
   <DataGraphic
+    data={data}
+    xDomain={$domain}
+    yDomain={[0, upperDomain]}
+    yType="log"
+    width=600
+    height=250
+    bind:dataGraphicMounted={dataGraphicMounted}
     bind:margins={margins}
     bind:rollover={dgRollover}
     bind:xScale={xScale}
     bind:bodyHeight={H}
     bind:topPlot={T}
     key={key}
-    data={data}
-    xDomain={$domain}
-    yDomain={[0, largestPercentileValue]}
-    yType="numeric"
-    width=400
-    height=150
-    bind:dataGraphicMounted={dataGraphicMounted}
+
   >
-    <LeftAxis showBorder=true />
-    <BottomAxis ticks={ticks} tickFormatter={tickFormatter} />
+    <LeftAxis />
+    <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
     <GraphicBody>
       {#each percentileData as
@@ -130,7 +127,7 @@ let latest = data[data.length - 1];
           lineDrawAnimation={{ duration: 300 }} 
           xAccessor="label"
           yAccessor="originalPercentileValue"
-          color={pi === 50 ? 'var(--digital-blue-400)' : 'var(--digital-blue-300)'}
+          color={percentileLineColorMap(pi)}
           data={percentile} />
         {/each}
     </GraphicBody>
@@ -141,11 +138,11 @@ let latest = data[data.length - 1];
         label={rollover.datum.label}
       />
       <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-     fill="var(--cool-gray-700)" opacity=.2 />
+      fill="var(--cool-gray-700)" opacity=.2 />
     {/if}
   </DataGraphic>
-  <ComparisonSummary 
+  <!-- <ComparisonSummary 
     left={rollover.datum} 
     right={latest} 
-    percentiles={percentiles} />
+    percentiles={percentiles} /> -->
 </div>

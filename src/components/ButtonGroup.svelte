@@ -23,6 +23,6 @@ div :global(button:last-child) {
 
 </style>
 
-<div>
+<div class=button-group>
   <slot></slot>
 </div>
