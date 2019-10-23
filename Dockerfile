@@ -25,7 +25,7 @@ WORKDIR /app
 # Install python requirements
 COPY api/requirements.txt /app/
 RUN pip install -U pip \
-    && pip install -r requirements.txt
+    && pip install --no-cache-dir -r requirements.txt
 # END BACKEND IMAGE
 
 # FINAL IMAGE
