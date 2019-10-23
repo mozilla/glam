@@ -12,6 +12,11 @@ RUN npm run build
 # FINAL IMAGE
 FROM python:3-slim AS final
 
+# Set environment variables
+ENV PATH="/venv/bin:$PATH"
+
+RUN python -m venv /venv
+
 WORKDIR /app
 
 COPY api/requirements.txt /app/
@@ -21,7 +26,7 @@ RUN pip install -U pip \
 COPY api/app.py /app/
 COPY --from=frontend /app/public/ /app/public/
 
-CMD exec /usr/local/bin/gunicorn \
+CMD exec gunicorn \
     --bind 0.0.0.0:${PORT} \
     --workers 2 \
     --threads 8 \
