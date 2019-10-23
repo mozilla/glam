@@ -8,3 +8,8 @@ export function percentileLineColorMap(percentile) {
   if (percentile === 95) return 'var(--pantone-red-300)';
   return 'black';
 }
+
+export function percentileLineStrokewidthMap(percentile) {
+  if (percentile === 50) return 1.5;
+  return 1;
+}

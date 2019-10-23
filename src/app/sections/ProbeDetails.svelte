@@ -80,9 +80,16 @@ h2 {
 }
 
 .probe-labels {
+    padding:0;
     display:grid;
     grid-auto-flow:column;
-    align-items: baseline;
+    align-items: center;
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    grid-column-gap: var(--space-2x);
+
+    height: var(--increment);
+
 }
 
 </style>

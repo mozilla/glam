@@ -375,6 +375,7 @@ header h1 div span {
     display: grid;
     grid-template-columns: auto max-content;
     align-items: center;
+    justify-items: end;
 }
 
 .drawer h2 {

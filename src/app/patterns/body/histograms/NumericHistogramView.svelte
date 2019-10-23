@@ -34,7 +34,7 @@ let percentiles = [5, 25, 50, 75, 95];
 
   
     .body-content {
-      margin-top: var(--space-4x);
+      margin-top: var(--space-2x);
     }
 
   </style>

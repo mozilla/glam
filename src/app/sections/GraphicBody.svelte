@@ -24,9 +24,10 @@ let width;
 
 <style>
 .graphic-body-container {
-    padding: var(--space-4x);
+    /* padding: var(--space-4x);
+    padding-top: var(--space-2x); */
     overflow-y: auto;
-    height: calc(100vh - var(--header-height) - var(--space-4x) * 2);
+    height: calc(100vh - var(--header-height));
     background-color: white;
 }
 
@@ -35,6 +36,8 @@ let width;
     grid-template-columns: auto max-content;
     grid-column-gap: var(--space-4x);
     align-items: start;
+    background-color: var(--cool-gray-100);
+    border-bottom: 1px solid var(--line-gray-01);
 }
 
 .graphic-body__graphic-header h2 {
@@ -42,10 +45,16 @@ let width;
     padding:0;
     width: 100%;
     word-break: break-all;
+    height: var(--increment);
+    display: grid;
+    align-items: center;
+    padding-left: var(--space-2x);
+    
 }
 
-.TEMP {
+.graphic-body__content {
     background-color: white;
+    padding: var(--space-4x);
 }
 
 </style>
@@ -62,7 +71,7 @@ let width;
     {/if}
     </div>
 
-    <div class=TEMP>
+    <div class=graphic-body__content>
         {#await $dataset}
             running query
             <!-- <Spinner /> -->
