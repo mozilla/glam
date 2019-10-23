@@ -10,7 +10,7 @@ RUN npm run build
 # END FRONTEND BUILDER IMAGE
 
 # FINAL IMAGE
-FROM python:3.7-slim AS final
+FROM python:3-slim AS final
 
 WORKDIR /app
 
