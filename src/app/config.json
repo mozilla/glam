@@ -8,7 +8,7 @@
       "title": "Operating System",
       "key": "os",
       "values": [
-        {"key": "ALL", "label": "All", "keyTransform": "NULL"},
+        {"key": "ALL", "label": "All OSes", "keyTransform": "NULL"},
         {"key": "Windows", "label": "Windows"},
         {"key": "Mac", "label": "Mac"},
         {"key": "Linux", "label": "Linux"}
@@ -27,8 +27,8 @@
       "title": "Aggregation Level",
       "key": "aggregationLevel",
       "values": [
-        {"key": "version", "label": "major version"},
-        {"key": "build_id", "label": "build id"}
+        {"key": "version", "label": "by major version"},
+        {"key": "build_id", "label": "by build id"}
       ]
     },
     "versions" : {
