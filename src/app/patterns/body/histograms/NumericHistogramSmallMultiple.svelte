@@ -15,7 +15,6 @@ import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
-import FiveNum from '../rollovers/FiveNum.svelte';
 import { nearestBelow } from '../../../../utils/stats';
 
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
