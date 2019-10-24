@@ -40,7 +40,7 @@ function setValue(evt) {
   <div class=parent bind:this={parent}>this is the element that the floating menu is "attached" to.</div>
 
   {#if on}
-  <FloatingMenu parent={parent} offset={+offset}>
+  <FloatingMenu on:cancel={() => { on = false; }} parent={parent} offset={+offset}>
     <MenuList on:selection={setValue}>
       <MenuListItem  key='first' value={0}>first item</MenuListItem>
       <MenuListItem  key='second' value={1}>second item</MenuListItem>

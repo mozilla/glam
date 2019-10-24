@@ -40,7 +40,7 @@ function next() {
 }
 
 function select() {
-    dispatch('selection', $allItems[$currentCandidate]);
+    onSelect($allItems[$currentCandidate]);
 }
 
 const handleKeypress = (event) => {
