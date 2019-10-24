@@ -6,8 +6,11 @@ import { writable } from 'svelte/store';
 
 const dispatch = createEventDispatcher();
 
+const onParentSelect = getContext('onChildSelect');
+
 export let onSelect = function onSelect(kvPair) {
     dispatch('selection', kvPair);
+    onParentSelect(kvPair);
   };
 
 const currentSelection = writable(undefined);

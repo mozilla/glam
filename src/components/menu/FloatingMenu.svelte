@@ -10,13 +10,15 @@ import Portal from '../Portal.svelte';
 export let active = false;
 export let parent;
 export let offset = 0;
-let element;
+export let onSelect = () => {};
 
+let element;
 
 let elementWidth = 0;
 let parentRight;
 let parentBottom;
-let mounted = false;
+
+setContext('onChildSelect', onSelect);
 
 function placeMenu() {
     const parentPosition = parent.getBoundingClientRect();
@@ -26,11 +28,6 @@ function placeMenu() {
     parentRight = parentPosition.right;
     parentBottom = parentPosition.bottom;
   }
-
-onMount(() => {
-    mounted = true;
-});
-
 
 $: if (parent && element) {
     placeMenu();
@@ -49,7 +46,7 @@ $: if (parent && element) {
   <div class=bound-menu bind:this={element} style="
     left: {parentRight - elementWidth}px;
     top: {parentBottom + offset}px;
-    " on:selection={(evt) => { console.log(evt); }}>
+    ">
     <slot></slot>
   </div>
 </Portal>
