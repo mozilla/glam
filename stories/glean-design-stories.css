@@ -5,12 +5,14 @@ body  {
 .story {
   width: calc(100vw - var(--increment) * 3);
   margin: auto;
-  margin-top: var(--space-4x);
+  /* margin-top: var(--space-4x); */
   min-height: 100vh;
   background-color: white;
   padding: var(--space-6x);
   border: 1px solid  var(--line-gray-01);
-  border-radius: var(--space-2x);
+  border-top: none;
+  border-bottom-left-radius:var(--space-2x);
+  border-bottom-right-radius:var(--space-2x);
   box-shadow: 0px var(--space-base) var(--space-2x) rgba(0,0,0,.1);
 }
 

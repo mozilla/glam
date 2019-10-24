@@ -242,7 +242,7 @@ h4 {
     key={key}
 
   >
-    <LeftAxis />
+    <LeftAxis tickCount=6 />
     <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
     <GraphicBody>

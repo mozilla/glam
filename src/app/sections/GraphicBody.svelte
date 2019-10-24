@@ -55,6 +55,7 @@ let width;
 .graphic-body__content {
     background-color: white;
     padding: var(--space-4x);
+    padding-top: var(--space-2x);
 }
 
 </style>
