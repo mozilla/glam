@@ -1,9 +1,39 @@
 <script>
+import { format } from 'd3-format';
+
+import { percentileLineColorMap } from './utils/color-maps';
+
+
+let fmt = format(',.2r');
+let pFmt = format('.0%');
 
 export let left;
 export let right;
+export let leftLabel;
+export let rightLabel;
 export let percentiles;
 export let compareTo = 'left-right';
+
+function percentChange(l, r) {
+  return (r - l) / l;
+}
+
+let displayValues = [];
+
+function createNewPercentiles() {
+  return percentiles.map((percentile) => {
+    const leftValue = left ? left.percentiles.find((p) => p.bin === percentile).value : undefined;
+    const rightValue = right ? right.percentiles.find((p) => p.bin === percentile).value : undefined;
+    return {
+      percentile,
+      leftValue,
+      rightValue,
+      percentageChange: (leftValue && rightValue) ? percentChange(leftValue, rightValue) : undefined,
+    };
+  });
+}
+
+$: if (leftLabel || rightLabel) displayValues = createNewPercentiles();
 
 </script>
 
@@ -18,7 +48,6 @@ th {
 }
 
 td, th {
-  min-width: var(--space-8x);
   text-align: right;
 }
 /* 
@@ -31,7 +60,6 @@ td, th {
 }
 
 .summary-label--main-date {
-  text-align: right;
   font-family: var(--main-mono-font); 
   color: var(--cool-gray-500); 
   font-weight: bold;
@@ -41,6 +69,13 @@ td, th {
 /* .value-label, .value-left, .value-right {
   text-align: right;
 } */
+
+.summary-color-label {
+  display: inline-block;
+  width: var(--space-base);
+  height: var(--space-base);
+  border-radius: var(--space-1q);
+}
 
 </style>
 
@@ -74,18 +109,39 @@ td, th {
     <tbody>
           <tr>
             <td class=value-label># clients</td>
-            <td class=value-left>{left ? left.audienceSize : ' '}</td>
-            <td class=value-right>{right ? right.audienceSize : ' '}</td>
+            <td class=value-left>{left ? fmt(left.audienceSize) : ' '}</td>
+            <td class=value-right>{right ? fmt(right.audienceSize) : ' '}</td>
+            <td class=value-right>{(left && right)
+            ? pFmt(percentChange(left.audienceSize, right.audienceSize)) : ' '}</td>
           </tr>
-          {#each percentiles as percentile}
+
+          {#each displayValues as {leftValue, rightValue, percentageChange, percentile}}
             <tr>
-              <td class=value-label>{percentile}%</td>
-              <td class=value-left>{left ? left.percentiles.find((p) => p.bin
-              === percentile).value : ' '}</td>
-              <td class=value-right>{right ? right.percentiles.find((p) => p.bin
-                  === percentile).value : ' '}</td>
+              <td class=value-label>
+                <span class='summary-color-label'
+                style="background-color:{percentileLineColorMap(percentile)}"></span>
+                {percentile}%</td>
+              <td class=value-left>{left ? fmt(leftValue) : ' '}</td>
+              <td class=value-right>{right ? fmt(rightValue) : ' '}</td>
+                  <td class=value-right>{percentageChange ? pFmt(percentageChange) : ' '}</td>
             </tr>
           {/each}
+          <!-- {#each percentiles as percentile}
+            <tr>
+              <td class=value-label>
+                <span class='summary-color-label'
+                style="background-color:{percentileLineColorMap(percentile)}"></span>
+                {percentile}%</td>
+              <td class=value-left>{left ? fmt(left.percentiles.find((p) => p.bin
+              === percentile).value) : ' '}</td>
+              <td class=value-right>{right ? fmt(right.percentiles.find((p) => p.bin
+                  === percentile).value) : ' '}</td>
+                  <td class=value-right>{(left && right)
+                      ? percentChange(left.percentiles.find((p) => p.bin
+                      === percentile).value, right.percentiles.find((p) => p.bin
+                      === percentile).value) : ' '}</td>
+            </tr>
+          {/each} -->
     </tbody>
   </table>
 

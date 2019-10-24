@@ -7,7 +7,9 @@ import {
 
 export let xScale = getContext('xScale');
 export let yScale = getContext('yScale');
+export let key;
 export let x;
+export let xp;
 export let y;
 export let opacity = 1;
 export let densityAccessor = 'weight';
@@ -23,8 +25,7 @@ const getValues = (data) => data.map((obj) => obj[densityAccessor]);
 let mounted = false;
 
 let plotY = y;
-
-$: if (x) {
+$: if (x || key) {
   plotY = [...y.map((obj) => ({ ...obj }))];
 }
 
@@ -60,7 +61,7 @@ onMount(() => {
 </script>
 
 {#if mounted}
-<g transform="translate({xScale(x)}, 0)" opacity={opacity}>
+<g transform="translate({xScale(x) || xp}, 0)" opacity={opacity}>
   {#if showLeft}
   <path d={histogramArea(plotY)} fill={areaColor} opacity={opacity} 
   />

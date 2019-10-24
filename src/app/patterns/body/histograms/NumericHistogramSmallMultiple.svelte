@@ -3,6 +3,9 @@ import { writable, derived } from 'svelte/store';
 import { format } from 'd3-format';
 
 export let data;
+
+// FIXME: after demo remove this requirement
+data = data.slice(0, -1);
 export let title;
 export let key;
 export let resolution = 'ALL_TIME';
@@ -16,6 +19,11 @@ import BuildIDRollover from '../../../../components/data-graphics/rollovers/Buil
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
 import FiveNum from '../rollovers/FiveNum.svelte';
+
+import DistributionComparison from '../rollovers/DistributionComparison.svelte';
+
+import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+
 import { nearestBelow } from '../../../../utils/stats';
 
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
@@ -76,23 +84,30 @@ function initiateRollover(rolloverStore) {
   });
 }
 
+let WIDTH = 500;
+let HEIGHT = 350;
+
 let margins;
 let dataGraphicMounted = false;
 let xScale;
 let T;
 let H;
 let GW;
+let R;
 let graphicWidth;
 let topPlot;
+let rightPlot;
 let bodyHeight;
 
 $: if (dataGraphicMounted) {
   initiateRollover(dgRollover);
   T.subscribe((t) => { topPlot = t; });
   H.subscribe((h) => { bodyHeight = h; });
+  R.subscribe((r) => { rightPlot = r; });
   GW.subscribe((gw) => { graphicWidth = gw; });
 }
 
+// FIXME: this is for demo purposes. use better build data.
 let latest = data[data.length - 1];
 let fmt = format(',.2r');
 
@@ -103,19 +118,20 @@ function tidyToObject(tidy) {
   });
   return out;
 }
+
 </script>
 
 <style>
 .graphic-and-summary {
   display: grid;
-  grid-template-columns: max-content auto;
-  grid-column-gap: var(--space-2x);
+  grid-template-columns: max-content max-content auto;
+  /* grid-column-gap: var(--space-2x); */
 }
 
 table {
   border-spacing: 0px;
   font-size: 16px;
-  justify-self: end;
+  /* justify-self: end; */
 }
 
 th {
@@ -165,8 +181,6 @@ h4 {
 .title-and-summary {
   display:grid;
   grid-template-columns: auto max-content;
-  justify-content: stretch;
-  width: 100%;
 }
 </style>
 
@@ -176,7 +190,7 @@ h4 {
   <h4>{title}</h4>
 </div>
 
-<table>
+<!-- <table>
   <thead>
     <tr>
         <th></th>
@@ -201,7 +215,7 @@ h4 {
     {/if}
     </tr>
   </tbody>
-</table>
+</table> -->
 </div>
 
 <!-- <div class=summary>
@@ -230,8 +244,8 @@ h4 {
     xDomain={$domain}
     yDomain={data[0].histogram.map((d) => d.bin)}
     yType="scalePoint"
-    width=600
-    height=350
+    width={WIDTH}
+    height={HEIGHT}
     bind:dataGraphicMounted={dataGraphicMounted}
     bind:margins={margins}
     bind:rollover={dgRollover}
@@ -239,6 +253,8 @@ h4 {
     bind:bodyHeight={H}
     bind:topPlot={T}
     bind:graphicWidth={GW}
+    bind:rightPlot={R}
+    right={10}
     key={key}
 
   >
@@ -259,6 +275,30 @@ h4 {
         {/each}
     </GraphicBody>
 
+    <Violin 
+      showRight={false}
+      xp={rightPlot + 100}
+      y={latest.histogram} 
+      densityAccessor='value'
+      valueAccessor='bin'
+      densityRange={[0, 30]}
+      areaColor="var(--digital-blue-400)"
+      lineColor="var(--digital-blue-500)"
+      />
+      {#if rollover.x && rollover.datum.histogram}
+        <Violin 
+        showLeft={false}
+        xp={rightPlot + 100}
+        key={rollover.x}
+        y={rollover.datum.histogram} 
+        densityAccessor='value'
+        valueAccessor='bin'
+        densityRange={[0, 30]}
+        areaColor="var(--digital-blue-400)"
+        lineColor="var(--digital-blue-500)"
+        />
+      {/if}
+
     {#if rollover.x && xScale && topPlot && bodyHeight}
       <BuildIDRollover 
         x={rollover.x}
@@ -277,9 +317,24 @@ h4 {
     {...tidyToObject(latest.percentiles)} 
        x={latest.label} /> -->
   </DataGraphic>
-  <!-- <ComparisonSummary 
+  <DistributionComparison 
+    width={125}
+    height={HEIGHT}
+    leftDistribution={rollover.datum ? rollover.datum.histogram : undefined}
+    leftLabel={rollover.x}
+    rightDistribution={latest.histogram}
+    rightLabel={latest.label}
+  leftPercentiles={rollover.datum ? rollover.datum.percentiles.filter((p) => percentiles.includes(p.bin)) : undefined}
+    rightPercentiles={latest.percentiles.filter((p) => percentiles.includes(p.bin))}
+    xDomain={['hovered', 'latest']}
+    yDomain={latest.histogram.map((d) => d.bin)}
+    yFocus={rollover.y}
+  />
+  <ComparisonSummary 
     left={rollover.datum} 
-    right={latest} 
-    percentiles={percentiles} /> -->
+    right={latest}
+    leftLabel={rollover.x}
+    rightLabel={latest.label}
+    percentiles={percentiles} />
 </div>
     
