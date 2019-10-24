@@ -77,12 +77,21 @@ $: if (parent && element) {
   position: absolute;
   width: max-content;
 }
+
+.click-area {
+  position:absolute;
+  left:0;
+  top:0;
+  width: 100vw;
+  height:100vh;
+}
 </style>
 
 <svelte:window on:keydown={handleKeypress} />
 
 
 <Portal>
+  <div on:click={() => { dispatch('cancel'); }} class=click-area></div>
   <div class=bound-menu bind:this={element} style="
     left: {left}px;
     top: {top}px;

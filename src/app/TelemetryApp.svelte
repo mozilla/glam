@@ -9,7 +9,9 @@ import Main from '../components/sections/Main.svelte';
 import MainActionBar from '../components/sections/MainActionBar.svelte';
 import Content from '../components/sections/Content.svelte';
 
+import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
 import TelemetryControls from './sections/TelemetryControls.svelte';
+import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
 import ProbeDetails from './sections/ProbeDetails.svelte';
 
 import { currentQuery } from './store/store';
@@ -42,11 +44,13 @@ div.inner-body {
 </style>
 <App>
     <!-- <TelemetryAppBar /> -->
-    <TelemetryControls />
+    <!-- <TelemetryControls /> -->
 
     <Main>
         <MainActionBar>
+                <TelemetryAppBar />
                 <Search />
+                <TelemetryMainFilters />
         </MainActionBar>
         <Content>
 

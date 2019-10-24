@@ -7,6 +7,9 @@ const dispatch = createEventDispatcher();
 
 export let active = false;
 export let position = 'top-left';
+export let offset = 0;
+export let level = 'high';
+export let compact = false;
 
 function onParentSelect(kvPair) {
     active = false;
@@ -25,12 +28,12 @@ let button;
 </style>
 
 <div class=menu-button bind:this={button}>
-<Button compact class=button--high on:click={toggle}>
+<Button level={level} compact={compact} on:click={toggle}>
   <slot name='label'></slot>
 </Button>
 </div>
 {#if active}
-  <FloatingMenu  on:cancel={() => { active = false; }}  position='bottom-left' parent={button} onParentSelect={onParentSelect}>
+  <FloatingMenu offset={offset} on:cancel={() => { active = false; }}  position='bottom-left' parent={button} onParentSelect={onParentSelect}>
     <slot name='menu'></slot>
   </FloatingMenu>
 {/if}
