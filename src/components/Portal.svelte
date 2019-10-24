@@ -3,12 +3,13 @@ import { onMount, onDestroy } from 'svelte';
 
 let ref;
 let portal;
-
+let mounted = false;
 onMount(() => {
   portal = document.createElement('div');
   portal.className = 'portal';
   document.body.appendChild(portal);
   portal.appendChild(ref);
+  mounted = true;
 });
 
 onDestroy(() => {
@@ -24,6 +25,8 @@ onDestroy(() => {
 
 <div class="portal-container">
   <div bind:this={ref}>
-    <slot></slot>
+    {#if mounted}
+      <slot></slot>
+    {/if}
   </div>
 </div>

@@ -91,7 +91,7 @@
     --space-96x: calc(var(--space-base) * 96);
 
     --increment: var(--space-6x); /* eg. 48dp. */
-    --drawer-width: var(--space-32x);
+    --drawer-width: calc(var(--space-base) * 28);
     --header-height: var(--increment);
 
     /* Shadow system */
