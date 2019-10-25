@@ -7,7 +7,9 @@ import {
 
 export let xScale = getContext('xScale');
 export let yScale = getContext('yScale');
+export let key;
 export let x;
+export let xp;
 export let y;
 export let opacity = 1;
 export let densityAccessor = 'weight';
@@ -23,8 +25,7 @@ const getValues = (data) => data.map((obj) => obj[densityAccessor]);
 let mounted = false;
 
 let plotY = y;
-
-$: if (x) {
+$: if (x || key) {
   plotY = [...y.map((obj) => ({ ...obj }))];
 }
 
@@ -35,6 +36,9 @@ const smallBarMultipleScale = (obj, range = [0, 20]) => {
   ]).range(range);
 };
 
+let yScaleType = yScale.type;
+let yScaleAdjustment = yScaleType === 'scalePoint' ? yScale.step() / 2 : 0;
+
 let histogramScale = smallBarMultipleScale(plotY, densityRange);
 $: histogramScale = smallBarMultipleScale(plotY, densityRange);
 
@@ -43,11 +47,11 @@ let [histogramArea, inverseHistogramArea] = [1, -1].map((direction) => area()
   .x1((d) => direction * histogramScale(d.value))
   .x0(() => histogramScale(0))
   .curve(curve)
-  .y((d) => yScale(d.bin) + yScale.step() / 2));
+  .y((d) => yScale(d.bin) + yScaleAdjustment));
 
-let histogramLine = histogramArea.lineX1().y((d) => yScale(d.bin) + yScale.step() / 2);
+let histogramLine = histogramArea.lineX1().y((d) => yScale(d.bin) + yScaleAdjustment);
 let inverseHistogramLine = inverseHistogramArea
-  .lineX1().y((d) => yScale(d.bin) + yScale.step() / 2);
+  .lineX1().y((d) => yScale(d.bin) + yScaleAdjustment);
 // $: histogramArea = histogramArea(plotY);
 // $: histogramLine = histogramLine(plotY);
 // $: inverseHistogramArea = inverseHistogramArea(plotY);
@@ -60,7 +64,7 @@ onMount(() => {
 </script>
 
 {#if mounted}
-<g transform="translate({xScale(x)}, 0)" opacity={opacity}>
+<g transform="translate({xScale(x) || xp}, 0)" opacity={opacity}>
   {#if showLeft}
   <path d={histogramArea(plotY)} fill={areaColor} opacity={opacity} 
   />

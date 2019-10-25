@@ -1,8 +1,18 @@
 <script>
 import { writable, derived } from 'svelte/store';
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
+import { symbol, symbolTriangle } from 'd3-shape';
+
+let valueFmt = format(',.4r');
+let countFmt = format(',d');
+let pFmt = format('.0%');
 
 export let data;
+
+// FIXME: after demo remove this requirement
+data = data.slice(0, -1);
 export let title;
 export let key;
 export let resolution = 'ALL_TIME';
@@ -15,6 +25,11 @@ import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+
+import DistributionComparison from '../rollovers/DistributionComparison.svelte';
+
+import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+
 import { nearestBelow } from '../../../../utils/stats';
 
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
@@ -75,46 +90,59 @@ function initiateRollover(rolloverStore) {
   });
 }
 
+let WIDTH = 450;
+let HEIGHT = 350;
+
 let margins;
 let dataGraphicMounted = false;
 let xScale;
+let yScale;
 let T;
 let H;
 let GW;
+let R;
 let graphicWidth;
 let topPlot;
+let rightPlot;
 let bodyHeight;
 
 $: if (dataGraphicMounted) {
   initiateRollover(dgRollover);
   T.subscribe((t) => { topPlot = t; });
   H.subscribe((h) => { bodyHeight = h; });
+  R.subscribe((r) => { rightPlot = r; });
   GW.subscribe((gw) => { graphicWidth = gw; });
 }
 
+// FIXME: this is for demo purposes. use better build data.
 let latest = data[data.length - 1];
 let fmt = format(',.2r');
 
-function tidyToObject(tidy) {
-  let out = {};
-  tidy.forEach((t) => {
-    out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
-  });
-  return out;
-}
+// function tidyToObject(tidy) {
+//   let out = {};
+//   tidy.forEach((t) => {
+//     out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
+//   });
+//   return out;
+// }
+
+const movingAudienceSize = tweened(0, { duration: 1000, easing });
+
+$: movingAudienceSize.set(latest.audienceSize);
+
 </script>
 
 <style>
 .graphic-and-summary {
   display: grid;
-  grid-template-columns: max-content auto;
-  grid-column-gap: var(--space-2x);
+  grid-template-columns: max-content max-content auto;
+  /* grid-column-gap: var(--space-2x); */
 }
 
 table {
   border-spacing: 0px;
   font-size: 16px;
-  justify-self: end;
+  /* justify-self: end; */
 }
 
 th {
@@ -163,64 +191,44 @@ h4 {
 
 .title-and-summary {
   display:grid;
-  grid-template-columns: auto max-content;
-  justify-content: stretch;
-  width: 100%;
+  grid-template-columns: auto max-content max-content;
+  grid-column-gap: var(--space-4x);
+  justify-items: start;
+  margin-bottom: var(--space-4x);
+}
+
+.bignum {
+  width: max-content;
+  justify-self: end;
+}
+
+.bignum__label {
+  font-size: var(--text-015);
+  text-transform: uppercase;
+  color: var(--cool-gray-500);
+}
+
+.bignum__value {
+  font-size: var(--text-06);
+  text-align: right;
 }
 </style>
 
 
-<div class='title-and-summary' style='width: {graphicWidth}px;'>
-<div style="padding-left:{margins ? margins.left : 0}px;">
-  <h4>{title}</h4>
-</div>
+<div class='title-and-summary'>
+  <div style="padding-left:{margins ? margins.left : 0}px;">
+    <h4>{title}</h4>
+  </div>
+  <div class=bignum>
+    <div class=bignum__label>Latest Median (50th perc.)</div>
+    <div class=bignum__value>{valueFmt(latest.percentiles.find((p) => p.bin === 50).value)}</div>
+  </div>
+  <div class=bignum>
+    <div class=bignum__label>Affected Clients</div>
+    <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-        <th></th>
-        {#each percentiles as perc, i}
-          <th><span class=color-label style='background-color:{percentileLineColorMap(perc)}'></span>{perc}%</th>
-        {/each}
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>latest</td>
-    {#each percentiles as perc, i}
-      <td class:bold={perc === 50}>{fmt(latest.percentiles.find((pi) => pi.bin === perc).value)}</td>
-    {/each}
-    </tr>
-    <tr>
-    <td>hovered</td>
-    {#if rollover.datum}
-    {#each percentiles as perc, i}
-      <td class:bold={perc === 50}>{fmt(rollover.datum.percentiles.find((pi) => pi.bin === perc).value)}</td>
-    {/each}
-    {/if}
-    </tr>
-  </tbody>
-</table>
 </div>
-
-<!-- <div class=summary>
-  {#each percentiles as perc, i}
-    <div class=summary-miniature>
-      <div><span class=color-label
-      style='background-color:{percentileLineColorMap(perc)}'
-      ></span>{perc}%</div>
-      <div>
-        {fmt(latest.percentiles.find((pi) => pi.bin === perc).value)}
-      </div>
-      <div></div>
-      <div>
-        {#if rollover.datum}
-          {fmt(rollover.datum.percentiles.find((pi) => pi.bin === perc).value)}
-        {/if}
-      </div>
-    </div>
-  {/each}
-</div> -->
 
 <div class=graphic-and-summary>
   <DataGraphic
@@ -229,18 +237,32 @@ h4 {
     xDomain={$domain}
     yDomain={data[0].histogram.map((d) => d.bin)}
     yType="scalePoint"
-    width=600
-    height=350
+    width={WIDTH}
+    height={HEIGHT}
     bind:dataGraphicMounted={dataGraphicMounted}
     bind:margins={margins}
     bind:rollover={dgRollover}
     bind:xScale={xScale}
+    bind:yScale={yScale}
     bind:bodyHeight={H}
     bind:topPlot={T}
     bind:graphicWidth={GW}
+    bind:rightPlot={R}
+    right={16}
     key={key}
 
   >
+
+  {#if rollover.x && xScale && topPlot && bodyHeight}
+  <BuildIDRollover 
+    x={rollover.x}
+    label={rollover.datum.label}
+  />
+  <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+  fill="var(--cool-gray-100)" />
+  <rect x={xScale(latest.label) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+  fill="var(--cool-gray-100)" />
+{/if}
     <LeftAxis tickCount=6 />
     <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
@@ -256,29 +278,72 @@ h4 {
           color={percentileLineColorMap(pi)}
           data={percentile} />
         {/each}
+        {#if rollover.datum}
+          {#each rollover.datum.percentiles as percentile, i}
+          <circle 
+            cx={xScale(rollover.datum.label)}
+            cy={yScale(nearestBelow(percentile.value, rollover.datum.histogram.map((h) => h.bin)))}
+            r=2
+            stroke="none"
+            fill={percentileLineColorMap(percentile.bin)}
+            />
+            <g style="transform:translate({xScale(latest.label)}px, {yScale(nearestBelow(latest.percentiles[i].value, latest.histogram.map((h) => h.bin)))}px)">
+                <path 
+                  d={symbol().type(symbolTriangle).size(20)()} 
+                  fill={percentileLineColorMap(latest.percentiles[i].bin)}
+                />
+              </g>
+            {/each}
+        {/if}
     </GraphicBody>
 
-    {#if rollover.x && xScale && topPlot && bodyHeight}
-      <BuildIDRollover 
-        x={rollover.x}
-        label={rollover.datum.label}
+    <Violin 
+      showRight={false}
+      xp={rightPlot + 100}
+      y={latest.histogram} 
+      densityAccessor='value'
+      valueAccessor='bin'
+      densityRange={[0, 30]}
+      areaColor="var(--digital-blue-400)"
+      lineColor="var(--digital-blue-500)"
       />
-      <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-      fill="var(--cool-gray-700)" opacity=.2 />
-      <!-- <FiveNum numbers={rollover.datum.percentiles}
-      numberAccessor={'value'} x={rollover.x} /> -->
-      <!-- <FiveNum 
-      {...tidyToObject(rollover.datum.percentiles)} 
-         x={rollover.datum.label} /> -->
+      {#if rollover.x && rollover.datum.histogram}
+        <Violin 
+        showLeft={false}
+        xp={rightPlot + 100}
+        key={rollover.x}
+        y={rollover.datum.histogram} 
+        densityAccessor='value'
+        valueAccessor='bin'
+        densityRange={[0, 30]}
+        areaColor="var(--digital-blue-400)"
+        lineColor="var(--digital-blue-500)"
+        />
+      {/if}
 
-    {/if}
+
     <!-- <FiveNum 
     {...tidyToObject(latest.percentiles)} 
        x={latest.label} /> -->
   </DataGraphic>
-  <!-- <ComparisonSummary 
+  <DistributionComparison 
+    width={125}
+    height={HEIGHT}
+    leftDistribution={rollover.datum ? rollover.datum.histogram : undefined}
+    leftLabel={rollover.x}
+    rightDistribution={latest.histogram}
+    rightLabel={latest.label}
+  leftPercentiles={rollover.datum ? rollover.datum.percentiles.filter((p) => percentiles.includes(p.bin)) : undefined}
+    rightPercentiles={latest.percentiles.filter((p) => percentiles.includes(p.bin))}
+    xDomain={['hovered', 'latest']}
+    yDomain={latest.histogram.map((d) => d.bin)}
+    yFocus={rollover.y}
+  />
+  <ComparisonSummary 
     left={rollover.datum} 
-    right={latest} 
-    percentiles={percentiles} /> -->
+    right={latest}
+    leftLabel={rollover.x}
+    rightLabel={latest.label}
+    percentiles={percentiles} />
 </div>
     

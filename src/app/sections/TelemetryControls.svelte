@@ -46,7 +46,7 @@ const resetFilters = () => {
 </script>
 
 <LeftDrawer {visible}>
-    <TelemetryAppBar />
+    <!-- <TelemetryAppBar /> -->
     <div class=left-drawer__header>
         {#if !$hasDefaultControlFields}
             <div transition:fly={{ y: -10, duration: 200 }}

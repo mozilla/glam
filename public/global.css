@@ -82,6 +82,7 @@
     --space-8x: calc(var(--space-base) * 8);
     --space-12x: calc(var(--space-base) * 12);
     --space-16x: calc(var(--space-base) * 16);
+    --space-20x: calc(var(--space-base) * 20);
     --space-24x: calc(var(--space-base) * 24);
     --space-32x: calc(var(--space-base) * 32);
     --space-40x: calc(var(--space-base) * 40);
@@ -306,6 +307,7 @@ button:focus {
 }
 
 header {
+    min-width: var(--space-24x);
     width: 100%;
     height: var(--header-height);
     background-color: var(--blue-slate-700);
@@ -404,8 +406,14 @@ main .main-content {
 }
 
 main .main-action {
+    background-color: var(--blue-slate-700);
+
     position: relative;
     width: 100%;
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: start;
+    grid-column-gap: var(--space-2x);
 }
 
 main .details {

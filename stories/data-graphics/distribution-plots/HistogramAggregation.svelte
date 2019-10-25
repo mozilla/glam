@@ -9,7 +9,7 @@
   </script>
     
     <div class=story>
-      <div style="width: var(--space-81x);">
+      <div style="width: 900px;">
         <h1 class="story__title">probe / <span class=probe-head>gc_ms</span></h1>
         <NumericHistogramView data={gcmsByBuild} />
       </div>

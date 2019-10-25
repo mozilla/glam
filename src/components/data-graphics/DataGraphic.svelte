@@ -11,18 +11,27 @@ export let yDomain;
 export let xType = 'scalePoint';
 export let yType = 'scalePoint';
 
+export let left = 50;
+export let right = 16;
+export let top = 20;
+export let bottom = 20;
+export let laneGap = 30;
+export let buffer = 5;
+
+let xPadding = 0.5;
+
 // if x is a function, use that to get xMin / xMax.
 // if xMin / xMax is a function, use that to calculate xMin / xMax.
 // if xMin / xMax is a string, use that to pull out values for xMin / xMax.
 // xType / yType determine what you might need, so start there?
 
 export let margins = {
-  left: 50,
-  right: 16,
-  top: 20,
-  bottom: 20,
-  laneGap: 30,
-  buffer: 5,
+  left,
+  right,
+  top,
+  bottom,
+  laneGap,
+  buffer,
 };
 
 const DEFAULTS = {
@@ -85,7 +94,7 @@ function createXPointScale(values) {
   const scale = scaleFunction()
     .domain([...values])
     .range([$leftPlot, $rightPlot])
-    .padding(0.5);
+    .padding(xPadding);
   scale.type = xType;
   return scale;
 }

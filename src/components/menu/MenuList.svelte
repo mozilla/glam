@@ -13,11 +13,9 @@ export let onSelect = function onSelect(kvPair) {
     onParentSelect(kvPair);
   };
 
-const currentSelection = writable(undefined);
 const currentCandidate = writable(undefined);
 const allItems = writable([]);
 
-setContext('currentSelection', currentSelection);
 setContext('currentCandidate', currentCandidate);
 setContext('allItems', allItems);
 setContext('onSelect', onSelect);
@@ -40,7 +38,7 @@ function next() {
 }
 
 function select() {
-    dispatch('selection', $allItems[$currentCandidate]);
+    onSelect($allItems[$currentCandidate]);
 }
 
 const handleKeypress = (event) => {

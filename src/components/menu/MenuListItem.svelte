@@ -1,7 +1,6 @@
 <script>
 import { onMount, getContext } from 'svelte';
 
-const currentSelection = getContext('currentSelection');
 const currentCandidate = getContext('currentCandidate');
 const onSelect = getContext('onSelect');
 const allItems = getContext('allItems');
