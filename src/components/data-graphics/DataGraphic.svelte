@@ -201,6 +201,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
     viewbox='0 0 {$graphicWidth} {$graphicHeight}'
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
+    on:click
   >
   <clipPath id='graphic-body-{key}'>
       <rect

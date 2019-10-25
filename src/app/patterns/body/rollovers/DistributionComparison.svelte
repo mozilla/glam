@@ -2,7 +2,7 @@
 import { onMount, getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 import {
-  line, curveStep, symbol, symbolTriangle,
+  line, curveStep, symbol, symbolStar as referenceSymbol,
 } from 'd3-shape';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
@@ -101,7 +101,7 @@ function placeShapeY(value) {
     />
     <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i][yAccessor])}px)">
       <path 
-        d={symbol().type(symbolTriangle).size(20)()} 
+        d={symbol().type(referenceSymbol).size(20)()} 
         fill={percentileLineColorMap(leftP[xAccessor])}
       />
   </g>

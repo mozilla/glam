@@ -25,7 +25,7 @@ import PercentileSelectionControl from '../../PercentileSelectionControl.svelte'
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 
 let timeHorizon = 'MONTH';
-let percentiles = [50];
+let percentiles = [5, 25, 50, 75, 95];
 
 let readableAggs = {
   avg: 'Average',
@@ -37,36 +37,18 @@ let readableAggs = {
 </script>
 
 <style>
-  h4 {
-    margin:0;
-    margin-left: 50px;
-    margin-top:50px;
-  }
+.body-content {
+  margin-top: var(--space-2x);
+}
 
-  .time-horizon {
-    display: grid;
-    grid-auto-flow: column;
-    grid-column-gap: var(--space-base);
-    width: max-content;
-    margin-bottom: var(--space-base);
-  }
+.data-graphics {
+  margin-top: var(--space-4x);
+}
 
-  .body-content {
-    margin-top: var(--space-4x);
-  }
+.graphic-section {
+  margin-bottom: var(--space-8x);
+}
 
-  /* .data-graphics {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    
-    grid-column-gap: var(--space-2x);
-  } */
-
-  /* @media (max-width: 1500px) {
-    .data-graphics {
-      grid-template-columns: auto;
-    }
-  } */
 </style>
 
 <div class=body-content>
@@ -85,9 +67,9 @@ let readableAggs = {
 
   <div class=data-graphics>
     {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
-      <div>
-        <h4>{readableAggs[aggType]}</h4>
+      <div class=graphic-section>
         <ScalarAggregationSmallMultiple
+          title={readableAggs[aggType]}
           data={dataset}
           key={aggType + timeHorizon}
           resolution={timeHorizon}

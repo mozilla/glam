@@ -3,7 +3,7 @@ import { writable, derived } from 'svelte/store';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
-import { symbol, symbolTriangle } from 'd3-shape';
+import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
 
 let valueFmt = format(',.4r');
 let countFmt = format(',d');
@@ -126,7 +126,7 @@ let fmt = format(',.2r');
 //   return out;
 // }
 
-const movingAudienceSize = tweened(0, { duration: 1000, easing });
+const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(latest.audienceSize);
 
@@ -220,11 +220,11 @@ h4 {
     <h4>{title}</h4>
   </div>
   <div class=bignum>
-    <div class=bignum__label>Latest Median (50th perc.)</div>
+    <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
     <div class=bignum__value>{valueFmt(latest.percentiles.find((p) => p.bin === 50).value)}</div>
   </div>
   <div class=bignum>
-    <div class=bignum__label>Affected Clients</div>
+    <div class=bignum__label>⭑ Audience Size</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div>
 
@@ -232,7 +232,6 @@ h4 {
 
 <div class=graphic-and-summary>
   <DataGraphic
-  
     data={data}
     xDomain={$domain}
     yDomain={data[0].histogram.map((d) => d.bin)}
@@ -250,7 +249,9 @@ h4 {
     bind:rightPlot={R}
     right={16}
     key={key}
-
+    on:click={() => {
+      if (rollover.datum) latest = rollover.datum;
+    }}
   >
 
   {#if rollover.x && xScale && topPlot && bodyHeight}
@@ -289,7 +290,7 @@ h4 {
             />
             <g style="transform:translate({xScale(latest.label)}px, {yScale(nearestBelow(latest.percentiles[i].value, latest.histogram.map((h) => h.bin)))}px)">
                 <path 
-                  d={symbol().type(symbolTriangle).size(20)()} 
+                  d={symbol().type(referenceSymbol).size(20)()} 
                   fill={percentileLineColorMap(latest.percentiles[i].bin)}
                 />
               </g>
