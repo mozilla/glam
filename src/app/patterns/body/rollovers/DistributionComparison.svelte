@@ -1,5 +1,9 @@
 <script>
 import { onMount, getContext } from 'svelte';
+import { fade } from 'svelte/transition';
+import {
+  line, curveStep, symbol, symbolTriangle,
+} from 'd3-shape';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
@@ -41,6 +45,7 @@ onMount(() => {
   T.subscribe((t) => { topPlot = t; });
   B.subscribe((b) => { bottomPlot = b; });
 });
+
 </script>
 
 <DataGraphic
@@ -54,7 +59,7 @@ onMount(() => {
   bind:topPlot={T}
   bind:bottomPlot={B}
   bind:yScale={yScale}
-  left={0}
+  left={10}
   right={40}
 >
   <rect 
@@ -68,7 +73,40 @@ onMount(() => {
 
   <!-- <LeftAxis tickCount=6 />
   <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} /> -->
+
+  {#if leftPercentiles && rightPercentiles}
+  {#each leftPercentiles as leftP, i}
+    <!-- <path 
+    d={line().curve(curveStep)([
+      [leftPlot, yScale(nearestBelow(leftP.value, yDomain))],
+    [rightPlot, yScale(nearestBelow(rightPercentiles[i].value, yDomain))]])}
+    stroke={percentileLineColorMap(leftP.bin)}
+    fill="none"
+    /> -->
+    <line 
+      x1={leftPlot}
+      x2={rightPlot}
+      y1={yScale(nearestBelow(leftP.value, yDomain))}
+      y2={yScale(nearestBelow(rightPercentiles[i].value, yDomain))}
+      stroke={percentileLineColorMap(leftP.bin)}
+    />
+    <circle 
+      cx={leftPlot} 
+      cy={yScale(nearestBelow(leftP.value, yDomain))} 
+      r=2
+      fill={percentileLineColorMap(leftP.bin)}
+    />
+    <g style="transform:translate({rightPlot}px, {yScale(nearestBelow(rightPercentiles[i].value, yDomain))}px)">
+      <path 
+        d={symbol().type(symbolTriangle).size(20)()} 
+        fill={percentileLineColorMap(leftP.bin)}
+      />
+  </g>
+  {/each}
+{/if}
+
   {#if leftDistribution}
+  <g transition:fade={{ duration: 50 }}>
     <Violin 
       showLeft={false}
       xp={(rightPlot - leftPlot) / 2 + leftPlot - 1}
@@ -81,6 +119,7 @@ onMount(() => {
       areaColor="var(--digital-blue-400)"
       lineColor="var(--digital-blue-500)"
     />
+  </g>
   {/if}
     {#if rightDistribution}
       <Violin 
@@ -100,17 +139,7 @@ onMount(() => {
     <RightAxis tickCount=6 />
     <BottomAxis ticks={['hovered', 'latest']}  />
 
-    {#if leftPercentiles && rightPercentiles}
-      {#each leftPercentiles as leftP, i}
-        <line 
-          x1={leftPlot}
-          x2={rightPlot}
-          y1={yScale(nearestBelow(leftP.value, yDomain))}
-          y2={yScale(nearestBelow(rightPercentiles[i].value, yDomain))}
-          stroke={percentileLineColorMap(leftP.bin)}
-        />
-      {/each}
-    {/if}
+
     <!-- {#if leftPercentiles}
       {#each leftPercentiles as percentile, i}
         <line 

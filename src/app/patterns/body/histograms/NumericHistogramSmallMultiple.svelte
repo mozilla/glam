@@ -1,6 +1,12 @@
 <script>
 import { writable, derived } from 'svelte/store';
+import { tweened } from 'svelte/motion';
 import { format } from 'd3-format';
+import { symbol, symbolTriangle } from 'd3-shape';
+
+let valueFmt = format(',.4r');
+let countFmt = format(',d');
+let pFmt = format('.0%');
 
 export let data;
 
@@ -18,7 +24,6 @@ import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
-import FiveNum from '../rollovers/FiveNum.svelte';
 
 import DistributionComparison from '../rollovers/DistributionComparison.svelte';
 
@@ -84,12 +89,13 @@ function initiateRollover(rolloverStore) {
   });
 }
 
-let WIDTH = 500;
+let WIDTH = 450;
 let HEIGHT = 350;
 
 let margins;
 let dataGraphicMounted = false;
 let xScale;
+let yScale;
 let T;
 let H;
 let GW;
@@ -180,62 +186,44 @@ h4 {
 
 .title-and-summary {
   display:grid;
-  grid-template-columns: auto max-content;
+  grid-template-columns: auto max-content max-content;
+  grid-column-gap: var(--space-4x);
+  justify-items: start;
+  margin-bottom: var(--space-4x);
+}
+
+.bignum {
+  width: max-content;
+  justify-self: end;
+}
+
+.bignum__label {
+  font-size: var(--text-015);
+  text-transform: uppercase;
+  color: var(--cool-gray-500);
+}
+
+.bignum__value {
+  font-size: var(--text-06);
+  text-align: right;
 }
 </style>
 
 
-<div class='title-and-summary' style='width: {graphicWidth}px;'>
-<div style="padding-left:{margins ? margins.left : 0}px;">
-  <h4>{title}</h4>
-</div>
+<div class='title-and-summary'>
+  <div style="padding-left:{margins ? margins.left : 0}px;">
+    <h4>{title}</h4>
+  </div>
+  <div class=bignum>
+    <div class=bignum__label>Latest Median (50th perc.)</div>
+    <div class=bignum__value>{valueFmt(latest.percentiles.find((p) => p.bin === 50).value)}</div>
+  </div>
+  <div class=bignum>
+    <div class=bignum__label>Affected Clients</div>
+    <div class=bignum__value>{countFmt(latest.audienceSize)}</div>
+  </div>
 
-<!-- <table>
-  <thead>
-    <tr>
-        <th></th>
-        {#each percentiles as perc, i}
-          <th><span class=color-label style='background-color:{percentileLineColorMap(perc)}'></span>{perc}%</th>
-        {/each}
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>latest</td>
-    {#each percentiles as perc, i}
-      <td class:bold={perc === 50}>{fmt(latest.percentiles.find((pi) => pi.bin === perc).value)}</td>
-    {/each}
-    </tr>
-    <tr>
-    <td>hovered</td>
-    {#if rollover.datum}
-    {#each percentiles as perc, i}
-      <td class:bold={perc === 50}>{fmt(rollover.datum.percentiles.find((pi) => pi.bin === perc).value)}</td>
-    {/each}
-    {/if}
-    </tr>
-  </tbody>
-</table> -->
 </div>
-
-<!-- <div class=summary>
-  {#each percentiles as perc, i}
-    <div class=summary-miniature>
-      <div><span class=color-label
-      style='background-color:{percentileLineColorMap(perc)}'
-      ></span>{perc}%</div>
-      <div>
-        {fmt(latest.percentiles.find((pi) => pi.bin === perc).value)}
-      </div>
-      <div></div>
-      <div>
-        {#if rollover.datum}
-          {fmt(rollover.datum.percentiles.find((pi) => pi.bin === perc).value)}
-        {/if}
-      </div>
-    </div>
-  {/each}
-</div> -->
 
 <div class=graphic-and-summary>
   <DataGraphic
@@ -250,14 +238,26 @@ h4 {
     bind:margins={margins}
     bind:rollover={dgRollover}
     bind:xScale={xScale}
+    bind:yScale={yScale}
     bind:bodyHeight={H}
     bind:topPlot={T}
     bind:graphicWidth={GW}
     bind:rightPlot={R}
-    right={10}
+    right={16}
     key={key}
 
   >
+
+  {#if rollover.x && xScale && topPlot && bodyHeight}
+  <BuildIDRollover 
+    x={rollover.x}
+    label={rollover.datum.label}
+  />
+  <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+  fill="var(--cool-gray-100)" />
+  <rect x={xScale(latest.label) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+  fill="var(--cool-gray-100)" />
+{/if}
     <LeftAxis tickCount=6 />
     <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
@@ -273,6 +273,23 @@ h4 {
           color={percentileLineColorMap(pi)}
           data={percentile} />
         {/each}
+        {#if rollover.datum}
+          {#each rollover.datum.percentiles as percentile, i}
+          <circle 
+            cx={xScale(rollover.datum.label)}
+            cy={yScale(nearestBelow(percentile.value, rollover.datum.histogram.map((h) => h.bin)))}
+            r=2
+            stroke="none"
+            fill={percentileLineColorMap(percentile.bin)}
+            />
+            <g style="transform:translate({xScale(latest.label)}px, {yScale(nearestBelow(latest.percentiles[i].value, latest.histogram.map((h) => h.bin)))}px)">
+                <path 
+                  d={symbol().type(symbolTriangle).size(20)()} 
+                  fill={percentileLineColorMap(latest.percentiles[i].bin)}
+                />
+              </g>
+            {/each}
+        {/if}
     </GraphicBody>
 
     <Violin 
@@ -299,20 +316,7 @@ h4 {
         />
       {/if}
 
-    {#if rollover.x && xScale && topPlot && bodyHeight}
-      <BuildIDRollover 
-        x={rollover.x}
-        label={rollover.datum.label}
-      />
-      <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-      fill="var(--cool-gray-700)" opacity=.2 />
-      <!-- <FiveNum numbers={rollover.datum.percentiles}
-      numberAccessor={'value'} x={rollover.x} /> -->
-      <!-- <FiveNum 
-      {...tidyToObject(rollover.datum.percentiles)} 
-         x={rollover.datum.label} /> -->
 
-    {/if}
     <!-- <FiveNum 
     {...tidyToObject(latest.percentiles)} 
        x={latest.label} /> -->
