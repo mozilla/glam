@@ -26,6 +26,10 @@ export let xDomain;
 export let yDomain;
 export let width;
 export let height;
+export let xType;
+export let yType;
+export let xAccessor = 'bin';
+export let yAccessor = 'value';
 
 const margins = getContext('margins');
 
@@ -46,12 +50,18 @@ onMount(() => {
   B.subscribe((b) => { bottomPlot = b; });
 });
 
+
+function placeShapeY(value) {
+  if (yScale.type !== 'scalePoint') return yScale(value);
+  return yScale(nearestBelow(value, yDomain));
+}
+
 </script>
 
 <DataGraphic
   xDomain={xDomain}
   yDomain={yDomain}
-  yType="scalePoint"
+  yType={yType}
   width={width}
   height={height}
   bind:leftPlot={L}
@@ -76,30 +86,23 @@ onMount(() => {
 
   {#if leftPercentiles && rightPercentiles}
   {#each leftPercentiles as leftP, i}
-    <!-- <path 
-    d={line().curve(curveStep)([
-      [leftPlot, yScale(nearestBelow(leftP.value, yDomain))],
-    [rightPlot, yScale(nearestBelow(rightPercentiles[i].value, yDomain))]])}
-    stroke={percentileLineColorMap(leftP.bin)}
-    fill="none"
-    /> -->
     <line 
       x1={leftPlot}
       x2={rightPlot}
-      y1={yScale(nearestBelow(leftP.value, yDomain))}
-      y2={yScale(nearestBelow(rightPercentiles[i].value, yDomain))}
-      stroke={percentileLineColorMap(leftP.bin)}
+      y1={placeShapeY(leftP[yAccessor])}
+      y2={placeShapeY(rightPercentiles[i][yAccessor])}
+      stroke={percentileLineColorMap(leftP[xAccessor])}
     />
     <circle 
       cx={leftPlot} 
-      cy={yScale(nearestBelow(leftP.value, yDomain))} 
+      cy={placeShapeY(leftP[yAccessor])} 
       r=2
-      fill={percentileLineColorMap(leftP.bin)}
+      fill={percentileLineColorMap(leftP[xAccessor])}
     />
-    <g style="transform:translate({rightPlot}px, {yScale(nearestBelow(rightPercentiles[i].value, yDomain))}px)">
+    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i][yAccessor])}px)">
       <path 
         d={symbol().type(symbolTriangle).size(20)()} 
-        fill={percentileLineColorMap(leftP.bin)}
+        fill={percentileLineColorMap(leftP[xAccessor])}
       />
   </g>
   {/each}
@@ -138,28 +141,4 @@ onMount(() => {
 
     <RightAxis tickCount=6 />
     <BottomAxis ticks={['hovered', 'latest']}  />
-
-
-    <!-- {#if leftPercentiles}
-      {#each leftPercentiles as percentile, i}
-        <line 
-          x1={leftPlot + margins.buffer * 2} 
-          x2={leftPlot}
-          y1={yScale(nearestBelow(percentile.value, yDomain))}
-          y2={yScale(nearestBelow(percentile.value, yDomain))}
-          stroke={percentileLineColorMap(percentile.bin)}
-          stroke-width=2 />
-      {/each}
-    {/if}
-    {#if rightPercentiles}
-      {#each rightPercentiles as percentile, i}
-        <line 
-          x1={rightPlot - margins.buffer * 2} 
-          x2={rightPlot}
-          y1={yScale(nearestBelow(percentile.value, yDomain))}
-          y2={yScale(nearestBelow(percentile.value, yDomain))}
-          stroke={percentileLineColorMap(percentile.bin)}
-          stroke-width=2 />
-      {/each}
-    {/if} -->
 </DataGraphic>    

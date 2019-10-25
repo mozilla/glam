@@ -151,7 +151,7 @@ td, th {
                 6)}-{right.label.slice(6, 8)}{' '}</div> 
               {right.label.slice(8, 10)}:{right.label.slice(10, 12)}:{right.label.slice(12, 14)} -->
           </th>
-          <th></th>
+          <th>Diff.</th>
       </tr>
     </thead>
     <tbody>

@@ -36,6 +36,9 @@ const smallBarMultipleScale = (obj, range = [0, 20]) => {
   ]).range(range);
 };
 
+let yScaleType = yScale.type;
+let yScaleAdjustment = yScaleType === 'scalePoint' ? yScale.step() / 2 : 0;
+
 let histogramScale = smallBarMultipleScale(plotY, densityRange);
 $: histogramScale = smallBarMultipleScale(plotY, densityRange);
 
@@ -44,11 +47,11 @@ let [histogramArea, inverseHistogramArea] = [1, -1].map((direction) => area()
   .x1((d) => direction * histogramScale(d.value))
   .x0(() => histogramScale(0))
   .curve(curve)
-  .y((d) => yScale(d.bin) + yScale.step() / 2));
+  .y((d) => yScale(d.bin) + yScaleAdjustment));
 
-let histogramLine = histogramArea.lineX1().y((d) => yScale(d.bin) + yScale.step() / 2);
+let histogramLine = histogramArea.lineX1().y((d) => yScale(d.bin) + yScaleAdjustment);
 let inverseHistogramLine = inverseHistogramArea
-  .lineX1().y((d) => yScale(d.bin) + yScale.step() / 2);
+  .lineX1().y((d) => yScale(d.bin) + yScaleAdjustment);
 // $: histogramArea = histogramArea(plotY);
 // $: histogramLine = histogramLine(plotY);
 // $: inverseHistogramArea = inverseHistogramArea(plotY);

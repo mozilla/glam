@@ -1,6 +1,7 @@
 <script>
 import { writable, derived } from 'svelte/store';
 import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 import { symbol, symbolTriangle } from 'd3-shape';
 
@@ -117,13 +118,17 @@ $: if (dataGraphicMounted) {
 let latest = data[data.length - 1];
 let fmt = format(',.2r');
 
-function tidyToObject(tidy) {
-  let out = {};
-  tidy.forEach((t) => {
-    out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
-  });
-  return out;
-}
+// function tidyToObject(tidy) {
+//   let out = {};
+//   tidy.forEach((t) => {
+//     out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
+//   });
+//   return out;
+// }
+
+const movingAudienceSize = tweened(0, { duration: 1000, easing });
+
+$: movingAudienceSize.set(latest.audienceSize);
 
 </script>
 
@@ -220,7 +225,7 @@ h4 {
   </div>
   <div class=bignum>
     <div class=bignum__label>Affected Clients</div>
-    <div class=bignum__value>{countFmt(latest.audienceSize)}</div>
+    <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div>
 
 </div>
