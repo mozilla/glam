@@ -6,14 +6,15 @@ import { nearestBelow } from '../../../utils/stats';
 
 export function extractPercentiles(percentileValues, convertedData) {
   return percentileValues
-    .map((percentile) => convertedData.map(({ label, percentiles, histogram }) => {
-      const histKeys = histogram.map((h) => h.bin);
-      const originalPercentileValue = percentiles.find((p) => p.bin === percentile).value;
+    .map((percentileBin) => convertedData.map(({
+      label, percentiles, transformedPercentiles,
+    }) => {
+      const percentile = percentiles[percentileBin];
+      const transformedPercentile = transformedPercentiles[percentileBin];
       return {
         label,
-        value:
-        nearestBelow(originalPercentileValue, histKeys),
-        originalPercentileValue,
+        percentile,
+        transformedPercentile,
       };
     }));
 }

@@ -43,10 +43,6 @@ $: if (x) {
   ];
 }
 
-[p5, p25, p50, p75, p95].forEach((p) => {
-  console.log(yScale(p));
-});
-
 // function interleave(data) {
 //   // in: [1,2,3,4] out [[1,2], [2,3], [3,4]]
 //   let interleaved = Array.from({ length: data.length - 1 }).map((_, i) => [data[i], data[i + 1]]);

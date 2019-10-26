@@ -8,6 +8,8 @@ import { zipByAggregationType, makeDataset, topKBuildsPerDay } from '../../../ut
 
 export let data;
 
+// key, agg type. It's okay if it is a double-nested object even if there is no key / agg-type.
+// just assume this and work accordingly.
 const aggs = Object
   .entries(zipByAggregationType(data))
   .map(([aggType, payload]) => [
