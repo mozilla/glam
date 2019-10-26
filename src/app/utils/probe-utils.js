@@ -1,4 +1,6 @@
-function sortByKey(key) {
+import { nearestBelow } from '../../utils/stats';
+
+export function sortByKey(key) {
   return (a, b) => {
     if (a[key] < b[key]) return -1;
     if (a[key] > b[key]) return 1;
@@ -25,12 +27,21 @@ export const responseHistogramToGraphicFormat = (histogram, keyTransform = (k) =
   return formatted;
 };
 
-export const makeDataset = (probeData, key = 'version') => probeData.map((probe) => ({
-  label: probe.metadata[key],
-  histogram: responseHistogramToGraphicFormat(probe.data[0].histogram),
-  percentiles: responseHistogramToGraphicFormat(probe.data[0].percentiles),
-  audienceSize: probe.data[0].total_users,
-}));
+export const makeDataset = (probeData, key = 'version') => probeData.map((probe) => {
+  const histogram = responseHistogramToGraphicFormat(probe.data[0].histogram);
+  const { percentiles } = probe.data[0];
+  const transformedPercentiles = Object.entries(percentiles).reduce((acc, [bin, value]) => {
+    acc[bin] = nearestBelow(value, histogram.map((h) => h.bin));
+    return acc;
+  }, {});
+  return {
+    label: probe.metadata[key],
+    histogram,
+    percentiles,
+    transformedPercentiles,
+    audienceSize: probe.data[0].total_users,
+  };
+});
 
 export function isScalar(payload) {
   return payload.every((aggregation) => aggregation.metadata.metric_type === 'scalar');
@@ -62,7 +73,7 @@ export function zipByAggregationType(payload) {
     const { metadata } = aggregation;
     aggregation.data.forEach((datum) => {
       const aggType = datum.client_agg_type;
-      out[aggType].push({ data: [datum], metadata });
+      out[aggType].push({ data: datum, metadata });
     });
   });
 
@@ -93,3 +104,47 @@ export function topKBuildsPerDay(dataset, k = 2) {
   flattened.sort(sortByKey('label'));
   return flattened;
 }
+
+export function gatherBy(payload, by) {
+  const gathered = {};
+  // get the entire set of keys.
+  payload.forEach((aggregation) => {
+    aggregation.data.forEach((entry) => {
+      const aggType = by(entry);
+      if (!(aggType in gathered)) gathered[aggType] = [];
+      gathered[aggType].push({
+        data: [entry], metadata: aggregation.metadata,
+      });
+    });
+  });
+  return gathered;
+}
+
+
+// export function gatherBy(payload, by) {
+//   const keys = new Set([]);
+//   payload.forEach((aggregation) => {
+//     aggregation.data.forEach((entry) => {
+//       const aggType = by(entry);
+//       keys.add(aggType);
+//     });
+//   });
+
+//   const out = {};
+//   keys.forEach((a) => {
+//     out[a] = [];
+//   });
+
+//   payload.forEach((aggregation) => {
+//     const { metadata } = aggregation;
+//     aggregation.data.forEach((datum) => {
+//       const aggType = datum.client_agg_type;
+//       out[aggType].push({ data: [datum], metadata });
+//     });
+//   });
+
+//   keys.forEach((a) => {
+//     out[a].sort(sortByBuildID);
+//   });
+//   return out;
+// }

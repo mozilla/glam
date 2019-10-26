@@ -48,7 +48,7 @@ let width;
     height: var(--increment);
     display: grid;
     align-items: center;
-    padding-left: var(--space-2x);
+    padding-left: var(--space-4x);
     
 }
 

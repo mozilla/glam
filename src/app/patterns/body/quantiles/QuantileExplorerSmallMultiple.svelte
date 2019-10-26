@@ -1,22 +1,10 @@
 <script>
+import { getContext } from 'svelte';
 import { writable, derived } from 'svelte/store';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
-
-let valueFmt = format(',.4r');
-let countFmt = format(',d');
-let pFmt = format('.0%');
-
-export let data;
-
-// FIXME: after demo remove this requirement
-data = data.slice(0, -1);
-export let title;
-export let key;
-export let resolution = 'ALL_TIME';
-export let percentiles = [50];
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
@@ -25,19 +13,42 @@ import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
-
 import DistributionComparison from '../rollovers/DistributionComparison.svelte';
 
-import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
-
-import { nearestBelow } from '../../../../utils/stats';
-
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
-
 import {
   buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
 } from '../../../../components/data-graphics/utils/build-id-utils';
 import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
+
+export let data;
+export let title;
+export let key;
+export let timeHorizon;
+export let percentiles = [50];
+
+let valueFmt = format(',.4r');
+let countFmt = format(',d');
+
+const probeType = getContext('probeType');
+
+let yScaleType;
+let yDomain;
+let whichPercentileAccessor = 'transformedPercentiles';
+let whichPercentileVersion = 'transformedPercentile';
+if (probeType === 'histogram') {
+  yScaleType = 'scalePoint';
+  yDomain = data[0].histogram.map((d) => d.bin);
+} else if (probeType === 'scalar') {
+  yScaleType = 'log';
+  let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
+  yDomain = [0, upperDomain];
+  whichPercentileAccessor = 'percentiles';
+  whichPercentileVersion = 'percentile';
+}
+
+// FIXME: after demo remove this requirement
+data = data.slice(0, -1);
 
 let domain = writable(data.map((d) => d.label));
 
@@ -52,23 +63,20 @@ function setDomain(str) {
   domain.set(filtered.map((d) => d.label));
 }
 
-$: setDomain(resolution);
+$: setDomain(timeHorizon);
 let percentileData = [];
 
 $: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
   .map((ps, i) => [ps, percentiles[i]]);
 
-
-// let [upperDomain] = extractPercentiles([95], data.filter((d) => $domain.includes(d.label)));
-// upperDomain = Math.max(...upperDomain.map((o) => o.originalPercentileValue));
-
+// FIXME: establish the buildID graph as a shared pattern, not this boilerplate.
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
 
-$: if (resolution === 'ALL_TIME') {
+$: if (timeHorizon === 'ALL_TIME') {
   tickFormatter = buildIDToMonth;
   ticks = firstOfMonth;
-} else if (resolution === 'MONTH') {
+} else if (timeHorizon === 'MONTH') {
   tickFormatter = buildIDToMonth;
   ticks = mondays;
 } else {
@@ -78,6 +86,7 @@ $: if (resolution === 'ALL_TIME') {
 
 let dgRollover;
 let rollover = {};
+
 function initiateRollover(rolloverStore) {
   if (!rolloverStore) return undefined;
   derived(rolloverStore, ({ x, y }) => {
@@ -101,17 +110,13 @@ let T;
 let H;
 let GW;
 let R;
-let graphicWidth;
 let topPlot;
-let rightPlot;
 let bodyHeight;
 
 $: if (dataGraphicMounted) {
   initiateRollover(dgRollover);
   T.subscribe((t) => { topPlot = t; });
   H.subscribe((h) => { bodyHeight = h; });
-  R.subscribe((r) => { rightPlot = r; });
-  GW.subscribe((gw) => { graphicWidth = gw; });
 }
 
 // FIXME: this is for demo purposes. use better build data.
@@ -126,9 +131,21 @@ let fmt = format(',.2r');
 //   return out;
 // }
 
+
 const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(latest.audienceSize);
+
+
+function getPercentiles(percentileBin, datum) {
+  const percentile = datum.percentiles[percentileBin];
+  const transformedPercentile = datum.transformedPercentiles[percentileBin];
+  return { percentileBin, percentile, transformedPercentile };
+}
+
+function getAllPercentiles(percentileBins, datum) {
+  return percentileBins.map((p) => getPercentiles(p, datum));
+}
 
 </script>
 
@@ -221,7 +238,7 @@ h4 {
   </div>
   <div class=bignum>
     <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
-    <div class=bignum__value>{valueFmt(latest.percentiles.find((p) => p.bin === 50).value)}</div>
+    <div class=bignum__value>{valueFmt(latest.percentiles[50])}</div>
   </div>
   <div class=bignum>
     <div class=bignum__label>⭑ Audience Size</div>
@@ -234,8 +251,8 @@ h4 {
   <DataGraphic
     data={data}
     xDomain={$domain}
-    yDomain={data[0].histogram.map((d) => d.bin)}
-    yType="scalePoint"
+    yDomain={yDomain}
+    yType={yScaleType}
     width={WIDTH}
     height={HEIGHT}
     bind:dataGraphicMounted={dataGraphicMounted}
@@ -245,8 +262,6 @@ h4 {
     bind:yScale={yScale}
     bind:bodyHeight={H}
     bind:topPlot={T}
-    bind:graphicWidth={GW}
-    bind:rightPlot={R}
     right={16}
     key={key}
     on:click={() => {
@@ -274,72 +289,47 @@ h4 {
           curve="curveStep"
           lineDrawAnimation={{ duration: 300 }} 
           xAccessor="label"
-          yAccessor="value"
+          yAccessor={whichPercentileVersion}
           strokeWidth={percentileLineStrokewidthMap(pi)}
           color={percentileLineColorMap(pi)}
           data={percentile} />
         {/each}
-        {#if rollover.datum}
-          {#each rollover.datum.percentiles as percentile, i}
-          <circle 
-            cx={xScale(rollover.datum.label)}
-            cy={yScale(nearestBelow(percentile.value, rollover.datum.histogram.map((h) => h.bin)))}
-            r=2
-            stroke="none"
-            fill={percentileLineColorMap(percentile.bin)}
-            />
-            <g style="transform:translate({xScale(latest.label)}px, {yScale(nearestBelow(latest.percentiles[i].value, latest.histogram.map((h) => h.bin)))}px)">
-                <path 
-                  d={symbol().type(referenceSymbol).size(20)()} 
-                  fill={percentileLineColorMap(latest.percentiles[i].bin)}
-                />
-              </g>
-            {/each}
-        {/if}
     </GraphicBody>
 
-    <Violin 
-      showRight={false}
-      xp={rightPlot + 100}
-      y={latest.histogram} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0, 30]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
+    {#if rollover.datum}
+    {#each percentiles.map((p) => getPercentiles(p, rollover.datum)) as p, i (p.percentileBin)}
+    <circle 
+      cx={xScale(rollover.datum.label)}
+      cy={yScale(p[whichPercentileVersion])}
+      r=2
+      stroke="none"
+      fill={percentileLineColorMap(p.percentileBin)}
       />
-      {#if rollover.x && rollover.datum.histogram}
-        <Violin 
-        showLeft={false}
-        xp={rightPlot + 100}
-        key={rollover.x}
-        y={rollover.datum.histogram} 
-        densityAccessor='value'
-        valueAccessor='bin'
-        densityRange={[0, 30]}
-        areaColor="var(--digital-blue-400)"
-        lineColor="var(--digital-blue-500)"
-        />
-      {/if}
-
-
-    <!-- <FiveNum 
-    {...tidyToObject(latest.percentiles)} 
-       x={latest.label} /> -->
+      <g style="transform:translate({xScale(latest.label)}px, {yScale(latest.transformedPercentiles[p.percentileBin])}px)">
+          <path 
+            d={symbol().type(referenceSymbol).size(20)()} 
+            fill={percentileLineColorMap(p.percentileBin)}
+          />
+        </g>
+      {/each}
+  {/if}
   </DataGraphic>
   <DistributionComparison 
+    yType={yScaleType}
     width={125}
     height={HEIGHT}
     leftDistribution={rollover.datum ? rollover.datum.histogram : undefined}
-    leftLabel={rollover.x}
     rightDistribution={latest.histogram}
+    leftLabel={rollover.x}
     rightLabel={latest.label}
-  leftPercentiles={rollover.datum ? rollover.datum.percentiles.filter((p) => percentiles.includes(p.bin)) : undefined}
-    rightPercentiles={latest.percentiles.filter((p) => percentiles.includes(p.bin))}
+    precentileValueAccessor={whichPercentileVersion}
+    leftPercentiles={rollover.datum ? getAllPercentiles(percentiles, rollover.datum) : undefined}
+    rightPercentiles={getAllPercentiles(percentiles, latest)}
     xDomain={['hovered', 'latest']}
-    yDomain={latest.histogram.map((d) => d.bin)}
+    yDomain={yDomain}
     yFocus={rollover.y}
   />
+  
   <ComparisonSummary 
     left={rollover.datum} 
     right={latest}

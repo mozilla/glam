@@ -3,7 +3,7 @@ import { writable, derived } from 'svelte/store';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
-import { symbol, symbolTriangle } from 'd3-shape';
+import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
 
 let valueFmt = format(',.4r');
 let countFmt = format(',d');
@@ -117,17 +117,8 @@ $: if (dataGraphicMounted) {
 let latest = data[data.length - 1];
 let fmt = format(',.2r');
 
-$: console.log(latest.percentiles.filter((p) => percentiles.includes(p.bin)));
 
-// function tidyToObject(tidy) {
-//   let out = {};
-//   tidy.forEach((t) => {
-//     out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
-//   });
-//   return out;
-// }
-
-const movingAudienceSize = tweened(0, { duration: 1000, easing });
+const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(latest.audienceSize);
 </script>
@@ -289,7 +280,7 @@ h4 {
             />
             <g style="transform:translate({xScale(latest.label)}px, {yScale(latest.percentiles[i].value)}px)">
                 <path 
-                  d={symbol().type(symbolTriangle).size(20)()} 
+                  d={symbol().type(referenceSymbol).size(20)()} 
                   fill={percentileLineColorMap(latest.percentiles[i].bin)}
                 />
               </g>

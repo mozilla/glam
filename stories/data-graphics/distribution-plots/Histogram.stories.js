@@ -5,6 +5,8 @@ import { storiesOf } from '@storybook/svelte';
 import ScalarAggregation from './ScalarAggregation.svelte';
 import HistogramAggregation from './HistogramAggregation.svelte';
 
+import GenericQuantileView from './GenericQuantileView.svelte';
+
 import '../../../public/global.css';
 import './shared.css';
 
@@ -14,4 +16,6 @@ storiesOf('Data Graphics|Quantile Plot', module)
   }))
   .add('Scalar View (active_ticks)', () => ({
     Component: ScalarAggregation,
+  })).add('Generic Quantile View', () => ({
+    Component: GenericQuantileView,
   }));

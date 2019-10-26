@@ -8,7 +8,7 @@ import ScalarAggregationView from '../../../src/app/patterns/body/scalars/Scalar
 
   <h1 class="story__title">probe / <span
   class=probe-head>browser_engagement_active_ticks</span></h1>
-  <div style="width: var(--space-81x);">
+  <div style="width: 900px;">
       <ScalarAggregationView data={ACTIVE_TICKS_BUILD.response} />
   </div>
 

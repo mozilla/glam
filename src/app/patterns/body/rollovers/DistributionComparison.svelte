@@ -2,15 +2,11 @@
 import { onMount, getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 import {
-  line, curveStep, symbol, symbolTriangle,
+  line, curveStep, symbol, symbolStar as referenceSymbol,
 } from 'd3-shape';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
-import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -28,10 +24,9 @@ export let width;
 export let height;
 export let xType;
 export let yType;
-export let xAccessor = 'bin';
+export let key = Math.random().toString(36).substring(7);
+export let precentileValueAccessor = 'percentile';
 export let yAccessor = 'value';
-
-const margins = getContext('margins');
 
 let L;
 let R;
@@ -71,6 +66,7 @@ function placeShapeY(value) {
   bind:yScale={yScale}
   left={10}
   right={40}
+  key={key}
 >
   <rect 
     x={leftPlot}
@@ -89,20 +85,20 @@ function placeShapeY(value) {
     <line 
       x1={leftPlot}
       x2={rightPlot}
-      y1={placeShapeY(leftP[yAccessor])}
-      y2={placeShapeY(rightPercentiles[i][yAccessor])}
-      stroke={percentileLineColorMap(leftP[xAccessor])}
+      y1={placeShapeY(leftP[precentileValueAccessor])}
+      y2={placeShapeY(rightPercentiles[i][precentileValueAccessor])}
+      stroke={percentileLineColorMap(leftP.percentileBin)}
     />
     <circle 
       cx={leftPlot} 
-      cy={placeShapeY(leftP[yAccessor])} 
+      cy={placeShapeY(leftP[precentileValueAccessor])} 
       r=2
-      fill={percentileLineColorMap(leftP[xAccessor])}
+      fill={percentileLineColorMap(leftP.percentileBin)}
     />
-    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i][yAccessor])}px)">
+    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i][precentileValueAccessor])}px)">
       <path 
-        d={symbol().type(symbolTriangle).size(20)()} 
-        fill={percentileLineColorMap(leftP[xAccessor])}
+        d={symbol().type(referenceSymbol).size(20)()} 
+        fill={percentileLineColorMap(leftP.percentileBin)}
       />
   </g>
   {/each}
@@ -124,21 +120,21 @@ function placeShapeY(value) {
     />
   </g>
   {/if}
-    {#if rightDistribution}
-      <Violin 
-      showRight={false}
-      xp={(rightPlot - leftPlot) / 2 + leftPlot + 1}
-      opacity=.9
-      key={rightLabel}
-      y={rightDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0, 30]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-      />
-    {/if}
+  {#if rightDistribution}
+    <Violin 
+    showRight={false}
+    xp={(rightPlot - leftPlot) / 2 + leftPlot + 1}
+    opacity=.9
+    key={rightLabel}
+    y={rightDistribution} 
+    densityAccessor='value'
+    valueAccessor='bin'
+    densityRange={[0, 30]}
+    areaColor="var(--digital-blue-400)"
+    lineColor="var(--digital-blue-500)"
+    />
+  {/if}
 
-    <RightAxis tickCount=6 />
-    <BottomAxis ticks={['hovered', 'latest']}  />
+  <RightAxis tickCount=6 />
+  <BottomAxis ticks={['hovered', 'latest']}  />
 </DataGraphic>    
