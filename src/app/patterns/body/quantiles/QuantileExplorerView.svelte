@@ -33,63 +33,54 @@ let percentiles = [5, 25, 50, 75, 95];
 setContext('probeType', probeType);
 
 </script>
-    
-    <style>
-      .body-content {
-        margin-top: var(--space-2x);
-      }
-  
-      .data-graphics {
-        margin-top: var(--space-4x);
-      }
-  
-    </style>
-    
-    
-    <div class=body-content>
-      
-      <div class=body-control-row>
-        <div class=body-control-set>
-          <label class=body-control-set--label>Time Horizon  </label>
-          <TimeHorizonControl bind:horizon={timeHorizon} />
-        </div>
-      
-        <div class=body-control-set>
-            <label class=body-control-set--label>Probe Value Percentiles</label>
-          <PercentileSelectionControl bind:percentiles={percentiles} />
-        </div>
-      </div>
-  
-      <div class=data-graphics>
-        {#each Object.entries(transformed) as [key, aggs], i (key)}
-          {#if key !== 'undefined'}
-            <h4>{key}</h4>
-          {/if}
-          {probeType}
 
-          {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
-            <div>
-              <QuantileExplorerSmallMultiple
-                title={aggType}
-                data={data}
-                probeType={probeType}
-                percentiles={percentiles}
-                timeHorizon={timeHorizon}
-              />
-            </div>
-          {/each}
-        {/each}
-        <!-- {#each aggs as [aggType, dataset], i (aggType + timeHorizon)}
-          <div>
-            <NumericHistogramSmallMultiple
-              title={[aggType]}
-              data={dataset}
-              key={aggType + timeHorizon}
-              resolution={timeHorizon}
-              percentiles={percentiles}
-            />
-        </div>
-        {/each} -->
-      </div>
+<style>
+  .body-content {
+    margin-top: var(--space-2x);
+  }
+
+  .data-graphics {
+    margin-top: var(--space-8x);
+  }
+
+  .small-multiple {
+    margin-bottom: var(--space-8x);
+  }
+
+</style>
+
+
+<div class=body-content>
+  
+  <div class=body-control-row>
+    <div class=body-control-set>
+      <label class=body-control-set--label>Time Horizon  </label>
+      <TimeHorizonControl bind:horizon={timeHorizon} />
     </div>
-    
+  
+    <div class=body-control-set>
+        <label class=body-control-set--label>Probe Value Percentiles</label>
+      <PercentileSelectionControl bind:percentiles={percentiles} />
+    </div>
+  </div>
+
+  <div class=data-graphics>
+    {#each Object.entries(transformed) as [key, aggs], i (key)}
+      {#if key !== 'undefined'}
+        <h4>{key}</h4>
+      {/if}
+
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
+        <div class='small-multiple'>
+          <QuantileExplorerSmallMultiple
+            title={aggType}
+            data={data}
+            probeType={probeType}
+            percentiles={percentiles}
+            timeHorizon={timeHorizon}
+          />
+        </div>
+      {/each}
+    {/each}
+  </div>
+</div>

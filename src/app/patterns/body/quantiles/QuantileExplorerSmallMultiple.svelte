@@ -34,7 +34,6 @@ const probeType = getContext('probeType');
 
 let yScaleType;
 let yDomain;
-let whichPercentileAccessor = 'transformedPercentiles';
 let whichPercentileVersion = 'transformedPercentile';
 if (probeType === 'histogram') {
   yScaleType = 'scalePoint';
@@ -43,7 +42,6 @@ if (probeType === 'histogram') {
   yScaleType = 'log';
   let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
   yDomain = [0, upperDomain];
-  whichPercentileAccessor = 'percentiles';
   whichPercentileVersion = 'percentile';
 }
 

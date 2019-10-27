@@ -5,8 +5,9 @@ import {
   store, dataset,
 } from '../store/store';
 
-import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationView.svelte';
-import NumericHistogramView from '../patterns/body/histograms/NumericHistogramView.svelte';
+// import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationView.svelte';
+// import NumericHistogramView from '../patterns/body/histograms/NumericHistogramView.svelte';
+import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 
 function isScalarData(data) {
   return data[0].metadata.metric_type === 'scalar';
@@ -79,9 +80,9 @@ let width;
         {:then data}
             <div in:fade>
                 {#if isScalarData(data.response)}
-                    <ScalarAggregationView data={data.response} />
+                    <QuantileExplorerView data={data.response} probeType='scalar' />
                 {:else if isNumericHistogramData(data.response)}
-                    <NumericHistogramView data={data.response} />
+                    <QuantileExplorerView data={data.response} probeType='histogram' />
                 {:else}
                     <pre>
                         {JSON.stringify(data, null, 2)}
