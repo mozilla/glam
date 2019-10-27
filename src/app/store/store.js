@@ -150,8 +150,6 @@ export const searchResults = derived(
   },
 );
 
-// further derivations from the store
-
 export const hasDefaultControlFields = derived(store, ($store) => Object.values(CONFIG.fields)
   .every((field) => (!field.values || (field.skipValidation === true))
     || field.values[0].key === $store[field.key]));

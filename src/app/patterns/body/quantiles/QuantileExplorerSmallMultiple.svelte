@@ -216,7 +216,6 @@ h4 {
 
 .bignum {
   width: max-content;
-  justify-self: end;
 }
 
 .bignum__label {

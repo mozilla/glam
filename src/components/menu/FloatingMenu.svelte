@@ -11,6 +11,7 @@ export let active = false;
 export let parent;
 export let offset = 0;
 export let position = 'bottom-left';
+export let width;
 export let onParentSelect = () => {};
 
 let element;
@@ -48,6 +49,8 @@ function placeMenu() {
     parentLeft = parentPosition.left;
     parentTop = parentPosition.top;
     parentBottom = parentPosition.bottom;
+
+    width = elementWidth;
     if (position.startsWith('bottom')) {
       top = parentBottom + offset;
     } else if (position.startsWith('top')) {
