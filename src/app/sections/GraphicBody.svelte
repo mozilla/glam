@@ -5,17 +5,15 @@ import {
   store, dataset,
 } from '../store/store';
 
-// import ScalarAggregationView from '../patterns/body/scalars/ScalarAggregationView.svelte';
-// import NumericHistogramView from '../patterns/body/histograms/NumericHistogramView.svelte';
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 
 function isScalarData(data) {
-  return data[0].metadata.metric_type === 'scalar';
+  return data && data[0].metadata.metric_type.includes('scalar');
 }
 
 function isNumericHistogramData(data) {
-  return data[0].metadata.metric_type === 'histogram-exponential' || data[0].metadata.metric_type
-    === 'histogram-linear';
+  return data && (data[0].metadata.metric_type === 'histogram-exponential' || data[0].metadata.metric_type
+    === 'histogram-linear');
 }
 
 let container;
@@ -74,24 +72,29 @@ let width;
     </div>
 
     <div class=graphic-body__content>
-        {#await $dataset}
-            running query
-            <!-- <Spinner /> -->
-        {:then data}
-            <div in:fade>
-                {#if isScalarData(data.response)}
-                    <QuantileExplorerView data={data.response} probeType='scalar' />
-                {:else if isNumericHistogramData(data.response)}
-                    <QuantileExplorerView data={data.response} probeType='histogram' />
-                {:else}
-                    <pre>
-                        {JSON.stringify(data, null, 2)}
-                    </pre>
-                {/if}
-            </div>
-
-        {:catch err}
-            An error was caught: {err}
-        {/await}
+        {#if $dataset.key === 'DEFAULT_VIEW'}
+            <div>Telemetry dashboard default view goes here</div>
+        {:else if $dataset.data}
+            {#await $dataset.data}
+                running query
+            {:then data}
+                <div in:fade>
+                    {#if isScalarData(data.response)}
+                        <QuantileExplorerView data={data.response} probeType='scalar' />
+                    {:else if isNumericHistogramData(data.response)}
+                        <QuantileExplorerView data={data.response} probeType='histogram' />
+                    {:else}
+                        <pre>
+                            {JSON.stringify(data, null, 2)}
+                        </pre>
+                    {/if}
+                </div>
+            {:catch err}
+                An error was caught: {err}
+            {/await}
+        {:else}
+            <div>{$dataset.key}</div>
+        {/if}
+        
     </div>
 </div>

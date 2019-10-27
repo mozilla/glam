@@ -35,6 +35,7 @@ const probeType = getContext('probeType');
 let yScaleType;
 let yDomain;
 let whichPercentileVersion = 'transformedPercentile';
+let whichPercentileVersionKey = 'transformedPercentiles';
 if (probeType === 'histogram') {
   yScaleType = 'scalePoint';
   yDomain = data[0].histogram.map((d) => d.bin);
@@ -43,6 +44,7 @@ if (probeType === 'histogram') {
   let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
   yDomain = [0, upperDomain];
   whichPercentileVersion = 'percentile';
+  whichPercentileVersionKey = 'percentiles';
 }
 
 // FIXME: after demo remove this requirement
@@ -303,7 +305,7 @@ h4 {
       stroke="none"
       fill={percentileLineColorMap(p.percentileBin)}
       />
-      <g style="transform:translate({xScale(latest.label)}px, {yScale(latest.transformedPercentiles[p.percentileBin])}px)">
+      <g style="transform:translate({xScale(latest.label)}px, {yScale(latest[whichPercentileVersionKey][p.percentileBin])}px)">
           <path 
             d={symbol().type(referenceSymbol).size(20)()} 
             fill={percentileLineColorMap(p.percentileBin)}

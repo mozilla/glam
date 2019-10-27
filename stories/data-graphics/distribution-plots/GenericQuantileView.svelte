@@ -61,7 +61,7 @@ let probes = [
   margin-bottom: var(--space-4x);
   padding: var(--space-4x);
   border-radius: var(--space-base);
-  box-shadow: var(--depth-medium);
+  box-shadow: var(--depth-tiny);
   z-index:1000;
   background-color: white;
   color: var(--blue-slate-600);

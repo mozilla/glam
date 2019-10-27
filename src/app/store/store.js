@@ -78,6 +78,7 @@ const initStore = {
     audienceSize: 0,
     totalSize: 0,
   },
+  dashboardMode: {},
   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
@@ -189,35 +190,46 @@ function toQueryString(params) {
   const keys = Object.keys(params);
   keys.sort();
   return keys.map((k) => toQueryStringPair(k, params[k])).join('&');
-  // return keys.map((k) => `${k}=${params[k]}`).join('&');
 }
 
+function probeSelected(probeValue) {
+  return probeValue !== undefined && probeValue !== 'null';
+}
 
 function paramsAreValid(params) {
   return Object.entries(params)
     .filter(([k]) => isField(k))
-    .every(([fieldKey, valueKey]) => isValidFieldValue(fieldKey, valueKey));
+    .every(([fieldKey, valueKey]) => isValidFieldValue(fieldKey, valueKey))
+    && probeSelected(params.probe);
 }
 
 const cache = {};
 
-// function toWeightedQuantiles(probe, q = [0.05, 0.25, 0.5, 0.75, 0.95]) {
-//   const values = Object.keys(probe.histogram).map((v) => +v);
-//   const weights = Object.values(probe.histogram);
-//   return weightedQuantile(q, values, weights);
-// }
+export const updateDashboardMode = (msg) => (draft) => {
+  draft.dashboardMode = msg;
+};
+
+export const datasetResponse = (level, key, data) => ({ level, key, data });
 
 export const dataset = derived(store, ($store) => {
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
-  if (!paramsAreValid(params)) {
-    return Promise.reject(new Error(`parameters not valid: ${JSON.stringify(params, 2)}`));
+
+  if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
+    const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    dispatch(updateDashboardMode(message));
+    return datasetResponse(message);
   }
+  if (!probeSelected($store.probe.name)) {
+    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+    if ($store.dashboardMode.key !== 'DEFAULT_VIEW') dispatch(updateDashboardMode(message));
+    return message;
+  }
+
   if (!(qs in cache)) {
     cache[qs] = getProbeData(params);
   }
-
-  return cache[qs];
+  return { level: 'SUCCESS', key: 'EXPLORER_VIEW', data: cache[qs] };
 });
 
 export const currentQuery = derived(store, ($store) => {
