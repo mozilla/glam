@@ -11,6 +11,8 @@ export let offset = 0;
 export let level = 'high';
 export let compact = false;
 
+let width;
+
 function onParentSelect(kvPair) {
     active = false;
     dispatch('selection', kvPair);
@@ -18,6 +20,7 @@ function onParentSelect(kvPair) {
 
 function toggle() { active = !active; }
 let button;
+
 </script>
 
 <style>
@@ -25,15 +28,29 @@ let button;
   width: max-content;
 }
 
+.activating-button {
+  margin:0;
+  padding: var(--space-1h);
+  padding-left: var(--space-base);
+  padding-right: var(--space-base);
+  font-size: var(--text-02);
+  border: none;
+  background-color: hsla(240,50%,80%,.3);
+  color: white;
+}
+
 </style>
 
 <div class=menu-button bind:this={button}>
-<Button level={level} compact={compact} on:click={toggle}>
+<!-- <Button level={level} compact={compact} on:click={toggle}>
   <slot name='label'></slot>
-</Button>
+</Button> -->
+<button class=activating-button on:click={toggle}>
+    <slot name='label'></slot>
+</button>
 </div>
 {#if active}
-  <FloatingMenu offset={offset} on:cancel={() => { active = false; }}  position='bottom-left' parent={button} onParentSelect={onParentSelect}>
+  <FloatingMenu bind:width={width} offset={offset} on:cancel={() => { active = false; }}  position='bottom-left' parent={button} onParentSelect={onParentSelect}>
     <slot name='menu'></slot>
   </FloatingMenu>
 {/if}

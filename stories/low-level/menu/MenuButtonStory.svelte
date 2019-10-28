@@ -2,6 +2,7 @@
 import MenuButton from '../../../src/components/menu/MenuButton.svelte';
 import MenuList from '../../../src/components/menu/MenuList.svelte';
 import MenuListItem from '../../../src/components/menu/MenuListItem.svelte';
+import DownCarat from '../../../src/components/icons/DownCarat.svelte';
 
 let key = 'first';
 
@@ -18,8 +19,14 @@ function setValue(event) {
   display: inline-block;
   width: var(--space-base);
   height: var(--space-base);
-  margin-right: var(--space-1h);
+  margin-right: var(--space-base);
   border-radius: var(--space-1q);
+}
+
+.menu-label-example {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
 }
 
 .first {
@@ -35,16 +42,18 @@ function setValue(event) {
 }
 </style>
 
-<div class=story>
-<MenuButton>
-  <span slot="label"> <span class='story-label {key}'></span> {key}</span>
-  <div slot="menu">
-    <MenuList  on:selection={setValue}>
-        <MenuListItem  key='first' value={0}><span class='story-label first'></span>first item</MenuListItem>
-        <MenuListItem  key='second' value={1}><span class='story-label second'></span>second item</MenuListItem>
-        <MenuListItem  key='third' value={2}><span class='story-label third'></span>third item</MenuListItem>
-      </MenuList>
+<div class="story story--dark">
+  <h1 class=story__title>Menu Button</h1>
+  <div>
+    <MenuButton level=medium>
+      <div class=menu-label-example slot="label"> <span class='story-label {key}'></span> {key} <span style='display: grid;'><DownCarat size=16 /></span></div>
+      <div slot="menu">
+        <MenuList  on:selection={setValue}>
+            <MenuListItem compact key='first' value={0}><span class='story-label first'></span>first item</MenuListItem>
+            <MenuListItem compact key='second' value={1}><span class='story-label second'></span>second item</MenuListItem>
+            <MenuListItem compact key='third' value={2}><span class='story-label third'></span>third item</MenuListItem>
+          </MenuList>
+      </div>
+    </MenuButton>
   </div>
-  </MenuButton>
-
 </div>

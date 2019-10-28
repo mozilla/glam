@@ -16,6 +16,11 @@ body  {
   box-shadow: 0px var(--space-base) var(--space-2x) rgba(0,0,0,.1);
 }
 
+.story--dark {
+  background-color: var(--blue-slate-700);
+  color: white;
+}
+
 .story__section {
   border-top: 1px solid var(--line-gray-01);
   padding: var(--space-8x);
@@ -28,6 +33,10 @@ body  {
   padding:0;
   margin-bottom: var(--space-4x);
   color: var(--subhead-gray-02);
+}
+
+.story--dark .story__title {
+  color: white;
 }
 
 .story__subtitle {
