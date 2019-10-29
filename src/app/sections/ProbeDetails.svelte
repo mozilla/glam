@@ -32,12 +32,12 @@ onMount(() => { visible = true; });
 }
 
 .drawer-section-container {
-    display: grid;
-    grid-template-rows: max-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .probe-details {
-    grid-template-rows: max-content;
     height: 100%;
 }
 
@@ -108,6 +108,10 @@ h2 {
     margin: 0 0 var(--space-base) 0;
 }
 
+.details-list > *:last-child {
+    margin-bottom: 0;
+}
+
 .detail--indented {
     position: relative;
     padding-left: var(--space-2x);
@@ -138,73 +142,83 @@ h2 {
     {/if}
 {:else if $store.probe.name}
 <div in:fly={rightDrawerTransition} class="drawer-section-container probe-details">
-    {#if $store.probe.type}
-        <div class="drawer-section probe-labels">
-            <div>
-                <span
-                    style="display: inline-block;"
-                    class="label label-text--01 label--{$store.probe.type}">{$store.probe.type}</span>
+    <!-- probe-details-content -->
+    <div class="probe-details-content">
+        {#if $store.probe.type}
+            <div class="drawer-section probe-labels">
+                <div>
+                    <span
+                        style="display: inline-block;"
+                        class="label label-text--01 label--{$store.probe.type}">{$store.probe.type}</span>
+                </div>
+                {#if $store.probe.kind}
+                    <div class="probe-kind label-text--01">
+                        {$store.probe.kind}
+                    </div>
+                {/if}
             </div>
-            {#if $store.probe.kind}
-                <div class="probe-kind label-text--01">
-                    {$store.probe.kind}
+        {/if}
+        <div class="drawer-section">
+            <ul class="details-list">
+            {#if $store.probe.active !== undefined}
+                <li class="detail--indented">
+                {#if $store.probe.active}
+                    active
+                {:else}
+                    inactive
+                {/if}
+                </li>
+            {/if}
+            {#if $store.versions && $store.versions.length}
+                <li class="detail--indented">
+                    available in {$store.channel}: {$store.probe.versions[$store.channel][0]}
+                    &ndash; {$store.probe.versions[$store.channel][1]}
+                </li>
+            {/if}
+            </ul>
+        </div>
+        <div class=drawer-section>
+            {#if $store.probe.description}
+                <h2 class="detail__heading--01">description</h2>
+                <div class="probe-description helper-text--01">
+                    {@html $store.probe.description}
                 </div>
             {/if}
         </div>
-    {/if}
-    <div class="drawer-section">
-        <ul class="details-list">
-        {#if $store.probe.active !== undefined}
-            <li class="detail--indented">
-            {#if $store.probe.active}
-                active
-            {:else}
-                inactive
-            {/if}
-            </li>
-        {/if}
-        {#if $store.versions && $store.versions.length}
-            <li class="detail--indented">
-                available in {$store.channel}: {$store.probe.versions[$store.channel][0]}
-                &ndash; {$store.probe.versions[$store.channel][1]}
-            </li>
-        {/if}
-        </ul>
-    </div>
-    <div class=drawer-section>
-        {#if $store.probe.description}
-            <h2 class="detail__heading--01">description</h2>
-            <div class="probe-description helper-text--01">
-                {@html $store.probe.description}
+        {#if $store.probe.bugs && $store.probe.bugs.length}
+        <div class="drawer-section">
+            <h2 class="detail__heading--01">associated bugs</h2>
+            <div class="bug-list helper-text--01">
+            {#each $store.probe.bugs as bugID, i (bugID)}
+                <a
+                href='https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}'
+                target="_blank">{bugID}</a>
+            {/each}
             </div>
+        </div>
         {/if}
     </div>
-    {#if $store.probe.bugs && $store.probe.bugs.length}
-    <div class="drawer-section">
-        <h2 class="detail__heading--01">associated bugs</h2>
-        <div class="bug-list helper-text--01">
-        {#each $store.probe.bugs as bugID, i (bugID)}
-            <a
-            href='https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}'
-            target="_blank">{bugID}</a>
-        {/each}
+    <!-- /probe-details-content -->
+    
+    <!-- probe-details-download -->
+    <div class="probe-details-download">
+        <div class="drawer-section drawer-section--end">
+            <h2 class="detail__heading--01">export</h2>
+            {#await $dataset}
+                <div>
+                    <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
+                </div>
+            {:then value}
+                <div in:fly={rightDrawerTransition}>
+                <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }} level=medium compact>to JSON</Button>
+                </div>
+            {:catch err}
+                {err.message}
+            {/await}
         </div>
     </div>
-    {/if}
-    <div class="drawer-section drawer-section--end">
-        <h2 class="detail__heading--01">export</h2>
-        {#await $dataset}
-            <div>
-                <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
-            </div>
-        {:then value}
-            <div in:fly={rightDrawerTransition}>
-            <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }} level=medium compact>to JSON</Button>
-            </div>
-        {:catch err}
-            {err.message}
-        {/await}
-    </div>
+    <!-- /probe-details-download -->
+
 </div>
 {:else}
     <div class="drawer-section">
