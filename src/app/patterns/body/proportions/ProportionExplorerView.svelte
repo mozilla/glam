@@ -1,17 +1,18 @@
 <script>
 import { setContext } from 'svelte';
-import QuantileExplorerSmallMultiple from './QuantileExplorerSmallMultiple.svelte';
-import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
-import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import InBodySelector from '../../AggregationTypeSelector.svelte';
-
 import {
   gatherBy, makeDataset, topKBuildsPerDay, sortByKey,
 } from '../../../utils/probe-utils';
 
+import QuantileExplorerSmallMultiple from '../quantiles/QuantileExplorerSmallMultiple.svelte';
+import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../../TimeHorizonControl.svelte';
+import InBodySelector from '../../AggregationTypeSelector.svelte';
 
 export let data;
 export let probeType;
+
+console.log(data, probeType);
 
 function byKeyAndAggregation(d) {
   const byKey = gatherBy(data, (entry) => entry.key);
@@ -83,13 +84,13 @@ setContext('probeType', probeType);
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
         {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
           <div class='small-multiple'>
-            <QuantileExplorerSmallMultiple
+            <!-- <QuantileExplorerSmallMultiple
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
               percentiles={percentiles}
               timeHorizon={timeHorizon}
-            />
+            /> -->
           </div>
         {/if}
       {/each}
