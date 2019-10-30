@@ -3,6 +3,7 @@ import { setContext } from 'svelte';
 import QuantileExplorerSmallMultiple from './QuantileExplorerSmallMultiple.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
+import InBodySelector from '../../AggregationTypeSelector.svelte';
 
 import {
   gatherBy, makeDataset, topKBuildsPerDay, sortByKey,
@@ -27,8 +28,13 @@ function byKeyAndAggregation(d) {
 
 const transformed = byKeyAndAggregation(data);
 
+let totalAggs = Object.keys(Object.values(transformed)[0]).length;
+
 let timeHorizon = 'MONTH';
 let percentiles = [5, 25, 50, 75, 95];
+let aggregationTypes = ['avg', 'max', 'min', 'sum'];
+let currentAggregation = aggregationTypes[0];
+let aggregationInfo;
 
 setContext('probeType', probeType);
 
@@ -45,6 +51,10 @@ setContext('probeType', probeType);
 
   .small-multiple {
     margin-bottom: var(--space-8x);
+  }
+
+  .hidden {
+    visibility: hidden;
   }
 
 </style>
@@ -64,22 +74,37 @@ setContext('probeType', probeType);
     </div>
   </div>
 
+    <div class=body-control-row class:hidden={totalAggs === 1}>
+      <InBodySelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
+    </div>
+
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}
-      {#if key !== 'undefined'}
-        <h4>{key}</h4>
-      {/if}
 
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
-        <div class='small-multiple'>
+      
+      <!-- <div class='small-multiple'>
           <QuantileExplorerSmallMultiple
-            title={aggType}
-            data={data}
+            title={currentAggregation}
+            data={aggs[currentAggregation]}
             probeType={probeType}
             percentiles={percentiles}
             timeHorizon={timeHorizon}
           />
-        </div>
+        </div> -->
+        
+    
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
+        {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
+          <div class='small-multiple'>
+            <QuantileExplorerSmallMultiple
+              title={key === 'undefined' ? '' : key}
+              data={data}
+              probeType={probeType}
+              percentiles={percentiles}
+              timeHorizon={timeHorizon}
+            />
+          </div>
+        {/if}
       {/each}
     {/each}
   </div>

@@ -43,6 +43,7 @@ function select() {
 
 const handleKeypress = (event) => {
     const { key } = event;
+    if (key !== 'Tab') event.preventDefault();
     if (key === 'ArrowUp') previous();
     if (key === 'ArrowDown') next();
     if (key === 'Enter') select();
