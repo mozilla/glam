@@ -568,6 +568,8 @@ main .details {
 .body-control-row {
     display:grid;
     grid-auto-flow: column;
+    margin-top:var(--space-2x);
+    margin-bottom:var(--space-2x);
   }
 
   .body-control-set {

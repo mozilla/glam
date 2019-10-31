@@ -15,13 +15,26 @@ import {
   buildIDToDate,
 } from '../../../../components/data-graphics/utils/build-id-utils';
 
-import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
+export function extractProportions(activeKeys, convertedData, which = 'proportions') {
+  return activeKeys
+    .map((key) => convertedData.map((data) => {
+      const value = data[which][key];
+      return {
+        label: data.label,
+        bin: key,
+        value,
+      };
+    }));
+}
+
 
 export let data;
 export let title;
 export let key;
 export let timeHorizon;
-export let percentiles = [50];
+export let proportions;
+export let activeProportions;
+
 
 let valueFmt = format(',.4r');
 let countFmt = format(',d');
@@ -29,17 +42,17 @@ let countFmt = format(',d');
 const probeType = getContext('probeType');
 
 let yScaleType;
-let yDomain;
-let whichPercentileVersion = 'transformedPercentiles';
-if (probeType === 'histogram') {
-  yScaleType = 'scalePoint';
-  yDomain = data[0].histogram.map((d) => d.bin);
-} else if (probeType === 'scalar') {
-  yScaleType = 'log';
-  let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
-  yDomain = [0, upperDomain];
-  whichPercentileVersion = 'percentiles';
-}
+let yDomain = [0, 1];
+let whichTransformation = 'proportions';
+// if (probeType === 'histogram') {
+//   yScaleType = 'scalePoint';
+//   yDomain = data[0].histogram.map((d) => d.bin);
+// } else if (probeType === 'scalar') {
+//   yScaleType = 'log';
+//   let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
+//   yDomain = [0, upperDomain];
+//   whichTransformation = 'counts';
+// }
 
 // FIXME: after demo remove this requirement
 data = data.slice(0, -1);
@@ -71,15 +84,12 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(reference.audienceSize);
 
-function getPercentile(percentileBin, datum) {
-  let percentileValue;
-  if (probeType !== 'histogram') percentileValue = datum.percentiles[percentileBin];
-  else percentileValue = datum.transformedPercentiles[percentileBin];
-  return { label: datum.label, bin: percentileBin, value: percentileValue };
+function getProportion(activeProportion, datum) {
+  return { label: datum.label, bin: activeProportion, value: datum.proportions[activeProportion] };
 }
 
-function getAllPercentiles(percentileBins, datum) {
-  return percentileBins.map((p) => getPercentile(p, datum));
+function getAllProportions(activeProportions, datum) {
+  return activeProportions.map((p) => getProportion(p, datum));
 }
 
 </script>
@@ -133,14 +143,14 @@ h4 {
   <div>
     <h4>{title}</h4>
   </div>
-  <div class=bignum>
+  <!-- <div class=bignum>
     <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
     <div class=bignum__value>{valueFmt(reference.percentiles[50])}</div>
   </div>
   <div class=bignum>
     <div class=bignum__label>⭑ Audience Size</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
-  </div>
+  </div> -->
 </div>
 
 <div class=graphic-and-summary>
@@ -151,17 +161,17 @@ h4 {
     timeHorizon={timeHorizon}
     lineColorMap={percentileLineColorMap}
     key={key}
-    yScaleType={yScaleType}
+    yScaleType={'linear'}
     width={WIDTH}
     height={HEIGHT}
-    transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
-    metricKeys={percentiles}
+    transform={(p, d) => extractProportions(p, d, whichTransformation)}
+    metricKeys={proportions}
     bind:reference={reference}
     bind:hovered={hovered}
-    extractMouseoverValues={getPercentile}
+    extractMouseoverValues={getProportion}
   />
 
-  <DistributionComparison 
+  <!-- <DistributionComparison 
     yType={yScaleType}
     width={125}
     height={HEIGHT}
@@ -170,8 +180,8 @@ h4 {
     leftLabel={hovered.x}
     rightLabel={reference.label}
     colorMap={percentileLineColorMap}
-    leftPercentiles={hovered.datum ? getAllPercentiles(percentiles, hovered.datum) : undefined}
-    rightPercentiles={getAllPercentiles(percentiles, reference)}
+    leftPercentiles={hovered.datum ? getAllProportions(proportions, hovered.datum) : undefined}
+    rightPercentiles={getAllProportions(proportions, reference)}
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
@@ -181,6 +191,6 @@ h4 {
     right={reference}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    percentiles={percentiles} />
+    percentiles={proportions} /> -->
 </div>
     

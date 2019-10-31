@@ -1,28 +1,29 @@
 <script>
 import { setContext } from 'svelte';
-import QuantileExplorerSmallMultiple from './QuantileExplorerSmallMultiple.svelte';
-import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
-import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import InBodySelector from '../../AggregationTypeSelector.svelte';
-
 import {
   byKeyAndAggregation,
 } from '../../../utils/probe-utils';
 
+import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
+import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 
 export let data;
 export let probeType;
 
 
-const transformed = byKeyAndAggregation(data);
+const transformed = byKeyAndAggregation(data, 'proportion');
+
+function getProportionKeys(tr) {
+  return Object.keys(Object.values(Object.values(tr)[0])[0][0].counts);
+}
 
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
 let percentiles = [5, 25, 50, 75, 95];
-let aggregationTypes = ['avg', 'max', 'min', 'sum'];
-let currentAggregation = aggregationTypes[0];
-let aggregationInfo;
+
+let proportions = getProportionKeys(transformed);
 
 setContext('probeType', probeType);
 
@@ -62,24 +63,22 @@ setContext('probeType', probeType);
     </div>
   </div>
 
-    <div class=body-control-row class:hidden={totalAggs === 1}>
+    <!-- <div class=body-control-row class:hidden={totalAggs === 1}>
       <InBodySelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
-    </div>
+    </div> -->
 
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
-        {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
           <div class='small-multiple'>
-            <QuantileExplorerSmallMultiple
+            <ProportionExplorerSmallMultiple
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
-              percentiles={percentiles}
+              proportions={proportions}
               timeHorizon={timeHorizon}
             />
           </div>
-        {/if}
       {/each}
     {/each}
   </div>

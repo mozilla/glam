@@ -15,21 +15,8 @@ import {
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
 import {
-  gatherBy, makeDataset, topKBuildsPerDay, sortByKey,
+  byKeyAndAggregation,
 } from '../../../src/app/utils/probe-utils';
-
-function byKeyAndAggregation(d) {
-  const byKey = gatherBy(d, (entry) => entry.key);
-  Object.keys(byKey).forEach((k) => {
-    byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
-    Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = makeDataset(byKey[k][aggKey], 'build_id');
-      byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
-      byKey[k][aggKey].sort(sortByKey('label'));
-    });
-  });
-  return byKey;
-}
 
 let gcms = byKeyAndAggregation(GCMS.response)[undefined]['summed-histogram'];
 

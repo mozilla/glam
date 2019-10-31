@@ -12,6 +12,7 @@ export let parent;
 export let offset = 0;
 export let position = 'bottom-left';
 export let width;
+let y;
 export let onParentSelect = () => {};
 
 let element;
@@ -47,8 +48,8 @@ function placeMenu() {
 
     parentRight = parentPosition.right;
     parentLeft = parentPosition.left;
-    parentTop = parentPosition.top;
-    parentBottom = parentPosition.bottom;
+    parentTop = parentPosition.top + y;
+    parentBottom = parentPosition.bottom + y;
 
     width = elementWidth;
     if (position.startsWith('bottom')) {
@@ -82,15 +83,15 @@ $: if (parent && element) {
 }
 
 .click-area {
-  position:absolute;
+  position:fixed;
   left:0;
   top:0;
   width: 100vw;
-  height:100vh;
+  height: 100vh;
 }
 </style>
 
-<svelte:window on:keydown={handleKeypress} />
+<svelte:window on:keydown={handleKeypress} bind:scrollY={y} />
 
 
 <Portal>
