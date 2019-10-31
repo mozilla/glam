@@ -87,7 +87,7 @@ $: if (timeHorizon === 'ALL_TIME') {
 }
 
 let dgRollover;
-let rollover = {};
+let hovered = {};
 
 let WIDTH = 450;
 let HEIGHT = 350;
@@ -99,11 +99,11 @@ let HEIGHT = 350;
 // }
 
 // FIXME: this is for demo purposes. use better build data.
-let latest = data[data.length - 1];
+let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
 
-$: movingAudienceSize.set(latest.audienceSize);
+$: movingAudienceSize.set(reference.audienceSize);
 
 function getPercentile(percentileBin, datum) {
   // const percentile = datum.percentiles[percentileBin];
@@ -112,7 +112,7 @@ function getPercentile(percentileBin, datum) {
   if (whichPercentileVersion === 'percentile') percentileValue = datum.percentiles[percentileBin];
   else percentileValue = datum.transformedPercentiles[percentileBin];
   // return { percentileBin, percentile, transformedPercentile };
-  return [datum.label, percentileBin, percentileValue];
+  return { label: datum.label, bin: percentileBin, value: percentileValue };
 }
 
 function getAllPercentiles(percentileBins, datum) {
@@ -173,7 +173,7 @@ h4 {
   </div>
   <div class=bignum>
     <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
-    <div class=bignum__value>{valueFmt(latest.percentiles[50])}</div>
+    <div class=bignum__value>{valueFmt(reference.percentiles[50])}</div>
   </div>
   <div class=bignum>
     <div class=bignum__label>⭑ Audience Size</div>
@@ -196,31 +196,30 @@ h4 {
     height={HEIGHT}
     transform={extractPercentiles}
     metricKeys={percentiles}
-    bind:reference={latest}
-    bind:hovered={rollover}
+    bind:reference={reference}
+    bind:hovered={hovered}
     extractMouseoverValues={getPercentile}
   />
+
   <DistributionComparison 
     yType={yScaleType}
     width={125}
     height={HEIGHT}
-    leftDistribution={rollover.datum ? rollover.datum.histogram : undefined}
-    rightDistribution={latest.histogram}
-    leftLabel={rollover.x}
-    rightLabel={latest.label}
-    precentileValueAccessor={whichPercentileVersion}
-    leftPercentiles={rollover.datum ? getAllPercentiles(percentiles, rollover.datum) : undefined}
-    rightPercentiles={getAllPercentiles(percentiles, latest)}
+    leftDistribution={hovered.datum ? hovered.datum.histogram : undefined}
+    rightDistribution={reference.histogram}
+    leftLabel={hovered.x}
+    rightLabel={reference.label}
+    leftPercentiles={hovered.datum ? getAllPercentiles(percentiles, hovered.datum) : undefined}
+    rightPercentiles={getAllPercentiles(percentiles, reference)}
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
-    yFocus={rollover.y}
   />
   
   <ComparisonSummary 
-    left={rollover.datum} 
-    right={latest}
-    leftLabel={rollover.x}
-    rightLabel={latest.label}
+    left={hovered.datum} 
+    right={reference}
+    leftLabel={hovered.x}
+    rightLabel={reference.label}
     percentiles={percentiles} />
 </div>
     

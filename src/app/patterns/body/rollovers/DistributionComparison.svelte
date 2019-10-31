@@ -1,8 +1,8 @@
 <script>
-import { onMount, getContext } from 'svelte';
+import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import {
-  line, curveStep, symbol, symbolStar as referenceSymbol,
+  symbol, symbolStar as referenceSymbol,
 } from 'd3-shape';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
@@ -25,7 +25,6 @@ export let height;
 export let xType;
 export let yType;
 export let key = Math.random().toString(36).substring(7);
-export let precentileValueAccessor = 'percentile';
 export let yAccessor = 'value';
 
 let L;
@@ -81,31 +80,31 @@ function placeShapeY(value) {
   <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} /> -->
 
   {#if leftPercentiles && rightPercentiles}
-  {#each leftPercentiles as leftP, i}
+  {#each leftPercentiles as {label, bin, value}, i}
     <line 
       x1={leftPlot}
       x2={rightPlot}
-      y1={placeShapeY(leftP[precentileValueAccessor])}
-      y2={placeShapeY(rightPercentiles[i][precentileValueAccessor])}
-      stroke={percentileLineColorMap(leftP.percentileBin)}
+      y1={placeShapeY(value)}
+      y2={placeShapeY(rightPercentiles[i].value)}
+      stroke={percentileLineColorMap(bin)}
     />
     <circle 
       cx={leftPlot} 
-      cy={placeShapeY(leftP[precentileValueAccessor])} 
+      cy={placeShapeY(value)} 
       r=2
-      fill={percentileLineColorMap(leftP.percentileBin)}
+      fill={percentileLineColorMap(bin)}
     />
-    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i][precentileValueAccessor])}px)">
+    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i].value)}px)">
       <path 
         d={symbol().type(referenceSymbol).size(20)()} 
-        fill={percentileLineColorMap(leftP.percentileBin)}
+        fill={percentileLineColorMap(bin)}
       />
   </g>
   {/each}
 {/if}
 
   {#if leftDistribution}
-  <g transition:fade={{ duration: 50 }}>
+  <g in:fade={{ duration: 50 }}>
     <Violin 
       showLeft={false}
       xp={(rightPlot - leftPlot) / 2 + leftPlot - 1}

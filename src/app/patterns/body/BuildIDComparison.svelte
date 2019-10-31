@@ -113,18 +113,18 @@ fill="var(--cool-gray-100)" />
  </GraphicBody>
 
  {#if hovered.datum && extractMouseoverValues}
- {#each metricKeys.map((m) => extractMouseoverValues(m, hovered.datum)) as [x, bin, y], i (bin)}
+ {#each metricKeys.map((m) => extractMouseoverValues(m, hovered.datum)) as {label, bin, value}, i (bin)}
   <circle 
-  cx={xScale(x)}
-  cy={yScale(y)}
+  cx={xScale(label)}
+  cy={yScale(value)}
   r=2
   stroke="none"
   fill={lineColorMap(bin)}
   />
 
   {/each}
-  {#each metricKeys.map((m) => extractMouseoverValues(m, reference)) as [x, bin, y], i (bin)}
-  <g style="transform:translate({xScale(x)}px, {yScale(y)}px)">
+  {#each metricKeys.map((m) => extractMouseoverValues(m, reference)) as {label, bin, value}, i (bin)}
+  <g style="transform:translate({xScale(label)}px, {yScale(value)}px)">
       <path 
         d={symbol().type(referenceSymbol).size(20)()} 
         fill={lineColorMap(bin)}

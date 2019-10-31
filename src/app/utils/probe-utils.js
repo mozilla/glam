@@ -1,4 +1,3 @@
-import { object } from 'prop-types';
 import { nearestBelow } from '../../utils/stats';
 
 export function sortByKey(key) {
