@@ -5,8 +5,10 @@ import {
 } from '../../../utils/probe-utils';
 
 import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
-import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
+import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
+
+import { createCatColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 export let data;
 export let probeType;
@@ -21,9 +23,10 @@ function getProportionKeys(tr) {
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
-let percentiles = [5, 25, 50, 75, 95];
 
 let proportions = getProportionKeys(transformed);
+
+const cmp = createCatColorMap(proportions);
 
 setContext('probeType', probeType);
 
@@ -58,8 +61,9 @@ setContext('probeType', probeType);
     </div>
   
     <div class=body-control-set>
-        <label class=body-control-set--label>Probe Value Percentiles</label>
-      <PercentileSelectionControl bind:percentiles={percentiles} />
+        <label class=body-control-set--label>Keys</label>
+        <KeySelectionControl bind:selections={proportions} colorMap={cmp} />
+      <!-- <PercentileSelectionControl bind:percentiles={percentiles} /> -->
     </div>
   </div>
 
@@ -77,6 +81,7 @@ setContext('probeType', probeType);
               probeType={probeType}
               proportions={proportions}
               timeHorizon={timeHorizon}
+              colorMap={cmp}
             />
           </div>
       {/each}

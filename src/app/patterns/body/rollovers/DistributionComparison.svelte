@@ -4,11 +4,11 @@ import { fade } from 'svelte/transition';
 import {
   symbol, symbolStar as referenceSymbol,
 } from 'd3-shape';
+
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 import { nearestBelow } from '../../../../utils/stats';
 
@@ -18,6 +18,7 @@ export let leftLabel;
 export let rightLabel;
 export let leftPercentiles;
 export let rightPercentiles;
+export let yTickFormatter;
 export let colorMap = () => 'black';
 export let xDomain;
 export let yDomain;
@@ -28,6 +29,7 @@ export let yType;
 export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
+
 
 let L;
 let R;
@@ -136,6 +138,6 @@ function placeShapeY(value) {
     />
   {/if}
 
-  <RightAxis tickCount=6 />
+  <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
   <BottomAxis ticks={['hovered', 'latest']}  />
 </DataGraphic>    
