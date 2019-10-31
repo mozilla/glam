@@ -11,13 +11,16 @@ import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../components/data-graphics/LineMultiple.svelte';
 
+import {
+  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
+} from '../../../components/data-graphics/utils/build-id-utils';
+
 export let data;
 export let metricKeys;
 export let reference; // used to be latest
 export let hovered = {};
 export let key; // ???????
 export let transform; // extractPercentiles?
-export let lineYValueAccessor; // whichPercentile whatever
 export let lineColorMap = () => 'gray'; // percentileLineColorMap
 export let strokeWidthMap = () => 1; // percentileLineStrokewidthMap
 export let extractMouseoverValues;
@@ -26,8 +29,21 @@ export let yDomain;
 export let yScaleType;
 export let width;
 export let height;
-export let xTicks;
-export let xTickFormatter;
+export let timeHorizon;
+
+let tickFormatter = buildIDToMonth;
+let ticks = firstOfMonth;
+
+$: if (timeHorizon === 'ALL_TIME') {
+  tickFormatter = buildIDToMonth;
+  ticks = firstOfMonth;
+} else if (timeHorizon === 'MONTH') {
+  tickFormatter = buildIDToMonth;
+  ticks = mondays;
+} else {
+  tickFormatter = buildIDToMonth;
+  ticks = getFirstBuildOfDays;
+}
 
 let transformedData = [];
 
@@ -96,7 +112,7 @@ fill="var(--cool-gray-100)" />
 fill="var(--cool-gray-100)" />
 {/if}
  <LeftAxis tickCount=6 />
- <BottomAxis  ticks={xTicks} tickFormatter={xTickFormatter} />
+ <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
  <GraphicBody>
    {#each transformedData as
@@ -105,7 +121,7 @@ fill="var(--cool-gray-100)" />
        curve="curveStep"
        lineDrawAnimation={{ duration: 300 }} 
        xAccessor="label"
-       yAccessor={lineYValueAccessor}
+       yAccessor={'value'}
        strokeWidth={strokeWidthMap(key)}
        color={lineColorMap(key)}
        data={lineData} />

@@ -6,25 +6,13 @@ import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import InBodySelector from '../../AggregationTypeSelector.svelte';
 
 import {
-  gatherBy, prepareForQuantilePlot, topKBuildsPerDay, sortByKey,
+  byKeyAndAggregation,
 } from '../../../utils/probe-utils';
 
 
 export let data;
 export let probeType;
 
-function byKeyAndAggregation(d) {
-  const byKey = gatherBy(data, (entry) => entry.key);
-  Object.keys(byKey).forEach((k) => {
-    byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
-    Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = prepareForQuantilePlot(byKey[k][aggKey], 'build_id');
-      byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
-      byKey[k][aggKey].sort(sortByKey('label'));
-    });
-  });
-  return byKey;
-}
 
 const transformed = byKeyAndAggregation(data);
 

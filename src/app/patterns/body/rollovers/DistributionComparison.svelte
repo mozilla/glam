@@ -18,12 +18,14 @@ export let leftLabel;
 export let rightLabel;
 export let leftPercentiles;
 export let rightPercentiles;
+export let colorMap = () => 'black';
 export let xDomain;
 export let yDomain;
 export let width;
 export let height;
 export let xType;
 export let yType;
+export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
 
@@ -86,24 +88,24 @@ function placeShapeY(value) {
       x2={rightPlot}
       y1={placeShapeY(value)}
       y2={placeShapeY(rightPercentiles[i].value)}
-      stroke={percentileLineColorMap(bin)}
+      stroke={colorMap(bin)}
     />
     <circle 
       cx={leftPlot} 
       cy={placeShapeY(value)} 
       r=2
-      fill={percentileLineColorMap(bin)}
+      fill={colorMap(bin)}
     />
     <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i].value)}px)">
       <path 
         d={symbol().type(referenceSymbol).size(20)()} 
-        fill={percentileLineColorMap(bin)}
+        fill={colorMap(bin)}
       />
   </g>
   {/each}
 {/if}
 
-  {#if leftDistribution}
+  {#if leftDistribution && showViolins}
   <g in:fade={{ duration: 50 }}>
     <Violin 
       showLeft={false}
@@ -119,7 +121,7 @@ function placeShapeY(value) {
     />
   </g>
   {/if}
-  {#if rightDistribution}
+  {#if rightDistribution && showViolins}
     <Violin 
     showRight={false}
     xp={(rightPlot - leftPlot) / 2 + leftPlot + 1}

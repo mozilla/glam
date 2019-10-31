@@ -141,6 +141,20 @@ export function gatherBy(payload, by) {
 }
 
 
+export function byKeyAndAggregation(data, preparationType = 'quantile', aggregationLevel = 'build_id') {
+  const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
+  const byKey = gatherBy(data, (entry) => entry.key);
+  Object.keys(byKey).forEach((k) => {
+    byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
+    Object.keys(byKey[k]).forEach((aggKey) => {
+      byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel);
+      byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
+      byKey[k][aggKey].sort(sortByKey('label'));
+    });
+  });
+  return byKey;
+}
+
 // export function gatherBy(payload, by) {
 //   const keys = new Set([]);
 //   payload.forEach((aggregation) => {

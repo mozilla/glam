@@ -1,26 +1,20 @@
 <script>
 import { getContext } from 'svelte';
-import { writable, derived } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
-import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
-
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
-import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
-import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
 import BuildIDComparison from '../BuildIDComparison.svelte';
 import DistributionComparison from '../rollovers/DistributionComparison.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
 
-import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
+import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+
 import {
-  buildIDToDate, firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
+  buildIDToDate,
 } from '../../../../components/data-graphics/utils/build-id-utils';
+
 import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
 
 export let data;
@@ -36,8 +30,7 @@ const probeType = getContext('probeType');
 
 let yScaleType;
 let yDomain;
-let whichPercentileVersion = 'transformedPercentile';
-let whichPercentileVersionKey = 'transformedPercentiles';
+let whichPercentileVersion = 'transformedPercentiles';
 if (probeType === 'histogram') {
   yScaleType = 'scalePoint';
   yDomain = data[0].histogram.map((d) => d.bin);
@@ -45,8 +38,7 @@ if (probeType === 'histogram') {
   yScaleType = 'log';
   let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
   yDomain = [0, upperDomain];
-  whichPercentileVersion = 'percentile';
-  whichPercentileVersionKey = 'percentiles';
+  whichPercentileVersion = 'percentiles';
 }
 
 // FIXME: after demo remove this requirement
@@ -66,37 +58,11 @@ function setDomain(str) {
 }
 
 $: setDomain(timeHorizon);
-let percentileData = [];
 
-$: percentileData = extractPercentiles(percentiles, data.filter((d) => $domain.includes(d.label)))
-  .map((ps, i) => [ps, percentiles[i]]);
-
-// FIXME: establish the buildID graph as a shared pattern, not this boilerplate.
-let tickFormatter = buildIDToMonth;
-let ticks = firstOfMonth;
-
-$: if (timeHorizon === 'ALL_TIME') {
-  tickFormatter = buildIDToMonth;
-  ticks = firstOfMonth;
-} else if (timeHorizon === 'MONTH') {
-  tickFormatter = buildIDToMonth;
-  ticks = mondays;
-} else {
-  tickFormatter = buildIDToMonth;
-  ticks = getFirstBuildOfDays;
-}
-
-let dgRollover;
 let hovered = {};
 
 let WIDTH = 450;
 let HEIGHT = 350;
-
-// $: if (dataGraphicMounted) {
-//   initiateRollover(dgRollover);
-//   T.subscribe((t) => { topPlot = t; });
-//   H.subscribe((h) => { bodyHeight = h; });
-// }
 
 // FIXME: this is for demo purposes. use better build data.
 let reference = data[data.length - 1];
@@ -106,12 +72,9 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 $: movingAudienceSize.set(reference.audienceSize);
 
 function getPercentile(percentileBin, datum) {
-  // const percentile = datum.percentiles[percentileBin];
-  // const transformedPercentile = datum.transformedPercentiles[percentileBin];
   let percentileValue;
-  if (whichPercentileVersion === 'percentile') percentileValue = datum.percentiles[percentileBin];
+  if (probeType !== 'histogram') percentileValue = datum.percentiles[percentileBin];
   else percentileValue = datum.transformedPercentiles[percentileBin];
-  // return { percentileBin, percentile, transformedPercentile };
   return { label: datum.label, bin: percentileBin, value: percentileValue };
 }
 
@@ -130,7 +93,6 @@ function getAllPercentiles(percentileBins, datum) {
 .summary {
   display:grid;
   grid-auto-flow:column;
-  /* width: max-content; */
   justify-content: end;
   font-size: 14px;
 }
@@ -186,15 +148,13 @@ h4 {
     data={data}
     xDomain={$domain}
     yDomain={yDomain}
-    xTicks={ticks}
-    xTickFormatter={tickFormatter}
-    lineYValueAccessor={whichPercentileVersion}
+    timeHorizon={timeHorizon}
     lineColorMap={percentileLineColorMap}
     key={key}
     yScaleType={yScaleType}
     width={WIDTH}
     height={HEIGHT}
-    transform={extractPercentiles}
+    transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
     metricKeys={percentiles}
     bind:reference={reference}
     bind:hovered={hovered}
@@ -209,6 +169,7 @@ h4 {
     rightDistribution={reference.histogram}
     leftLabel={hovered.x}
     rightLabel={reference.label}
+    colorMap={percentileLineColorMap}
     leftPercentiles={hovered.datum ? getAllPercentiles(percentiles, hovered.datum) : undefined}
     rightPercentiles={getAllPercentiles(percentiles, reference)}
     xDomain={['hovered', 'latest']}
