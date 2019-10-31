@@ -90,18 +90,10 @@ export let tickFormatter = (t) => t;
 export let showTicks = true;
 export let showBorder = false;
 export let showLabels = true;
-/*
-- create option for long / short
-- figure out what calcs need to be made:
-  -text location: tickLocation + DIRECTION * tickLength + DIRECTION * margins.buffer;
-  -tick location:
-  -tick length:
-
-*/
 
 let mainDim = (side === 'left' || side === 'right') ? 'x' : 'y';
 let secondaryDim = (side === 'left' || side === 'right') ? 'y' : 'x';
-// for left / right, we need additional buffer. for top / bottom, we need to move down tickFontSize.
+
 let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 
 let tickEnd;
@@ -144,7 +136,7 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
           }}
           text-anchor={textAnchor}
           font-size={tickFontSize}
-        >{tickFormatter(tick)}</text>
+        >{tickFormatter ? tickFormatter(tick) : tick}</text>
       {/if}
   {/each}
   </g>

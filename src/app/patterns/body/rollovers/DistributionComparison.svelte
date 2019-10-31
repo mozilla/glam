@@ -18,7 +18,7 @@ export let leftLabel;
 export let rightLabel;
 export let leftPercentiles;
 export let rightPercentiles;
-export let yTickFormatter;
+export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
 export let xDomain;
 export let yDomain;
