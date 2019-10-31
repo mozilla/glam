@@ -1,5 +1,5 @@
 <script>
-import { zipByAggregationType, makeDataset } from '../../../src/app/utils/probe-utils';
+import { zipByAggregationType, prepareForQuantilePlot } from '../../../src/app/utils/probe-utils';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;
@@ -8,7 +8,7 @@ const aggs = Object
   .entries(zipByAggregationType(activeTicksBuild))
   .map(([aggType, payload]) => [
     aggType,
-    makeDataset(payload, 'build_id'),
+    prepareForQuantilePlot(payload, 'build_id'),
     payload,
   ]);
 const dataset = aggs[1][1];

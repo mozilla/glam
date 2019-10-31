@@ -1,7 +1,7 @@
 <script>
 import { setContext } from 'svelte';
 import {
-  gatherBy, makeDataset, topKBuildsPerDay, sortByKey,
+  gatherBy, prepareForProportionPlot, topKBuildsPerDay, sortByKey,
 } from '../../../utils/probe-utils';
 
 import QuantileExplorerSmallMultiple from '../quantiles/QuantileExplorerSmallMultiple.svelte';
@@ -12,14 +12,12 @@ import InBodySelector from '../../AggregationTypeSelector.svelte';
 export let data;
 export let probeType;
 
-console.log(data, probeType);
-
 function byKeyAndAggregation(d) {
   const byKey = gatherBy(data, (entry) => entry.key);
   Object.keys(byKey).forEach((k) => {
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
     Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = makeDataset(byKey[k][aggKey], 'build_id');
+      byKey[k][aggKey] = prepareForProportionPlot(byKey[k][aggKey], 'build_id');
       byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
       byKey[k][aggKey].sort(sortByKey('label'));
     });
@@ -28,6 +26,8 @@ function byKeyAndAggregation(d) {
 }
 
 const transformed = byKeyAndAggregation(data);
+
+console.log(transformed);
 
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 

@@ -1,3 +1,4 @@
+import { object } from 'prop-types';
 import { nearestBelow } from '../../utils/stats';
 
 export function sortByKey(key) {
@@ -27,7 +28,7 @@ export const responseHistogramToGraphicFormat = (histogram, keyTransform = (k) =
   return formatted;
 };
 
-export const makeDataset = (probeData, key = 'version') => probeData.map((probe) => {
+export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.map((probe) => {
   const histogram = responseHistogramToGraphicFormat(probe.data[0].histogram);
   const { percentiles } = probe.data[0];
   const transformedPercentiles = Object.entries(percentiles).reduce((acc, [bin, value]) => {
@@ -39,6 +40,26 @@ export const makeDataset = (probeData, key = 'version') => probeData.map((probe)
     histogram,
     percentiles,
     transformedPercentiles,
+    audienceSize: probe.data[0].total_users,
+  };
+});
+
+function toProportions(obj) {
+  const proportions = { ...obj };
+  const total = Object.values(proportions).reduce((a, b) => a + b, 0);
+  Object.keys(proportions).forEach((p) => {
+    proportions[p] /= total;
+  });
+  return proportions;
+}
+
+export const prepareForProportionPlot = (probeData, key = 'version') => probeData.map((probe) => {
+  const counts = probe.data[0].histogram;
+  const proportions = toProportions(probe.data[0].histogram);
+  return {
+    label: probe.metadata[key],
+    counts,
+    proportions,
     audienceSize: probe.data[0].total_users,
   };
 });

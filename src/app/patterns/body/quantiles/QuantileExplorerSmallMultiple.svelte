@@ -12,8 +12,10 @@ import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
-import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+
+import BuildIDComparison from '../BuildIDComparison.svelte';
 import DistributionComparison from '../rollovers/DistributionComparison.svelte';
+import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
 
 import { percentileLineColorMap, percentileLineStrokewidthMap } from '../../../../components/data-graphics/utils/color-maps';
 import {
@@ -87,64 +89,34 @@ $: if (timeHorizon === 'ALL_TIME') {
 let dgRollover;
 let rollover = {};
 
-function initiateRollover(rolloverStore) {
-  if (!rolloverStore) return undefined;
-  derived(rolloverStore, ({ x, y }) => {
-    // we need the whole data point?
-    // use only x to fetch the data point.
-    const datum = data.find((d) => d.label === x);
-    return { x, y, datum };
-  }).subscribe((st) => {
-    rollover = st;
-  });
-}
-
 let WIDTH = 450;
 let HEIGHT = 350;
 
-let margins;
-let dataGraphicMounted = false;
-let xScale;
-let yScale;
-let T;
-let H;
-let GW;
-let R;
-let topPlot;
-let bodyHeight;
-
-$: if (dataGraphicMounted) {
-  initiateRollover(dgRollover);
-  T.subscribe((t) => { topPlot = t; });
-  H.subscribe((h) => { bodyHeight = h; });
-}
+// $: if (dataGraphicMounted) {
+//   initiateRollover(dgRollover);
+//   T.subscribe((t) => { topPlot = t; });
+//   H.subscribe((h) => { bodyHeight = h; });
+// }
 
 // FIXME: this is for demo purposes. use better build data.
 let latest = data[data.length - 1];
-let fmt = format(',.2r');
-
-// function tidyToObject(tidy) {
-//   let out = {};
-//   tidy.forEach((t) => {
-//     out[`p${t.bin}`] = nearestBelow(t.value, latest.histogram.map((h) => h.bin));
-//   });
-//   return out;
-// }
-
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(latest.audienceSize);
 
-
-function getPercentiles(percentileBin, datum) {
-  const percentile = datum.percentiles[percentileBin];
-  const transformedPercentile = datum.transformedPercentiles[percentileBin];
-  return { percentileBin, percentile, transformedPercentile };
+function getPercentile(percentileBin, datum) {
+  // const percentile = datum.percentiles[percentileBin];
+  // const transformedPercentile = datum.transformedPercentiles[percentileBin];
+  let percentileValue;
+  if (whichPercentileVersion === 'percentile') percentileValue = datum.percentiles[percentileBin];
+  else percentileValue = datum.transformedPercentiles[percentileBin];
+  // return { percentileBin, percentile, transformedPercentile };
+  return [datum.label, percentileBin, percentileValue];
 }
 
 function getAllPercentiles(percentileBins, datum) {
-  return percentileBins.map((p) => getPercentiles(p, datum));
+  return percentileBins.map((p) => getPercentile(p, datum));
 }
 
 </script>
@@ -153,35 +125,6 @@ function getAllPercentiles(percentileBins, datum) {
 .graphic-and-summary {
   display: grid;
   grid-template-columns: max-content max-content auto;
-  /* grid-column-gap: var(--space-2x); */
-}
-
-table {
-  border-spacing: 0px;
-  font-size: 16px;
-  /* justify-self: end; */
-}
-
-th {
-  font-weight: 600;
-}
-
-td, th {
-  font-size: 12px;
-  text-align: right;
-  min-width: var(--space-6x);
-}
-
-.color-label {
-  display:inline-block;
-  width: var(--space-base);
-  height: var(--space-base);
-  margin-right: var(--space-1h);
-  border-radius: var(--space-1q);
-}
-
-.bold {
-  font-weight: bold;
 }
 
 .summary {
@@ -190,13 +133,6 @@ td, th {
   /* width: max-content; */
   justify-content: end;
   font-size: 14px;
-}
-
-.summary-miniature {
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  outline:1px solid black;
 }
 
 h4 {
@@ -232,7 +168,7 @@ h4 {
 
 
 <div class='title-and-summary'>
-  <div style="padding-left:{margins ? margins.left : 0}px;">
+  <div>
     <h4>{title}</h4>
   </div>
   <div class=bignum>
@@ -243,76 +179,27 @@ h4 {
     <div class=bignum__label>⭑ Audience Size</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div>
-
 </div>
 
 <div class=graphic-and-summary>
-  <DataGraphic
+  <BuildIDComparison
     data={data}
     xDomain={$domain}
     yDomain={yDomain}
-    yType={yScaleType}
+    xTicks={ticks}
+    xTickFormatter={tickFormatter}
+    lineYValueAccessor={whichPercentileVersion}
+    lineColorMap={percentileLineColorMap}
+    key={key}
+    yScaleType={yScaleType}
     width={WIDTH}
     height={HEIGHT}
-    bind:dataGraphicMounted={dataGraphicMounted}
-    bind:margins={margins}
-    bind:rollover={dgRollover}
-    bind:xScale={xScale}
-    bind:yScale={yScale}
-    bind:bodyHeight={H}
-    bind:topPlot={T}
-    right={16}
-    key={key}
-    on:click={() => {
-      if (rollover.datum) latest = rollover.datum;
-    }}
-  >
-
-  {#if rollover.x && xScale && topPlot && bodyHeight}
-  <BuildIDRollover 
-    x={rollover.x}
-    label={rollover.datum.label}
+    transform={extractPercentiles}
+    metricKeys={percentiles}
+    bind:reference={latest}
+    bind:hovered={rollover}
+    extractMouseoverValues={getPercentile}
   />
-  <rect x={xScale(rollover.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-  fill="var(--cool-gray-100)" />
-  <rect x={xScale(latest.label) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-  fill="var(--cool-gray-100)" />
-{/if}
-    <LeftAxis tickCount=6 />
-    <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
-
-    <GraphicBody>
-      {#each percentileData as
-        [percentile, pi], i (pi)}
-          <Line
-          curve="curveStep"
-          lineDrawAnimation={{ duration: 300 }} 
-          xAccessor="label"
-          yAccessor={whichPercentileVersion}
-          strokeWidth={percentileLineStrokewidthMap(pi)}
-          color={percentileLineColorMap(pi)}
-          data={percentile} />
-        {/each}
-    </GraphicBody>
-
-    {#if rollover.datum}
-    {#each percentiles.map((p) => getPercentiles(p, rollover.datum)) as p, i (p.percentileBin)}
-    <circle 
-      cx={xScale(rollover.datum.label)}
-      cy={yScale(p[whichPercentileVersion])}
-      r=2
-      stroke="none"
-      fill={percentileLineColorMap(p.percentileBin)}
-      />
-      <g style="transform:translate({xScale(latest.label)}px, {yScale(latest[whichPercentileVersionKey][p.percentileBin])}px)">
-          <path 
-            d={symbol().type(referenceSymbol).size(20)()} 
-            fill={percentileLineColorMap(p.percentileBin)}
-          />
-        </g>
-      {/each}
-  {/if}
-  </DataGraphic>
   <DistributionComparison 
     yType={yScaleType}
     width={125}
