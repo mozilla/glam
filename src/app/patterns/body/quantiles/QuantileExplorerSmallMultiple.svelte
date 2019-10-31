@@ -177,10 +177,14 @@ h4 {
   />
   
   <ComparisonSummary 
-    left={hovered.datum} 
-    right={reference}
+    left={hovered.datum ? hovered.datum.percentiles : hovered.datum} 
+    right={reference.percentiles}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    percentiles={percentiles} />
+    keySet={percentiles}
+    colorMap={percentileLineColorMap}
+    valueFormatter={valueFmt}
+    keyFormatter={(perc) => `${perc}%`}
+    />
 </div>
     

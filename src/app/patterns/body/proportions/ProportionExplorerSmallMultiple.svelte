@@ -189,12 +189,15 @@ h4 {
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
-  <!-- 
+  
   <ComparisonSummary 
-    left={hovered.datum} 
-    right={reference}
+    left={hovered.datum ? hovered.datum.proportions : hovered.datum} 
+    right={reference.proportions}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    percentiles={proportions} /> -->
+    keySet={proportions} 
+    colorMap={colorMap}
+    valueFormatter={percentFormatter}
+    />
 </div>
     
