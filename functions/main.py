@@ -17,6 +17,8 @@ PROBES_URL = "https://probeinfo.telemetry.mozilla.org/firefox/all/main/all_probe
 PRODUCT_DETAILS_URL = "https://product-details.mozilla.org/1.0/firefox_versions.json"
 latest_nightly = None
 
+# TODO: Remove this.
+# Only import probes in this list.
 PROBES = [
     "a11y_backplate",
     "a11y_consumers",
