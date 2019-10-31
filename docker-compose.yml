@@ -1,0 +1,26 @@
+version: "3.4"
+
+services:
+  server:
+    build:
+      context: ./
+      target: backend
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - FLASK_APP=server/wsgi.py
+      - FLASK_CONFIG=local
+      - FLASK_ENV=development
+      - DATABASE_URL=sqlite:///app/glam.sqlite
+    ports:
+    - "8000:5000"
+    volumes:
+    - "./server/:/app/server"
+    - "./public/:/app/public"
+    depends_on:
+    - db
+    links:
+    - db
+    command: flask run --host=0.0.0.0
+
+  db:
+    image: postgres:11
