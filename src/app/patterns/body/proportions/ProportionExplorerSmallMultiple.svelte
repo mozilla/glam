@@ -43,7 +43,7 @@ const percentFormatter = format('.0p');
 const probeType = getContext('probeType');
 
 let yScaleType = 'linear';
-let yDomain = [0, 1];
+let yDomain = [-0.05, 1.05];
 let whichTransformation = 'proportions';
 // if (probeType === 'histogram') {
 //   yScaleType = 'scalePoint';

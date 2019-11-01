@@ -79,7 +79,7 @@ let which = 0;
       </div>
   
     <h1 class="story__title">probe / <span class=probe-head>{probes[which].name}</span></h1>
-    {#each probes as probe, i (probe.name)}
+    {#each probes as probe, i (probe.name + probe.probeType)}
       {#if which === i}
         <ProportionExplorerView
           probeType={probe.probeType}
