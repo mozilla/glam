@@ -1,15 +1,3 @@
-# FRONTEND BUILDER IMAGE
-FROM node:lts-slim AS frontend
-
-WORKDIR /app
-
-COPY package.json /app/
-RUN npm install
-COPY . /app/
-RUN npm run build
-# END FRONTEND BUILDER IMAGE
-
-
 # BACKEND IMAGE
 FROM python:3.8-slim AS backend
 
@@ -35,7 +23,20 @@ WORKDIR /app
 COPY ./requirements.txt /app/
 RUN pip install -U pip \
     && pip install --no-cache-dir -r requirements.txt
+COPY server /app/server
 # END BACKEND IMAGE
+
+
+# FRONTEND BUILDER IMAGE
+FROM node:lts-slim AS frontend
+
+WORKDIR /app
+
+COPY package.json /app/
+RUN npm install
+COPY . /app/
+RUN npm run build
+# END FRONTEND BUILDER IMAGE
 
 
 # FINAL IMAGE
