@@ -27,6 +27,7 @@ export let extractMouseoverValues;
 export let xDomain;
 export let yDomain;
 export let yScaleType;
+export let yTickFormatter;
 export let width;
 export let height;
 export let timeHorizon;
@@ -111,7 +112,7 @@ fill="var(--cool-gray-100)" />
 <rect x={xScale(reference.label) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
 fill="var(--cool-gray-100)" />
 {/if}
- <LeftAxis tickCount=6 />
+ <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
  <GraphicBody>

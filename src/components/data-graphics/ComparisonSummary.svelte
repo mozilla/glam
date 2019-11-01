@@ -1,19 +1,19 @@
 <script>
 import { format } from 'd3-format';
 
-import { percentileLineColorMap } from './utils/color-maps';
-
 
 let fmt = format(',.4r');
-let countFmt = format(',d');
 let pFmt = format('.0%');
 
+export let colorMap = () => 'black';
 export let left;
 export let right;
 export let leftLabel;
 export let rightLabel;
-export let percentiles;
+export let keySet;
 export let compareTo = 'left-right';
+export let valueFormatter = (t) => t;
+export let keyFormatter = (t) => t;
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -22,11 +22,11 @@ function percentChange(l, r) {
 let displayValues = [];
 
 function createNewPercentiles() {
-  return percentiles.map((percentile) => {
-    const leftValue = left ? left.percentiles[percentile] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
-    const rightValue = right ? right.percentiles[percentile] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
+  return keySet.map((key) => {
+    const leftValue = left ? left[key] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
+    const rightValue = right ? right[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
     return {
-      percentile,
+      key,
       leftValue,
       rightValue,
       percentageChange: (leftValue && rightValue) ? percentChange(leftValue, rightValue) : undefined,
@@ -34,7 +34,7 @@ function createNewPercentiles() {
   });
 }
 
-$: if (leftLabel || rightLabel || percentiles) displayValues = createNewPercentiles();
+$: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles();
 
 </script>
 
@@ -144,13 +144,13 @@ td, th {
       </tr>
     </thead>
     <tbody>
-          {#each displayValues as {leftValue, rightValue, percentageChange, percentile}}
+          {#each displayValues as {leftValue, rightValue, percentageChange, key}}
             <tr>
               <td class=value-label>
                 <span class='summary-color-label'
-                style="background-color:{percentileLineColorMap(percentile)}"></span>{percentile}%</td>
-              <td class=value-left>{left ? fmt(leftValue) : ' '}</td>
-              <td class=value-right>{right ? fmt(rightValue) : ' '}</td>
+                style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
+              <td class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
+              <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
               <td class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
             </tr>
           {/each}

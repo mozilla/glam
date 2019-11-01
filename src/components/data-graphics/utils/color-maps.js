@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
+import { schemeTableau10 } from 'd3-scale-chromatic';
+
 export function percentileLineColorMap(percentile) {
   if (percentile === 5) return 'var(--digital-blue-300)';
   if (percentile === 25) return 'var(--digital-blue-500)';
@@ -12,4 +14,17 @@ export function percentileLineColorMap(percentile) {
 export function percentileLineStrokewidthMap(percentile) {
   if (percentile === 50) return 1.5;
   return 1;
+}
+
+export function createCatColorMap(options) {
+  // array of options should
+  const getID = (value) => options.find((v) => v === value);
+  return function catColorMap(v) {
+    const i = getID(v);
+    return schemeTableau10[i];
+  };
+}
+
+export function genericCategoricalColorMap(v) {
+  return schemeTableau10[v];
 }

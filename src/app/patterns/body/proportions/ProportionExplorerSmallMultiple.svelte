@@ -9,8 +9,6 @@ import BuildIDComparison from '../BuildIDComparison.svelte';
 import DistributionComparison from '../rollovers/DistributionComparison.svelte';
 import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
 
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
-
 import {
   buildIDToDate,
 } from '../../../../components/data-graphics/utils/build-id-utils';
@@ -34,14 +32,17 @@ export let key;
 export let timeHorizon;
 export let proportions;
 export let activeProportions;
+export let colorMap = () => 'var(--digital-blue-500)';
 
 
 let valueFmt = format(',.4r');
 let countFmt = format(',d');
+const percentFormatter = format('.0p');
+
 
 const probeType = getContext('probeType');
 
-let yScaleType;
+let yScaleType = 'linear';
 let yDomain = [0, 1];
 let whichTransformation = 'proportions';
 // if (probeType === 'histogram') {
@@ -159,9 +160,10 @@ h4 {
     xDomain={$domain}
     yDomain={yDomain}
     timeHorizon={timeHorizon}
-    lineColorMap={percentileLineColorMap}
+    lineColorMap={colorMap}
     key={key}
-    yScaleType={'linear'}
+    yScaleType={yScaleType}
+    yTickFormatter={percentFormatter}
     width={WIDTH}
     height={HEIGHT}
     transform={(p, d) => extractProportions(p, d, whichTransformation)}
@@ -171,15 +173,17 @@ h4 {
     extractMouseoverValues={getProportion}
   />
 
-  <!-- <DistributionComparison 
+  <DistributionComparison 
     yType={yScaleType}
+    yTickFormatter={percentFormatter}
     width={125}
     height={HEIGHT}
-    leftDistribution={hovered.datum ? hovered.datum.histogram : undefined}
-    rightDistribution={reference.histogram}
+    showViolins={false}
+    leftDistribution={hovered.datum ? hovered.datum.proportions : undefined}
+    rightDistribution={reference.proportions}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    colorMap={percentileLineColorMap}
+    colorMap={colorMap}
     leftPercentiles={hovered.datum ? getAllProportions(proportions, hovered.datum) : undefined}
     rightPercentiles={getAllProportions(proportions, reference)}
     xDomain={['hovered', 'latest']}
@@ -187,10 +191,13 @@ h4 {
   />
   
   <ComparisonSummary 
-    left={hovered.datum} 
-    right={reference}
+    left={hovered.datum ? hovered.datum.proportions : hovered.datum} 
+    right={reference.proportions}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    percentiles={proportions} /> -->
+    keySet={proportions} 
+    colorMap={colorMap}
+    valueFormatter={percentFormatter}
+    />
 </div>
     
