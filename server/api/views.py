@@ -3,7 +3,8 @@ from sqlalchemy.sql import and_, select
 from werkzeug import exceptions
 
 from server import db
-from .models import FirefoxMeasurement as fxm, Probe
+from .models import AggregateTypes, Probe
+from .models import FirefoxMeasurement as fxm
 
 
 bp = Blueprint("api", __name__)
@@ -148,7 +149,9 @@ def get_aggregate_data():
         if sub_key not in record:
             record[sub_key] = {}
 
-        new_data = {row.agg_type.name: aggs, "total_users": row.total_users}
+        new_data = {row.agg_type.name: aggs}
+        if row.agg_type == AggregateTypes.histogram:
+            new_data["total_users"] = row.total_users
         if value := row.metric_key:
             new_data["key"] = value
         if value := row.client_agg_type:
