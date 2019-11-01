@@ -18,7 +18,7 @@ export function percentileLineStrokewidthMap(percentile) {
 
 export function createCatColorMap(options) {
   // array of options should
-  const getID = (value) => options.find((v) => v === value);
+  const getID = (value) => options.findIndex((v) => v === value);
   return function catColorMap(v) {
     const i = getID(v);
     return schemeTableau10[i];

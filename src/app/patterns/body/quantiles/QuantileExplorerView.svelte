@@ -19,7 +19,7 @@ const transformed = byKeyAndAggregation(data);
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
-let percentiles = [5, 25, 50, 75, 95];
+let percentiles = [95, 75, 50, 25, 5];
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 let currentAggregation = aggregationTypes[0];
 let aggregationInfo;

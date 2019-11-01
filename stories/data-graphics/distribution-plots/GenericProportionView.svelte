@@ -2,13 +2,16 @@
 import ProportionExplorerView from '../../../src/app/patterns/body/proportions/ProportionExplorerView.svelte';
 import SSL_RESUMED_SESSION from '../../../tests/data/ssl_resumed_session_build_id.json';
 import SSL_HANDSHAKE_VERSION from '../../../tests/data/ssl_handshake_version_build_id.json';
+import CRYPTO from '../../../tests/data/cryptominers_blocked_count_build_id.json';
 
 const sslResumedSession = SSL_RESUMED_SESSION.response;
 const sslHandshakeVersion = SSL_HANDSHAKE_VERSION.response;
+const cryptominersBlockedCount = CRYPTO.response;
 
 let probes = [
   { name: 'SSL_RESUMED_SESSION', data: sslResumedSession, probeType: 'histogram-boolean' },
   { name: 'SSL_HANDSHAKE_VERSION', data: sslHandshakeVersion, probeType: 'histogram-enumerated' },
+  { name: 'cryptominers_blocked_count', data: cryptominersBlockedCount, probeType: 'histogram-categorical' },
 ];
 
 let which = 0;
