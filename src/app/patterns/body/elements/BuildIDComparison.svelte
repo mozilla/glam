@@ -4,19 +4,19 @@ import { writable, derived } from 'svelte/store';
 
 import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
 
-import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../components/data-graphics/LeftAxis.svelte';
-import BottomAxis from '../../../components/data-graphics/BottomAxis.svelte';
-import TopAxis from '../../../components/data-graphics/TopAxis.svelte';
-import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
-import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../components/data-graphics/LineMultiple.svelte';
+import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
+import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
+import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
+import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
+import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
+import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
+import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
-import Marker from '../../../components/data-graphics/Marker.svelte';
+import Marker from '../../../../components/data-graphics/Marker.svelte';
 
 import {
   firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays, dateToBuildID,
-} from '../../../components/data-graphics/utils/build-id-utils';
+} from '../../../../components/data-graphics/utils/build-id-utils';
 
 export let data;
 export let markers;
