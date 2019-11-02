@@ -12,6 +12,8 @@ import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
+import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
+
 import Marker from '../../../../components/data-graphics/Marker.svelte';
 
 import {
@@ -164,18 +166,6 @@ fill="var(--cool-gray-100)" />
  {/if}
 
 
-
-
- {#if markers && markers.length && topPlot}
-    {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) })).filter((d) => d.date !== undefined) as {label, date}, i (date)}
-      <Marker location={date}>{label}</Marker>
-    {/each}
-    <!-- <g class=markers>
-    {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) })).filter((d) => d.date !== undefined) as {label, date}, i (date)}
-      <line y1={topPlot} y2={bottomPlot} x1={xScale(date)} x2={xScale(date)} stroke-dasharray='1,1' stroke='var(--cool-gray-500)' />
-      <text x={xScale(date)} y={topPlot - margins.buffer} font-size=11 text-anchor='middle' fill='var(--cool-gray-500)'>{label}</text>
-    {/each}
-    </g> -->
- {/if}
+  <FirefoxReleaseVersionMarkers />
 
 </DataGraphic>
