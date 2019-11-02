@@ -1,5 +1,5 @@
 <script context=module>
-let order = 0;
+let orders = {};
 </script>
 
 <script>
@@ -15,8 +15,13 @@ export let lineThickness = 1;
 export let lineColor = 'var(--cool-gray-500)';
 export let textColor = lineColor;
 
-const ORDER = order;
-order += 1;
+
+const key = getContext('key');
+
+if (!(key in orders)) orders[key] = 0;
+const ORDER = orders[key];
+orders[key] += 1;
+
 export let margins = getContext('margins');
 
 const scale = direction === 'vertical' ? getContext('xScale') : getContext('yScale');
@@ -25,13 +30,12 @@ const scale = direction === 'vertical' ? getContext('xScale') : getContext('ySca
 export let endLocation = direction === 'vertical' ? getContext('topPlot') : getContext('rightPlot');
 export let rootLocation = direction === 'vertical' ? getContext('bottomPlot') : getContext('leftPlot');
 
-
 const distance = direction === 'vertical' ? getContext('bodyHeight') : getContext('bodyWidth');
 const animate = true;
 
 let pixelDirection = direction === 'vertical' ? 1 : -1;
 
-const scaling = tweened(pixelDirection, { duration: animate ? 600 : 0, delay: ORDER * 50, easing });
+const scaling = tweened(pixelDirection, { duration: animate ? 500 : 0, delay: ORDER * 50, easing });
 
 let lineEndCoord;
 let lineStartCoord;
@@ -61,9 +65,9 @@ $: textAnchor = direction === 'vertical' ? 'middle' : 'start';
 $: dy = direction === 'vertical' ? 0 : '.35em';
 
 
-let mounted = false;
+// let mounted = false;
 onMount(() => {
-  mounted = true;
+  // mounted = true;
   scaling.set(0);
 });
 
