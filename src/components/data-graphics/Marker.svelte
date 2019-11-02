@@ -69,8 +69,8 @@ onMount(() => {
 
 </script>
 
-{#if mounted}
-  <g in:fade class=marker>
+
+  <g style="opacity: {1 - Math.abs($scaling)}"  class=marker>
       <line 
         y1={y1} 
         y2={y2} 
@@ -89,4 +89,3 @@ onMount(() => {
         <slot></slot>
       </text>
   </g>
-{/if}
