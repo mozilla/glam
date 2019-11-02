@@ -5,9 +5,9 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
-import BuildIDComparison from '../BuildIDComparison.svelte';
-import DistributionComparison from '../rollovers/DistributionComparison.svelte';
-import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+import BuildIDComparison from '../elements/BuildIDComparison.svelte';
+import DistributionComparison from '../elements/DistributionComparison.svelte';
+import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
 import {
   buildIDToDate,
@@ -43,7 +43,7 @@ const percentFormatter = format('.0p');
 const probeType = getContext('probeType');
 
 let yScaleType = 'linear';
-let yDomain = [0, 1];
+let yDomain = [-0.05, 1.05];
 let whichTransformation = 'proportions';
 // if (probeType === 'histogram') {
 //   yScaleType = 'scalePoint';

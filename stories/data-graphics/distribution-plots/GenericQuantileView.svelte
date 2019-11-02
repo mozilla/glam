@@ -4,6 +4,8 @@ import NAV_URL from '../../../tests/data/browser_engagement_navigation_urlbar_bu
 import ACTIVE_TICKS from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
+import { firefoxVersionMarkers } from '../../../src/app/store/product-versions';
+
 const navUrl = NAV_URL.response;
 const gcms = GCMS.response;
 const activeTicks = ACTIVE_TICKS.response;
@@ -95,6 +97,7 @@ let probes = [
         <QuantileExplorerView 
           probeType={probe.probeType}
           data={probe.data}
+          markers={$firefoxVersionMarkers}
         />
       {/if}
     {/each}

@@ -35,7 +35,7 @@ $: if (x && mounted) {
 <text
 bind:this={rollover}
 x={Math.min(Math.max(xScale(x), leftCorrection), rightCorrection)} 
-y={topPlot - margins.buffer}
+y={topPlot - margins.buffer - 12}
 text-anchor='middle'
 font-family="var(--main-mono-font)"
 font-size='12'>

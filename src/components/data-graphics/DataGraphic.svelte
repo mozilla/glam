@@ -5,7 +5,15 @@ import { scalePoint, scaleLinear, scaleSymlog } from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
-export let key;
+// key is used to uniquely identify a DataGraphic.
+// users can supply their own, but one must exist.
+// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
+export let key = Math
+  .random()
+  .toString(36)
+  .substring(2, 15) + Math.random()
+  .toString(36).substring(2, 15);
+
 export let xDomain;
 export let yDomain;
 export let xType = 'scalePoint';
@@ -13,7 +21,7 @@ export let yType = 'scalePoint';
 
 export let left = 50;
 export let right = 16;
-export let top = 20;
+export let top = 50;
 export let bottom = 20;
 export let laneGap = 30;
 export let buffer = 5;

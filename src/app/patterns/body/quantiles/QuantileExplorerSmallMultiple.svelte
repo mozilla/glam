@@ -5,9 +5,9 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
-import BuildIDComparison from '../BuildIDComparison.svelte';
-import DistributionComparison from '../rollovers/DistributionComparison.svelte';
-import ComparisonSummary from '../../../../components/data-graphics/ComparisonSummary.svelte';
+import BuildIDComparison from '../elements/BuildIDComparison.svelte';
+import DistributionComparison from '../elements/DistributionComparison.svelte';
+import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -19,6 +19,7 @@ import { extractPercentiles } from '../../../../components/data-graphics/utils/p
 
 export let data;
 export let title;
+export let markers;
 export let key;
 export let timeHorizon;
 export let percentiles = [50];
@@ -159,6 +160,7 @@ h4 {
     bind:reference={reference}
     bind:hovered={hovered}
     extractMouseoverValues={getPercentile}
+    markers={markers}
   />
 
   <DistributionComparison 

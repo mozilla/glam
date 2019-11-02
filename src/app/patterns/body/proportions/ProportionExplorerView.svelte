@@ -14,7 +14,8 @@ export let data;
 export let probeType;
 
 
-const transformed = byKeyAndAggregation(data, 'proportion');
+let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
+
 
 function getProportionKeys(tr) {
   return Object.keys(Object.values(Object.values(tr)[0])[0][0].counts);
@@ -70,10 +71,9 @@ setContext('probeType', probeType);
     <!-- <div class=body-control-row class:hidden={totalAggs === 1}>
       <InBodySelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
     </div> -->
-
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType)}
           <div class='small-multiple'>
             <ProportionExplorerSmallMultiple
               title={key === 'undefined' ? '' : key}

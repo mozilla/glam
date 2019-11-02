@@ -6,6 +6,8 @@ export let level = 'medium';
 export let compact = true;
 export let options;
 export let multi = false;
+export let sort = true;
+export let reverse = false;
 export let selected = multi ? [] : undefined;
 
 function toggle(v) {
@@ -14,8 +16,12 @@ function toggle(v) {
     else {
       selected = [...selected, v];
     }
-    selected.sort();
-    selected.reverse();
+    if (sort) {
+      let sortCallback = (a, b) => (a < b ? -1 : 1);
+      if (typeof sort === 'function') sortCallback = sort;
+      selected.sort(sortCallback);
+    }
+    if (reverse) selected.reverse();
   } else {
     selected = v;
   }

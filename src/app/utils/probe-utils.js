@@ -1,3 +1,5 @@
+import produce from 'immer';
+
 import { nearestBelow } from '../../utils/stats';
 
 export function sortByKey(key) {
@@ -52,9 +54,16 @@ function toProportions(obj) {
   return proportions;
 }
 
-export const prepareForProportionPlot = (probeData, key = 'version') => probeData.map((probe) => {
-  const counts = probe.data[0].histogram;
-  const proportions = toProportions(probe.data[0].histogram);
+export const prepareForProportionPlot = (probeData, key = 'version', prepareArgs = {}) => probeData.map((probe) => {
+  const counts = { ...probe.data[0].histogram };
+  if (prepareArgs.probeType === 'histogram-boolean') {
+    counts.no = counts['0'];
+    counts.yes = counts['1'];
+    delete counts['0'];
+    delete counts['1'];
+    delete counts['2'];
+  }
+  const proportions = toProportions(counts);
   return {
     label: probe.metadata[key],
     counts,
@@ -141,44 +150,30 @@ export function gatherBy(payload, by) {
 }
 
 
-export function byKeyAndAggregation(data, preparationType = 'quantile', aggregationLevel = 'build_id') {
+export function byKeyAndAggregation(data, preparationType = 'quantile', aggregationLevel = 'build_id', prepareArgs = {}, postProcessArgs = {}) {
   const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
   const byKey = gatherBy(data, (entry) => entry.key);
   Object.keys(byKey).forEach((k) => {
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
     Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel);
+      byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel, prepareArgs);
       byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
       byKey[k][aggKey].sort(sortByKey('label'));
+      if (postProcessArgs.removeZeroes) {
+        // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
+        const keys = Object.keys(byKey[k][aggKey][0].counts);
+        const toRemove = keys
+          .map((ki) => [ki, byKey[k][aggKey].every((datum) => datum.counts[ki] === 0.0)])
+          .filter(([ki, tf]) => tf).map(([k]) => k);
+        // byKey[k][aggKey].forEach(console.log);
+        byKey[k][aggKey] = byKey[k][aggKey].map((datum) => produce(datum, (draft) => {
+          toRemove.forEach((k) => {
+            delete draft.counts[k];
+            delete draft.proportions[k];
+          });
+        }));
+      }
     });
   });
   return byKey;
 }
-
-// export function gatherBy(payload, by) {
-//   const keys = new Set([]);
-//   payload.forEach((aggregation) => {
-//     aggregation.data.forEach((entry) => {
-//       const aggType = by(entry);
-//       keys.add(aggType);
-//     });
-//   });
-
-//   const out = {};
-//   keys.forEach((a) => {
-//     out[a] = [];
-//   });
-
-//   payload.forEach((aggregation) => {
-//     const { metadata } = aggregation;
-//     aggregation.data.forEach((datum) => {
-//       const aggType = datum.client_agg_type;
-//       out[aggType].push({ data: [datum], metadata });
-//     });
-//   });
-
-//   keys.forEach((a) => {
-//     out[a].sort(sortByBuildID);
-//   });
-//   return out;
-// }
