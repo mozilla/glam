@@ -19,6 +19,7 @@ import { extractPercentiles } from '../../../../components/data-graphics/utils/p
 
 export let data;
 export let title;
+export let markers;
 export let key;
 export let timeHorizon;
 export let percentiles = [50];
@@ -159,6 +160,7 @@ h4 {
     bind:reference={reference}
     bind:hovered={hovered}
     extractMouseoverValues={getPercentile}
+    markers={markers}
   />
 
   <DistributionComparison 

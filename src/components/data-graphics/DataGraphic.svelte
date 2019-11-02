@@ -13,7 +13,7 @@ export let yType = 'scalePoint';
 
 export let left = 50;
 export let right = 16;
-export let top = 20;
+export let top = 50;
 export let bottom = 20;
 export let laneGap = 30;
 export let buffer = 5;

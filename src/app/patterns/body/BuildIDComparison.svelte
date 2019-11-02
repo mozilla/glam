@@ -7,15 +7,19 @@ import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
 import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import LeftAxis from '../../../components/data-graphics/LeftAxis.svelte';
 import BottomAxis from '../../../components/data-graphics/BottomAxis.svelte';
+import TopAxis from '../../../components/data-graphics/TopAxis.svelte';
 import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../components/data-graphics/LineMultiple.svelte';
 
+import Marker from '../../../components/data-graphics/Marker.svelte';
+
 import {
-  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
+  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays, dateToBuildID,
 } from '../../../components/data-graphics/utils/build-id-utils';
 
 export let data;
+export let markers;
 export let metricKeys;
 export let reference; // used to be latest
 export let hovered = {};
@@ -31,6 +35,7 @@ export let yTickFormatter;
 export let width;
 export let height;
 export let timeHorizon;
+
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
@@ -56,9 +61,12 @@ let xScale;
 let yScale;
 let H;
 let T;
+let B;
 let bodyHeight;
 let topPlot;
+let bottomPlot;
 let dgRollover;
+let margins;
 
 function initiateRollover(rolloverStore) {
   if (!rolloverStore) return undefined;
@@ -77,6 +85,7 @@ let dataGraphicMounted;
 $: if (dataGraphicMounted) {
   initiateRollover(dgRollover);
   T.subscribe((t) => { topPlot = t; });
+  B.subscribe((b) => { bottomPlot = b; });
   H.subscribe((h) => { bodyHeight = h; });
 }
 
@@ -94,6 +103,8 @@ $: if (dataGraphicMounted) {
  bind:yScale={yScale}
  bind:bodyHeight={H}
  bind:topPlot={T}
+ bind:bottomPlot={B}
+ bind:margins={margins}
  right={16}
  key={key}
  bind:dataGraphicMounted={dataGraphicMounted}
@@ -114,6 +125,8 @@ fill="var(--cool-gray-100)" />
 {/if}
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
+
+ <!-- <TopAxis showLabels=false showBorder=true /> -->
 
  <GraphicBody>
    {#each transformedData as
@@ -149,4 +162,20 @@ fill="var(--cool-gray-100)" />
     </g>
   {/each}
  {/if}
+
+
+
+
+ {#if markers && markers.length && topPlot}
+    {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) })).filter((d) => d.date !== undefined) as {label, date}, i (date)}
+      <Marker location={date}>{label}</Marker>
+    {/each}
+    <!-- <g class=markers>
+    {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) })).filter((d) => d.date !== undefined) as {label, date}, i (date)}
+      <line y1={topPlot} y2={bottomPlot} x1={xScale(date)} x2={xScale(date)} stroke-dasharray='1,1' stroke='var(--cool-gray-500)' />
+      <text x={xScale(date)} y={topPlot - margins.buffer} font-size=11 text-anchor='middle' fill='var(--cool-gray-500)'>{label}</text>
+    {/each}
+    </g> -->
+ {/if}
+
 </DataGraphic>
