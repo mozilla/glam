@@ -29,6 +29,5 @@ const lineGenerator = SHAPE.line()
     stroke-width={strokeWidth}
     fill=none 
     in:draw={lineDrawAnimation}
-    out:fade={{ duration: 50 }}
     d={lineGenerator(data)} />
 </g>
