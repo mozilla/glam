@@ -10,6 +10,10 @@ export let sort = true;
 export let reverse = false;
 export let selected = multi ? [] : undefined;
 
+$: if (multi && sort && typeof sort === 'function') {
+  selected.sort(sort);
+}
+
 function toggle(v) {
   if (multi) {
     if (selected.includes(v)) selected = [...selected.filter((vi) => vi !== v)];

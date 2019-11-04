@@ -21,6 +21,9 @@ export function createCatColorMap(options) {
   const getID = (value) => options.findIndex((v) => v === value);
   return function catColorMap(v) {
     const i = getID(v);
+    if (i >= 10) {
+      return 'var(--cool-gray-200)';
+    }
     return schemeTableau10[i];
   };
 }
