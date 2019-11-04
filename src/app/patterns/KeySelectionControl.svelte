@@ -2,9 +2,10 @@
 import BodyControl from './BodyControl.svelte';
 
 export let selections;
+export let options;
 export let sortFunction;
 export let colorMap = () => 'black';
-export let transformed = selections.map((opt) => ({
+export let transformed = options.map((opt) => ({
   label: opt, value: opt, labelColor: colorMap(opt),
 }));
 

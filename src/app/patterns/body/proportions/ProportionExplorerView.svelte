@@ -37,9 +37,12 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-let proportions = getProportionKeys(transformed);
+let options = getProportionKeys(transformed);
 let cmpProportions = getProportionKeys(transformed);
 cmpProportions.sort(sortOrder);
+
+let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+
 
 const cmp = createCatColorMap(cmpProportions);
 
@@ -77,7 +80,7 @@ setContext('probeType', probeType);
   
     <div class=body-control-set>
         <label class=body-control-set--label>Keys</label>
-        <KeySelectionControl sortFunction={sortOrder} bind:selections={proportions} colorMap={cmp} />
+        <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
     </div>
   </div>
 
