@@ -224,6 +224,7 @@ def transform(probe):
     )[0]
     nightly_versions = get_probe_versions("nightly", probe)
     name = get_name(probe["key"])
+    expiry = latest_history.get("expiry_version")
 
     id = probe["key"].replace("/", "::").lower()
     info = {
@@ -246,7 +247,7 @@ def transform(probe):
         "bugs": latest_history["bug_numbers"],
         # active (bool): TRUE if last recorded nightly version is equal to
         # the latest nightly version.
-        "active": nightly_versions[1] == VERSIONS["nightly"] or False,
+        "active": expiry == "never" or int(expiry) > int(nightly_versions[1]),
         # prelease (bool): TRUE if "optout" is false on the "release"
         # channel, i.e., it's recorded by default on all channels.
         "prerelease": get_optout("release", probe) is False,
