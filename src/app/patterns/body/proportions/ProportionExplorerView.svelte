@@ -7,6 +7,7 @@ import {
 import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
+import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
 
 import { createCatColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -16,7 +17,6 @@ export let probeType;
 
 let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 
-
 function getProportionKeys(tr) {
   return Object.keys(Object.values(Object.values(tr)[0])[0][0].counts);
 }
@@ -24,6 +24,7 @@ function getProportionKeys(tr) {
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
+let metricType = 'proportions';
 
 let latest = Object.values(Object.values(transformed)[0])[0];
 
@@ -79,14 +80,21 @@ setContext('probeType', probeType);
     </div>
   
     <div class=body-control-set>
-        <label class=body-control-set--label>Keys</label>
-        <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
+      <label class=body-control-set--label>Keys</label>
+      <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
+    </div>
+  </div>
+
+  <div class=body-control-row>
+    <div class=body-control-set>
+      <label class=body-control-set--label>Keys</label>
+      <ProportionMetricTypeControl bind:metricType={metricType} />
     </div>
   </div>
 
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType)}
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
             <ProportionExplorerSmallMultiple
               title={key === 'undefined' ? '' : key}
@@ -95,6 +103,7 @@ setContext('probeType', probeType);
               proportions={proportions}
               timeHorizon={timeHorizon}
               colorMap={cmp}
+              metricType={metricType}
             />
           </div>
       {/each}
