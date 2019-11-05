@@ -42,6 +42,9 @@ let options = getProportionKeys(transformed);
 let cmpProportions = getProportionKeys(transformed);
 cmpProportions.sort(sortOrder);
 
+// I guess we can update the sort order when metricType changes,
+// but obviously counts <-> proportions does not change the order
+// for a build id's buckets.
 $: if (metricType) cmpProportions.sort(sortOrder);
 
 let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
@@ -88,7 +91,7 @@ setContext('probeType', probeType);
 
   <div class=body-control-row>
     <div class=body-control-set>
-      <label class=body-control-set--label>Keys</label>
+      <label class=body-control-set--label>Metric Type</label>
       <ProportionMetricTypeControl bind:metricType={metricType} />
     </div>
   </div>
