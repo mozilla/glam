@@ -567,27 +567,36 @@ main .details {
 
 .body-control-row {
     display:grid;
-    grid-auto-flow: column;
-    margin-top:var(--space-2x);
-    margin-bottom:var(--space-2x);
+    width: 100%;
+    grid-template-columns: auto auto;
+    /* justify-content: stretch; */
+    justify-items: start;
+    margin-top:var(--space-base);
+    margin-bottom:var(--space-base);
+    text-align: right;
   }
 
-  .body-control-set {
+.body-control-set {
     grid-column-gap: var(--space-base);
     margin-bottom: var(--space-base);
-  }
+}
 
-  .body-control-set .body-control-set--label {
+.body-control-set .body-control-set--label {
     text-transform: uppercase;
     font-size: var(--text-01);
     padding-bottom: var(--space-1h);
     color: var(--cool-gray-500);
-  }
+}
 
-  .body-control-row .body-control-set:last-child {
+.body-control-row .body-control-set:last-child {
     justify-self: end;
-  }
+}
 
-  .body-control-row .body-control-set:last-child .body-control-set--label {
-    text-align: right;
-  }
+.body-control-row .body-control-set:first-child {
+    justify-self: start;
+}
+
+.body-control-row .body-control-set:first-child .body-control-set--label {
+    text-align: left;
+}
+

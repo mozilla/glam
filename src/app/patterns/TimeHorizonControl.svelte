@@ -1,7 +1,7 @@
 <script>
 import BodyControl from './BodyControl.svelte';
 
-export let horizon = 'ALL_TIME';
+export let horizon = 'MONTH';
 </script>
 
 <BodyControl

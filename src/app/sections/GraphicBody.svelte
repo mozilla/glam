@@ -1,19 +1,23 @@
 <script>
-import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import {
   store, dataset,
 } from '../store/store';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
+import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
 function isScalarData(data) {
-  return data && data[0].metadata.metric_type.includes('scalar');
+  return (data && $store.probe.type === 'scalar' && $store.probe.kind === 'uint');
 }
 
 function isNumericHistogramData(data) {
-  return data && (data[0].metadata.metric_type === 'histogram-exponential' || data[0].metadata.metric_type
-    === 'histogram-linear');
+  return data && $store.probe.type === 'histogram' && ($store.probe.kind === 'linear' || $store.probe.kind === 'exponential');
+}
+
+function isCategoricalData(data) {
+  return data && (($store.probe.type === 'histogram' && $store.probe.kind === 'enumerated')
+  || $store.probe.kind === 'categorical' || $store.probe.kind === 'flag' || $store.probe.kind === 'boolean');
 }
 
 let container;
@@ -23,8 +27,6 @@ let width;
 
 <style>
 .graphic-body-container {
-    /* padding: var(--space-4x);
-    padding-top: var(--space-2x); */
     overflow-y: auto;
     height: calc(100vh - var(--header-height));
     background-color: white;
@@ -83,6 +85,8 @@ let width;
                         <QuantileExplorerView data={data.response} probeType='scalar' />
                     {:else if isNumericHistogramData(data.response)}
                         <QuantileExplorerView data={data.response} probeType='histogram' />
+                    {:else if isCategoricalData(data.response)}
+                        <ProportionExplorerView data={data.response} probeType={`${$store.probe.type}-${$store.probe.kind}`}  />
                     {:else}
                         <pre>
                             {JSON.stringify(data, null, 2)}

@@ -1,9 +1,13 @@
+<script>
 
+
+</script>
 
 <style>
 div {
   display:grid;
-  grid-auto-flow: column;
+  grid-template-columns: repeat(10, max-content);
+  grid-row-gap: var(--space-base);
   width: max-content;
 }
 
@@ -23,6 +27,6 @@ div :global(button:last-child) {
 
 </style>
 
-<div class=button-group>
+<div class=button-group style="">
   <slot></slot>
 </div>

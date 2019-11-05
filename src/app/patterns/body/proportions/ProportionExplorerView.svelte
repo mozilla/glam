@@ -25,9 +25,26 @@ let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
 
-let proportions = getProportionKeys(transformed);
+let latest = Object.values(Object.values(transformed)[0])[0];
 
-const cmp = createCatColorMap(proportions);
+// FIXME: slicing here for the demo.
+[latest] = latest.slice(-2);
+
+const sortOrder = (a, b) => {
+  // get latest data point and see
+  if (latest.counts[a] < latest.counts[b]) return 1;
+  if (latest.counts[a] >= latest.counts[b]) return -1;
+  return 0;
+};
+
+let options = getProportionKeys(transformed);
+let cmpProportions = getProportionKeys(transformed);
+cmpProportions.sort(sortOrder);
+
+let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+
+
+const cmp = createCatColorMap(cmpProportions);
 
 setContext('probeType', probeType);
 
@@ -63,14 +80,10 @@ setContext('probeType', probeType);
   
     <div class=body-control-set>
         <label class=body-control-set--label>Keys</label>
-        <KeySelectionControl bind:selections={proportions} colorMap={cmp} />
-      <!-- <PercentileSelectionControl bind:percentiles={percentiles} /> -->
+        <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
     </div>
   </div>
 
-    <!-- <div class=body-control-row class:hidden={totalAggs === 1}>
-      <InBodySelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
-    </div> -->
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType)}

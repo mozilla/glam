@@ -41,6 +41,7 @@ export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.
     histogram,
     percentiles,
     transformedPercentiles,
+    version: probe.metadata.version,
     audienceSize: probe.data[0].total_users,
   };
 });
@@ -67,6 +68,7 @@ export const prepareForProportionPlot = (probeData, key = 'version', prepareArgs
   return {
     label: probe.metadata[key],
     counts,
+    version: probe.metadata.version,
     proportions,
     audienceSize: probe.data[0].total_users,
   };

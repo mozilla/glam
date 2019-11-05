@@ -3,7 +3,7 @@ import { setContext } from 'svelte';
 import QuantileExplorerSmallMultiple from './QuantileExplorerSmallMultiple.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import InBodySelector from '../../AggregationTypeSelector.svelte';
+import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
 
 import {
   byKeyAndAggregation,
@@ -18,7 +18,7 @@ const transformed = byKeyAndAggregation(data);
 
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
-let timeHorizon = 'ALL_TIME';
+let timeHorizon = 'MONTH';
 let percentiles = [95, 75, 50, 25, 5];
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 let currentAggregation = aggregationTypes[0];
@@ -34,7 +34,7 @@ setContext('probeType', probeType);
   }
 
   .data-graphics {
-    margin-top: var(--space-8x);
+    margin-top: var(--space-6x);
   }
 
   .small-multiple {
@@ -62,9 +62,16 @@ setContext('probeType', probeType);
     </div>
   </div>
 
-    <div class=body-control-row class:hidden={totalAggs === 1}>
-      <InBodySelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
-    </div>
+  {#if totalAggs > 1}
+  <div class=body-control-row>
+    <div class=body-control-set>
+      <label class=body-control-set--label>aggregation</label>
+      <AggregationTypeSelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
+    </div>    
+  </div>
+  {/if}
+
+
 
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  

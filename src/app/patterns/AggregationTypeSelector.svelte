@@ -71,7 +71,6 @@ label {
 </style>
 
 <div class=menu-button bind:this={button}>
-  <label>aggregation</label>
   <button class=activating-button on:click={toggle} class:active>
       <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
   </button>
