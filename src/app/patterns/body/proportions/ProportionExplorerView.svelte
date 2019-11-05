@@ -33,8 +33,8 @@ let latest = Object.values(Object.values(transformed)[0])[0];
 
 const sortOrder = (a, b) => {
   // get latest data point and see
-  if (latest.counts[a] < latest.counts[b]) return 1;
-  if (latest.counts[a] >= latest.counts[b]) return -1;
+  if (latest[metricType][a] < latest[metricType][b]) return 1;
+  if (latest[metricType][a] >= latest[metricType][b]) return -1;
   return 0;
 };
 
@@ -42,8 +42,9 @@ let options = getProportionKeys(transformed);
 let cmpProportions = getProportionKeys(transformed);
 cmpProportions.sort(sortOrder);
 
-let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+$: if (metricType) cmpProportions.sort(sortOrder);
 
+let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
 
 const cmp = createCatColorMap(cmpProportions);
 
