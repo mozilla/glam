@@ -55,7 +55,7 @@
     "start": "sirv public --single",
     "start:dev": "sirv public --single --dev",
     "lint": "eslint --ext .js,.svelte rollup.config.js src/",
-    "storybook": "start-storybook -s ./public",
+    "storybook": "start-storybook -s ./public -p 6006",
     "test": "jest test --no-cache"
   }
 }

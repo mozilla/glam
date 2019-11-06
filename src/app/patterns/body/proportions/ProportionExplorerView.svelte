@@ -7,6 +7,7 @@ import {
 import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
+import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
 
 import { createCatColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -16,7 +17,6 @@ export let probeType;
 
 let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 
-
 function getProportionKeys(tr) {
   return Object.keys(Object.values(Object.values(tr)[0])[0][0].counts);
 }
@@ -24,6 +24,7 @@ function getProportionKeys(tr) {
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
 let timeHorizon = 'MONTH';
+let metricType = 'proportions';
 
 let latest = Object.values(Object.values(transformed)[0])[0];
 
@@ -32,8 +33,8 @@ let latest = Object.values(Object.values(transformed)[0])[0];
 
 const sortOrder = (a, b) => {
   // get latest data point and see
-  if (latest.counts[a] < latest.counts[b]) return 1;
-  if (latest.counts[a] >= latest.counts[b]) return -1;
+  if (latest[metricType][a] < latest[metricType][b]) return 1;
+  if (latest[metricType][a] >= latest[metricType][b]) return -1;
   return 0;
 };
 
@@ -41,8 +42,12 @@ let options = getProportionKeys(transformed);
 let cmpProportions = getProportionKeys(transformed);
 cmpProportions.sort(sortOrder);
 
-let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+// I guess we can update the sort order when metricType changes,
+// but obviously counts <-> proportions does not change the order
+// for a build id's buckets.
+$: if (metricType) cmpProportions.sort(sortOrder);
 
+let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
 
 const cmp = createCatColorMap(cmpProportions);
 
@@ -79,14 +84,21 @@ setContext('probeType', probeType);
     </div>
   
     <div class=body-control-set>
-        <label class=body-control-set--label>Keys</label>
-        <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
+      <label class=body-control-set--label>Keys</label>
+      <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
+    </div>
+  </div>
+
+  <div class=body-control-row>
+    <div class=body-control-set>
+      <label class=body-control-set--label>Metric Type</label>
+      <ProportionMetricTypeControl bind:metricType={metricType} />
     </div>
   </div>
 
   <div class=data-graphics>
     {#each Object.entries(transformed) as [key, aggs], i (key)}  
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType)}
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
             <ProportionExplorerSmallMultiple
               title={key === 'undefined' ? '' : key}
@@ -95,6 +107,7 @@ setContext('probeType', probeType);
               proportions={proportions}
               timeHorizon={timeHorizon}
               colorMap={cmp}
+              metricType={metricType}
             />
           </div>
       {/each}

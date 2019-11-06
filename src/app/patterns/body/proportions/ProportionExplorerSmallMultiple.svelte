@@ -31,6 +31,7 @@ export let title;
 export let key;
 export let timeHorizon;
 export let proportions;
+export let metricType;
 export let activeProportions;
 export let colorMap = () => 'var(--digital-blue-500)';
 
@@ -43,8 +44,14 @@ const percentFormatter = format('.0p');
 const probeType = getContext('probeType');
 
 let yScaleType = 'linear';
+
 let yDomain = [-0.05, 1.05];
-let whichTransformation = 'proportions';
+
+if (metricType === 'counts') {
+  const counts = Math.max(...data.map((d) => Object.values(d.counts)).flat());
+  yDomain = [0, counts];
+}
+
 // if (probeType === 'histogram') {
 //   yScaleType = 'scalePoint';
 //   yDomain = data[0].histogram.map((d) => d.bin);
@@ -86,7 +93,7 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 $: movingAudienceSize.set(reference.audienceSize);
 
 function getProportion(activeProportion, datum) {
-  return { label: datum.label, bin: activeProportion, value: datum.proportions[activeProportion] };
+  return { label: datum.label, bin: activeProportion, value: datum[metricType][activeProportion] };
 }
 
 function getAllProportions(activeProportions, datum) {
@@ -163,10 +170,10 @@ h4 {
     lineColorMap={colorMap}
     key={key}
     yScaleType={yScaleType}
-    yTickFormatter={percentFormatter}
+    yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     width={WIDTH}
     height={HEIGHT}
-    transform={(p, d) => extractProportions(p, d, whichTransformation)}
+    transform={(p, d) => extractProportions(p, d, metricType)}
     metricKeys={proportions}
     bind:reference={reference}
     bind:hovered={hovered}
@@ -175,12 +182,12 @@ h4 {
 
   <DistributionComparison 
     yType={yScaleType}
-    yTickFormatter={percentFormatter}
+    yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     width={125}
     height={HEIGHT}
     showViolins={false}
-    leftDistribution={hovered.datum ? hovered.datum.proportions : undefined}
-    rightDistribution={reference.proportions}
+    leftDistribution={hovered.datum ? hovered.datum[metricType] : undefined}
+    rightDistribution={reference[metricType]}
     leftLabel={hovered.x}
     rightLabel={reference.label}
     colorMap={colorMap}
@@ -191,13 +198,13 @@ h4 {
   />
   
   <ComparisonSummary 
-    left={hovered.datum ? hovered.datum.proportions : hovered.datum} 
-    right={reference.proportions}
+    left={hovered.datum ? hovered.datum[metricType] : hovered.datum} 
+    right={reference[metricType]}
     leftLabel={hovered.x}
     rightLabel={reference.label}
     keySet={proportions} 
     colorMap={colorMap}
-    valueFormatter={percentFormatter}
+    valueFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     />
 </div>
     
