@@ -109,7 +109,7 @@ function placeShapeY(value) {
 
   {#if leftDistribution && showViolins}
   <g in:fade={{ duration: 50 }}>
-    <Violin 
+    <!-- <Violin 
       showLeft={false}
       xp={(rightPlot - leftPlot) / 2 + leftPlot - 1}
       key={leftLabel}
@@ -120,11 +120,24 @@ function placeShapeY(value) {
       densityRange={[0, 30]}
       areaColor="var(--digital-blue-400)"
       lineColor="var(--digital-blue-500)"
+    /> -->
+    <Violin
+      orientation="vertical"
+      showLeft={false}
+      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot - 1}
+      key={leftLabel}
+      opacity=.9
+      density={leftDistribution} 
+      densityAccessor='value'
+      valueAccessor='bin'
+      densityRange={[0, 30]}
+      areaColor="var(--digital-blue-400)"
+      lineColor="var(--digital-blue-500)"
     />
   </g>
   {/if}
   {#if rightDistribution && showViolins}
-    <Violin 
+    <!-- <Violin 
     showRight={false}
     xp={(rightPlot - leftPlot) / 2 + leftPlot + 1}
     opacity=.9
@@ -135,6 +148,19 @@ function placeShapeY(value) {
     densityRange={[0, 30]}
     areaColor="var(--digital-blue-400)"
     lineColor="var(--digital-blue-500)"
+    /> -->
+    <Violin
+      orientation="vertical"
+      showRight={false}
+      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot + 1}
+      opacity=.9
+      key={rightLabel}
+      density={rightDistribution} 
+      densityAccessor='value'
+      valueAccessor='bin'
+      densityRange={[0, 30]}
+      areaColor="var(--digital-blue-400)"
+      lineColor="var(--digital-blue-500)"
     />
   {/if}
 
