@@ -6,6 +6,7 @@ import { cubicOut as easing } from 'svelte/easing';
 
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 
 const percFormat = (v) => `${~~(v * 100)}%`;
 const countFormat = format(',.0f');
@@ -108,15 +109,16 @@ td.data-cell--secondary {
     {/each}
     <td class=data-cell--graphic>
       <DataGraphic
-        width=150
-        height=45
-        left=0
-        right=0
+        width=250
+        height=50
+        left=10
+        right=10
         top=0
         bottom=0
         xDomain={datum.histogram.map((d) => d.bin)}
         yDomain={['top', 'bottom']}
       >
+        <TopAxis tickCount=6 lineStyle='long' />
         <Violin 
           orientation='horizontal'
           rawPlacement={45 / 2.0}

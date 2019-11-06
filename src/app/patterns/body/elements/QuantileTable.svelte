@@ -1,5 +1,6 @@
 <script>
-
+import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import QuantileRow from './QuantileRow.svelte';
 
 export let data;
@@ -33,6 +34,10 @@ th {
 th {
   border-bottom: 2px solid var(--cool-gray-200);
   background-color: white;
+  text-align: right;
+  padding: var(--space-base);
+  padding-left: var(--space-2x);
+  padding-right: var(--space-2x);
 }
 
 
@@ -41,7 +46,9 @@ thead tr th {
   top: 0;
 }
 
-
+.dg-scales {
+  padding:0;
+}
 
 </style>
 
@@ -54,7 +61,19 @@ thead tr th {
           {#each Object.keys(data[0].percentiles) as p, i (p + data[0].percentiles[p])}
             <th>{p}%</th>
           {/each}
-          <th>Distribution</th>
+          <th class=dg-scales>
+              <DataGraphic
+              width=250
+              height=60
+              left=10
+              right=10
+              bottom=0
+              xDomain={data[0].histogram.map((d) => d.bin)}
+              yDomain={['top', 'bottom']}
+            >
+              <TopAxis tickCount=6 />
+            </DataGraphic>
+          </th>
         </tr>
       </thead>
       <tbody>
