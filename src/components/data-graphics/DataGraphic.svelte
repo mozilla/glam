@@ -193,8 +193,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 <style>
 
-.quantile-plot {
-  background-color: white;
+.data-graphic-container {
   display: grid;
   align-content: center;
   justify-content: center;
@@ -202,7 +201,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 </style>
 
-<div class=quantile-plot style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
+<div class=data-graphic-container style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
   <svg
     bind:this={svg}
     shape-rendering="geometricPrecision"

@@ -24,20 +24,12 @@ function diff(a, b) {
 }
 
 th {
-  font-size: var(--text-015);
-  text-transform: uppercase;
-  font-weight: 600;
-  color: var(--cool-gray-500);
+
 }
 
 
 th {
-  border-bottom: 2px solid var(--cool-gray-200);
-  background-color: white;
-  text-align: right;
-  padding: var(--space-base);
-  padding-left: var(--space-2x);
-  padding-right: var(--space-2x);
+
 }
 
 
@@ -46,8 +38,28 @@ thead tr th {
   top: 0;
 }
 
-.dg-scales {
+.header-cell {
+  border-bottom: 2px solid var(--cool-gray-200);
+  background-color: white;
+  text-align: right;
+  padding-left: var(--space-2x);
+  padding-right: var(--space-2x);
+  vertical-align: end;
+  font-size: var(--text-015);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--cool-gray-500);
+  padding-top: var(--space-base);
+  /* padding-top: var(--space-2x); */
+}
+
+.header-cell--text {
+  padding-bottom: var(--space-base);
+}
+
+.header-cell--dg-scales {
   padding:0;
+  padding-top: var(--space-base)
 }
 
 </style>
@@ -56,18 +68,20 @@ thead tr th {
     <table class=data-table>
       <thead>
         <tr>
-          <th></th>
-          <th>Clients</th>
+          <th class="header-cell header-cell--text"></th>
+          <th class="header-cell header-cell--text">Clients</th>
           {#each Object.keys(data[0].percentiles) as p, i (p + data[0].percentiles[p])}
-            <th>{p}%</th>
+            <th class="header-cell header-cell--text">{p}%</th>
           {/each}
-          <th class=dg-scales>
+          <th class="header-cell header-cell--dg-scales">
               <DataGraphic
-              width=250
-              height=60
-              left=10
-              right=10
-              bottom=0
+              width={250}
+              height={20}
+              left={10}
+              top={20}
+              right={10}
+              bottom={0}
+              key="header-scale"
               xDomain={data[0].histogram.map((d) => d.bin)}
               yDomain={['top', 'bottom']}
             >

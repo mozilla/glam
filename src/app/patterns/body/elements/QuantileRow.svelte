@@ -3,6 +3,7 @@ import { onMount, createEventDispatcher } from 'svelte';
 import { format } from 'd3-format';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
+import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
@@ -25,6 +26,10 @@ export let datum;
 export let isReference;
 
 $: if (datum.audienceSize) audienceSize.set(datum.audienceSize);
+
+let hovered = false;
+
+let xScale;
 
 </script>
 
@@ -82,13 +87,19 @@ td.data-cell--secondary {
   vertical-align: center;
 }
 
+tr td.data-cell--graphic:hover {
+  padding:0;
+  vertical-align: center;
+  background-color: var(--cool-gray-100);
+}
+
 .median {
   font-weight: bold;
   font-size: var(--text-03);
 }
 </style>
 
-<tr class:reference={isReference} on:click={() => { onClick(datum); }}>
+<tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
     <td class=data-cell--main>
       <div>
         <div class=overline--small>Firefox {datum.version}</div>
@@ -109,39 +120,53 @@ td.data-cell--secondary {
     {/each}
     <td class=data-cell--graphic>
       <DataGraphic
-        width=250
-        height=50
-        left=10
-        right=10
-        top=0
-        bottom=0
+        width={250}
+        height={50}
+        left={10}
+        right={10}
+        top={0}
+        bottom={0}
+        bind:xScale={xScale}
         xDomain={datum.histogram.map((d) => d.bin)}
         yDomain={['top', 'bottom']}
       >
         <TopAxis tickCount=6 lineStyle='long' />
+
         <Violin 
           orientation='horizontal'
-          rawPlacement={45 / 2.0}
+          rawPlacement={50 / 2.0}
           density={datum.histogram}
           densityAccessor='value'
           valueAccessor='bin'
-          densityRange={[0, 45 / 3.0]}
+          opacity={hovered || isReference ? 0.9 : 0.6}
+          densityRange={[0, 50 / 4.0]}
           areaColor="var(--digital-blue-400)"
           lineColor="var(--digital-blue-500)"
         />
-        <!-- <Violin
-        orientation="vertical"
-        showRight={false}
-        rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot + 1}
-        opacity=.9
-        key={rightLabel}
-        density={rightDistribution} 
-        densityAccessor='value'
-        valueAccessor='bin'
-        densityRange={[0, 30]}
-        areaColor="var(--digital-blue-400)"
-        lineColor="var(--digital-blue-500)"
-      /> -->
+        <!-- {#if xScale}
+          <line 
+            x1={xScale(datum.transformedPercentiles[5])}
+            x2={xScale(datum.transformedPercentiles[95])}
+            y1={50 - 6}
+            y2={50 - 6}
+            stroke=var(--cool-gray-300)
+          />
+          {#each Object.keys(datum.percentiles) as p, i}
+            {#if ['5', '95'].includes(p)}
+              <circle 
+                cx={xScale(datum.transformedPercentiles[p])} 
+                cy={50 - 6} r=2 fill={percentileLineColorMap(+p)} />
+            {:else}
+            <line 
+              x1={xScale(datum.transformedPercentiles[p])} 
+              x2={xScale(datum.transformedPercentiles[p])}
+              y1={50 - 9}
+              y2={50 - 3}
+              stroke={percentileLineColorMap(+p)}
+              stroke-width=2 />
+            {/if}
+          {/each}
+      {/if} -->
       </DataGraphic>
     </td>
   </tr>
