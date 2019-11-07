@@ -7,6 +7,8 @@ import {
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
+import { firefoxVersionMarkers } from '../store/product-versions';
+
 function isScalarData(data) {
   return (data && $store.probe.type === 'scalar' && $store.probe.kind === 'uint');
 }
@@ -82,11 +84,11 @@ let width;
             {:then data}
                 <div in:fade>
                     {#if isScalarData(data.response)}
-                        <QuantileExplorerView data={data.response} probeType='scalar' />
+                        <QuantileExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType='scalar' />
                     {:else if isNumericHistogramData(data.response)}
-                        <QuantileExplorerView data={data.response} probeType='histogram' />
+                        <QuantileExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType='histogram' />
                     {:else if isCategoricalData(data.response)}
-                        <ProportionExplorerView data={data.response} probeType={`${$store.probe.type}-${$store.probe.kind}`}  />
+                        <ProportionExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType={`${$store.probe.type}-${$store.probe.kind}`}  />
                     {:else}
                         <pre>
                             {JSON.stringify(data, null, 2)}

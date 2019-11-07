@@ -24,16 +24,6 @@ function diff(a, b) {
   position: relative;
 }
 
-th {
-
-}
-
-
-th {
-
-}
-
-
 thead tr th {
   position: sticky;
   top: 0;
