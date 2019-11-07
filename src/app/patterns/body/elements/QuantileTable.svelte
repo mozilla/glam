@@ -5,8 +5,9 @@ import QuantileRow from './QuantileRow.svelte';
 
 export let data;
 
-
 let reference = data[0];
+
+const biggestAudience = Math.max(...data.map((d) => d.audienceSize));
 
 function setReference(r) {
   reference = r.detail.value;
@@ -91,8 +92,13 @@ thead tr th {
         </tr>
       </thead>
       <tbody>
-        {#each data as datum, i (datum.label)}
-          <QuantileRow datum={datum} isReference={datum.label === reference.label} on:click={setReference} />
+        {#each data.slice(0, 30) as datum, i (datum.label)}
+          <QuantileRow 
+            datum={datum} 
+            reference={reference}
+            biggestAudience={biggestAudience} 
+            isReference={datum.label === reference.label} 
+            on:click={setReference} />
           
         {/each}
       </tbody>

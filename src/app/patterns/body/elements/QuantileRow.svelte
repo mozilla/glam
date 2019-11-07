@@ -13,7 +13,7 @@ const percFormat = (v) => `${~~(v * 100)}%`;
 const countFormat = format(',.0f');
 const numberFormat = format('.0f');
 
-const audienceSize = tweened(0, { duration: 800, easing });
+const audienceSize = tweened(0, { duration: 800, delay: 200, easing });
 
 const dispatch = createEventDispatcher();
 function onClick(v) {
@@ -23,13 +23,30 @@ function onClick(v) {
 }
 
 export let datum;
+export let reference;
+export let biggestAudience = datum.audienceSize;
 export let isReference;
 
 $: if (datum.audienceSize) audienceSize.set(datum.audienceSize);
 
 let hovered = false;
 
-let xScale;
+let distributionXScale;
+let audienceXScale;
+
+let mounted = false;
+
+let audienceGraph = {
+  width: 150,
+  height: 20,
+};
+
+let distributionGraph = {
+  width: 250,
+  height: 50,
+};
+
+onMount(() => { mounted = true; });
 
 </script>
 
@@ -97,6 +114,12 @@ tr td.data-cell--graphic:hover {
   font-weight: bold;
   font-size: var(--text-03);
 }
+
+.audience-size {
+  font-size: var(--text-015);
+  color: var(--cool-gray-500);
+  font-family: var(--main-mono-font);
+}
 </style>
 
 <tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
@@ -109,7 +132,31 @@ tr td.data-cell--graphic:hover {
         </div>
       </div>
     </td>
-    <td class=data-cell--secondary>{countFormat($audienceSize)}</td>
+    <td class=data-cell--secondary>
+        <div>
+        {#if mounted}
+          <DataGraphic
+            width={audienceGraph.width}
+            height={audienceGraph.height}
+            left={5}
+            right={3}
+            top={0}
+            bottom={0}
+            bind:xScale={audienceXScale}
+            xDomain={[0, 1]}
+            yDomain={[0, 1]}
+            xType={'linear'}
+          >
+            <line x1={audienceXScale(0)} x2={audienceXScale(1)} y1={audienceGraph.height / 2} y2={audienceGraph.height / 2} stroke='var(--cool-gray-400)' stroke-dasharray="4,1" />
+            <line x1={audienceXScale(0)} x2={audienceXScale($audienceSize / biggestAudience)} y1={audienceGraph.height / 2} y2={audienceGraph.height / 2} stroke='var(--cool-gray-500)'/>
+            <circle cx={audienceXScale($audienceSize / biggestAudience)} cy={audienceGraph.height / 2} r=2.5 fill=var(--cool-gray-500) />
+          </DataGraphic>
+        {/if}
+        </div>
+        <div class='audience-size'>
+          {countFormat($audienceSize)}
+        </div>
+    </td>
     
     {#each Object.keys(datum.percentiles) as p, i (p + datum.percentiles[p])}
       <td class=data-cell--metric>
@@ -120,53 +167,108 @@ tr td.data-cell--graphic:hover {
     {/each}
     <td class=data-cell--graphic>
       <DataGraphic
-        width={250}
-        height={50}
+        width={distributionGraph.width}
+        height={distributionGraph.height}
         left={10}
         right={10}
         top={0}
         bottom={0}
-        bind:xScale={xScale}
+        bind:xScale={distributionXScale}
         xDomain={datum.histogram.map((d) => d.bin)}
         yDomain={['top', 'bottom']}
       >
         <TopAxis tickCount=6 lineStyle='long' />
-
-        <Violin 
-          orientation='horizontal'
-          rawPlacement={50 / 2.0}
-          density={datum.histogram}
-          densityAccessor='value'
-          valueAccessor='bin'
-          opacity={hovered || isReference ? 0.9 : 0.6}
-          densityRange={[0, 50 / 4.0]}
-          areaColor="var(--digital-blue-400)"
-          lineColor="var(--digital-blue-500)"
-        />
-        <!-- {#if xScale}
-          <line 
-            x1={xScale(datum.transformedPercentiles[5])}
-            x2={xScale(datum.transformedPercentiles[95])}
-            y1={50 - 6}
-            y2={50 - 6}
+        {#if distributionXScale}
+          <!-- <line 
+            x1={distributionXScale(datum.transformedPercentiles[5])}
+            x2={distributionXScale(datum.transformedPercentiles[95])}
+            y1={distributionGraph.height - 6}
+            y2={distributionGraph.height - 6}
             stroke=var(--cool-gray-300)
-          />
+          /> -->
+          {#if hovered}
+
           {#each Object.keys(datum.percentiles) as p, i}
-            {#if ['5', '95'].includes(p)}
+            <!-- {#if ['5', '95'].includes(p)} -->
               <circle 
-                cx={xScale(datum.transformedPercentiles[p])} 
-                cy={50 - 6} r=2 fill={percentileLineColorMap(+p)} />
-            {:else}
+                cx={distributionXScale(datum.transformedPercentiles[p])} 
+                cy={ 6} r=2 fill={percentileLineColorMap(+p)} />
+            <!-- {:else}
             <line 
-              x1={xScale(datum.transformedPercentiles[p])} 
-              x2={xScale(datum.transformedPercentiles[p])}
-              y1={50 - 9}
-              y2={50 - 3}
+              x1={distributionXScale(datum.transformedPercentiles[p])} 
+              x2={distributionXScale(datum.transformedPercentiles[p])}
+              y1={distributionGraph.height - 9}
+              y2={distributionGraph.height - 3}
               stroke={percentileLineColorMap(+p)}
               stroke-width=2 />
-            {/if}
+            {/if} -->
           {/each}
-      {/if} -->
+          {#each Object.keys(reference.percentiles) as p, i}
+            <!-- {#if ['5', '95'].includes(p)} -->
+              <line
+                x1={distributionXScale(datum.transformedPercentiles[p])}
+                x2={distributionXScale(reference.transformedPercentiles[p])}
+                y1={6}
+                y2={distributionGraph.height - 6}
+                stroke={percentileLineColorMap(+p)}
+              />
+              <circle 
+                cx={distributionXScale(reference.transformedPercentiles[p])} 
+                cy={distributionGraph.height - 6} r=2 fill={percentileLineColorMap(+p)} />
+            <!-- {:else}
+            <line 
+              x1={distributionXScale(datum.transformedPercentiles[p])} 
+              x2={distributionXScale(datum.transformedPercentiles[p])}
+              y1={distributionGraph.height - 9}
+              y2={distributionGraph.height - 3}
+              stroke={percentileLineColorMap(+p)}
+              stroke-width=2 />
+            {/if} -->
+          {/each}
+          {/if}
+      {/if}
+      <Violin 
+      orientation='horizontal'
+      rawPlacement={distributionGraph.height / 2.0 - 0.5}
+      density={datum.histogram}
+      densityAccessor='value'
+      showLeft={false}
+      valueAccessor='bin'
+      opacity={hovered || isReference ? 0.9 : 0.6}
+      densityRange={[0, distributionGraph.height / 4.0]}
+      areaColor="var(--digital-blue-400)"
+      lineColor="var(--digital-blue-500)"
+    />
+    {#if hovered}
+      <Violin 
+        orientation='horizontal'
+        rawPlacement={distributionGraph.height / 2.0 + 0.5}
+        density={reference.histogram}
+        densityAccessor='value'
+        showRight={false}
+        valueAccessor='bin'
+        opacity={hovered || isReference ? 0.9 : 0.6}
+        densityRange={[0, distributionGraph.height / 4.0]}
+        areaColor="var(--digital-blue-400)"
+        lineColor="var(--digital-blue-500)"
+      />
+      <text 
+        x={distributionGraph.width - 3}
+        y={10}
+        text-anchor=end
+        font-size=10
+        font-weight=bold
+        fill=var(--cool-gray-500)
+      >hovered</text>
+      <text 
+        x={distributionGraph.width - 3}
+        y={distributionGraph.height - 3}
+        text-anchor=end
+        font-size=10
+        font-weight=bold
+        fill=var(--pantone-red-500)
+      >ref.</text>
+    {/if}
       </DataGraphic>
     </td>
   </tr>

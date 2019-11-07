@@ -99,10 +99,13 @@ function getScaleFunction(type) {
 
 function createXPointScale(values) {
   const scaleFunction = getScaleFunction(xType);// xType === 'scalePoint' ? scalePoint : scaleLinear;
-  const scale = scaleFunction()
-    .domain([...values])
-    .range([$leftPlot, $rightPlot])
-    .padding(xPadding);
+  let scale = scaleFunction()
+    .domain(values)
+    .range([$leftPlot, $rightPlot]);
+
+  if (xType === 'scalePoint') {
+    scale = scale.padding(xPadding);
+  }
   scale.type = xType;
   return scale;
 }
