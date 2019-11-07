@@ -34,7 +34,6 @@ $: if (placement || key) {
 
 const smallBarMultipleScale = (obj, range = [0, 20]) => {
   const v = getValues(obj);
-  console.log(Math.min(...v), Math.max(...v), range);
   return scaleLinear().domain([
     Math.min(...v), Math.max(...v),
   ]).range(range);

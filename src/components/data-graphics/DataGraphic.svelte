@@ -99,10 +99,13 @@ function getScaleFunction(type) {
 
 function createXPointScale(values) {
   const scaleFunction = getScaleFunction(xType);// xType === 'scalePoint' ? scalePoint : scaleLinear;
-  const scale = scaleFunction()
-    .domain([...values])
-    .range([$leftPlot, $rightPlot])
-    .padding(xPadding);
+  let scale = scaleFunction()
+    .domain(values)
+    .range([$leftPlot, $rightPlot]);
+
+  if (xType === 'scalePoint') {
+    scale = scale.padding(xPadding);
+  }
   scale.type = xType;
   return scale;
 }
@@ -193,8 +196,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 <style>
 
-.quantile-plot {
-  background-color: white;
+.data-graphic-container {
   display: grid;
   align-content: center;
   justify-content: center;
@@ -202,7 +204,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 </style>
 
-<div class=quantile-plot style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
+<div class=data-graphic-container style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
   <svg
     bind:this={svg}
     shape-rendering="geometricPrecision"
