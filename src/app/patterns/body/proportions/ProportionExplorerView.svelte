@@ -1,5 +1,5 @@
 <script>
-import { setContext } from 'svelte';
+import { setContext, createEventDispatcher } from 'svelte';
 import {
   byKeyAndAggregation,
 } from '../../../utils/probe-utils';
@@ -14,6 +14,7 @@ import { createCatColorMap } from '../../../../components/data-graphics/utils/co
 export let data;
 export let probeType;
 
+const dispatch = createEventDispatcher();
 
 let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 
@@ -23,8 +24,8 @@ function getProportionKeys(tr) {
 
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
-let timeHorizon = 'MONTH';
-let metricType = 'proportions';
+export let timeHorizon = 'MONTH';
+export let metricType = 'proportions';
 
 let latest = Object.values(Object.values(transformed)[0])[0];
 
@@ -53,6 +54,12 @@ const cmp = createCatColorMap(cmpProportions);
 
 setContext('probeType', probeType);
 
+function makeSelection(type) {
+  return function onSelection(event) {
+    dispatch('selection', { selection: event.detail.selection, type });
+  };
+}
+
 </script>
 
 <style>
@@ -80,7 +87,10 @@ setContext('probeType', probeType);
   <div class=body-control-row>
     <div class=body-control-set>
       <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl bind:horizon={timeHorizon} />
+      <TimeHorizonControl 
+        horizon={timeHorizon}
+        on:selection={makeSelection('timeHorizon')}
+      />
     </div>
   
     <div class=body-control-set>
@@ -92,7 +102,10 @@ setContext('probeType', probeType);
   <div class=body-control-row>
     <div class=body-control-set>
       <label class=body-control-set--label>Metric Type</label>
-      <ProportionMetricTypeControl bind:metricType={metricType} />
+      <ProportionMetricTypeControl 
+        metricType={metricType}
+        on:selection={makeSelection('metricType')}
+      />
     </div>
   </div>
 

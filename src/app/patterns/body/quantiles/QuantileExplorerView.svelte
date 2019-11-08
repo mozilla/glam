@@ -1,5 +1,5 @@
 <script>
-import { setContext } from 'svelte';
+import { setContext, getContext, createEventDispatcher } from 'svelte';
 import QuantileExplorerSmallMultiple from './QuantileExplorerSmallMultiple.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
@@ -9,6 +9,10 @@ import {
   byKeyAndAggregation,
 } from '../../../utils/probe-utils';
 
+const dispatch = createEventDispatcher();
+
+export let store = getContext('store');
+export let actions = getContext('actions');
 
 export let data;
 export let probeType;
@@ -18,13 +22,22 @@ const transformed = byKeyAndAggregation(data);
 
 let totalAggs = Object.keys(Object.values(transformed)[0]).length;
 
-let timeHorizon = 'MONTH';
-let percentiles = [95, 75, 50, 25, 5];
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
+
+// FIXME: these are selections that should be put in a level above this
+export let timeHorizon = 'MONTH';
+export let percentiles = [95, 75, 50, 25, 5];
 let currentAggregation = aggregationTypes[0];
+
 let aggregationInfo;
 
 setContext('probeType', probeType);
+
+function makeSelection(type) {
+  return function onSelection(event) {
+    dispatch('selection', { selection: event.detail.selection, type });
+  };
+}
 
 </script>
 
@@ -40,11 +53,6 @@ setContext('probeType', probeType);
   .small-multiple {
     margin-bottom: var(--space-8x);
   }
-
-  .hidden {
-    visibility: hidden;
-  }
-
 </style>
 
 
@@ -53,12 +61,18 @@ setContext('probeType', probeType);
   <div class=body-control-row>
     <div class=body-control-set>
       <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl bind:horizon={timeHorizon} />
+      <TimeHorizonControl 
+      horizon={timeHorizon}
+      on:selection={makeSelection('timeHorizon')}
+       />
     </div>
   
     <div class=body-control-set>
         <label class=body-control-set--label>Probe Value Percentiles</label>
-      <PercentileSelectionControl bind:percentiles={percentiles} />
+      <PercentileSelectionControl 
+        percentiles={percentiles}
+        on:selection={makeSelection('percentiles')}
+        />
     </div>
   </div>
 
@@ -66,7 +80,11 @@ setContext('probeType', probeType);
   <div class=body-control-row>
     <div class=body-control-set>
       <label class=body-control-set--label>aggregation</label>
-      <AggregationTypeSelector bind:aggregationInfo={aggregationInfo} bind:currentAggregation={currentAggregation} aggregationTypes={aggregationTypes} />
+      <AggregationTypeSelector 
+        bind:aggregationInfo={aggregationInfo} 
+        bind:currentAggregation={currentAggregation} 
+        aggregationTypes={aggregationTypes}
+        />
     </div>    
   </div>
   {/if}

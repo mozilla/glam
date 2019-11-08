@@ -18,8 +18,15 @@ let probes = [
 
 let which = 0;
 
-</script>
+let timeHorizon = 'MONTH';
+let metricType = 'proportions';
+function handleSelection(event) {
+  const { selection, type } = event.detail;
+  if (type === 'timeHorizon') timeHorizon = selection;
+  if (type === 'metricType') metricType = selection;
+}
 
+</script>
 
 <style>
 
@@ -86,6 +93,9 @@ let which = 0;
         <ProportionExplorerView
           probeType={probe.probeType}
           data={probe.data}
+          timeHorizon={timeHorizon}
+          metricType={metricType}
+          on:selection={handleSelection}
         />
       {/if}
     {/each}

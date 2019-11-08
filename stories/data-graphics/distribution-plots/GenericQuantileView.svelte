@@ -29,6 +29,15 @@ let probes = [
   },
 ];
 
+let timeHorizon = 'ALL_TIME';
+let percentiles = [5, 25, 50, 75, 95];
+
+function handleSelection(event) {
+  const { selection, type } = event.detail;
+  if (type === 'timeHorizon') timeHorizon = selection;
+  if (type === 'percentiles') percentiles = selection;
+}
+
 </script>
 
 
@@ -97,7 +106,10 @@ let probes = [
         <QuantileExplorerView 
           probeType={probe.probeType}
           data={probe.data}
+          timeHorizon={timeHorizon}
+          percentiles={percentiles}
           markers={$firefoxVersionMarkers}
+          on:selection={handleSelection}
         />
       {/if}
     {/each}

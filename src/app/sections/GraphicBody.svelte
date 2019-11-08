@@ -1,7 +1,7 @@
 <script>
 import { fade } from 'svelte/transition';
 import {
-  store, dataset,
+  store, dataset, visiblePercentiles, timeHorizon,
 } from '../store/store';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
@@ -83,12 +83,24 @@ let width;
                 running query
             {:then data}
                 <div in:fade>
-                    {#if isScalarData(data.response)}
-                        <QuantileExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType='scalar' />
-                    {:else if isNumericHistogramData(data.response)}
-                        <QuantileExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType='histogram' />
-                    {:else if isCategoricalData(data.response)}
-                        <ProportionExplorerView markers={$firefoxVersionMarkers} data={data.response} probeType={`${$store.probe.type}-${$store.probe.kind}`}  />
+                    {#if isCategoricalData(data.response)}
+                        <ProportionExplorerView 
+                            markers={$firefoxVersionMarkers} 
+                            data={data.response} 
+                            probeType={`${$store.probe.type}-${$store.probe.kind}`}  
+                        />
+                    {:else if isScalarData(data.response) || isNumericHistogramData(data.response)}                    
+                        <QuantileExplorerView markers={$firefoxVersionMarkers}
+                            data={data.response}
+                            probeType={isScalarData(data.response) ? 'scalar' : 'histogram'}
+                            timeHorizon={$store.timeHorizon}
+                            percentiles={$store.visiblePercentiles}
+                            on:selection={(event) => {
+                                const { selection, type } = event.detail;
+                                if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
+                                if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
+                            }}
+                        />
                     {:else}
                         <pre>
                             {JSON.stringify(data, null, 2)}

@@ -86,6 +86,10 @@ const initStore = {
   versions: getFromQueryString('versions') || [70, 69],
   searchIsActive: false,
   result: Promise.resolve(undefined),
+  timeHorizon: 'MONTH',
+  visiblePercentiles: [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
+  proportionMetricType: 'proportions', //
+  proportionBuckets: [],
 };
 
 
@@ -137,6 +141,18 @@ export const resetFilters = () => async () => {
   dispatch(updateChannel(getDefaultFieldValue('channel')));
   dispatch(updateOS(getDefaultFieldValue('os')));
   dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
+};
+
+// FIXME: we should be using this pattern for other parts of the store.
+// this lets us namespace a bit more easily.
+export const visiblePercentiles = {
+  set: (value) => (draft) => { draft.visiblePercentiles = value; },
+  reset: () => (draft) => { draft.visiblePercentiles = [5, 25, 50, 75, 95]; },
+};
+
+export const timeHorizon = {
+  set: (value) => (draft) => { draft.timeHorizon = value; },
+  reset: () => (draft) => { draft.timeHorizon = 'MONTH'; },
 };
 
 export const searchResults = derived(
