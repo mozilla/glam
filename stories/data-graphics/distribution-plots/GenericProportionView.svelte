@@ -20,10 +20,12 @@ let which = 0;
 
 let timeHorizon = 'MONTH';
 let metricType = 'proportions';
+let activeBuckets = [];
 function handleSelection(event) {
   const { selection, type } = event.detail;
   if (type === 'timeHorizon') timeHorizon = selection;
   if (type === 'metricType') metricType = selection;
+  if (type === 'activeBuckets') activeBuckets = selection;
 }
 
 </script>
@@ -95,6 +97,7 @@ function handleSelection(event) {
           data={probe.data}
           timeHorizon={timeHorizon}
           metricType={metricType}
+          activeBuckets={activeBuckets}
           on:selection={handleSelection}
         />
       {/if}

@@ -1,7 +1,7 @@
 <script>
 import { fade } from 'svelte/transition';
 import {
-  store, dataset, visiblePercentiles, timeHorizon,
+  store, dataset, visiblePercentiles, timeHorizon, activeBuckets,
 } from '../store/store';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
@@ -24,6 +24,13 @@ function isCategoricalData(data) {
 
 let container;
 let width;
+
+function handleBodySelectors(event) {
+  const { selection, type } = event.detail;
+  if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
+  if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
+  if (type === 'activeBuckets') store.dispatch(activeBuckets.set(selection));
+}
 
 </script>
 
@@ -84,10 +91,14 @@ let width;
             {:then data}
                 <div in:fade>
                     {#if isCategoricalData(data.response)}
+                        {$store.activeBuckets.length} HI!!
                         <ProportionExplorerView 
                             markers={$firefoxVersionMarkers} 
                             data={data.response} 
-                            probeType={`${$store.probe.type}-${$store.probe.kind}`}  
+                            probeType={`${$store.probe.type}-${$store.probe.kind}`}
+                            activeBuckets={$store.activeBuckets.length ? $store.activeBuckets : []}
+                            timeHorizon={$store.timeHorizon}
+                            on:selection={handleBodySelectors}
                         />
                     {:else if isScalarData(data.response) || isNumericHistogramData(data.response)}                    
                         <QuantileExplorerView markers={$firefoxVersionMarkers}
@@ -95,11 +106,7 @@ let width;
                             probeType={isScalarData(data.response) ? 'scalar' : 'histogram'}
                             timeHorizon={$store.timeHorizon}
                             percentiles={$store.visiblePercentiles}
-                            on:selection={(event) => {
-                                const { selection, type } = event.detail;
-                                if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
-                                if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
-                            }}
+                            on:selection={handleBodySelectors}
                         />
                     {:else}
                         <pre>

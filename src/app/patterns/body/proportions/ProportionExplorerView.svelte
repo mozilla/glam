@@ -1,5 +1,5 @@
 <script>
-import { setContext, createEventDispatcher } from 'svelte';
+import { setContext, createEventDispatcher, onMount } from 'svelte';
 import {
   byKeyAndAggregation,
 } from '../../../utils/probe-utils';
@@ -13,8 +13,14 @@ import { createCatColorMap } from '../../../../components/data-graphics/utils/co
 
 export let data;
 export let probeType;
-
+export let activeBuckets;
 const dispatch = createEventDispatcher();
+
+function makeSelection(type) {
+  return function onSelection(event) {
+    dispatch('selection', { selection: event.detail.selection, type });
+  };
+}
 
 let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 
@@ -48,17 +54,17 @@ cmpProportions.sort(sortOrder);
 // for a build id's buckets.
 $: if (metricType) cmpProportions.sort(sortOrder);
 
-let proportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+let initialProportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
+// report up the initial active proportions.
 
 const cmp = createCatColorMap(cmpProportions);
 
 setContext('probeType', probeType);
-
-function makeSelection(type) {
-  return function onSelection(event) {
-    dispatch('selection', { selection: event.detail.selection, type });
-  };
-}
+let mounted = false;
+onMount(() => {
+  dispatch('selection', { selection: initialProportions, type: 'activeBuckets' });
+  mounted = true;
+});
 
 </script>
 
@@ -94,8 +100,13 @@ function makeSelection(type) {
     </div>
   
     <div class=body-control-set>
-      <label class=body-control-set--label>Keys</label>
-      <KeySelectionControl sortFunction={sortOrder} options={options} bind:selections={proportions} colorMap={cmp} />
+      <label class=body-control-set--label>Keys {activeBuckets.length}</label>
+        <KeySelectionControl 
+          sortFunction={sortOrder} 
+          options={options} 
+          selections={activeBuckets} 
+          on:selection={makeSelection('activeBuckets')}
+          colorMap={cmp} />
     </div>
   </div>
 
@@ -117,7 +128,7 @@ function makeSelection(type) {
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
-              proportions={proportions}
+              activeBuckets={activeBuckets}
               timeHorizon={timeHorizon}
               colorMap={cmp}
               metricType={metricType}

@@ -89,12 +89,10 @@ const initStore = {
   timeHorizon: 'MONTH',
   visiblePercentiles: [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
   proportionMetricType: 'proportions', //
-  proportionBuckets: [],
+  activeBuckets: [],
 };
 
-
 const STORE = writable(initStore);
-
 // this works very similar to what you'd expect in a redux setting.
 // eg. dispatch(changeChannel('beta')) should take the changeChannel
 // action, which returns a draft-mutating function to be fed into
@@ -143,17 +141,20 @@ export const resetFilters = () => async () => {
   dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
 };
 
-// FIXME: we should be using this pattern for other parts of the store.
+// FIXME: we should be using this pattern for other actions, where appropriate.
 // this lets us namespace a bit more easily.
-export const visiblePercentiles = {
-  set: (value) => (draft) => { draft.visiblePercentiles = value; },
-  reset: () => (draft) => { draft.visiblePercentiles = [5, 25, 50, 75, 95]; },
-};
 
-export const timeHorizon = {
-  set: (value) => (draft) => { draft.timeHorizon = value; },
-  reset: () => (draft) => { draft.timeHorizon = 'MONTH'; },
-};
+function createActionSet(key, defaultValue) {
+  return {
+    set: (value) => updateField(key, value),
+    reset: () => updateField(key, defaultValue),
+  };
+}
+
+export const visiblePercentiles = createActionSet('visiblePercentiles', [5, 25, 50, 75, 95]);
+export const timeHorizon = createActionSet('timeHorizon', 'MONTH');
+export const proportionMetricType = createActionSet('proportionMetricType', 'proportions');
+export const activeBuckets = createActionSet('activeBuckets', []);
 
 export const searchResults = derived(
   [telemetrySearch, searchQuery], ([$telemetrySearch, $query]) => {
@@ -161,7 +162,6 @@ export const searchResults = derived(
     if ($telemetrySearch.loaded) {
       resultSet = $telemetrySearch.search($query).map((r, searchID) => ({ ...r, searchID }));
     }
-
     return { results: resultSet, total: $telemetrySearch.length };
   },
 );

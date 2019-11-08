@@ -32,7 +32,7 @@ export let key;
 export let timeHorizon;
 export let proportions;
 export let metricType;
-export let activeProportions;
+export let activeBuckets;
 export let colorMap = () => 'var(--digital-blue-500)';
 
 
@@ -92,12 +92,12 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(reference.audienceSize);
 
-function getProportion(activeProportion, datum) {
-  return { label: datum.label, bin: activeProportion, value: datum[metricType][activeProportion] };
+function getProportion(bucket, datum) {
+  return { label: datum.label, bin: bucket, value: datum[metricType][bucket] };
 }
 
-function getAllProportions(activeProportions, datum) {
-  return activeProportions.map((p) => getProportion(p, datum));
+function getAllProportions(buckets, datum) {
+  return buckets.map((p) => getProportion(p, datum));
 }
 
 </script>
@@ -174,7 +174,7 @@ h4 {
     width={WIDTH}
     height={HEIGHT}
     transform={(p, d) => extractProportions(p, d, metricType)}
-    metricKeys={proportions}
+    metricKeys={activeBuckets}
     bind:reference={reference}
     bind:hovered={hovered}
     extractMouseoverValues={getProportion}
@@ -191,8 +191,8 @@ h4 {
     leftLabel={hovered.x}
     rightLabel={reference.label}
     colorMap={colorMap}
-    leftPercentiles={hovered.datum ? getAllProportions(proportions, hovered.datum) : undefined}
-    rightPercentiles={getAllProportions(proportions, reference)}
+    leftPercentiles={hovered.datum ? getAllProportions(activeBuckets, hovered.datum) : undefined}
+    rightPercentiles={getAllProportions(activeBuckets, reference)}
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
@@ -202,7 +202,7 @@ h4 {
     right={reference[metricType]}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    keySet={proportions} 
+    keySet={activeBuckets} 
     colorMap={colorMap}
     valueFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     />

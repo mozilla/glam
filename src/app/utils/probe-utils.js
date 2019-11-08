@@ -167,7 +167,6 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
         const toRemove = keys
           .map((ki) => [ki, byKey[k][aggKey].every((datum) => datum.counts[ki] === 0.0)])
           .filter(([ki, tf]) => tf).map(([k]) => k);
-        // byKey[k][aggKey].forEach(console.log);
         byKey[k][aggKey] = byKey[k][aggKey].map((datum) => produce(datum, (draft) => {
           toRemove.forEach((k) => {
             delete draft.counts[k];
