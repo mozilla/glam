@@ -1,7 +1,7 @@
 <script>
 import { fade } from 'svelte/transition';
 import {
-  store, dataset, visiblePercentiles, timeHorizon, activeBuckets,
+  store, dataset, visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType,
 } from '../store/store';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
@@ -13,12 +13,12 @@ function isScalarData(data) {
   return (data && $store.probe.type === 'scalar' && $store.probe.kind === 'uint');
 }
 
-function isNumericHistogramData(data) {
-  return data && $store.probe.type === 'histogram' && ($store.probe.kind === 'linear' || $store.probe.kind === 'exponential');
+function isNumericHistogramData() {
+  return $store.probe.type === 'histogram' && ($store.probe.kind === 'linear' || $store.probe.kind === 'exponential');
 }
 
-function isCategoricalData(data) {
-  return data && (($store.probe.type === 'histogram' && $store.probe.kind === 'enumerated')
+function isCategoricalData() {
+  return (($store.probe.type === 'histogram' && $store.probe.kind === 'enumerated')
   || $store.probe.kind === 'categorical' || $store.probe.kind === 'flag' || $store.probe.kind === 'boolean');
 }
 
@@ -29,8 +29,18 @@ function handleBodySelectors(event) {
   const { selection, type } = event.detail;
   if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
   if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
+  if (type === 'metricType') store.dispatch(proportionMetricType.set(selection));
   if (type === 'activeBuckets') store.dispatch(activeBuckets.set(selection));
 }
+
+let data;
+
+async function getData(dataRequest) {
+  const payload = await dataRequest.data;
+  if (payload) data = payload;
+}
+
+$: if ($store.probe.name) getData($dataset);
 
 </script>
 
@@ -85,24 +95,53 @@ function handleBodySelectors(event) {
     <div class=graphic-body__content>
         {#if $dataset.key === 'DEFAULT_VIEW'}
             <div>Telemetry dashboard default view goes here</div>
+        <!-- {:else if data && $store.probe.name}
+            <div in:fade>
+                {#if isCategoricalData(data)}
+                    <ProportionExplorerView 
+                        markers={$firefoxVersionMarkers} 
+                        data={data.data}
+                        probeType={`${$store.probe.type}-${$store.probe.kind}`}
+                        bucketOptions={data.bucketOptions}
+                        bucketColorMap={data.bucketColorMap}
+                        activeBuckets={$store.activeBuckets}
+                        timeHorizon={$store.timeHorizon}
+                        on:selection={handleBodySelectors}
+                    />
+                {:else if isScalarData(data) || isNumericHistogramData(data)}                    
+                    <QuantileExplorerView markers={$firefoxVersionMarkers}
+                        data={data.data}
+                        probeType={isScalarData(data.data) ? 'scalar' : 'histogram'}
+                        timeHorizon={$store.timeHorizon}
+                        percentiles={$store.visiblePercentiles}
+                        on:selection={handleBodySelectors}
+                    />
+                {:else}
+                    <pre>
+                        {JSON.stringify(data, null, 2)}
+                    </pre>
+                {/if}
+            </div> -->
         {:else if $dataset.data}
             {#await $dataset.data}
                 running query
             {:then data}
                 <div in:fade>
                     {#if isCategoricalData(data.response)}
-                        {$store.activeBuckets.length} HI!!
                         <ProportionExplorerView 
                             markers={$firefoxVersionMarkers} 
-                            data={data.response} 
+                            data={data.data}
                             probeType={`${$store.probe.type}-${$store.probe.kind}`}
-                            activeBuckets={$store.activeBuckets.length ? $store.activeBuckets : []}
+                            metricType={$store.proportionMetricType}
+                            activeBuckets={[...$store.activeBuckets]}
                             timeHorizon={$store.timeHorizon}
+                            bucketOptions={data.bucketOptions}
+                            bucketColorMap={data.bucketColorMap}
                             on:selection={handleBodySelectors}
                         />
                     {:else if isScalarData(data.response) || isNumericHistogramData(data.response)}                    
                         <QuantileExplorerView markers={$firefoxVersionMarkers}
-                            data={data.response}
+                            data={data.data}
                             probeType={isScalarData(data.response) ? 'scalar' : 'histogram'}
                             timeHorizon={$store.timeHorizon}
                             percentiles={$store.visiblePercentiles}

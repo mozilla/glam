@@ -5,10 +5,6 @@ import PercentileSelectionControl from '../../PercentileSelectionControl.svelte'
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
 
-import {
-  byKeyAndAggregation,
-} from '../../../utils/probe-utils';
-
 const dispatch = createEventDispatcher();
 
 export let store = getContext('store');
@@ -18,9 +14,8 @@ export let data;
 export let probeType;
 export let markers;
 
-const transformed = byKeyAndAggregation(data);
 
-let totalAggs = Object.keys(Object.values(transformed)[0]).length;
+let totalAggs = Object.keys(Object.values(data)[0]).length;
 
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 
@@ -92,7 +87,7 @@ function makeSelection(type) {
 
 
   <div class=data-graphics>
-    {#each Object.entries(transformed) as [key, aggs], i (key)}  
+    {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
         {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
           <div class='small-multiple'>

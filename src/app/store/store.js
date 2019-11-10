@@ -4,7 +4,13 @@ import produce from 'immer';
 import telemetrySearch from './telemetry-search'; // eslint-disable-line
 import { getProbeData } from './api';
 
+import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
+
+
 import CONFIG from '../config.json';
+
+
+import { byKeyAndAggregation } from '../utils/probe-utils';
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -225,6 +231,62 @@ export const updateDashboardMode = (msg) => (draft) => {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
+function isCategoricalData(probe) {
+  return ((probe.type === 'histogram' && probe.kind === 'enumerated')
+  || probe.kind === 'categorical' || probe.kind === 'flag' || probe.kind === 'boolean');
+}
+
+// FIXME: let's remove this function. It's almost comically redundant.
+export function responseToData(data, probeClass = 'quantile', probeType, aggregationMethod = 'build_id') {
+  return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
+}
+
+function sampleDatapoint(tr) {
+  return Object.values(Object.values(tr)[0])[0][0];
+}
+
+function getBucketKeys(tr) {
+  return Object.keys(sampleDatapoint(tr).counts);
+}
+
+const makeSortOrder = (latest) => (a, b) => {
+  // get latest data point and see
+  if (latest.counts[a] < latest.counts[b]) return 1;
+  if (latest.counts[a] >= latest.counts[b]) return -1;
+  return 0;
+};
+
+export function extractBucketMetadata(transformedData) {
+  const etc = {};
+  const options = getBucketKeys(transformedData);
+  const cmpBuckets = getBucketKeys(transformedData);
+  cmpBuckets.sort(makeSortOrder(sampleDatapoint(transformedData)));
+  const cmp = createCatColorMap(cmpBuckets);
+  const initialBuckets = getBucketKeys(transformedData)
+    .filter((p) => cmpBuckets.slice(0, 10).includes(p));
+  etc.bucketOptions = options;
+  etc.bucketColorMap = cmp;
+  etc.initialBuckets = initialBuckets;
+  return etc;
+}
+
+export function fetchDataForGLAM(params, currentStore) {
+  const { probe } = currentStore;
+  const isCategorical = isCategoricalData(probe);
+  return getProbeData(params).then(
+    (payload) => responseToData(payload.response, isCategorical ? 'proportion' : 'quantile', `${probe.type}-${probe.kind}`),
+  ).then(
+    (transformedData) => {
+      let etc = {};
+      if (isCategorical) {
+        etc = extractBucketMetadata(transformedData);
+        dispatch(activeBuckets.set(etc.initialBuckets));
+      }
+      return { data: transformedData, ...etc };
+    },
+  );
+}
+
 export const dataset = derived(store, ($store) => {
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
@@ -241,9 +303,11 @@ export const dataset = derived(store, ($store) => {
   }
 
   if (!(qs in cache)) {
-    cache[qs] = getProbeData(params);
+    cache[qs] = fetchDataForGLAM(params, $store); // getProbeData(params);
   }
-  return { level: 'SUCCESS', key: 'EXPLORER_VIEW', data: cache[qs] };
+  return {
+    level: 'SUCCESS', key: 'EXPLORER_VIEW', data: cache[qs], probeType: `${$store.probe.type}-${$store.probe.kind}`,
+  };
 });
 
 export const currentQuery = derived(store, ($store) => {

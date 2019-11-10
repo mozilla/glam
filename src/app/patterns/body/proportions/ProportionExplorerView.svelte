@@ -1,19 +1,17 @@
 <script>
 import { setContext, createEventDispatcher, onMount } from 'svelte';
-import {
-  byKeyAndAggregation,
-} from '../../../utils/probe-utils';
 
 import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
 
-import { createCatColorMap } from '../../../../components/data-graphics/utils/color-maps';
-
 export let data;
 export let probeType;
 export let activeBuckets;
+export let bucketColorMap;
+export let bucketOptions;
+
 const dispatch = createEventDispatcher();
 
 function makeSelection(type) {
@@ -22,18 +20,14 @@ function makeSelection(type) {
   };
 }
 
-let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
+// let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 
-function getProportionKeys(tr) {
-  return Object.keys(Object.values(Object.values(tr)[0])[0][0].counts);
-}
-
-let totalAggs = Object.keys(Object.values(transformed)[0]).length;
+let totalAggs = Object.keys(Object.values(data)[0]).length;
 
 export let timeHorizon = 'MONTH';
 export let metricType = 'proportions';
 
-let latest = Object.values(Object.values(transformed)[0])[0];
+let latest = Object.values(Object.values(data)[0])[0];
 
 // FIXME: slicing here for the demo.
 [latest] = latest.slice(-2);
@@ -45,26 +39,7 @@ const sortOrder = (a, b) => {
   return 0;
 };
 
-let options = getProportionKeys(transformed);
-let cmpProportions = getProportionKeys(transformed);
-cmpProportions.sort(sortOrder);
-
-// I guess we can update the sort order when metricType changes,
-// but obviously counts <-> proportions does not change the order
-// for a build id's buckets.
-$: if (metricType) cmpProportions.sort(sortOrder);
-
-let initialProportions = getProportionKeys(transformed).filter((p) => cmpProportions.slice(0, 10).includes(p));
-// report up the initial active proportions.
-
-const cmp = createCatColorMap(cmpProportions);
-
 setContext('probeType', probeType);
-let mounted = false;
-onMount(() => {
-  dispatch('selection', { selection: initialProportions, type: 'activeBuckets' });
-  mounted = true;
-});
 
 </script>
 
@@ -103,10 +78,10 @@ onMount(() => {
       <label class=body-control-set--label>Keys {activeBuckets.length}</label>
         <KeySelectionControl 
           sortFunction={sortOrder} 
-          options={options} 
+          options={bucketOptions} 
           selections={activeBuckets} 
           on:selection={makeSelection('activeBuckets')}
-          colorMap={cmp} />
+          colorMap={bucketColorMap} />
     </div>
   </div>
 
@@ -121,7 +96,7 @@ onMount(() => {
   </div>
 
   <div class=data-graphics>
-    {#each Object.entries(transformed) as [key, aggs], i (key)}  
+    {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
             <ProportionExplorerSmallMultiple
@@ -130,7 +105,7 @@ onMount(() => {
               probeType={probeType}
               activeBuckets={activeBuckets}
               timeHorizon={timeHorizon}
-              colorMap={cmp}
+              colorMap={bucketColorMap}
               metricType={metricType}
             />
           </div>
