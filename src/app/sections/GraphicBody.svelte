@@ -30,7 +30,9 @@ function handleBodySelectors(event) {
   if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
   if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
   if (type === 'metricType') store.dispatch(proportionMetricType.set(selection));
-  if (type === 'activeBuckets') store.dispatch(activeBuckets.set(selection));
+  if (type === 'activeBuckets') {
+    store.dispatch(activeBuckets.set(selection));
+  }
 }
 
 let data;

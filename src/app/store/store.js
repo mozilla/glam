@@ -57,8 +57,8 @@ export function getDefaultFieldValue(fieldKey) {
   return getFieldValues(fieldKey)[0].key;
 }
 
-export function getFromQueryString(fieldKey) {
-  const isMulti = getField(fieldKey).type === 'multi';
+export function getFromQueryString(fieldKey, isMulti = false) {
+  // const isMulti = getField(fieldKey).type === 'multi';
   const params = new URLSearchParams(window.location.search);
   const value = params.get(fieldKey);
   if (isMulti) {
@@ -67,8 +67,8 @@ export function getFromQueryString(fieldKey) {
   return value;
 }
 
-export function getFromQueryStringOrDefault(fieldKey) {
-  const value = getFromQueryString(fieldKey);
+export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
+  const value = getFromQueryString(fieldKey, isMulti);
   if (!value) {
     return getDefaultFieldValue(fieldKey);
   }
@@ -89,13 +89,13 @@ const initStore = {
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryStringOrDefault('os'),
-  versions: getFromQueryString('versions') || [70, 69],
+  versions: getFromQueryString('versions', true) || [70, 69],
   searchIsActive: false,
   result: Promise.resolve(undefined),
-  timeHorizon: 'MONTH',
-  visiblePercentiles: [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
-  proportionMetricType: 'proportions', //
-  activeBuckets: [],
+  timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
+  visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
+  proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
+  activeBuckets: getFromQueryString('activeBuckets', true) || undefined,
 };
 
 const STORE = writable(initStore);
@@ -185,6 +185,9 @@ function getParamsForQueryString(obj) {
     probe: obj.probe.apiName,
     os: obj.os,
     aggregationLevel: obj.aggregationLevel,
+    timeHorizon: obj.timeHorizon,
+    proportionMetricType: obj.proportionMetricType,
+    activeBuckets: obj.activeBuckets,
   };
 }
 
@@ -192,16 +195,24 @@ function getParamsForDataAPI(obj) {
   const channelValue = getFieldValueKey('channel', obj.channel);
   const osValue = getFieldValueKey('os', obj.os);
   const params = getParamsForQueryString(obj);
+  delete params.timeHorizon;
+  delete params.proportionMetricType;
+  delete params.activeBuckets;
   params.os = osValue;
   params.channel = channelValue;
   return params;
 }
 
 const toQueryStringPair = (k, v) => {
-  const fieldType = getField(k).type;
-  if (fieldType === 'multi') {
+  // what if we checked fieldType by just seeing if v is an array?
+  // const fieldType = getField(k).type;
+
+  if (Array.isArray(v)) {
     return `${k}=${encodeURIComponent(JSON.stringify(v.sort()))}`;
   }
+  // if (fieldType === 'multi') {
+  //   return `${k}=${encodeURIComponent(JSON.stringify(v.sort()))}`;
+  // }
   return `${k}=${encodeURIComponent(v)}`;
 };
 
