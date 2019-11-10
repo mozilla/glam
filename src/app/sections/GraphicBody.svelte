@@ -32,6 +32,8 @@ function handleBodySelectors(event) {
   if (type === 'metricType') store.dispatch(proportionMetricType.set(selection));
   if (type === 'activeBuckets') {
     store.dispatch(activeBuckets.set(selection));
+    // FIXME: figure out where to set applicationStatus to 'ACTIVE'. Will do here for now.
+    // store.dispatch(applicationStatus.set('ACTIVE'));
   }
 }
 

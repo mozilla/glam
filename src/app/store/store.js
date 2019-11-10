@@ -96,6 +96,7 @@ const initStore = {
   visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || undefined,
+  applicationStatus: 'INITIALIZING',
 };
 
 const STORE = writable(initStore);
@@ -154,9 +155,11 @@ function createActionSet(key, defaultValue) {
   return {
     set: (value) => updateField(key, value),
     reset: () => updateField(key, defaultValue),
+    defaultValue,
   };
 }
 
+export const applicationStatus = createActionSet('applicationStatus', 'INITIALIZING');
 export const visiblePercentiles = createActionSet('visiblePercentiles', [5, 25, 50, 75, 95]);
 export const timeHorizon = createActionSet('timeHorizon', 'MONTH');
 export const proportionMetricType = createActionSet('proportionMetricType', 'proportions');
@@ -291,7 +294,10 @@ export function fetchDataForGLAM(params, currentStore) {
       let etc = {};
       if (isCategorical) {
         etc = extractBucketMetadata(transformedData);
-        dispatch(activeBuckets.set(etc.initialBuckets));
+        if (currentStore.applicationStatus !== 'INITIALIZING') {
+          dispatch(activeBuckets.set(etc.initialBuckets));
+        }
+        dispatch(applicationStatus.set('ACTIVE'));
       }
       return { data: transformedData, ...etc };
     },
