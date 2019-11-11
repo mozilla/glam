@@ -49,9 +49,6 @@ const handleKeypress = (event) => {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
-      // const {
-      //   id, name, type, description, versions, apiName,
-      // } = $searchResults.results[focusedItem];
       setProbe($searchResults.results[focusedItem]);
       setSearchIsActive(false);
       // reset focused element
@@ -95,115 +92,106 @@ $: if (parentElement) {
 
 /* FIXME: move toward BEM */
 .telemetry-results {
-    --header-bg-color: var(--cool-gray-200);
-    --list-border-color: gainsboro;
-    --list-border: 1px solid var(--list-border-color);
-    max-height: calc(100vh - var(--header-height) * 3);
-    border:1px solid var(--line-gray-02);
-    background-color: white;
-    /* width: calc(100vw - var(--drawer-width) * 2 - var(--space-base) - 40px * 2); */
-    max-width: calc(var(--increment) * 16);
-    box-shadow: var(--depth-5l);
-    /* box-shadow: 
-      0 1px 1px rgba(0,0,0,0.12),
-      0 var(--space-1q) var(--space-1q) rgba(0,0,0,0.06),
-      0 var(--space-1h) var(--space-1h) rgba(0,0,0,0.08),
-      0 var(--space-base) var(--space-base) rgba(0,0,0,0.12),
-      0 var(--space-2x) var(--space-2x) rgba(0,0,0,0.16),
-      0 var(--space-4x) var(--space-4x) rgba(0,0,0,0.20); */
-    border-bottom-right-radius: var(--border-radius-base);
-    border-bottom-left-radius: var(--border-radius-base);
-    position: absolute;
-    left:0;top:0;
-    /* 40px is icon width */
-    overflow: hidden;
+  --header-bg-color: var(--cool-gray-200);
+  --list-border-color: gainsboro;
+  --list-border: 1px solid var(--list-border-color);
+  max-height: calc(100vh - var(--header-height) * 3);
+  border:1px solid var(--line-gray-02);
+  background-color: white;
+  max-width: calc(var(--increment) * 16);
+  box-shadow: var(--depth-5l);
+  border-bottom-right-radius: var(--border-radius-base);
+  border-bottom-left-radius: var(--border-radius-base);
+  position: absolute;
+  left:0;top:0;
+  overflow: hidden;
 }
 
 .header-container {
   background-color: var(--cool-gray-300);
-    --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
-    font-size:.8em;
-    color: var(--body-gray-01);
-    font-style: italic;
-    height: var(--height);
-    max-height: var(--height);
-    display: grid;
-    align-items: stretch;
+  --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
+  font-size:.8em;
+  color: var(--body-gray-01);
+  font-style: italic;
+  height: var(--height);
+  max-height: var(--height);
+  display: grid;
+  align-items: stretch;
 }
 
 .header {
-    padding:var(--space-base);
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
-    display: grid;
-    grid-template-columns: max-content auto;
-    align-items:center;
-    grid-column-gap: var(--space-base);
-    position:relative;
+  padding:var(--space-base);
+  padding-left: var(--space-2x);
+  padding-right: var(--space-2x);
+  display: grid;
+  grid-template-columns: max-content auto;
+  align-items:center;
+  grid-column-gap: var(--space-base);
+  position:relative;
 }
 
 .header--loaded {
-    grid-template-columns: auto;
-    grid-column-gap: 0px;
-    align-items:center;
+  grid-template-columns: auto;
+  grid-column-gap: 0px;
+  align-items:center;
 }
 
 ul {
-    max-height: calc(100vh - var(--header-height) * 3 - 40px);
-    padding:0;
-    margin:0;
-    list-style-type: none;
-    overflow-y: scroll;
+  max-height: calc(100vh - var(--header-height) * 3 - 40px);
+  padding:0;
+  margin:0;
+  list-style-type: none;
+  overflow-y: scroll;
 }
 
 li:first-child {
-    border-top: var(--list-border);
+  border-top: var(--list-border);
 }
 
 li {
-    padding:var(--space-2x);
-    border-bottom: var(--list-border);
-    display:grid;
-    grid-template-columns: auto 100px;
-    grid-column-gap: var(--space-2x);
-    grid-template-rows: max-content max-content;
-    grid-template-areas: "title probe-type"
-                         "description versions";
-    cursor: pointer;
-    color: var(--body-gray-01);
+  padding:var(--space-2x);
+  border-bottom: var(--list-border);
+  display:grid;
+  grid-template-columns: auto 100px;
+  grid-column-gap: var(--space-2x);
+  grid-template-rows: max-content max-content;
+  grid-template-areas: "title probe-type"
+                        "description versions";
+  cursor: pointer;
+  color: var(--body-gray-01);
 }
 
 .name {
-    grid-area: title;
-    word-break: break-all;
-    font-weight:bold;
+  grid-area: title;
+  word-break: break-all;
+  font-weight:bold;
 }
 
 .probe-type, .first-release {
-    justify-self: end;
-    padding: var(--border-radius-1h);
+  justify-self: end;
+  padding: var(--border-radius-1h);
 }
 
 .first-release {
-    font-size:.8em;
-    text-align: right;
-    align-self: end;
+  font-size:.8em;
+  text-align: right;
+  align-self: end;
 }
 
 .probe-type {
-    grid-area: probe-type;
+  grid-area: probe-type;
 }
 
 .description {
-    grid-area: description;
-    font-size:.8em;
-    line-height:1.4;
-    outline: 1px;
-    max-height: 2.6em;
-    overflow: hidden;
-    color: var(--subhead-gray-02);
-    font-style: italic;
-    padding-bottom: var(--space-1h);
+  grid-area: description;
+  font-size:.8em;
+  line-height:1.4;
+  outline: 1px;
+  max-height: 2.6em;
+  overflow: hidden;
+  color: var(--subhead-gray-02);
+  font-style: italic;
+  padding-bottom: var(--space-1h);
 }
 
 .focused {
@@ -240,7 +228,7 @@ li {
       </div>
       {#if $searchResults.results.length}
           <ul bind:this={searchListElement}>
-          {#each $searchResults.results.slice(0, 30) as {id, name, apiName, type, description, versions}, i (id)}
+          {#each $searchResults.results.slice(0, 30) as {id, name, type, description, versions}, i (id)}
               <li 
                   class:focused={focusedItem === i} on:click={() => {
                   setProbe($searchResults.results[focusedItem]);

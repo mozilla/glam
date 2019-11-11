@@ -21,14 +21,14 @@ const telemetrySearch = readable({ loaded: false }, async (set) => {
     // resolution: 3,
     doc: {
       id: 'id',
-      field: ['name', 'apiName', 'description', 'type'],
+      field: ['name', 'description', 'type'],
     },
   });
   search.add(data);
   search.loaded = true;
   const { probe } = store.getState();
-  if (probe.apiName) {
-    const probeInfo = data.find((d) => d.apiName === probe.apiName);
+  if (probe.name) {
+    const probeInfo = data.find((d) => d.name === probe.name);
     if (probeInfo) {
       store.dispatch(setProbe(probeInfo));
     }

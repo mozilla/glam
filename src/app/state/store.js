@@ -11,7 +11,6 @@ import { createCatColorMap } from '../../components/data-graphics/utils/color-ma
 
 import CONFIG from '../config.json';
 
-
 import { byKeyAndAggregation } from '../utils/probe-utils';
 
 export function getField(fieldKey) {
@@ -81,7 +80,6 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
 const initStore = {
   probe: {
     name: getFromQueryString('probe'),
-    apiName: getFromQueryString('probe'),
     description: undefined,
     audienceSize: 0,
     totalSize: 0,
@@ -137,7 +135,6 @@ export const resetFilters = () => async () => {
   dispatch(setAggregationLevel(getDefaultFieldValue('aggregationLevel')));
 };
 
-
 export const searchResults = derived(
   [telemetrySearch, store], ([$telemetrySearch, $store]) => {
     const $query = $store.searchQuery;
@@ -159,7 +156,7 @@ function getParamsForQueryString(obj) {
   return {
     versions: obj.versions,
     channel: obj.channel,
-    probe: obj.probe.apiName,
+    probe: obj.probe.name,
     os: obj.os,
     aggregationLevel: obj.aggregationLevel,
     timeHorizon: obj.timeHorizon,
