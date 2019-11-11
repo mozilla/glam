@@ -141,9 +141,10 @@ export const updateAggregationLevel = (aggregationLevel) => updateField('aggrega
 // search
 export const updateSearchIsActive = (tf) => (draft) => { draft.searchIsActive = tf; };
 
-// export const searchQuery = writable('');
-export const updateSearchQuery = (query) => updateField('searchQuery', query);
-
+export const updateSearchQuery = (query) => (draft) => {
+  draft.searchQuery = query;
+  updateSearchIsActive(true)(draft);
+};
 
 // FIXME: we should be using this pattern for other actions, where appropriate.
 // this lets us namespace a bit more easily.
