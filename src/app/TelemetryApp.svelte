@@ -57,7 +57,7 @@ div.inner-body {
             <div class=inner-body>
                 <GraphicBody />
             </div>
-            <!-- <ProbeDetails /> -->
+            <ProbeDetails />
 
         </Content>
 
