@@ -3,13 +3,13 @@
 import { fly } from 'svelte/transition';
 import {
     store,
-} from '../store/store';
+} from '../state/store';
 
 import {
     setSearchIsActive, setSearchQuery, setProbe,
-} from '../store/actions';
+} from '../state/actions';
 
-import telemetrySearch from '../store/telemetry-search';
+import telemetrySearch from '../state/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';

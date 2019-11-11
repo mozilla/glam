@@ -8,11 +8,11 @@ import CONFIG from '../config.json';
 import {
   store,
   getFieldValueLabel,
-} from '../store/store';
+} from '../state/store';
 
 import {
   setChannel, setOS, setAggregationLevel,
-} from '../store/actions';
+} from '../state/actions';
 
 const OFFSET = 10;
 const COMPACT = true;

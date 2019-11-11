@@ -4,10 +4,10 @@ import NAV_URL from '../../../tests/data/browser_engagement_navigation_urlbar_bu
 import ACTIVE_TICKS from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
-import { responseToData } from '../../../src/app/store/store';
+import { responseToData } from '../../../src/app/state/store';
 
 
-import { firefoxVersionMarkers } from '../../../src/app/store/product-versions';
+import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
 
 let which = 0;
 let probes = [

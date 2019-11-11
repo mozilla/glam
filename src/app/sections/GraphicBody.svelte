@@ -2,16 +2,16 @@
 import { fade } from 'svelte/transition';
 import {
   store, dataset, extractBucketMetadata,
-} from '../store/store';
+} from '../state/store';
 import {
   setVisiblePercentiles, setTimeHorizon, setActiveBuckets, setProportionMetricType, setApplicationStatus,
-} from '../store/actions';
+} from '../state/actions';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
 
-import { firefoxVersionMarkers } from '../store/product-versions';
+import { firefoxVersionMarkers } from '../state/product-versions';
 
 function isScalarData(data) {
   return (data && $store.probe.type === 'scalar' && $store.probe.kind === 'uint');

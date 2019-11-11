@@ -1,17 +1,12 @@
 import { readable, derived } from 'svelte/store';
 import { store } from './store';
 
-
-// not sure what to export here.
-
 export const productDetails = readable(undefined, async (set) => {
-  // if (!hasLoaded) {
   const request = await fetch('https://product-details.mozilla.org/1.0/all.json');
   const data = await request.json();
   set(data.releases);
   return () => undefined;
 });
-
 
 export const firefoxReleases = derived([store, productDetails], ([$store, $pd]) => {
   const { channel } = $store;
@@ -28,10 +23,9 @@ export const firefoxReleases = derived([store, productDetails], ([$store, $pd]) 
       info.str = info.date;
       info.date = new Date(info.date);
       let version = parseInt(info.version, 10);
-      if (version >= 4) version = ~~version;
+      if (version >= 4) version = ~~version; // eslint-disable-line
       if (channel === 'nightly') version += 2;
       if (channel === 'beta') version += 1;
-      // version = `${version}`;
       info.label = version;
       return info;
     })

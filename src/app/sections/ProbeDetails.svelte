@@ -3,7 +3,8 @@ import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import RightDrawer from '../../components/sections/RightDrawer.svelte';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
-import telemetrySearch from '../store/telemetry-search';
+import telemetrySearch from '../state/telemetry-search';
+import { store, dataset } from '../state/store';
 
 import { downloadString } from '../../utils/download';
 
@@ -11,7 +12,6 @@ import Button from '../../components/Button.svelte';
 
 // import AudienceSize from './AudienceSize.svelte';
 const rightDrawerTransition = { x: 10, duration: 300 };
-import { store, dataset } from '../store/store';
 
 let paneVisible = true;
 let visible = false; // this is unused for the time being.

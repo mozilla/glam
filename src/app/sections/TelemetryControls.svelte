@@ -15,13 +15,13 @@ import {
   hasDefaultControlFields,
   resetFilters as resetFiltersAction,
 
-} from '../store/store';
+} from '../state/store';
 
 import {
   setChannel as setChannelAction,
   setOS as setOSAction,
   setAggregationLevel as setAggregationLevelAction,
-} from '../store/actions';
+} from '../state/actions';
 
 
 import CONFIG from '../config.json';

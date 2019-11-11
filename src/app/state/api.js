@@ -10,4 +10,4 @@ export async function getProbeData(params) {
     body: JSON.stringify({ query: params }),
   }).then((response) => response.json());
   return data;
-} // this is the raw data.
+}

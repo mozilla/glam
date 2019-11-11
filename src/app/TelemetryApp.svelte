@@ -13,7 +13,7 @@ import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
 import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
 import ProbeDetails from './sections/ProbeDetails.svelte';
 
-import { currentQuery } from './store/store';
+import { currentQuery } from './state/store';
 
 let visible = false;
 

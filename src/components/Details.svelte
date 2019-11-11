@@ -1,6 +1,6 @@
 <script>
 import { fly } from 'svelte/transition';
-import { store } from '../app/store/store';
+import { store } from '../app/state/store';
 import DetailSection from './DetailSection.svelte';
 
 let visible = true;
