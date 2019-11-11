@@ -91,6 +91,7 @@ const initStore = {
   os: getFromQueryStringOrDefault('os'),
   versions: getFromQueryString('versions', true) || [70, 69],
   searchIsActive: false,
+  searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
   visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [95, 75, 50, 25, 5],
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
@@ -139,14 +140,10 @@ export const updateAggregationLevel = (aggregationLevel) => updateField('aggrega
 
 // search
 export const updateSearchIsActive = (tf) => (draft) => { draft.searchIsActive = tf; };
-export const searchQuery = writable('');
-export const updateSearchQuery = (s) => { searchQuery.set(s); };
 
-export const resetFilters = () => async () => {
-  dispatch(updateChannel(getDefaultFieldValue('channel')));
-  dispatch(updateOS(getDefaultFieldValue('os')));
-  dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
-};
+// export const searchQuery = writable('');
+export const updateSearchQuery = (query) => updateField('searchQuery', query);
+
 
 // FIXME: we should be using this pattern for other actions, where appropriate.
 // this lets us namespace a bit more easily.
@@ -165,8 +162,17 @@ export const timeHorizon = createActionSet('timeHorizon', 'MONTH');
 export const proportionMetricType = createActionSet('proportionMetricType', 'proportions');
 export const activeBuckets = createActionSet('activeBuckets', []);
 
+
+export const resetFilters = () => async () => {
+  dispatch(updateChannel(getDefaultFieldValue('channel')));
+  dispatch(updateOS(getDefaultFieldValue('os')));
+  dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
+};
+
+
 export const searchResults = derived(
-  [telemetrySearch, searchQuery], ([$telemetrySearch, $query]) => {
+  [telemetrySearch, store], ([$telemetrySearch, $store]) => {
+    const $query = $store.searchQuery;
     let resultSet = [];
     if ($telemetrySearch.loaded) {
       resultSet = $telemetrySearch.search($query).map((r, searchID) => ({ ...r, searchID }));

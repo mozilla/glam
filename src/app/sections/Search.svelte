@@ -2,7 +2,6 @@
   import { tick, setContext } from 'svelte';
 import { fly } from 'svelte/transition';
 import {
-    searchQuery,
     updateSearchQuery,
     store,
     updateSearchIsActive,
@@ -137,8 +136,8 @@ async function onKeypress(event) {
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}
-      bind:value={$searchQuery} on:input={(evt) => {
-          updateSearchQuery(evt.target.value);
+      value={$store.searchQuery} on:input={(evt) => {
+          store.dispatch(updateSearchQuery(evt.target.value));
       }} />
     </div>
 </div>

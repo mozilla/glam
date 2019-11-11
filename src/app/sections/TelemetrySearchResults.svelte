@@ -3,7 +3,7 @@ import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
 import { getContext, afterUpdate } from 'svelte';
 import {
-  searchResults, store, searchQuery,
+  searchResults, store,
 } from '../store/store';
 
 import Portal from '../../components/Portal.svelte';
@@ -11,8 +11,6 @@ import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.
-// export let updateProbe = getContext('updateProbe');
-export let updateSearchQuery = getContext('updateSearchQuery');
 export let updateProbe = getContext('updateProbe');
 export let updateSearchIsActive = getContext('updateSearchIsActive');
 export let parentElement;
@@ -25,7 +23,7 @@ let formatTotal = format(',.4d');
 let focusedItem = 0;
 let focusedElement;
 
-$: if ($searchQuery) { focusedItem = 0; }
+$: if ($store.searchQuery) { focusedItem = 0; }
 
 $: if (searchListElement) {
   focusedElement = searchListElement.querySelector(`li:nth-child(${focusedItem + 1})`);
@@ -217,7 +215,7 @@ li {
 <svelte:window on:keydown={handleKeypress} />
 
 <Portal>
-{#if $store.searchIsActive && $searchQuery.length}
+{#if $store.searchIsActive && $store.searchQuery.length}
   <div 
   style="left: calc({x}px + var(--space-base)); top: {y}px; width:
   calc({width}px - var(--space-base));"
