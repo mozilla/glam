@@ -121,10 +121,10 @@ function handleSelection(event) {
           metricType={metricType}
           activeBuckets={activeBuckets}
           on:selection={handleSelection}
-
           markers={$firefoxVersionMarkers} 
           bucketOptions={probe.bucketOptions}
           bucketColorMap={probe.bucketColorMap}
+          bucketSortOrder={probe.bucketSortOrder}
         />
       {/if}
     {/each}

@@ -11,6 +11,7 @@ export let probeType;
 export let activeBuckets;
 export let bucketColorMap;
 export let bucketOptions;
+export let bucketSortOrder = (a, b) => ((a < b) ? 1 : -1);
 
 const dispatch = createEventDispatcher();
 
@@ -30,14 +31,7 @@ export let metricType = 'proportions';
 let latest = Object.values(Object.values(data)[0])[0];
 
 // FIXME: slicing here for the demo.
-[latest] = latest.slice(-2);
-
-const sortOrder = (a, b) => {
-  // get latest data point and see
-  if (latest[metricType][a] < latest[metricType][b]) return 1;
-  if (latest[metricType][a] >= latest[metricType][b]) return -1;
-  return 0;
-};
+[latest] = latest.slice(-1);
 
 setContext('probeType', probeType);
 
@@ -75,9 +69,9 @@ setContext('probeType', probeType);
     </div>
   
     <div class=body-control-set>
-      <label class=body-control-set--label>Keys {activeBuckets.length}</label>
+      <label class=body-control-set--label>Categories</label>
         <KeySelectionControl 
-          sortFunction={sortOrder} 
+          sortFunction={bucketSortOrder} 
           options={bucketOptions} 
           selections={activeBuckets} 
           on:selection={makeSelection('activeBuckets')}

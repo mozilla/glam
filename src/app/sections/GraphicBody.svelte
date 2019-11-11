@@ -1,11 +1,12 @@
 <script>
 import { fade } from 'svelte/transition';
 import {
-  store, dataset, visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType,
+  store, dataset, visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType, applicationStatus, extractBucketMetadata,
 } from '../store/store';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
+
 
 import { firefoxVersionMarkers } from '../store/product-versions';
 
@@ -22,6 +23,37 @@ function isCategoricalData() {
   || $store.probe.kind === 'categorical' || $store.probe.kind === 'flag' || $store.probe.kind === 'boolean');
 }
 
+
+let probeName;
+let output = Promise.resolve({});
+// FIXME: for now, once we have retreived the data set, there are
+// a few additional operations that need to be performed.
+// to start, we will need to reset the activeBuckets in the non-
+// initializing case.
+
+// down the line, it would be good to figure out the right way to think
+// about this whole pipeline. At the moment it does feel kind of weird to
+// have the post-fetching step be in a component.
+$: if ($store.probe.name !== probeName && $dataset.data) {
+  probeName = $store.probe.name;
+  output = $dataset.data.then(
+    (transformedData) => {
+      const isCategorical = isCategoricalData($store.probe);
+
+      let etc = {};
+      if (isCategorical) {
+        etc = extractBucketMetadata(transformedData);
+        if ($store.applicationStatus !== 'INITIALIZING') {
+          store.dispatch(activeBuckets.set(etc.initialBuckets));
+        }
+      }
+      store.dispatch(applicationStatus.set('ACTIVE'));
+      return { data: transformedData, ...etc };
+    },
+  ).catch((err) => console.error(err));
+}
+
+
 let container;
 let width;
 
@@ -31,20 +63,13 @@ function handleBodySelectors(event) {
   if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
   if (type === 'metricType') store.dispatch(proportionMetricType.set(selection));
   if (type === 'activeBuckets') {
+    //   const thisSelection = [...selection];
+    // thisSelection.sort()
     store.dispatch(activeBuckets.set(selection));
     // FIXME: figure out where to set applicationStatus to 'ACTIVE'. Will do here for now.
     // store.dispatch(applicationStatus.set('ACTIVE'));
   }
 }
-
-let data;
-
-async function getData(dataRequest) {
-  const payload = await dataRequest.data;
-  if (payload) data = payload;
-}
-
-$: if ($store.probe.name) getData($dataset);
 
 </script>
 
@@ -99,35 +124,8 @@ $: if ($store.probe.name) getData($dataset);
     <div class=graphic-body__content>
         {#if $dataset.key === 'DEFAULT_VIEW'}
             <div>Telemetry dashboard default view goes here</div>
-        <!-- {:else if data && $store.probe.name}
-            <div in:fade>
-                {#if isCategoricalData(data)}
-                    <ProportionExplorerView 
-                        markers={$firefoxVersionMarkers} 
-                        data={data.data}
-                        probeType={`${$store.probe.type}-${$store.probe.kind}`}
-                        bucketOptions={data.bucketOptions}
-                        bucketColorMap={data.bucketColorMap}
-                        activeBuckets={$store.activeBuckets}
-                        timeHorizon={$store.timeHorizon}
-                        on:selection={handleBodySelectors}
-                    />
-                {:else if isScalarData(data) || isNumericHistogramData(data)}                    
-                    <QuantileExplorerView markers={$firefoxVersionMarkers}
-                        data={data.data}
-                        probeType={isScalarData(data.data) ? 'scalar' : 'histogram'}
-                        timeHorizon={$store.timeHorizon}
-                        percentiles={$store.visiblePercentiles}
-                        on:selection={handleBodySelectors}
-                    />
-                {:else}
-                    <pre>
-                        {JSON.stringify(data, null, 2)}
-                    </pre>
-                {/if}
-            </div> -->
         {:else if $dataset.data}
-            {#await $dataset.data}
+            {#await output}
                 running query
             {:then data}
                 <div in:fade>
@@ -141,6 +139,7 @@ $: if ($store.probe.name) getData($dataset);
                             timeHorizon={$store.timeHorizon}
                             bucketOptions={data.bucketOptions}
                             bucketColorMap={data.bucketColorMap}
+                            bucketSortOrder={data.bucketSortOrder}
                             on:selection={handleBodySelectors}
                         />
                     {:else if isScalarData(data.response) || isNumericHistogramData(data.response)}                    

@@ -14,7 +14,7 @@ export let selected = multi ? [] : undefined;
 const dispatch = createEventDispatcher();
 
 $: if (selected && multi && sort && typeof sort === 'function') {
-  selected.sort(sort);
+  // selected.sort(sort);
 }
 // FIXME: support an on:select event as well, in case that is what people want to use here.
 function toggle(v) {
@@ -26,7 +26,9 @@ function toggle(v) {
     }
     if (sort) {
       let sortCallback = (a, b) => (a < b ? -1 : 1);
-      if (typeof sort === 'function') sortCallback = sort;
+      if (typeof sort === 'function') {
+        sortCallback = sort;
+      }
       selection.sort(sortCallback);
     }
     if (reverse) selection.reverse();

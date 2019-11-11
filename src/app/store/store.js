@@ -3,7 +3,6 @@ import produce from 'immer';
 // FIXME: take care of this dependency cycle.
 import telemetrySearch from './telemetry-search'; // eslint-disable-line
 import { getProbeData } from './api';
-
 import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
 
 
@@ -78,25 +77,25 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
 // TODO: get latest version for whatever the default channel is.
 const initStore = {
   probe: {
-    name: undefined,
+    name: getFromQueryString('probe'),
     apiName: getFromQueryString('probe'),
     description: undefined,
     audienceSize: 0,
     totalSize: 0,
+    versions: [],
   },
-  dashboardMode: {},
+  dashboardMode: { },
   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryStringOrDefault('os'),
   versions: getFromQueryString('versions', true) || [70, 69],
   searchIsActive: false,
-  result: Promise.resolve(undefined),
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
-  visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [5, 25, 50, 75, 95], // FIXME: figure out how we want to catpture these
+  visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [95, 75, 50, 25, 5],
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
-  activeBuckets: getFromQueryString('activeBuckets', true) || undefined,
-  applicationStatus: 'INITIALIZING',
+  activeBuckets: getFromQueryString('activeBuckets', true) || [],
+  applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both?
 };
 
 const STORE = writable(initStore);
@@ -126,6 +125,7 @@ export const getState = () => get(STORE);
 export const store = {
   subscribe: STORE.subscribe, dispatch, connect, getState,
 };
+
 
 export const updateField = (field, value) => (draft) => {
   draft[field] = value;
@@ -207,18 +207,11 @@ function getParamsForDataAPI(obj) {
 }
 
 const toQueryStringPair = (k, v) => {
-  // what if we checked fieldType by just seeing if v is an array?
-  // const fieldType = getField(k).type;
-
   if (Array.isArray(v)) {
-    return `${k}=${encodeURIComponent(JSON.stringify(v.sort()))}`;
+    return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
   }
-  // if (fieldType === 'multi') {
-  //   return `${k}=${encodeURIComponent(JSON.stringify(v.sort()))}`;
-  // }
   return `${k}=${encodeURIComponent(v)}`;
 };
-
 
 function toQueryString(params) {
   const keys = Object.keys(params);
@@ -227,7 +220,7 @@ function toQueryString(params) {
 }
 
 function probeSelected(probeValue) {
-  return probeValue !== undefined && probeValue !== 'null';
+  return probeValue !== undefined && probeValue !== 'null' && probeValue !== null;
 }
 
 function paramsAreValid(params) {
@@ -255,13 +248,6 @@ export function responseToData(data, probeClass = 'quantile', probeType, aggrega
   return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 }
 
-function sampleDatapoint(tr) {
-  return Object.values(Object.values(tr)[0])[0][0];
-}
-
-function getBucketKeys(tr) {
-  return Object.keys(sampleDatapoint(tr).counts);
-}
 
 const makeSortOrder = (latest) => (a, b) => {
   // get latest data point and see
@@ -270,36 +256,45 @@ const makeSortOrder = (latest) => (a, b) => {
   return 0;
 };
 
+
+function sampleDatapoint(tr) {
+  return Object.values(Object.values(tr)[0])[0][0];
+}
+
+function latestDatapoint(tr) {
+  const series = Object.values(Object.values(tr)[0])[0];
+  // FIXME: this should be the last value, not the second to last
+  return series[series.length - 2];
+}
+
+function getBucketKeys(tr) {
+  return Object.keys(latestDatapoint(tr).counts);
+}
+
+
 export function extractBucketMetadata(transformedData) {
   const etc = {};
   const options = getBucketKeys(transformedData);
   const cmpBuckets = getBucketKeys(transformedData);
-  cmpBuckets.sort(makeSortOrder(sampleDatapoint(transformedData)));
+  const sorter = makeSortOrder(latestDatapoint(transformedData));
+  cmpBuckets.sort(sorter);
   const cmp = createCatColorMap(cmpBuckets);
-  const initialBuckets = getBucketKeys(transformedData)
-    .filter((p) => cmpBuckets.slice(0, 10).includes(p));
+  const initialBuckets = cmpBuckets.slice(0, 10);
   etc.bucketOptions = options;
   etc.bucketColorMap = cmp;
   etc.initialBuckets = initialBuckets;
+  etc.bucketSortOrder = sorter;
   return etc;
 }
 
-export function fetchDataForGLAM(params, currentStore) {
-  const { probe } = currentStore;
-  const isCategorical = isCategoricalData(probe);
+
+export function fetchDataForGLAM(params) {
+  // const { probe } = currentStore;
   return getProbeData(params).then(
-    (payload) => responseToData(payload.response, isCategorical ? 'proportion' : 'quantile', `${probe.type}-${probe.kind}`),
-  ).then(
-    (transformedData) => {
-      let etc = {};
-      if (isCategorical) {
-        etc = extractBucketMetadata(transformedData);
-        if (currentStore.applicationStatus !== 'INITIALIZING') {
-          dispatch(activeBuckets.set(etc.initialBuckets));
-        }
-        dispatch(applicationStatus.set('ACTIVE'));
-      }
-      return { data: transformedData, ...etc };
+    (payload) => {
+      const { probe } = get(store);
+      const isCategorical = isCategoricalData(probe);
+      return responseToData(payload.response, isCategorical ? 'proportion' : 'quantile', `${probe.type}-${probe.kind}`);
     },
   );
 }
@@ -313,15 +308,19 @@ export const dataset = derived(store, ($store) => {
     dispatch(updateDashboardMode(message));
     return datasetResponse(message);
   }
+
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-    if ($store.dashboardMode.key !== 'DEFAULT_VIEW') dispatch(updateDashboardMode(message));
+    if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
+      dispatch(updateDashboardMode(message));
+      dispatch(applicationStatus.set('ACTIVE'));
+    }
     return message;
   }
-
   if (!(qs in cache)) {
-    cache[qs] = fetchDataForGLAM(params, $store); // getProbeData(params);
+    cache[qs] = fetchDataForGLAM(params, $store);
   }
+
   return {
     level: 'SUCCESS', key: 'EXPLORER_VIEW', data: cache[qs], probeType: `${$store.probe.type}-${$store.probe.kind}`,
   };

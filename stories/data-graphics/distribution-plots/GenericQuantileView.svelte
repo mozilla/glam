@@ -30,7 +30,7 @@ let probes = [
 ];
 
 let timeHorizon = 'ALL_TIME';
-let percentiles = [5, 25, 50, 75, 95];
+let percentiles = [95, 75, 50, 25, 5];
 
 function handleSelection(event) {
   const { selection, type } = event.detail;
