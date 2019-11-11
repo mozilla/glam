@@ -3,7 +3,7 @@ import produce from 'immer';
 // FIXME: take care of this dependency cycle.
 import telemetrySearch from './telemetry-search'; // eslint-disable-line
 import {
-  updateAggregationLevel, updateOS, updateChannel, applicationStatus, updateDashboardMode,
+  setAggregationLevel, setOS, setChannel, setApplicationStatus, setDashboardMode,
 } from './actions';
 import { getProbeData } from './api';
 import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
@@ -132,9 +132,9 @@ export const store = {
 
 
 export const resetFilters = () => async () => {
-  dispatch(updateChannel(getDefaultFieldValue('channel')));
-  dispatch(updateOS(getDefaultFieldValue('os')));
-  dispatch(updateAggregationLevel(getDefaultFieldValue('aggregationLevel')));
+  dispatch(setChannel(getDefaultFieldValue('channel')));
+  dispatch(setOS(getDefaultFieldValue('os')));
+  dispatch(setAggregationLevel(getDefaultFieldValue('aggregationLevel')));
 };
 
 
@@ -275,15 +275,15 @@ export const dataset = derived(store, ($store) => {
 
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    dispatch(updateDashboardMode(message));
+    dispatch(setDashboardMode(message));
     return datasetResponse(message);
   }
 
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-      dispatch(updateDashboardMode(message));
-      dispatch(applicationStatus.set('ACTIVE'));
+      dispatch(setDashboardMode(message));
+      dispatch(setApplicationStatus('ACTIVE'));
     }
     return message;
   }

@@ -11,16 +11,3 @@ export async function getProbeData(params) {
   }).then((response) => response.json());
   return data;
 } // this is the raw data.
-
-// TRANSFORMATION
-
-// STORE UPDATES
-
-/*
-
-getProbeData
-transformData
-updateStoreFromData
-plot
-
-*/

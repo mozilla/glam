@@ -4,7 +4,7 @@ import {
   store, dataset, extractBucketMetadata,
 } from '../store/store';
 import {
-  visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType, applicationStatus,
+  setVisiblePercentiles, setTimeHorizon, setActiveBuckets, setProportionMetricType, setApplicationStatus,
 } from '../store/actions';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
@@ -47,10 +47,10 @@ $: if ($store.probe.name !== probeName && $dataset.data) {
       if (isCategorical) {
         etc = extractBucketMetadata(transformedData);
         if ($store.applicationStatus !== 'INITIALIZING') {
-          store.dispatch(activeBuckets.set(etc.initialBuckets));
+          store.dispatch(setActiveBuckets(etc.initialBuckets));
         }
       }
-      store.dispatch(applicationStatus.set('ACTIVE'));
+      store.dispatch(setApplicationStatus('ACTIVE'));
       return { data: transformedData, ...etc };
     },
   ).catch((err) => console.error(err));
@@ -62,15 +62,11 @@ let width;
 
 function handleBodySelectors(event) {
   const { selection, type } = event.detail;
-  if (type === 'percentiles') store.dispatch(visiblePercentiles.set(selection));
-  if (type === 'timeHorizon') store.dispatch(timeHorizon.set(selection));
-  if (type === 'metricType') store.dispatch(proportionMetricType.set(selection));
+  if (type === 'percentiles') store.dispatch(setVisiblePercentiles(selection));
+  if (type === 'timeHorizon') store.dispatch(setTimeHorizon(selection));
+  if (type === 'metricType') store.dispatch(setProportionMetricType(selection));
   if (type === 'activeBuckets') {
-    //   const thisSelection = [...selection];
-    // thisSelection.sort()
-    store.dispatch(activeBuckets.set(selection));
-    // FIXME: figure out where to set applicationStatus to 'ACTIVE'. Will do here for now.
-    // store.dispatch(applicationStatus.set('ACTIVE'));
+    store.dispatch(setActiveBuckets(selection));
   }
 }
 
