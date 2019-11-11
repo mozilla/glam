@@ -9,17 +9,20 @@ import RadioGroup from '../../components/RadioGroup.svelte';
 import RadioSelector from '../../components/RadioSelector.svelte';
 // import ListDivider from '../../components/ListDivider.svelte';
 
-import TelemetryAppBar from './TelemetryAppBar.svelte';
-
 import {
   store,
   getFieldValueLabel,
   hasDefaultControlFields,
-  updateChannel as updateChannelAction,
   resetFilters as resetFiltersAction,
+
+} from '../store/store';
+
+import {
+  updateChannel as updateChannelAction,
   updateOS as updateOSAction,
   updateAggregationLevel as updateAggregationLevelAction,
-} from '../store/store';
+} from '../store/actions';
+
 
 import CONFIG from '../config.json';
 

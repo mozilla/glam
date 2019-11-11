@@ -1,8 +1,11 @@
 <script>
 import { fade } from 'svelte/transition';
 import {
-  store, dataset, visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType, applicationStatus, extractBucketMetadata,
+  store, dataset, extractBucketMetadata,
 } from '../store/store';
+import {
+  visiblePercentiles, timeHorizon, activeBuckets, proportionMetricType, applicationStatus,
+} from '../store/actions';
 
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';

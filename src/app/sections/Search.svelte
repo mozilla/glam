@@ -2,11 +2,13 @@
   import { tick, setContext } from 'svelte';
 import { fly } from 'svelte/transition';
 import {
-    updateSearchQuery,
     store,
-    updateSearchIsActive,
-    updateProbe,
 } from '../store/store';
+
+import {
+    updateSearchIsActive, updateSearchQuery, updateProbe,
+} from '../store/actions';
+
 import telemetrySearch from '../store/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';

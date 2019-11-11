@@ -1,5 +1,4 @@
 <script>
-import { getContext } from 'svelte';
 import MenuButton from '../../components/menu/MenuButton.svelte';
 import MenuList from '../../components/menu/MenuList.svelte';
 import MenuListItem from '../../components/menu/MenuListItem.svelte';
@@ -9,9 +8,11 @@ import CONFIG from '../config.json';
 import {
   store,
   getFieldValueLabel,
-  updateChannel, updateOS, updateAggregationLevel,
 } from '../store/store';
 
+import {
+  updateChannel, updateOS, updateAggregationLevel,
+} from '../store/actions';
 
 const OFFSET = 10;
 const COMPACT = true;
@@ -59,7 +60,6 @@ const COMPACT = true;
         <div slot="menu">
             <MenuList on:selection={(event) => { store.dispatch(updateOS(event.detail.key)); }}>
               {#each CONFIG.fields.os.values as {key, label}, i (key)}
-              <!-- <RadioSelector value={key} label={label} group={$store.channel} /> -->
                 <MenuListItem  key={key} value={key}><span class='story-label
                   first'></span>{label}</MenuListItem>
                 {/each}
@@ -71,7 +71,6 @@ const COMPACT = true;
           <div slot="menu">
               <MenuList on:selection={(event) => { store.dispatch(updateAggregationLevel(event.detail.key)); }}>
                   {#each CONFIG.fields.aggregationLevel.values as {key, label}, i (key)}
-                <!-- <RadioSelector value={key} label={label} group={$store.channel} /> -->
                   <MenuListItem  key={key} value={key}><span class='story-label
                     first'></span>{label}</MenuListItem>
                   {/each}

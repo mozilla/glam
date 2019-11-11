@@ -1,7 +1,8 @@
 import { readable } from 'svelte/store';
 import FlexSearch from 'flexsearch';
 // FIXME: this dependency cycle is innocuous but we should fix it.
-import { store, updateProbe } from './store'; // eslint-disable-line
+import { store } from './store'; // eslint-disable-line
+import { updateProbe } from './actions';
 
 // TODO: Make this dynamic based on prod vs local dev.
 const url = 'http://localhost:8000/api/v1/probes';
