@@ -17,6 +17,10 @@ let paneVisible = true;
 let visible = false; // this is unused for the time being.
 onMount(() => { visible = true; });
 
+function probeIsSelected(probe) {
+  return probe.name !== null && probe.name !== 'null';
+}
+
 </script>
 
 <style>
@@ -140,7 +144,7 @@ h2 {
         </div>
     </div>
     {/if}
-{:else if $store.probe.name}
+{:else if probeIsSelected($store.probe)}
 <div in:fly={rightDrawerTransition} class="drawer-section-container probe-details">
     <!-- probe-details-content -->
     <div class="probe-details-content">
@@ -170,10 +174,10 @@ h2 {
                 </li>
             {/if}
             {#if $store.versions && $store.versions.length}
-                <li class="detail--indented">
+                <!-- <li class="detail--indented">
                     available in {$store.channel}: {$store.probe.versions[$store.channel][0]}
                     &ndash; {$store.probe.versions[$store.channel][1]}
-                </li>
+                </li> -->
             {/if}
             </ul>
         </div>

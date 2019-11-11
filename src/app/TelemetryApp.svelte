@@ -10,7 +10,6 @@ import MainActionBar from '../components/sections/MainActionBar.svelte';
 import Content from '../components/sections/Content.svelte';
 
 import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
-import TelemetryControls from './sections/TelemetryControls.svelte';
 import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
 import ProbeDetails from './sections/ProbeDetails.svelte';
 
@@ -53,16 +52,10 @@ div.inner-body {
                 <TelemetryMainFilters />
         </MainActionBar>
         <Content>
-
             <div class=inner-body>
                 <GraphicBody />
             </div>
             <ProbeDetails />
-
         </Content>
-
-        <!-- <div class=details>
-            <Details />
-        </div> -->
     </Main>
 </App>
