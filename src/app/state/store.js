@@ -1,5 +1,7 @@
-import { writable, derived, get } from 'svelte/store';
-import produce from 'immer';
+import { derived, get } from 'svelte/store';
+
+import { createStore } from '../../utils/create-store';
+
 // FIXME: take care of this dependency cycle.
 import telemetrySearch from './telemetry-search'; // eslint-disable-line
 import {
@@ -7,7 +9,6 @@ import {
 } from './actions';
 import { getProbeData } from './api';
 import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
-
 
 import CONFIG from '../config.json';
 
@@ -77,7 +78,7 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
 }
 
 // TODO: get latest version for whatever the default channel is.
-const initStore = {
+const initialState = {
   probe: {
     name: getFromQueryString('probe'),
     description: undefined,
@@ -85,7 +86,7 @@ const initStore = {
     totalSize: 0,
     versions: [],
   },
-  dashboardMode: { },
+  dashboardMode: { }, // FIXME: applicationStatus or dashboardMode, not both.
   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
@@ -97,42 +98,15 @@ const initStore = {
   visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [95, 75, 50, 25, 5],
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
-  applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both?
+  applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
 };
 
-const STORE = writable(initStore);
-// this works very similar to what you'd expect in a redux setting.
-// eg. dispatch(changeChannel('beta')) should take the changeChannel
-// action, which returns a draft-mutating function to be fed into
-// immer's produce function.
-export const dispatch = (func) => {
-  // I thought about using func.length (if it has two args, then we are go)
-  // but you may only have one. For now, I think marking a function a async
-  // works.
-  if (func.constructor.name === 'AsyncFunction') {
-    // composite update (thunk). Async may or may not be
-    // necessary here, but might as well make all of these async by
-    // default.
-    func(dispatch, () => get(STORE));
-  } else {
-    // atomic update (singular state change).
-    STORE.update((state) => produce(state, func));
-  }
-};
-
-export const connect = (func) => (...args) => dispatch(func(...args));
-
-export const getState = () => get(STORE);
-
-export const store = {
-  subscribe: STORE.subscribe, dispatch, connect, getState,
-};
-
+export const store = createStore(initialState);
 
 export const resetFilters = () => async () => {
-  dispatch(setChannel(getDefaultFieldValue('channel')));
-  dispatch(setOS(getDefaultFieldValue('os')));
-  dispatch(setAggregationLevel(getDefaultFieldValue('aggregationLevel')));
+  store.dispatch(setChannel(getDefaultFieldValue('channel')));
+  store.dispatch(setOS(getDefaultFieldValue('os')));
+  store.dispatch(setAggregationLevel(getDefaultFieldValue('aggregationLevel')));
 };
 
 export const searchResults = derived(
@@ -215,18 +189,12 @@ export function responseToData(data, probeClass = 'quantile', probeType, aggrega
   return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 }
 
-
 const makeSortOrder = (latest) => (a, b) => {
   // get latest data point and see
   if (latest.counts[a] < latest.counts[b]) return 1;
   if (latest.counts[a] >= latest.counts[b]) return -1;
   return 0;
 };
-
-
-function sampleDatapoint(tr) {
-  return Object.values(Object.values(tr)[0])[0][0];
-}
 
 function latestDatapoint(tr) {
   const series = Object.values(Object.values(tr)[0])[0];
@@ -237,7 +205,6 @@ function latestDatapoint(tr) {
 function getBucketKeys(tr) {
   return Object.keys(latestDatapoint(tr).counts);
 }
-
 
 export function extractBucketMetadata(transformedData) {
   const etc = {};
@@ -254,9 +221,7 @@ export function extractBucketMetadata(transformedData) {
   return etc;
 }
 
-
 export function fetchDataForGLAM(params) {
-  // const { probe } = currentStore;
   return getProbeData(params).then(
     (payload) => {
       const { probe } = get(store);
@@ -272,15 +237,15 @@ export const dataset = derived(store, ($store) => {
 
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    dispatch(setDashboardMode(message));
+    store.dispatch(setDashboardMode(message));
     return datasetResponse(message);
   }
 
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-      dispatch(setDashboardMode(message));
-      dispatch(setApplicationStatus('ACTIVE'));
+      store.dispatch(setDashboardMode(message));
+      store.dispatch(setApplicationStatus('ACTIVE'));
     }
     return message;
   }

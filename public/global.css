@@ -317,7 +317,7 @@ header {
     /* grid-template-columns: var(--column-grid); */
     /* align-content: center; */
     align-content: center;
-    border-bottom: 1px solid var(--blue-slate-700);
+    align-items: center;
 }
 
 header h1 {
@@ -326,9 +326,10 @@ header h1 {
     margin:0;
     font-size:1.5em;
     color: var(--cool-gray-100);
-    transform: translateY(.05em);
+    /* transform: translateY(.05em); */
     display: grid;
     align-items: center;
+    align-content: center;
     justify-content: start;
     font-weight: normal;
     grid-column-gap: var(--space-base);
