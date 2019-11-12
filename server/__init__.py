@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template
+from flask_caching import Cache
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +9,7 @@ from server.config import configs
 
 
 db = SQLAlchemy()
+cache = Cache(config={"CACHE_TYPE": "simple", "default_timeout": 60 * 15})
 
 
 def create_app(config_override=None):
@@ -29,8 +31,9 @@ def create_app(config_override=None):
     # Add CORS.
     CORS(app)
 
-    # Initialize Flask-SQLAlchemy.
+    # Initialize Flask-SQLAlchemy and Cache.
     db.init_app(app)
+    cache.init_app(app)
 
     configure_blueprints(app)
 

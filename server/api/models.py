@@ -19,20 +19,20 @@ class FirefoxMeasurement(db.Model):
 
     # Dimensions that make up the primary key.
     channel = db.Column(db.Enum(ChannelTypes), nullable=False, primary_key=True)
-    version = db.Column(db.String(16), primary_key=True)
+    version = db.Column(db.String(16), nullable=False, primary_key=True)
     agg_type = db.Column(db.Enum(AggregateTypes), nullable=False, primary_key=True)
-    os = db.Column(db.String(16), primary_key=True)
-    build_id = db.Column(db.String(16), primary_key=True)
+    os = db.Column(db.String(16), nullable=True, primary_key=True)
+    build_id = db.Column(db.String(16), nullable=True, primary_key=True)
     metric = db.Column(db.String(128), nullable=False, primary_key=True)
-    metric_key = db.Column(db.String(128), primary_key=True)
-    client_agg_type = db.Column(db.String(32), primary_key=True)
+    metric_key = db.Column(db.String(128), nullable=True, primary_key=True)
+    client_agg_type = db.Column(db.String(32), nullable=True, primary_key=True)
     # The data stored for each dimension.
     metric_type = db.Column(db.String(32), nullable=False)
     total_users = db.Column(db.Integer(), nullable=False)
     data = db.Column(db.JSON())
 
     def __repr__(self):
-        return "<Measurement {metric!r}>".format(metric=self.metric.name)
+        return "<Measurement {metric!r}>".format(metric=self.metric)
 
 
 class Probe(db.Model):

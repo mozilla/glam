@@ -91,8 +91,8 @@ def get_aggregate_data():
     except exceptions.BadRequest as e:
         raise APIException(str(e))
 
-    if body is None:
-        raise APIException("Missing JSON body or proper mimetype")
+    if body is None or body.get("query") is None:
+        raise APIException("Unexpected JSON body")
 
     q = body["query"]
 
@@ -100,7 +100,7 @@ def get_aggregate_data():
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
         raise APIException(
-            "Missing required query parameters: {}".format(", ".join(missing))
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
     dimensions = [
@@ -112,15 +112,12 @@ def get_aggregate_data():
 
     # Whether to pull aggregations by version or build_id.
     if q["aggregationLevel"] == "version":
-        dimensions.append(fxm.build_id == None)
+        dimensions.append(fxm.build_id == None)  # noqa
     elif q["aggregationLevel"] == "build_id":
-        dimensions.append(fxm.build_id != None)
+        dimensions.append(fxm.build_id != None)  # noqa
 
     sql = select([fxm]).where(and_(*dimensions))
-
     result = db.engine.execute(sql)
-    if not result.rowcount > 0:
-        raise APIException("No documents found for the given parameters.", 404)
 
     response = {}
 
@@ -164,6 +161,9 @@ def get_aggregate_data():
         response[key] = record
 
         # TODO: Attach labels to categorical histograms.
+
+    if not response:
+        raise APIException("No documents found for the given parameters.", 404)
 
     # Strip out the merge keys when returning the response.
     return {
