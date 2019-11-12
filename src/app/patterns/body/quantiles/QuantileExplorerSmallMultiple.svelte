@@ -24,7 +24,7 @@ export let key;
 export let timeHorizon;
 export let percentiles = [50];
 
-let valueFmt = format(',.4r');
+let valueFmt = format(',.2f');
 let countFmt = format(',d');
 
 const probeType = getContext('probeType');

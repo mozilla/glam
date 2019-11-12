@@ -6,7 +6,6 @@ import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
 import { responseToData } from '../../../src/app/state/store';
 
-
 import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
 
 let which = 0;
