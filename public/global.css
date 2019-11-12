@@ -601,3 +601,10 @@ main .details {
     text-align: left;
 }
 
+.percentile-label-block {
+    display: inline-block;
+    width: var(--space-base);
+    height: var(--space-base);
+    border-radius: var(--space-1q);
+    margin-right: var(--space-1h);
+  }

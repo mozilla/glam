@@ -2,7 +2,6 @@
 import { onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
 
-import { symbol, symbolStar as referenceSymbol } from 'd3-shape';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
@@ -11,6 +10,7 @@ import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
+import ReferenceSymbol from './ReferenceSymbol.svelte';
 
 import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
 
@@ -156,12 +156,7 @@ fill="var(--cool-gray-100)" />
 
   {/each}
   {#each metricKeys.map((m) => extractMouseoverValues(m, reference)) as {label, bin, value}, i (bin)}
-  <g style="transform:translate({xScale(label)}px, {yScale(value)}px)">
-      <path 
-        d={symbol().type(referenceSymbol).size(20)()} 
-        fill={lineColorMap(bin)}
-      />
-    </g>
+    <ReferenceSymbol xLocation={xScale(label)} yLocation={yScale(value)} color={lineColorMap(bin)} />
   {/each}
  {/if}
 

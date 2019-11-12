@@ -1,14 +1,12 @@
 <script>
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
-import {
-  symbol, symbolStar as referenceSymbol,
-} from 'd3-shape';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+import ReferenceSymbol from './ReferenceSymbol.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';
 
@@ -108,12 +106,7 @@ $: if (leftPercentiles && leftPercentiles) {
       r=2
       fill={color}
     />
-    <g style="transform:translate({rightPlot}px, {rightY}px)">
-      <path 
-        d={symbol().type(referenceSymbol).size(20)()} 
-        fill={color}
-      />
-  </g>
+    <ReferenceSymbol xLocation={rightPlot} yLocation={rightY} color={color} />
   {/each}
 {/if}
 

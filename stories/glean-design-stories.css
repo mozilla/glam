@@ -57,3 +57,30 @@ body  {
 hr {
   border: 1px solid var(--cool-gray-200);
 }
+
+.view-header {
+  display: grid;
+  grid-template-columns: auto max-content;
+  font-family: var(--main-mono-font);
+  border-bottom: 3px solid var(--cool-gray-200);
+  margin-bottom: var(--space-4x);
+}
+
+.view-header h1 {
+  font-weight: normal;
+  margin:0px;
+}
+
+.selectors {
+  position: relative;
+  width: max-content;
+  font-size: var(--text-02);
+  font-family: var(--main-mono-font);
+  margin-bottom: var(--space-4x);
+  padding: var(--space-4x);
+  border-radius: var(--space-base);
+  box-shadow: var(--depth-tiny);
+  z-index:1000;
+  background-color: white;
+  color: var(--blue-slate-600);
+}

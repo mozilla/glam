@@ -114,14 +114,6 @@ td, th {
 
 }
 
-.summary-color-label {
-  display: inline-block;
-  width: var(--space-base);
-  height: var(--space-base);
-  border-radius: var(--space-1q);
-  margin-right: var(--space-1h);
-}
-
 .small-shape {
   padding-left:var(--space-1h);
 }
@@ -147,7 +139,7 @@ td, th {
           {#each displayValues as {leftValue, rightValue, percentageChange, key}}
             <tr>
               <td class=value-label>
-                <span class='summary-color-label'
+                <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
               <td class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
               <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
