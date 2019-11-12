@@ -136,6 +136,7 @@ function getParamsForQueryString(obj) {
     timeHorizon: obj.timeHorizon,
     proportionMetricType: obj.proportionMetricType,
     activeBuckets: obj.activeBuckets,
+    visiblePercentiles: obj.visiblePercentiles,
   };
 }
 
