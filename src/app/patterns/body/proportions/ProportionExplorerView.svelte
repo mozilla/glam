@@ -21,8 +21,6 @@ function makeSelection(type) {
   };
 }
 
-// let transformed = byKeyAndAggregation(data, 'proportion', 'build_id', { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
-
 let totalAggs = Object.keys(Object.values(data)[0]).length;
 
 export let timeHorizon = 'MONTH';

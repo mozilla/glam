@@ -38,7 +38,7 @@ export let colorMap = () => 'var(--digital-blue-500)';
 
 let valueFmt = format(',.4r');
 let countFmt = format(',d');
-const percentFormatter = format('.0p');
+const percentFormatter = format('.0%');
 
 
 const probeType = getContext('probeType');
@@ -154,11 +154,11 @@ h4 {
   <!-- <div class=bignum>
     <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
     <div class=bignum__value>{valueFmt(reference.percentiles[50])}</div>
-  </div>
-  <div class=bignum>
-    <div class=bignum__label>⭑ Audience Size</div>
-    <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div> -->
+  <div class=bignum>
+    <div class=bignum__label>⭑ Latest Total Clients</div>
+    <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
+  </div>
 </div>
 
 <div class=graphic-and-summary>

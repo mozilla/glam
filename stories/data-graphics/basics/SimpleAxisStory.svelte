@@ -1,19 +1,12 @@
 <script>
-import { zipByAggregationType, prepareForQuantilePlot } from '../../../src/app/utils/probe-utils';
+import { responseToData } from '../../../src/app/state/store';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;
 
-const aggs = Object
-  .entries(zipByAggregationType(activeTicksBuild))
-  .map(([aggType, payload]) => [
-    aggType,
-    prepareForQuantilePlot(payload, 'build_id'),
-    payload,
-  ]);
-const dataset = aggs[1][1];
+const data = responseToData(activeTicksBuild);
 
-// //////////////////////////////////////////////////////////////////////////////
+const dataset = data['undefined']['avg']; // eslint-disable-line
 
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
@@ -106,12 +99,12 @@ td input {
 
 <h4>long left / right</h4>
 <DataGraphic
-data={dataset}
 xDomain={dataset.map((d) => d.label)}
 yDomain={[0, 1000]}
 yType="numeric"
 width=500
 height=250
+right={50}
 >
   {#if sides.left.all}
     <LeftAxis 
