@@ -10,6 +10,7 @@ export let horizon = 'MONTH';
       { label: 'last month', value: 'MONTH' },
       { label: 'all time', value: 'ALL_TIME' },
     ]}
-    bind:selected={horizon}
+    selected={horizon}
     level="medium"
+    on:selection
 />

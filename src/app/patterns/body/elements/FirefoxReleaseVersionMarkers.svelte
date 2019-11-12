@@ -1,7 +1,7 @@
 <script>
 import { getContext } from 'svelte';
 import Marker from '../../../../components/data-graphics/Marker.svelte';
-import { firefoxVersionMarkers } from '../../../store/product-versions';
+import { firefoxVersionMarkers } from '../../../state/product-versions';
 
 import {
   dateToBuildID,

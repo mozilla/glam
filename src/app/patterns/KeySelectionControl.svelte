@@ -14,7 +14,8 @@ export let transformed = options.map((opt) => ({
 <BodyControl
   sort={sortFunction}
   options={transformed}
-  bind:selected={selections}
+  selected={selections}
   multi={true}
   level="low"
+  on:selection
 />

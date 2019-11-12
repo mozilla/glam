@@ -30,7 +30,6 @@ export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
 
-
 let L;
 let R;
 let T;
@@ -48,10 +47,21 @@ onMount(() => {
   B.subscribe((b) => { bottomPlot = b; });
 });
 
-
 function placeShapeY(value) {
   if (yScale.type !== 'scalePoint') return yScale(value);
   return yScale(nearestBelow(value, yDomain));
+}
+
+let dotsAndLines = [];
+$: if (leftPercentiles && leftPercentiles) {
+  dotsAndLines = leftPercentiles.map(({ value, bin }) => {
+    let rightY = placeShapeY(rightPercentiles.find((r) => r.bin === bin).value);
+    let leftY = placeShapeY(value);
+    let color = colorMap(bin);
+    return { leftY, rightY, color };
+  });
+} else {
+  dotsAndLines = [];
 }
 
 </script>
@@ -84,24 +94,24 @@ function placeShapeY(value) {
   <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} /> -->
 
   {#if leftPercentiles && rightPercentiles}
-  {#each leftPercentiles as {label, bin, value}, i}
+  {#each dotsAndLines as {leftY, rightY, color}, i}
     <line 
       x1={leftPlot}
       x2={rightPlot}
-      y1={placeShapeY(value)}
-      y2={placeShapeY(rightPercentiles[i].value)}
-      stroke={colorMap(bin)}
+      y1={leftY}
+      y2={rightY}
+      stroke={color}
     />
     <circle 
       cx={leftPlot} 
-      cy={placeShapeY(value)} 
+      cy={leftY} 
       r=2
-      fill={colorMap(bin)}
+      fill={color}
     />
-    <g style="transform:translate({rightPlot}px, {placeShapeY(rightPercentiles[i].value)}px)">
+    <g style="transform:translate({rightPlot}px, {rightY}px)">
       <path 
         d={symbol().type(referenceSymbol).size(20)()} 
-        fill={colorMap(bin)}
+        fill={color}
       />
   </g>
   {/each}
@@ -109,18 +119,6 @@ function placeShapeY(value) {
 
   {#if leftDistribution && showViolins}
   <g in:fade={{ duration: 50 }}>
-    <!-- <Violin 
-      showLeft={false}
-      xp={(rightPlot - leftPlot) / 2 + leftPlot - 1}
-      key={leftLabel}
-      opacity=.9
-      y={leftDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0, 30]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    /> -->
     <Violin
       orientation="vertical"
       showLeft={false}
@@ -137,18 +135,6 @@ function placeShapeY(value) {
   </g>
   {/if}
   {#if rightDistribution && showViolins}
-    <!-- <Violin 
-    showRight={false}
-    xp={(rightPlot - leftPlot) / 2 + leftPlot + 1}
-    opacity=.9
-    key={rightLabel}
-    y={rightDistribution} 
-    densityAccessor='value'
-    valueAccessor='bin'
-    densityRange={[0, 30]}
-    areaColor="var(--digital-blue-400)"
-    lineColor="var(--digital-blue-500)"
-    /> -->
     <Violin
       orientation="vertical"
       showRight={false}

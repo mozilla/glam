@@ -1,4 +1,5 @@
 <script>
+import { createEventDispatcher } from 'svelte';
 import Button from '../../components/Button.svelte';
 import ButtonGroup from '../../components/ButtonGroup.svelte';
 
@@ -10,25 +11,32 @@ export let sort = true;
 export let reverse = false;
 export let selected = multi ? [] : undefined;
 
-$: if (multi && sort && typeof sort === 'function') {
-  selected.sort(sort);
-}
+const dispatch = createEventDispatcher();
 
+$: if (selected && multi && sort && typeof sort === 'function') {
+  // selected.sort(sort);
+}
+// FIXME: support an on:select event as well, in case that is what people want to use here.
 function toggle(v) {
+  let selection;
   if (multi) {
-    if (selected.includes(v)) selected = [...selected.filter((vi) => vi !== v)];
+    if (selected.includes(v)) selection = [...selected.filter((vi) => vi !== v)];
     else {
-      selected = [...selected, v];
+      selection = [...selected, v];
     }
     if (sort) {
       let sortCallback = (a, b) => (a < b ? -1 : 1);
-      if (typeof sort === 'function') sortCallback = sort;
-      selected.sort(sortCallback);
+      if (typeof sort === 'function') {
+        sortCallback = sort;
+      }
+      selection.sort(sortCallback);
     }
-    if (reverse) selected.reverse();
+    if (reverse) selection.reverse();
   } else {
-    selected = v;
+    selection = v;
   }
+
+  dispatch('selection', { selection });
 }
 
 </script>

@@ -4,30 +4,39 @@ import NAV_URL from '../../../tests/data/browser_engagement_navigation_urlbar_bu
 import ACTIVE_TICKS from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
-import { firefoxVersionMarkers } from '../../../src/app/store/product-versions';
+import { responseToData } from '../../../src/app/state/store';
 
-const navUrl = NAV_URL.response;
-const gcms = GCMS.response;
-const activeTicks = ACTIVE_TICKS.response;
+
+import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
+
 let which = 0;
 let probes = [
 
   {
     name: 'browser_engagement_active_ticks',
-    data: activeTicks,
+    data: responseToData(ACTIVE_TICKS.response),
     probeType: 'scalar',
   }, {
     name: 'gc_ms',
-    data: gcms,
+    data: responseToData(GCMS.response),
     probeType: 'histogram',
   },
 
   {
     name: 'browser_engagement_navigation_urlbar',
-    data: navUrl,
+    data: responseToData(NAV_URL.response),
     probeType: 'scalar',
   },
 ];
+
+let timeHorizon = 'ALL_TIME';
+let percentiles = [95, 75, 50, 25, 5];
+
+function handleSelection(event) {
+  const { selection, type } = event.detail;
+  if (type === 'timeHorizon') timeHorizon = selection;
+  if (type === 'percentiles') percentiles = selection;
+}
 
 </script>
 
@@ -85,7 +94,7 @@ let probes = [
             {#each probes as {name, data}, i}
               <label>
                 <input type=radio bind:group={which} value={i}>
-                {name} <i>({data.length})</i>
+                {name}
               </label>
             {/each}
             </div>
@@ -97,7 +106,10 @@ let probes = [
         <QuantileExplorerView 
           probeType={probe.probeType}
           data={probe.data}
+          timeHorizon={timeHorizon}
+          percentiles={percentiles}
           markers={$firefoxVersionMarkers}
+          on:selection={handleSelection}
         />
       {/if}
     {/each}

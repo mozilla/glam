@@ -9,6 +9,7 @@
         { label: 'proportion', value: 'proportions' },
         { label: 'total clients', value: 'counts' },
       ]}
-      bind:selected={metricType}
+      selected={metricType}
       level="medium"
+      on:selection
   />

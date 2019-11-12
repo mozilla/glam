@@ -5,21 +5,55 @@ import SSL_HANDSHAKE_VERSION from '../../../tests/data/ssl_handshake_version_bui
 import CRYPTO from '../../../tests/data/cryptominers_blocked_count_build_id.json';
 import GCREASON2 from '../../../tests/data/gc_reason_2_build_id.json';
 
-const sslResumedSession = SSL_RESUMED_SESSION.response;
-const sslHandshakeVersion = SSL_HANDSHAKE_VERSION.response;
-const cryptominersBlockedCount = CRYPTO.response;
-const gcReason2 = GCREASON2.response;
+import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
+
+import { responseToData, extractBucketMetadata } from '../../../src/app/state/store';
+
+const sslResumedSession = responseToData(SSL_RESUMED_SESSION.response, 'proportion', 'histogram-boolean');
+const sslHandshakeVersion = responseToData(SSL_HANDSHAKE_VERSION.response, 'proportion', 'histogram-enumerated');
+const cryptominersBlockedCount = responseToData(CRYPTO.response, 'proportion', 'histogram-categorical');
+const gcReason2 = responseToData(GCREASON2.response, 'proportion', 'histogram-enumerated');
 let probes = [
-  { name: 'SSL_RESUMED_SESSION', data: sslResumedSession, probeType: 'histogram-boolean' },
-  { name: 'SSL_HANDSHAKE_VERSION', data: sslHandshakeVersion, probeType: 'histogram-enumerated' },
-  { name: 'cryptominers_blocked_count', data: cryptominersBlockedCount, probeType: 'histogram-categorical' },
-  { name: 'gc_reason_2', data: gcReason2, probeType: 'histogram-enumerated' },
+  {
+    name: 'SSL_RESUMED_SESSION',
+    data: sslResumedSession,
+    probeType: 'histogram-boolean',
+    ...extractBucketMetadata(sslResumedSession),
+  },
+  {
+    name: 'SSL_HANDSHAKE_VERSION',
+    data: sslHandshakeVersion,
+    probeType: 'histogram-enumerated',
+    ...extractBucketMetadata(sslHandshakeVersion),
+  },
+  {
+    name: 'cryptominers_blocked_count',
+    data: cryptominersBlockedCount,
+    probeType: 'histogram-categorical',
+    ...extractBucketMetadata(cryptominersBlockedCount),
+  },
+  {
+    name: 'gc_reason_2',
+    data: gcReason2,
+    probeType: 'histogram-enumerated',
+    ...extractBucketMetadata(gcReason2),
+  },
 ];
 
 let which = 0;
 
-</script>
+let timeHorizon = 'MONTH';
+let metricType = 'proportions';
+let activeBuckets = probes[which].initialBuckets;
+$: activeBuckets = probes[which].initialBuckets;
+function handleSelection(event) {
+  const { selection, type } = event.detail;
+  if (type === 'timeHorizon') timeHorizon = selection;
+  if (type === 'metricType') metricType = selection;
+  if (type === 'activeBuckets') activeBuckets = selection;
+}
 
+</script>
 
 <style>
 
@@ -58,10 +92,6 @@ let which = 0;
   color: var(--blue-slate-600);
 }
 
-.selectors i {
-  font-weight: 100;
-  color: var(--cool-gray-500);
-}
 
 </style>
 
@@ -74,7 +104,7 @@ let which = 0;
             {#each probes as {name, data}, i}
               <label>
                 <input type=radio bind:group={which} value={i}>
-                {name} <i>({data.length})</i>
+                {name}
               </label>
             {/each}
             </div>
@@ -82,10 +112,19 @@ let which = 0;
   
     <h1 class="story__title">probe / <span class=probe-head>{probes[which].name}</span></h1>
     {#each probes as probe, i (probe.name + probe.probeType)}
+      
       {#if which === i}
         <ProportionExplorerView
           probeType={probe.probeType}
           data={probe.data}
+          timeHorizon={timeHorizon}
+          metricType={metricType}
+          activeBuckets={activeBuckets}
+          on:selection={handleSelection}
+          markers={$firefoxVersionMarkers} 
+          bucketOptions={probe.bucketOptions}
+          bucketColorMap={probe.bucketColorMap}
+          bucketSortOrder={probe.bucketSortOrder}
         />
       {/if}
     {/each}

@@ -17,4 +17,5 @@ export let percentiles = [50];
     bind:selected={percentiles}
     multi={true}
     level="low"
+    on:selection
 />

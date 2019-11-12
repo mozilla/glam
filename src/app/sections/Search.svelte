@@ -2,30 +2,31 @@
   import { tick, setContext } from 'svelte';
 import { fly } from 'svelte/transition';
 import {
-    searchQuery,
-    updateSearchQuery,
     store,
-    updateSearchIsActive,
-    updateProbe,
-} from '../store/store';
-import telemetrySearch from '../store/telemetry-search';
+} from '../state/store';
+
+import {
+    setSearchIsActive, setSearchQuery, setProbe,
+} from '../state/actions';
+
+import telemetrySearch from '../state/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
 
-setContext('updateProbe', store.connect(updateProbe));
-setContext('updateSearchIsActive', store.connect(updateSearchIsActive));
+setContext('setProbe', store.connect(setProbe));
+setContext('setSearchIsActive', store.connect(setSearchIsActive));
 
 let inputElement;
 let searchContainer;
 
 function turnOnSearch() {
-    store.dispatch(updateSearchIsActive(true));
+    store.dispatch(setSearchIsActive(true));
 }
 
 function turnOffSearch() {
     setTimeout(() => {
-      store.dispatch(updateSearchIsActive(false));
+      store.dispatch(setSearchIsActive(false));
     }, 100);
 }
 
@@ -137,8 +138,8 @@ async function onKeypress(event) {
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}
-      bind:value={$searchQuery} on:input={(evt) => {
-          updateSearchQuery(evt.target.value);
+      value={$store.searchQuery} on:input={(evt) => {
+          store.dispatch(setSearchQuery(evt.target.value));
       }} />
     </div>
 </div>

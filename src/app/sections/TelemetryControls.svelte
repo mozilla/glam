@@ -9,17 +9,20 @@ import RadioGroup from '../../components/RadioGroup.svelte';
 import RadioSelector from '../../components/RadioSelector.svelte';
 // import ListDivider from '../../components/ListDivider.svelte';
 
-import TelemetryAppBar from './TelemetryAppBar.svelte';
-
 import {
   store,
   getFieldValueLabel,
   hasDefaultControlFields,
-  updateChannel as updateChannelAction,
   resetFilters as resetFiltersAction,
-  updateOS as updateOSAction,
-  updateAggregationLevel as updateAggregationLevelAction,
-} from '../store/store';
+
+} from '../state/store';
+
+import {
+  setChannel as setChannelAction,
+  setOS as setOSAction,
+  setAggregationLevel as setAggregationLevelAction,
+} from '../state/actions';
+
 
 import CONFIG from '../config.json';
 
@@ -35,9 +38,9 @@ function collapseAll() {
   aggregationLevel.expand(false);
 }
 
-const updateChannel = store.connect(updateChannelAction);
-const updateOS = store.connect(updateOSAction);
-const updateAggregationLevel = store.connect(updateAggregationLevelAction);
+const setChannel = store.connect(setChannelAction);
+const setOS = store.connect(setOSAction);
+const setAggregationLevel = store.connect(setAggregationLevelAction);
 const resetFilters = () => {
   const reset = store.connect(resetFiltersAction);
   reset();
@@ -56,32 +59,11 @@ const resetFilters = () => {
             </div>
         {/if}
     </div>
-    <!-- <Accordion bind:this={product}>
-        <span slot="title">Product</span>
-        <span slot="description">{$store.product}</span>
-        <span slot="content">
-            <RadioGroup onSelect={(value) => updateProduct(value)}>
-                <RadioSelector value={'all'} label={'all products'} group={$store.product} />
-                <RadioSelector value={'firefox'} label={'Firefox Desktop'} group={$store.product} />
-                <RadioSelector value={'fennec'} label={'Fennec for Android'} group={$store.product} />
-            </RadioGroup>
-        </span>
-    </Accordion> -->
-    <!-- <Accordion bind:this={version}>
-        <span slot="title">Version / Build</span>
-        <span slot="description">Latest (69)</span>
-        <span slot="content">
-            <div style="padding-left: var(--space-2x); font-size: 14px; opacity:
-            .6;">
-                (coming soon)
-            </div>
-        </span>
-    </Accordion> -->
     <Accordion bind:this={channel}>
         <span slot="title">Channel</span>
         <span slot="description">{getFieldValueLabel('channel', $store.channel)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => updateChannel(value)}>
+            <RadioGroup onSelect={(value) => setChannel(value)}>
                 {#each CONFIG.fields.channel.values as {key, label}, i (key)}
                     <RadioSelector value={key} label={label} group={$store.channel} />
                 {/each}
@@ -92,7 +74,7 @@ const resetFilters = () => {
         <span slot="title">Operating System</span>
         <span slot="description">{getFieldValueLabel('os', $store.os)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => updateOS(value)}>
+            <RadioGroup onSelect={(value) => setOS(value)}>
                     {#each CONFIG.fields.os.values as {key, label}, i (key) }
                         <RadioSelector value={key} label={label} group={$store.os} /> 
                     {/each}
@@ -103,7 +85,7 @@ const resetFilters = () => {
         <span slot="title">Aggregate By</span>
         <span slot="description">{getFieldValueLabel('aggregationLevel', $store.aggregationLevel)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => updateAggregationLevel(value)}>
+            <RadioGroup onSelect={(value) => setAggregationLevel(value)}>
                 {#each CONFIG.fields.aggregationLevel.values as {key, label}, i (key)}
                     <RadioSelector value={key} label={label} group={$store.aggregationLevel} />
                 {/each}
