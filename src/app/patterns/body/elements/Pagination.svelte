@@ -21,14 +21,15 @@ function changePage(v) {
 
 div {
   display: grid;
-  grid-template-columns: max-content max-content auto;
+  grid-template-columns: auto max-content max-content;
   grid-column-gap: var(--space-1h);
+  align-items: center;
 }
 
 </style>
 
 <div>
+    page {currentPage + 1} of {totalPages}
   <Button on:click={() => changePage(currentPage - 1)} level=low compact><LeftCarat size={10} /></Button>
   <Button on:click={() => changePage(currentPage + 1)} level=low compact><RightCarat size={10} /></Button>
-    page {currentPage + 1} of {totalPages}
 </div>

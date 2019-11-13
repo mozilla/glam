@@ -4,8 +4,8 @@ import MenuList from '../../components/menu/MenuList.svelte';
 import MenuListItem from '../../components/menu/MenuListItem.svelte';
 import DownCarat from '../../components/icons/DownCarat.svelte';
 
-export let aggregationTypes;
-export let currentAggregation;
+// export let aggregationTypes;
+export let currentView;
 export let active;
 
 let button;
@@ -17,20 +17,24 @@ function toggle() {
 }
 
 function setValue(event) {
-  currentAggregation = event.detail.key;
+  currentView = event.detail.key;
   active = false;
 }
 
-export let aggregationInfo = {
-  avg: { name: 'Average', description: 'Shows the distribution of the average scalar value per client.' },
-  min: { name: 'Minimum', description: 'Shows the distribution of the smallest scalar value per client.' },
-  max: { name: 'Maximum', description: 'Shows the distribution of the largest scalar value per client.' },
-  sum: { name: 'Sum', description: 'Shows the distribution of the sum of scalar values per client.' },
+export let viewInfo = {
+  explorer: { name: 'Explorer', description: 'Observe trends over time and compare two probes.' },
+  table: { name: 'Table', description: 'Get a table of percentile / proportion values over many builds.' },
 };
+
+$: console.log(active);
 
 </script>
 
 <style>
+
+div {
+  width: max-content;
+}
 
 .activating-button {
   padding: var(--space-1h);
@@ -66,7 +70,7 @@ export let aggregationInfo = {
 
 <div class=menu-button bind:this={button}>
   <button class=activating-button on:click={toggle} class:active>
-      <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
+      <div>{viewInfo[currentView].name}</div> <DownCarat size=16 />
   </button>
 </div>
 
@@ -79,10 +83,10 @@ export let aggregationInfo = {
     parent={button}
   >
     <MenuList  on:selection={setValue}>
-      {#each aggregationTypes as agg, i}
-        <MenuListItem  key={agg} value={agg}>
-          <div class=menu-list-item__title>{aggregationInfo[agg].name}</div>
-          <div class=menu-list-item__description>{aggregationInfo[agg].description}</div>
+      {#each Object.entries(viewInfo) as [k, v], i}
+        <MenuListItem  key={k} value={k}>
+          <div class=menu-list-item__title>{v.name}</div>
+          <div class=menu-list-item__description>{v.description}</div>
         </MenuListItem>  
       {/each}
     </MenuList>

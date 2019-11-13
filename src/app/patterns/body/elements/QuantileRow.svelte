@@ -40,7 +40,7 @@ let audienceXScale;
 let mounted = false;
 
 let audienceGraph = {
-  width: 150,
+  width: 130,
   height: 16,
 };
 
@@ -123,15 +123,24 @@ tr td.data-cell--graphic:hover {
   color: var(--cool-gray-500);
   font-family: var(--main-mono-font);
 }
+
+.build-id__date {
+  font-weight: bold;
+  color: var(--cool-gray-500);
+}
 </style>
 
 <tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
     <td class=data-cell--main>
       <div>
-        <div class=overline--small>Firefox {datum.version}</div>
+        <!-- <div class=overline--small>Firefox {datum.version}</div> -->
         <div class=build-id>
-          <span>{datum.label.slice(0, 4)}</span>-<span>{datum.label.slice(4, 6)}</span>-<span>{datum.label.slice(6, 8)}</span>
+          <div class=build-id__date>
+            <span>{datum.label.slice(0, 4)}</span>-<span>{datum.label.slice(4, 6)}</span>-<span>{datum.label.slice(6, 8)}</span>
+          </div>
+          <div>
           {datum.label.slice(8, 10)}:{datum.label.slice(10, 12)}:{datum.label.slice(12, 14)}
+        </div>
         </div>
       </div>
     </td>

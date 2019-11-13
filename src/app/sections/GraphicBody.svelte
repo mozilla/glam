@@ -10,7 +10,6 @@ import {
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
-
 import { firefoxVersionMarkers } from '../state/product-versions';
 
 function isScalarData(data) {
@@ -25,7 +24,6 @@ function isCategoricalData() {
   return (($store.probe.type === 'histogram' && $store.probe.kind === 'enumerated')
   || $store.probe.kind === 'categorical' || $store.probe.kind === 'flag' || $store.probe.kind === 'boolean');
 }
-
 
 let probeName;
 let output = Promise.resolve({});
@@ -114,7 +112,9 @@ function handleBodySelectors(event) {
 
     <div class=graphic-body__graphic-header>
     {#if $store.probe.name}
-        <h2 class='heading--03'>{$store.probe.name}</h2>
+        <h2 class='heading--03'>
+          {$store.probe.name}
+        </h2>
     {:else}
         <h2 class='heading--04'>Telemetry Prototype</h2>
     {/if}
