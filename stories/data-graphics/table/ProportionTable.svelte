@@ -58,7 +58,7 @@ $: if (which) currentPage = 0;
 $: activeBuckets = probes[which].initialBuckets;
 
 let metricType = 'proportions';
-$: console.log(probes[which]);
+
 </script>
 
 <div class=story>
