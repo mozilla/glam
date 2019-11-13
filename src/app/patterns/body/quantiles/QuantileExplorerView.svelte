@@ -50,7 +50,6 @@ function makeSelection(type) {
   }
 </style>
 
-
 <div class=body-content>
   
   <div class=body-control-row>

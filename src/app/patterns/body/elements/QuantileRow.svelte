@@ -8,8 +8,8 @@ import { percentileLineColorMap } from '../../../../components/data-graphics/uti
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
+import ReferenceSymbol from './ReferenceSymbol.svelte';
 
-const percFormat = (v) => `${~~(v * 100)}%`;
 const countFormat = format(',.0f');
 const numberFormat = format('.0f');
 
@@ -26,6 +26,9 @@ export let datum;
 export let reference;
 export let biggestAudience = datum.audienceSize;
 export let isReference;
+export let distributionScaleType = 'scalePoint';
+
+export let xDomain;
 
 $: if (datum.audienceSize) audienceSize.set(datum.audienceSize);
 
@@ -37,8 +40,8 @@ let audienceXScale;
 let mounted = false;
 
 let audienceGraph = {
-  width: 150,
-  height: 20,
+  width: 130,
+  height: 16,
 };
 
 let distributionGraph = {
@@ -120,20 +123,32 @@ tr td.data-cell--graphic:hover {
   color: var(--cool-gray-500);
   font-family: var(--main-mono-font);
 }
+
+.build-id__date {
+  font-weight: bold;
+  color: var(--cool-gray-500);
+}
 </style>
 
 <tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
     <td class=data-cell--main>
       <div>
-        <div class=overline--small>Firefox {datum.version}</div>
+        <!-- <div class=overline--small>Firefox {datum.version}</div> -->
         <div class=build-id>
-          <span>{datum.label.slice(0, 4)}</span>-<span>{datum.label.slice(4, 6)}</span>-<span>{datum.label.slice(6, 8)}</span>
+          <div class=build-id__date>
+            <span>{datum.label.slice(0, 4)}</span>-<span>{datum.label.slice(4, 6)}</span>-<span>{datum.label.slice(6, 8)}</span>
+          </div>
+          <div>
           {datum.label.slice(8, 10)}:{datum.label.slice(10, 12)}:{datum.label.slice(12, 14)}
+        </div>
         </div>
       </div>
     </td>
     <td class=data-cell--secondary>
         <div>
+            <div class='audience-size'>
+                {countFormat($audienceSize)}
+              </div>
         {#if mounted}
           <DataGraphic
             width={audienceGraph.width}
@@ -141,20 +156,30 @@ tr td.data-cell--graphic:hover {
             left={5}
             right={3}
             top={0}
-            bottom={0}
             bind:xScale={audienceXScale}
             xDomain={[0, 1]}
             yDomain={[0, 1]}
             xType={'linear'}
           >
-            <line x1={audienceXScale(0)} x2={audienceXScale(1)} y1={audienceGraph.height / 2} y2={audienceGraph.height / 2} stroke='var(--cool-gray-400)' stroke-dasharray="4,1" />
-            <line x1={audienceXScale(0)} x2={audienceXScale($audienceSize / biggestAudience)} y1={audienceGraph.height / 2} y2={audienceGraph.height / 2} stroke='var(--cool-gray-500)'/>
-            <circle cx={audienceXScale($audienceSize / biggestAudience)} cy={audienceGraph.height / 2} r=2.5 fill=var(--cool-gray-500) />
+            <line x1={audienceXScale(0)} x2={audienceXScale(1)} y1={3} y2={3} stroke='var(--cool-gray-400)' stroke-dasharray="4,1" />
+            <line x1={audienceXScale(0)} x2={audienceXScale($audienceSize / biggestAudience)} y1={3} y2={3} stroke-width=2 stroke='var(--cool-gray-500)'/>
+            {#if isReference}
+              <ReferenceSymbol xLocation={audienceXScale($audienceSize / biggestAudience)} yLocation={3} color=var(--cool-gray-700) />
+            {:else}
+              <circle cx={audienceXScale($audienceSize / biggestAudience)} cy={3} r=2.5 fill=var(--cool-gray-500) />
+            {/if}
+            {#if hovered}
+              <ReferenceSymbol xLocation={audienceXScale(reference.audienceSize / biggestAudience)} yLocation={3} color=var(--cool-gray-500) />
+              <text 
+                font-size=10
+                font-weight=bold
+                text-anchor=middle
+                x={audienceXScale(reference.audienceSize / biggestAudience)} y={3 + 12} 
+                fill=var(--pantone-red-500)
+                >ref.</text>
+            {/if}
           </DataGraphic>
         {/if}
-        </div>
-        <div class='audience-size'>
-          {countFormat($audienceSize)}
         </div>
     </td>
     
@@ -174,57 +199,33 @@ tr td.data-cell--graphic:hover {
         top={0}
         bottom={0}
         bind:xScale={distributionXScale}
-        xDomain={datum.histogram.map((d) => d.bin)}
+        xDomain={xDomain}
         yDomain={['top', 'bottom']}
+        xType={distributionScaleType}
       >
         <TopAxis tickCount=6 lineStyle='long' />
         {#if distributionXScale}
-          <!-- <line 
-            x1={distributionXScale(datum.transformedPercentiles[5])}
-            x2={distributionXScale(datum.transformedPercentiles[95])}
-            y1={distributionGraph.height - 6}
-            y2={distributionGraph.height - 6}
-            stroke=var(--cool-gray-300)
-          /> -->
-          {#if hovered}
-
           {#each Object.keys(datum.percentiles) as p, i}
-            <!-- {#if ['5', '95'].includes(p)} -->
-              <circle 
+              <circle
+                opacity={hovered ? 1 : 0.6}
                 cx={distributionXScale(datum.transformedPercentiles[p])} 
                 cy={ 6} r=2 fill={percentileLineColorMap(+p)} />
-            <!-- {:else}
-            <line 
-              x1={distributionXScale(datum.transformedPercentiles[p])} 
-              x2={distributionXScale(datum.transformedPercentiles[p])}
-              y1={distributionGraph.height - 9}
-              y2={distributionGraph.height - 3}
-              stroke={percentileLineColorMap(+p)}
-              stroke-width=2 />
-            {/if} -->
           {/each}
-          {#each Object.keys(reference.percentiles) as p, i}
-            <!-- {#if ['5', '95'].includes(p)} -->
-              <line
-                x1={distributionXScale(datum.transformedPercentiles[p])}
-                x2={distributionXScale(reference.transformedPercentiles[p])}
-                y1={6}
-                y2={distributionGraph.height - 6}
-                stroke={percentileLineColorMap(+p)}
-              />
-              <circle 
-                cx={distributionXScale(reference.transformedPercentiles[p])} 
-                cy={distributionGraph.height - 6} r=2 fill={percentileLineColorMap(+p)} />
-            <!-- {:else}
-            <line 
-              x1={distributionXScale(datum.transformedPercentiles[p])} 
-              x2={distributionXScale(datum.transformedPercentiles[p])}
-              y1={distributionGraph.height - 9}
-              y2={distributionGraph.height - 3}
-              stroke={percentileLineColorMap(+p)}
-              stroke-width=2 />
-            {/if} -->
-          {/each}
+          {#if hovered}
+            {#each Object.keys(reference.percentiles) as p, i}
+                <line
+                  x1={distributionXScale(datum.transformedPercentiles[p])}
+                  x2={distributionXScale(reference.transformedPercentiles[p])}
+                  y1={6}
+                  y2={distributionGraph.height - 6}
+                  stroke={percentileLineColorMap(+p)}
+                />
+
+                <ReferenceSymbol
+                  xLocation={distributionXScale(reference.transformedPercentiles[p])} 
+                  yLocation={distributionGraph.height - 6} 
+                  color={percentileLineColorMap(+p)} />
+            {/each}
           {/if}
       {/if}
       <Violin 
