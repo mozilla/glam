@@ -26,8 +26,6 @@ export let viewInfo = {
   table: { name: 'Table', description: 'Get a table of percentile / proportion values over many builds.' },
 };
 
-$: console.log(active);
-
 </script>
 
 <style>

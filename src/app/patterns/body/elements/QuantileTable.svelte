@@ -101,7 +101,9 @@ thead tr th {
           </th>
           <th class="header-cell header-cell--text">Clients</th>
           {#each Object.keys(data[0].percentiles) as p, i (p + data[0].percentiles[p])}
-            <th class="header-cell header-cell--text header-cell--percentile"><span class=percentile-label-block style="background-color: {percentileLineColorMap(+p)}"></span>{p}%</th>
+            <th class="header-cell header-cell--text header-cell--percentile">
+              <span class=percentile-label-block style="background-color: {percentileLineColorMap(+p)}"></span>{p}%
+            </th>
           {/each}
           <th class="header-cell header-cell--dg-scales">
               <DataGraphic
