@@ -1,6 +1,6 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import { format } from 'd3-format';
+import { formatPercent, formatCount } from '../utils/formatters';
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 import BuildIDCell from '../table/BuildIDCell.svelte';
@@ -8,7 +8,6 @@ import CountProportionCell from '../table/CountProportionCell.svelte';
 import SingleNumberCell from '../table/SingleNumberCell.svelte';
 import ComparisonCell from '../table/ComparisonCell.svelte';
 
-const numberFormat = format('.0f');
 
 const dispatch = createEventDispatcher();
 function onClick(v) {
@@ -22,6 +21,11 @@ export let reference;
 export let biggestAudience = datum.audienceSize;
 export let isReference;
 export let distributionScaleType = 'scalePoint';
+export let activeBuckets;
+export let metricType;
+export let bucketColorMap = () => 'black';
+
+const numberFormat = metricType === 'proportions' ? formatPercent : formatCount;
 
 export let xDomain;
 
@@ -30,11 +34,6 @@ let hovered = false;
 </script>
 
 <style>
-
-.median {
-  font-weight: bold;
-  font-size: var(--text-03);
-}
 
 .reference {
   background-color: var(--pantone-red-100);
@@ -52,24 +51,19 @@ let hovered = false;
       referenceCount={reference.audienceSize}
       {hovered}
     />
-    
-    {#each Object.keys(datum.percentiles) as p, i (p + datum.percentiles[p])}
+    {#each activeBuckets as b, i}
       <SingleNumberCell>
-        <div class:median={p === '50'}>
-          {numberFormat(datum.percentiles[p])}
-        </div>
+        {numberFormat(datum[metricType][b])}
       </SingleNumberCell>
     {/each}
 
     <ComparisonCell
       distributionScaleType={distributionScaleType}
       xDomain={xDomain}
-      colorMap={(v) => percentileLineColorMap(+v)}
+      colorMap={bucketColorMap}
       hovered={hovered}
-      hoverDistributionValues={datum.histogram}
-      referenceDistributionValues={reference.histogram}
-      hoverPointValues={datum.transformedPercentiles}
-      referencePointValues={reference.transformedPercentiles}
+      hoverPointValues={datum[metricType]}
+      referencePointValues={reference[metricType]}
       isReference={isReference}
     />
 

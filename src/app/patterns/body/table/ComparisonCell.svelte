@@ -63,31 +63,35 @@ let distributionGraph = {
           {/each}
         {/if}
     {/if}
-    <Violin 
-    orientation='horizontal'
-    rawPlacement={distributionGraph.height / 2.0 - 0.5}
-    density={hoverDistributionValues}
-    densityAccessor='value'
-    showLeft={false}
-    valueAccessor='bin'
-    opacity={hovered || isReference ? 0.9 : 0.6}
-    densityRange={[0, distributionGraph.height / 4.0]}
-    areaColor="var(--digital-blue-400)"
-    lineColor="var(--digital-blue-500)"
-  />
+    {#if hoverDistributionValues}
+      <Violin 
+        orientation='horizontal'
+        rawPlacement={distributionGraph.height / 2.0 - 0.5}
+        density={hoverDistributionValues}
+        densityAccessor='value'
+        showLeft={false}
+        valueAccessor='bin'
+        opacity={hovered || isReference ? 0.9 : 0.6}
+        densityRange={[0, distributionGraph.height / 4.0]}
+        areaColor="var(--digital-blue-400)"
+        lineColor="var(--digital-blue-500)"
+      />
+  {/if}
   {#if hovered}
-    <Violin 
-      orientation='horizontal'
-      rawPlacement={distributionGraph.height / 2.0 + 0.5}
-      density={referenceDistributionValues}
-      densityAccessor='value'
-      showRight={false}
-      valueAccessor='bin'
-      opacity={hovered || isReference ? 0.9 : 0.6}
-      densityRange={[0, distributionGraph.height / 4.0]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    />
+    {#if referenceDistributionValues}
+      <Violin 
+        orientation='horizontal'
+        rawPlacement={distributionGraph.height / 2.0 + 0.5}
+        density={referenceDistributionValues}
+        densityAccessor='value'
+        showRight={false}
+        valueAccessor='bin'
+        opacity={hovered || isReference ? 0.9 : 0.6}
+        densityRange={[0, distributionGraph.height / 4.0]}
+        areaColor="var(--digital-blue-400)"
+        lineColor="var(--digital-blue-500)"
+      />
+    {/if}
     <text 
       x={distributionGraph.width - 3}
       y={10}
