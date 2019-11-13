@@ -608,3 +608,45 @@ main .details {
     border-radius: var(--space-1q);
     margin-right: var(--space-1h);
   }
+
+
+
+.data-cell {
+    font-size: var(--text-02);
+    text-align: right;
+    padding: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+  }
+  
+  tr .data-cell:first-child {
+    text-align: left;
+  }
+  
+  tr:hover .data-cell {
+    background-color: var(--cool-gray-100);
+  }
+  
+  tr .data-cell:hover {
+    background-color: var(--cool-gray-200);
+  }
+  
+  td.data-cell--main {
+    min-width: var(--space-16x);
+  }
+  
+  td.data-cell--secondary {
+    border-right: 2px solid var(--cool-gray-200);
+    min-width: var(--space-16x);
+  }
+  
+  .data-cell--graphic {
+    padding:0;
+    vertical-align: center;
+  }
+  
+  tr td.data-cell--graphic:hover {
+    padding:0;
+    vertical-align: center;
+    background-color: var(--cool-gray-100);
+  }
