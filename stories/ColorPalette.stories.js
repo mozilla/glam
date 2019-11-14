@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/svelte';
 import ColorPalette from './ColorPalette.svelte';
 
-import '../public/global.css';
+import '../public/static/global.css';
 
 storiesOf('Principles|Color', module)
   .add('Telemetry', () => ({

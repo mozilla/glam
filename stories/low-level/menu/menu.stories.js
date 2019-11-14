@@ -4,7 +4,7 @@ import BasicMenuStory from './BasicMenuStory.svelte';
 import FloatingMenuStory from './FloatingMenuStory.svelte';
 import MenuButtonStory from './MenuButtonStory.svelte';
 
-import '../../../public/global.css';
+import '../../../public/static/global.css';
 import '../../glean-design-stories.css';
 
 storiesOf('UX Components|Menu', module)
