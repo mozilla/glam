@@ -13,7 +13,7 @@ export default {
     sourcemap: true,
     format: 'iife',
     name: 'app',
-    file: 'public/bundle.js',
+    file: 'public/static/bundle.js',
   },
   plugins: [
     json(),
@@ -23,7 +23,7 @@ export default {
       // we'll extract any component CSS out into
       // a separate file — better for performance
       css: (css) => {
-        css.write('public/bundle.css');
+        css.write('public/static/bundle.css');
       },
     }),
 
@@ -35,9 +35,9 @@ export default {
     resolve({ browser: true }),
     commonjs(),
 
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
-    !production && livereload('public'),
+    // Watch the `public/static/` directory and refresh
+    // the browser on changes when not in production
+    !production && livereload('public/static/'),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify

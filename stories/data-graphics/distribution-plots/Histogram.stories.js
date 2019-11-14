@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/svelte';
 
 import GenericQuantileView from './GenericQuantileView.svelte';
 import GenericProportionView from './GenericProportionView.svelte';
-import '../../../public/global.css';
+import '../../../public/static/global.css';
 import './shared.css';
 
 storiesOf('Data Graphics|GLAM Body Elements', module)

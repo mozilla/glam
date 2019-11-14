@@ -14,7 +14,7 @@ Usage:
   font-display: swap;
   font-style: normal;
   font-named-instance: 'Regular';
-  src: url("/fonts/inter/Inter-upright.var.woff2") format("woff2");
+  src: url("/static/fonts/inter/Inter-upright.var.woff2") format("woff2");
 }
 @font-face {
   font-family: 'Inter var';
@@ -22,5 +22,5 @@ Usage:
   font-display: swap;
   font-style: italic;
   font-named-instance: 'Italic';
-  src: url("/fonts/inter/Inter-italic.var.woff2") format("woff2");
+  src: url("/static/fonts/inter/Inter-italic.var.woff2") format("woff2");
 }

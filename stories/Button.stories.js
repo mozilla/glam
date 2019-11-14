@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/svelte';
 import Buttons from './Buttons.svelte';
 import ButtonGroupStory from './ButtonGroupStory.svelte';
-import '../public/global.css';
+import '../public/static/global.css';
 import './glean-design-stories.css';
 
 storiesOf('UX Components|Buttons', module)

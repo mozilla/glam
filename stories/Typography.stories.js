@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/svelte';
 import TypographySizes from './TypographySizes.svelte';
 import Fonts from './Fonts.svelte';
 
-import '../public/global.css';
+import '../public/static/global.css';
 
 storiesOf('Principles|Typography', module)
   .add('Sizes', () => ({
