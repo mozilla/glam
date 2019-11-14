@@ -1,7 +1,7 @@
 <style>
-@import url('/fonts/fira-code/fira-font-face.css');
-@import url('/fonts/metropolis/metropolis-font-face.css');
-@import url('/fonts/inter/inter-font-face.css');
+@import url('/static/fonts/fira-code/fira-font-face.css');
+@import url('/static/fonts/metropolis/metropolis-font-face.css');
+@import url('/static/fonts/inter/inter-font-face.css');
 
 .font-section {
   margin-left: calc(var(--space-6x) * -1);
