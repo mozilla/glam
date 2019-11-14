@@ -63,7 +63,7 @@ let metricType = 'proportions';
 
 <div class=story>
     <div class='view-header'>
-        <h1>Quantile Table</h1>
+        <h1>Proportion Table</h1>
         <div class='selectors'>
           {#each probes as {name, data}, i}
             <label>
