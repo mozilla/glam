@@ -55,7 +55,7 @@ def handle_api_exception(error):
 REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
 
-@app.route("/api/v1/data", methods=["POST"])
+@app.route("/api/v1/data/", methods=["POST"])
 def get_data():
     """
     Fetches histogram data from Firestore.
@@ -195,7 +195,7 @@ def get_data():
     return jsonify(resp)
 
 
-@app.route("/api/v1/probes", methods=["GET"])
+@app.route("/api/v1/probes/", methods=["GET"])
 def get_probes():
     probes = {}
 
@@ -206,7 +206,7 @@ def get_probes():
     return jsonify({"probes": probes})
 
 
-@app.route("/api/v1/probes/<name>", methods=["GET"])
+@app.route("/api/v1/probes/<name>/", methods=["GET"])
 def get_probe(name):
     doc = db.collection("firefox-probes").document(name).get()
     if doc.exists:
