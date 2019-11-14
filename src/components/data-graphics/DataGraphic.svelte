@@ -27,6 +27,7 @@ export let laneGap = 30;
 export let buffer = 5;
 
 let xPadding = 0.5;
+export let yPadding = 0;
 
 // if x is a function, use that to get xMin / xMax.
 // if xMin / xMax is a function, use that to calculate xMin / xMax.
@@ -114,7 +115,10 @@ function createYPointScale(values) {
   // const scaleFunction = yType === 'scalePoint' ? scalePoint : scaleLinear;
   const scaleFunction = getScaleFunction(yType);
 
-  const scale = scaleFunction().domain(values).range([$bottomPlot, $topPlot]);
+  let scale = scaleFunction().domain(values).range([$bottomPlot, $topPlot]);
+  if (yType === 'scalePoint') {
+    scale = scale.padding(yPadding);
+  }
   scale.type = yType;
   return scale;
 }

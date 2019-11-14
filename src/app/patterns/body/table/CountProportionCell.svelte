@@ -7,19 +7,15 @@ import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
+import { proportionSmallMultiple } from '../utils/constants';
+
 export let count;
 export let total;
 export let referenceCount;
 export let isReference;
 export let hovered = false;
 
-
 const countFormat = format(',.0f');
-
-let audienceGraph = {
-  width: 130,
-  height: 16,
-};
 
 const audienceSize = tweened(0, { duration: 800, delay: 200, easing });
 
@@ -28,6 +24,7 @@ $: audienceSize.set(count);
 let audienceXScale;
 let mounted = false;
 onMount(() => { mounted = true; });
+
 </script>
 
 <style>
@@ -45,8 +42,8 @@ onMount(() => { mounted = true; });
           </div>
     {#if mounted}
       <DataGraphic
-        width={audienceGraph.width}
-        height={audienceGraph.height}
+        width={proportionSmallMultiple.width}
+        height={proportionSmallMultiple.height}
         left={5}
         right={3}
         top={0}

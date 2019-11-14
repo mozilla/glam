@@ -6,7 +6,7 @@ import { percentileLineColorMap } from '../../../../components/data-graphics/uti
 import BuildIDCell from '../table/BuildIDCell.svelte';
 import CountProportionCell from '../table/CountProportionCell.svelte';
 import SingleNumberCell from '../table/SingleNumberCell.svelte';
-import ComparisonCell from '../table/ComparisonCell.svelte';
+import ProportionComparisonCell from '../table/ProportionComparisonCell.svelte';
 
 
 const dispatch = createEventDispatcher();
@@ -57,7 +57,7 @@ let hovered = false;
       </SingleNumberCell>
     {/each}
 
-    <ComparisonCell
+    <ProportionComparisonCell
       distributionScaleType={distributionScaleType}
       xDomain={xDomain}
       colorMap={bucketColorMap}
@@ -65,6 +65,7 @@ let hovered = false;
       hoverPointValues={datum[metricType]}
       referencePointValues={reference[metricType]}
       isReference={isReference}
+      activeBuckets={activeBuckets}
     />
 
   </tr>

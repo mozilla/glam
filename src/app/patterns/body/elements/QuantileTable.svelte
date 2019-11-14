@@ -4,6 +4,8 @@ import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import QuantileRow from './QuantileRow.svelte';
 import Pagination from './Pagination.svelte';
 
+import { comparisonSmallMultiple } from '../utils/constants';
+
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 export let data;
@@ -107,11 +109,11 @@ thead tr th {
           {/each}
           <th class="header-cell header-cell--dg-scales">
               <DataGraphic
-              width={250}
+              width={comparisonSmallMultiple.width}
               height={20}
-              left={10}
+              left={comparisonSmallMultiple.left}
               top={20}
-              right={10}
+              right={comparisonSmallMultiple.right}
               bottom={0}
               key="header-scale"
               xDomain={xDomain}
