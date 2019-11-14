@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
 export async function getProbeData(params) {
-  const URL = 'http://localhost:8000/api/v1/data';
+  const URL = 'http://localhost:8000/api/v1/data/';
   const data = await fetch(URL, {
     method: 'POST',
     headers: {
