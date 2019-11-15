@@ -183,6 +183,8 @@ class Dev(Base):
     def VERSION(self):
         return {"version": datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")}
 
+    MIDDLEWARE = Base.MIDDLEWARE + ["glam.middleware.dev_cors_middleware"]
+
 
 class Test(Dev):
     "Configuration to be used during testing"
