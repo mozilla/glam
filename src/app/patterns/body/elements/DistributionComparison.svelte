@@ -1,6 +1,8 @@
 <script>
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
+import { derived } from 'svelte/store';
+import { spring } from 'svelte/motion';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
@@ -14,8 +16,9 @@ export let leftDistribution;
 export let rightDistribution;
 export let leftLabel;
 export let rightLabel;
-export let leftPercentiles;
-export let rightPercentiles;
+export let leftPoints;
+export let rightPoints;
+export let activeBins;
 export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
 export let xDomain;
@@ -46,23 +49,40 @@ onMount(() => {
 });
 
 function placeShapeY(value) {
+  if (!yScale) return bottomPlot || height;
   if (yScale.type !== 'scalePoint') return yScale(value);
   return yScale(nearestBelow(value, yDomain));
 }
 
-let dotsAndLines = [];
-$: if (leftPercentiles && leftPercentiles) {
-  dotsAndLines = leftPercentiles.map(({ value, bin }) => {
-    let rightY = placeShapeY(rightPercentiles.find((r) => r.bin === bin).value);
-    let leftY = placeShapeY(value);
-    let color = colorMap(bin);
-    return { leftY, rightY, color };
+function ptToSpringValue(pt) {
+  if (pt === undefined) return undefined;
+  const out = { ...pt };
+  Object.keys(out).forEach((k) => {
+    out[k] = placeShapeY(out[k]);
   });
-} else {
-  dotsAndLines = [];
+  return out;
 }
 
+let leftValues = spring(ptToSpringValue(rightPoints), { damping: 1, stiffness: 0.7 });
+let rightValues = spring(ptToSpringValue(rightPoints), { damping: 0.4, stiffness: 0.8 });
+$: if (leftPoints) leftValues.set(ptToSpringValue(leftPoints));
+$: if (rightPoints) rightValues.set(ptToSpringValue(rightPoints));
+
+
+const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
+  if (!leftPoints || !rightPoints) return [];
+  const dal = Object.keys($right).reduce((acc, k) => {
+    const rightY = $right[k];
+    const leftY = $left[k];
+    const color = colorMap(k);
+    acc[k] = { leftY, rightY, color };
+    return acc;
+  }, {});
+  return dal;
+});
+
 </script>
+
 
 <DataGraphic
   xDomain={xDomain}
@@ -91,22 +111,22 @@ $: if (leftPercentiles && leftPercentiles) {
   <!-- <LeftAxis tickCount=6 />
   <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} /> -->
 
-  {#if leftPercentiles && rightPercentiles}
-  {#each dotsAndLines as {leftY, rightY, color}, i}
+  {#if Object.keys($dotsAndLines).length}
+  {#each activeBins as bin, i}
     <line 
-      x1={leftPlot}
-      x2={rightPlot}
-      y1={leftY}
-      y2={rightY}
-      stroke={color}
+    x1={leftPlot}
+    x2={rightPlot}
+    y1={$dotsAndLines[bin].leftY}
+    y2={$dotsAndLines[bin].rightY}
+    stroke={$dotsAndLines[bin].color}
     />
     <circle 
-      cx={leftPlot} 
-      cy={leftY} 
-      r=2
-      fill={color}
+    cx={leftPlot} 
+    cy={$dotsAndLines[bin].leftY} 
+    r=2
+    fill={$dotsAndLines[bin].color}
     />
-    <ReferenceSymbol xLocation={rightPlot} yLocation={rightY} color={color} />
+    <ReferenceSymbol xLocation={rightPlot} yLocation={$dotsAndLines[bin].rightY} color={$dotsAndLines[bin].color} />
   {/each}
 {/if}
 
