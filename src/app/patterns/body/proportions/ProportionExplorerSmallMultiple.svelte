@@ -6,7 +6,7 @@ import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
 import BuildIDComparison from '../elements/BuildIDComparison.svelte';
-import DistributionComparison from '../elements/DistributionComparison.svelte';
+import DistributionComparison from '../elements/ProportionDistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
 import {
@@ -45,12 +45,13 @@ const probeType = getContext('probeType');
 
 let yScaleType = 'linear';
 
-let yDomain = [-0.05, 1.05];
+// let's get the maximum value here?
+// let yDomain = [-0.05, 1.05];
 
-if (metricType === 'counts') {
-  const counts = Math.max(...data.map((d) => Object.values(d.counts)).flat());
-  yDomain = [0, counts];
-}
+// if (metricType === 'counts') {
+const counts = Math.max(...data.map((d) => Object.values(d[metricType])).flat());
+let yDomain = [0, counts];
+// }
 
 // if (probeType === 'histogram') {
 //   yScaleType = 'scalePoint';
@@ -194,7 +195,6 @@ h4 {
     leftPoints={hovered.datum ? hovered.datum[metricType] : undefined}
     rightPoints={reference[metricType]}
     activeBins={activeBuckets}
-    xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
   

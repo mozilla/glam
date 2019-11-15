@@ -12,6 +12,8 @@ import ReferenceSymbol from './ReferenceSymbol.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';
 
+import { twoPointSpring } from '../utils/animation';
+
 export let leftDistribution;
 export let rightDistribution;
 export let leftLabel;
@@ -19,9 +21,10 @@ export let rightLabel;
 export let leftPoints;
 export let rightPoints;
 export let activeBins;
+
 export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
-export let xDomain;
+
 export let yDomain;
 export let width;
 export let height;
@@ -30,6 +33,8 @@ export let yType;
 export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
+
+const xDomain = ['hovered', 'ref.'];
 
 let L;
 let R;
@@ -54,32 +59,23 @@ function placeShapeY(value) {
   return yScale(nearestBelow(value, yDomain));
 }
 
-function ptToSpringValue(pt) {
-  if (pt === undefined) return undefined;
-  const out = { ...pt };
-  Object.keys(out).forEach((k) => {
-    out[k] = placeShapeY(out[k]);
-  });
-  return out;
+
+function getHistValues(d) {
+  return d.map((d) => d.value);
 }
 
-let leftValues = spring(ptToSpringValue(rightPoints), { damping: 1, stiffness: 0.7 });
-let rightValues = spring(ptToSpringValue(rightPoints), { damping: 0.4, stiffness: 0.8 });
-$: if (leftPoints) leftValues.set(ptToSpringValue(leftPoints));
-$: if (rightPoints) rightValues.set(ptToSpringValue(rightPoints));
+let referenceDistSpring;
 
+if (rightDistribution) referenceDistSpring = spring(getHistValues(rightDistribution), { damping: 1, stiffness: 0.9 });
+$: if (rightDistribution) referenceDistSpring.set(getHistValues(rightDistribution));
 
-const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
-  if (!leftPoints || !rightPoints) return [];
-  const dal = Object.keys($right).reduce((acc, k) => {
-    const rightY = $right[k];
-    const leftY = $left[k];
-    const color = colorMap(k);
-    acc[k] = { leftY, rightY, color };
-    return acc;
-  }, {});
-  return dal;
-});
+const animatedReferenceDistribution = derived(referenceDistSpring,
+  ($d) => $d.map((di, i) => ({ value: di, bin: rightDistribution[i].bin })));
+
+const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
+
+$: if (leftPoints) dotsAndLines.setHover(leftPoints);
+$: if (rightPoints) dotsAndLines.setReference(rightPoints);
 
 </script>
 
@@ -96,7 +92,7 @@ const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
   bind:bottomPlot={B}
   bind:yScale={yScale}
   left={10}
-  right={40}
+  right={50}
   key={key}
 >
   <rect 
@@ -107,28 +103,32 @@ const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
     fill="var(--cool-gray-200)"
     opacity=.25
   />
+  <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
+  <BottomAxis ticks={xDomain}  />
 
-  <!-- <LeftAxis tickCount=6 />
-  <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} /> -->
-
-  {#if Object.keys($dotsAndLines).length}
-  {#each activeBins as bin, i}
-    <line 
-    x1={leftPlot}
-    x2={rightPlot}
-    y1={$dotsAndLines[bin].leftY}
-    y2={$dotsAndLines[bin].rightY}
-    stroke={$dotsAndLines[bin].color}
-    />
-    <circle 
-    cx={leftPlot} 
-    cy={$dotsAndLines[bin].leftY} 
-    r=2
-    fill={$dotsAndLines[bin].color}
-    />
-    <ReferenceSymbol xLocation={rightPlot} yLocation={$dotsAndLines[bin].rightY} color={$dotsAndLines[bin].color} />
-  {/each}
-{/if}
+  {#if leftPoints && rightPoints}
+    {#each activeBins as bin, i}
+      <line 
+        x1={leftPlot}
+        x2={rightPlot}
+        y1={$dotsAndLines[bin].leftY}
+        y2={$dotsAndLines[bin].rightY}
+        stroke={$dotsAndLines[bin].color}
+        stroke-width=2
+      />
+      <circle 
+        cx={leftPlot} 
+        cy={$dotsAndLines[bin].leftY} 
+        r=3
+        fill={$dotsAndLines[bin].color}
+      />
+      <ReferenceSymbol 
+        xLocation={rightPlot} 
+        yLocation={$dotsAndLines[bin].rightY} 
+        color={$dotsAndLines[bin].color} 
+      />
+    {/each}
+  {/if}
 
   {#if leftDistribution && showViolins}
   <g in:fade={{ duration: 50 }}>
@@ -154,7 +154,7 @@ const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
       rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot + 1}
       opacity=.9
       key={rightLabel}
-      density={rightDistribution} 
+      density={$animatedReferenceDistribution} 
       densityAccessor='value'
       valueAccessor='bin'
       densityRange={[0, 30]}
@@ -163,6 +163,5 @@ const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
     />
   {/if}
 
-  <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
-  <BottomAxis ticks={['hovered', 'latest']}  />
+
 </DataGraphic>    

@@ -45,7 +45,6 @@ const referenceSpring = spring(removeInactiveBuckets(referencePointValues), { da
 
 $: referenceSpring.set(removeInactiveBuckets(referencePointValues));
 
-// $: console.log($referenceSpring);
 </script>
 
 <td class=data-cell--graphic>

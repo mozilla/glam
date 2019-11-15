@@ -8,7 +8,7 @@ export let color = 'black';
 
 <g style="transform:translate({xLocation}px, {yLocation}px)">
     <path 
-      d={symbol().type(referenceSymbol).size(20)()} 
+      d={symbol().type(referenceSymbol).size(30)()} 
       fill={color}
     />
   </g>
