@@ -171,9 +171,10 @@ h4 {
     rightDistribution={reference.histogram}
     leftLabel={hovered.x}
     rightLabel={reference.label}
-    colorMap={percentileLineColorMap}
-    leftPercentiles={hovered.datum ? getAllPercentiles(percentiles, hovered.datum) : undefined}
-    rightPercentiles={getAllPercentiles(percentiles, reference)}
+    colorMap={(v) => percentileLineColorMap(+v)}
+    leftPoints={hovered.datum ? hovered.datum.percentiles : undefined}
+    rightPoints={reference.percentiles}
+    activeBins={percentiles}
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />

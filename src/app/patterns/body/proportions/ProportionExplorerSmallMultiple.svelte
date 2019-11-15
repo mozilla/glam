@@ -191,8 +191,9 @@ h4 {
     leftLabel={hovered.x}
     rightLabel={reference.label}
     colorMap={colorMap}
-    leftPercentiles={hovered.datum ? getAllProportions(activeBuckets, hovered.datum) : undefined}
-    rightPercentiles={getAllProportions(activeBuckets, reference)}
+    leftPoints={hovered.datum ? hovered.datum[metricType] : undefined}
+    rightPoints={reference[metricType]}
+    activeBins={activeBuckets}
     xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
