@@ -5,7 +5,7 @@ import { store } from './store'; // eslint-disable-line
 import { setProbe } from './actions';
 
 // TODO: Make this dynamic based on prod vs local dev.
-const url = 'http://localhost:8000/api/v1/probes';
+const url = 'http://localhost:8000/api/v1/probes/';
 
 
 const telemetrySearch = readable({ loaded: false }, async (set) => {
