@@ -119,9 +119,6 @@ class Base(Core):
 
     ALLOWED_HOSTS = values.ListValue([])
 
-    #: The URL under which this instance is running
-    SITE_URL = values.URLValue("http://localhost:8000")
-
     # Database
     # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
     DATABASES = values.DatabaseURLValue("postgres://postgres@db/postgres")
@@ -219,8 +216,6 @@ class Stage(Base):
         DATABASES = super().DATABASES.value.copy()
         DATABASES["default"].setdefault("OPTIONS", {})["sslmode"] = "require"
         return DATABASES
-
-    MIDDLEWARE = Base.MIDDLEWARE + ["mozilla_django_oidc.middleware.SessionRefresh"]
 
     DOCKERFLOW_CHECKS = [
         "dockerflow.django.checks.check_database_connected",
