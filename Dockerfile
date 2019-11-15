@@ -23,7 +23,10 @@ WORKDIR /app
 COPY ./requirements.txt /app/
 RUN pip install -U pip \
     && pip install --no-cache-dir -r requirements.txt
-COPY server /app/server
+
+COPY manage.py /app/manage.py
+COPY pytest.ini /app/pytest.ini
+COPY glam /app/glam
 # END BACKEND IMAGE
 
 
@@ -42,7 +45,7 @@ RUN npm run build
 # FINAL IMAGE
 FROM python:3-slim AS final
 
-EXPOSE 5000
+EXPOSE 8000
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -52,16 +55,17 @@ ENV PATH="/venv/bin:$PATH"
 
 WORKDIR /app
 
-COPY server /app/server
+COPY --from=backend /app/manage.py /app/manage.py
+COPY --from=backend /app/glam/ /app/glam/
 COPY --from=backend /venv/ /venv/
 COPY --from=frontend /app/public/ /app/public/
 
 CMD exec gunicorn \
-    --bind 0.0.0.0:5000 \
+    --bind 0.0.0.0:8000 \
     --workers 2 \
     --threads 8 \
     --worker-tmp-dir /dev/shm \
     --log-file - \
     --access-logfile - \
-    server.wsgi:application
+    glam.wsgi:application
 # END FINAL IMAGE

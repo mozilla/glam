@@ -4,10 +4,6 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-firebase-debug.log*
-
-# Firebase cache
-.firebase/
 
 # Firebase config
 gcp-app-creds.json
@@ -28,6 +24,8 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+coverage.xml
+.coverage
 
 # nyc test coverage
 .nyc_output

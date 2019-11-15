@@ -5,31 +5,17 @@ services:
     build:
       context: .
       target: backend
-    environment:
-      - PYTHONDONTWRITEBYTECODE=1
-      - FLASK_APP=server/wsgi.py
-      - FLASK_CONFIG=local
-      - FLASK_ENV=development
+    env_file:
+      - .env
     ports:
-    - "8000:5000"
+    - "8000:8000"
     volumes:
-    - "./server/:/app/server"
-    - "./public/:/app/public"
+    - $PWD:/app
     depends_on:
     - db
     links:
     - db
-    command: flask run --host=0.0.0.0
-
-  testserver:
-    build:
-      context: .
-      target: backend
-    environment:
-      - PYTHONDONTWRITEBYTECODE=1
-      - FLASK_APP=server/wsgi.py
-      - FLASK_CONFIG=test
-      - FLASK_ENV=development
+    command: python manage.py runserver 0.0.0.0:8000
 
   db:
     image: postgres:11

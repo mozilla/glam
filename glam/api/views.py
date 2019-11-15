@@ -1,45 +1,17 @@
-from flask import Blueprint, jsonify, request
-from sqlalchemy.sql import and_, select
-from werkzeug import exceptions
+from django.db.models import Q
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.response import Response
 
-from server import db
-from .models import AggregateTypes, Probe
-from .models import FirefoxMeasurement as fxm
-
-
-bp = Blueprint("api", __name__)
+from glam.api.constants import (
+    AGGREGATION_HISTOGRAM, AGGREGATION_NAMES, CHANNEL_IDS, CHANNEL_NAMES)
+from glam.api.models import Aggregation, Probe
 
 
-class APIException(Exception):
-    status_code = 400
-
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv["message"] = self.message
-        return rv
-
-
-@bp.errorhandler(APIException)
-def handle_api_exception(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
-
-
-REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
-
-
-@bp.route("/api/v1/data", methods=["POST"])
-def get_aggregate_data():
+@api_view(["POST"])
+def aggregations(request):
     """
-    Fetches histogram data.
+    Fetches aggregation data.
 
     Expects a JSON object in the body containing the query parameters, e.g.::
 
@@ -86,45 +58,42 @@ def get_aggregate_data():
         }
 
     """
-    try:
-        body = request.get_json()
-    except exceptions.BadRequest as e:
-        raise APIException(str(e))
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
+    body = request.data
 
     if body is None or body.get("query") is None:
-        raise APIException("Unexpected JSON body")
+        raise ValidationError("Unexpected JSON body")
 
     q = body["query"]
 
     if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
-        raise APIException(
+        raise ValidationError(
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
     dimensions = [
-        fxm.metric == q.get("probe"),
-        fxm.channel == q.get("channel"),
-        fxm.version.in_(map(str, q.get("versions"))),
-        fxm.os == q.get("os"),
+        Q(metric=q.get("probe")),
+        Q(channel=CHANNEL_IDS[q.get("channel")]),
+        Q(version__in=map(str, q.get("versions"))),
+        Q(os=q.get("os")),
     ]
 
     # Whether to pull aggregations by version or build_id.
     if q["aggregationLevel"] == "version":
-        dimensions.append(fxm.build_id == None)  # noqa
+        dimensions.append(Q(build_id=None))
     elif q["aggregationLevel"] == "build_id":
-        dimensions.append(fxm.build_id != None)  # noqa
+        dimensions.append(~Q(build_id=None))
 
-    sql = select([fxm]).where(and_(*dimensions))
-    result = db.engine.execute(sql)
+    result = Aggregation.objects.filter(*dimensions)
 
     response = {}
 
     for row in result:
 
         metadata = {
-            "channel": row.channel.name,
+            "channel": CHANNEL_NAMES[row.channel],
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
@@ -146,13 +115,13 @@ def get_aggregate_data():
         if sub_key not in record:
             record[sub_key] = {}
 
-        new_data = {row.agg_type.name: aggs}
-        if row.agg_type == AggregateTypes.histogram:
+        new_data = {AGGREGATION_NAMES[row.agg_type]: aggs}
+        if row.agg_type == AGGREGATION_HISTOGRAM:
             new_data["total_users"] = row.total_users
-        if value := row.metric_key:
-            new_data["key"] = value
-        if value := row.client_agg_type:
-            new_data["client_agg_type"] = value
+        if row.metric_key:
+            new_data["key"] = row.metric_key
+        if row.client_agg_type:
+            new_data["client_agg_type"] = row.client_agg_type
 
         data = record[sub_key].get("data", {})
         data.update(new_data)
@@ -163,22 +132,21 @@ def get_aggregate_data():
         # TODO: Attach labels to categorical histograms.
 
     if not response:
-        raise APIException("No documents found for the given parameters.", 404)
+        raise NotFound("No documents found for the given parameters")
 
     # Strip out the merge keys when returning the response.
-    return {
-        "response": [
-            {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
-            for r in response.values()
-        ]
-    }
+    return Response(
+        {
+            "response": [
+                {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
+                for r in response.values()
+            ]
+        }
+    )
 
 
-@bp.route("/api/v1/probes", methods=["GET"])
-def get_all_probes():
-
-    response = {
-        "probes": {probe.id: probe.info for probe in Probe.query.all()}
-    }
-
-    return response
+@api_view(["GET"])
+def probes(request):
+    return Response(
+        {"probes": {probe.key: probe.info for probe in Probe.objects.all()}}
+    )
