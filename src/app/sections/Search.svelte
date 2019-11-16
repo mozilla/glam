@@ -5,28 +5,22 @@ import {
     store,
 } from '../state/store';
 
-import {
-    setSearchIsActive, setSearchQuery, setProbe,
-} from '../state/actions';
 
 import telemetrySearch from '../state/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
 
-setContext('setProbe', store.connect(setProbe));
-setContext('setSearchIsActive', store.connect(setSearchIsActive));
-
 let inputElement;
 let searchContainer;
 
 function turnOnSearch() {
-    store.dispatch(setSearchIsActive(true));
+    store.setField('searchIsActive', true);
 }
 
 function turnOffSearch() {
     setTimeout(() => {
-      store.dispatch(setSearchIsActive(false));
+      store.setField('searchIsActive', false);
     }, 100);
 }
 
@@ -140,7 +134,8 @@ async function onKeypress(event) {
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}
       value={$store.searchQuery} on:input={(evt) => {
-          store.dispatch(setSearchQuery(evt.target.value));
+          store.setField('searchQuery', evt.target.value);
+          store.setField('searchIsActive', true);
       }} />
     </div>
 </div>

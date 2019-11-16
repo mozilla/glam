@@ -3,9 +3,6 @@ import { fade } from 'svelte/transition';
 import {
   store, dataset, extractBucketMetadata,
 } from '../state/store';
-import {
-  setVisiblePercentiles, setTimeHorizon, setActiveBuckets, setProportionMetricType, setApplicationStatus,
-} from '../state/actions';
 
 import ProbeDetails from './ProbeDetails.svelte';
 
@@ -47,10 +44,10 @@ $: if ($store.probe.name !== probeName && $dataset.data) {
       if (isCategorical) {
         etc = extractBucketMetadata(transformedData);
         if ($store.applicationStatus !== 'INITIALIZING') {
-          store.dispatch(setActiveBuckets(etc.initialBuckets));
+          store.setField('activeBuckets', etc.initialBuckets);
         }
       }
-      store.dispatch(setApplicationStatus('ACTIVE'));
+      store.setField('applicationStatus', 'ACTIVE');
       return { data: transformedData, ...etc };
     },
   ).catch((err) => console.error(err));
@@ -62,11 +59,11 @@ let width;
 
 function handleBodySelectors(event) {
   const { selection, type } = event.detail;
-  if (type === 'percentiles') store.dispatch(setVisiblePercentiles(selection));
-  if (type === 'timeHorizon') store.dispatch(setTimeHorizon(selection));
-  if (type === 'metricType') store.dispatch(setProportionMetricType(selection));
+  if (type === 'percentiles') store.setField('visiblePercentiles', selection);
+  if (type === 'timeHorizon') store.setField('timeHorizon', selection);
+  if (type === 'metricType') store.setField('proportionMetricType', selection);
   if (type === 'activeBuckets') {
-    store.dispatch(setActiveBuckets(selection));
+    store.setField('activeBuckets', selection);
   }
 }
 
@@ -115,7 +112,6 @@ function handleBodySelectors(event) {
   background-color: white;
   padding: var(--space-4x);
   padding-top: var(--space-2x);
-  padding-bottom:0;
 }
 
 .graphic-body__details {
@@ -169,9 +165,11 @@ function handleBodySelectors(event) {
                             on:selection={handleBodySelectors}
                         />
                     {:else}
+                      <div style="width: 100%">
                         <pre>
                             {JSON.stringify(data, null, 2)}
                         </pre>
+                      </div>
                     {/if}
                 </div>
             {:catch err}

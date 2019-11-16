@@ -4,9 +4,7 @@ import { createStore } from '../../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
 import telemetrySearch from './telemetry-search'; // eslint-disable-line
-import {
-  setAggregationLevel, setOS, setChannel, setApplicationStatus, setDashboardMode,
-} from './actions';
+
 import { getProbeData } from './api';
 import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
 
@@ -103,10 +101,10 @@ const initialState = {
 
 export const store = createStore(initialState);
 
-export const resetFilters = () => async () => {
-  store.dispatch(setChannel(getDefaultFieldValue('channel')));
-  store.dispatch(setOS(getDefaultFieldValue('os')));
-  store.dispatch(setAggregationLevel(getDefaultFieldValue('aggregationLevel')));
+export const resetFilters = () => {
+  store.setField('channel', getDefaultFieldValue('channel'));
+  store.setField('os', getDefaultFieldValue('os'));
+  store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
 };
 
 export const searchResults = derived(
@@ -238,15 +236,15 @@ export const dataset = derived(store, ($store) => {
 
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    store.dispatch(setDashboardMode(message));
+    store.setField('dashboardMode', message);
     return datasetResponse(message);
   }
 
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-      store.dispatch(setDashboardMode(message));
-      store.dispatch(setApplicationStatus('ACTIVE'));
+      store.setField('dashboardMode', message);
+      store.setField('applicationStatus', 'ACTIVE');
     }
     return message;
   }

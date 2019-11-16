@@ -11,8 +11,6 @@ import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.
-export let setProbe = getContext('setProbe');
-export let setSearchIsActive = getContext('setSearchIsActive');
 export let parentElement;
 
 // when search query changes for any reason, always center back to first item,
@@ -49,13 +47,13 @@ const handleKeypress = (event) => {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
-      setProbe($searchResults.results[focusedItem]);
-      setSearchIsActive(false);
+      store.setField('probe', $searchResults.results[focusedItem]);
+      store.setField('searchIsActive', false);
       // reset focused element
       focusedItem = 0;
     }
     if (key === 'Escape') {
-      setSearchIsActive(false);
+      store.setField('searchIsActive', true);
       // reset focused element
       focusedItem = 0;
     }
@@ -231,7 +229,7 @@ li {
           {#each $searchResults.results.slice(0, 30) as {id, name, type, description, versions}, i (id)}
               <li 
                   class:focused={focusedItem === i} on:click={() => {
-                  setProbe($searchResults.results[focusedItem]);
+                  store.setField('probe', $searchResults.results[focusedItem]);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>
