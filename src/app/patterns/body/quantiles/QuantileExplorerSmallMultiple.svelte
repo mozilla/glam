@@ -6,7 +6,7 @@ import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
 import BuildIDComparison from '../elements/BuildIDComparison.svelte';
-import DistributionComparison from '../elements/DistributionComparison.svelte';
+import QuantileDistributionComparison from '../elements/QuantileDistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
@@ -163,7 +163,7 @@ h4 {
     markers={markers}
   />
 
-  <DistributionComparison 
+  <QuantileDistributionComparison 
     yType={yScaleType}
     width={125}
     height={HEIGHT}
@@ -175,7 +175,6 @@ h4 {
     leftPoints={hovered.datum ? hovered.datum.percentiles : undefined}
     rightPoints={reference.percentiles}
     activeBins={percentiles}
-    xDomain={['hovered', 'latest']}
     yDomain={yDomain}
   />
   

@@ -130,7 +130,7 @@ td, th {
             Hovered<span class='small-shape'>●</span>
         </th>
         <th class=summary-label>
-            Latest<span class='small-shape'>⭑</span>
+            Ref.<span class='small-shape'>⭑</span>
           </th>
           <th>Diff.</th>
       </tr>
