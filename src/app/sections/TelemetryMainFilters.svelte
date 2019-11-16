@@ -10,10 +10,6 @@ import {
   getFieldValueLabel,
 } from '../state/store';
 
-import {
-  setChannel, setOS, setAggregationLevel,
-} from '../state/actions';
-
 const OFFSET = 10;
 const COMPACT = true;
 </script>

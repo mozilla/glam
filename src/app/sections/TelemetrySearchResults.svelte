@@ -1,7 +1,7 @@
 <script>
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import { getContext, afterUpdate } from 'svelte';
+import { afterUpdate } from 'svelte';
 import {
   searchResults, store,
 } from '../state/store';
