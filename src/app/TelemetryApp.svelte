@@ -34,12 +34,6 @@ onMount(() => { visible = true; });
 
 <style>
 
-
-div.inner-body {
-    display: grid;
-    grid-template-columns: [inner-body] auto [right-drawer] max-content;
-}
-
 </style>
 <App>
     <!-- <TelemetryAppBar /> -->
@@ -52,10 +46,7 @@ div.inner-body {
                 <TelemetryMainFilters />
         </MainActionBar>
         <Content>
-            <div class=inner-body>
-                <GraphicBody />
-            </div>
-            <ProbeDetails />
+          <GraphicBody />
         </Content>
     </Main>
 </App>

@@ -214,7 +214,6 @@
 
     /* --nav-drawer-height: calc(100vh - var(--header-height)); */
     --nav-drawer-height: 100vh;
-    --details-draw-height: calc(100vh - var(--header-height) * 2);
 
     /* curves and pads for small elements */
     --border-radius-base: var(--space-base);
@@ -368,6 +367,7 @@ header h1 div span {
 .right-drawer {
     border-left: 1px solid var(--line-gray-01);
     background-color: white;
+    height: 100%;
 }
 
 .left-drawer__header {
@@ -400,6 +400,8 @@ main {
 
 main .main-content {
     width: 100%;
+    max-width: 1200px;
+    margin: auto;
     align-self: stretch;
     justify-self: stretch;
     display: grid;
@@ -408,12 +410,10 @@ main .main-content {
 
 main .main-action {
     background-color: var(--blue-slate-700);
-
     position: relative;
     width: 100%;
     display: grid;
     grid-auto-flow: column;
-    justify-content: start;
     grid-column-gap: var(--space-2x);
 }
 

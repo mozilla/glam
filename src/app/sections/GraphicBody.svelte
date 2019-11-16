@@ -7,6 +7,8 @@ import {
   setVisiblePercentiles, setTimeHorizon, setActiveBuckets, setProportionMetricType, setApplicationStatus,
 } from '../state/actions';
 
+import ProbeDetails from './ProbeDetails.svelte';
+
 import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
@@ -71,19 +73,26 @@ function handleBodySelectors(event) {
 </script>
 
 <style>
+
 .graphic-body-container {
-    overflow-y: auto;
-    height: calc(100vh - var(--header-height));
+    display:grid;
+    grid-template-columns: auto max-content;
+    grid-template-rows: auto auto;
+    grid-template-areas: "header header"
+                         "content-body right";
+    align-items: stretch;
+    justify-items: stretch;
     background-color: white;
+    --height: calc(100vh - var(--header-height) * 2);
 }
 
 .graphic-body__graphic-header {
+    grid-area: header;
     display: grid;
     grid-template-columns: auto max-content;
     grid-column-gap: var(--space-4x);
     align-items: start;
     background-color: var(--cool-gray-100);
-    border-bottom: 1px solid var(--line-gray-01);
 }
 
 .graphic-body__graphic-header h2 {
@@ -99,9 +108,19 @@ function handleBodySelectors(event) {
 }
 
 .graphic-body__content {
-    background-color: white;
-    padding: var(--space-4x);
-    padding-top: var(--space-2x);
+  box-sizing: border-box; 
+  grid-area: content-body;
+  overflow-y: auto;
+  height: var(--height);
+  background-color: white;
+  padding: var(--space-4x);
+  padding-top: var(--space-2x);
+  padding-bottom:0;
+}
+
+.graphic-body__details {
+  grid-area: right;
+  height: var(--height);
 }
 
 </style>
@@ -163,4 +182,10 @@ function handleBodySelectors(event) {
         {/if}
         
     </div>
+    <div class=graphic-body__details>
+        <ProbeDetails />
+    </div>
 </div>
+
+
+
