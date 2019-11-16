@@ -10,10 +10,6 @@ import {
   getFieldValueLabel,
 } from '../state/store';
 
-import {
-  setChannel, setOS, setAggregationLevel,
-} from '../state/actions';
-
 const OFFSET = 10;
 const COMPACT = true;
 </script>
@@ -47,7 +43,7 @@ const COMPACT = true;
   <MenuButton compact={COMPACT} offset={OFFSET} position='top-right'>
     <div class=main-filter__label slot="label">{getFieldValueLabel('channel', $store.channel)} <div class=pull-right-edge><DownCarat size=14 /></div></div>
     <div slot="menu">
-      <MenuList on:selection={(event) => { store.dispatch(setChannel(event.detail.key)); }}>
+      <MenuList on:selection={(event) => { store.setField('channel', event.detail.key); }}>
           {#each CONFIG.fields.channel.values as {key, label}, i (key)}
           <!-- <RadioSelector value={key} label={label} group={$store.channel} /> -->
             <MenuListItem  key={key} value={key}><span class='story-label
@@ -59,7 +55,7 @@ const COMPACT = true;
     <MenuButton compact={COMPACT} offset={OFFSET}  position='top-right'>
         <div class=main-filter__label slot="label">{getFieldValueLabel('os', $store.os)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
         <div slot="menu">
-            <MenuList on:selection={(event) => { store.dispatch(setOS(event.detail.key)); }}>
+            <MenuList on:selection={(event) => { store.setField('os', event.detail.key); }}>
               {#each CONFIG.fields.os.values as {key, label}, i (key)}
                 <MenuListItem  key={key} value={key}><span class='story-label
                   first'></span>{label}</MenuListItem>
@@ -70,7 +66,7 @@ const COMPACT = true;
       <MenuButton compact={COMPACT}  offset={OFFSET}  position='top-right'>
           <div class=main-filter__label slot="label">{getFieldValueLabel('aggregationLevel', $store.aggregationLevel)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
           <div slot="menu">
-              <MenuList on:selection={(event) => { store.dispatch(setAggregationLevel(event.detail.key)); }}>
+              <MenuList on:selection={(event) => { store.setField('aggregationLevel', event.detail.key); }}>
                   {#each CONFIG.fields.aggregationLevel.values as {key, label}, i (key)}
                   <MenuListItem  key={key} value={key}><span class='story-label
                     first'></span>{label}</MenuListItem>

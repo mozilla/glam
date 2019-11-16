@@ -17,13 +17,6 @@ import {
 
 } from '../state/store';
 
-import {
-  setChannel as setChannelAction,
-  setOS as setOSAction,
-  setAggregationLevel as setAggregationLevelAction,
-} from '../state/actions';
-
-
 import CONFIG from '../config.json';
 
 let visible = true;
@@ -38,12 +31,8 @@ function collapseAll() {
   aggregationLevel.expand(false);
 }
 
-const setChannel = store.connect(setChannelAction);
-const setOS = store.connect(setOSAction);
-const setAggregationLevel = store.connect(setAggregationLevelAction);
 const resetFilters = () => {
-  const reset = store.connect(resetFiltersAction);
-  reset();
+  resetFiltersAction();
   collapseAll();
 };
 </script>
@@ -63,7 +52,7 @@ const resetFilters = () => {
         <span slot="title">Channel</span>
         <span slot="description">{getFieldValueLabel('channel', $store.channel)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => setChannel(value)}>
+            <RadioGroup onSelect={(value) => { store.setField('channel', value); }}>
                 {#each CONFIG.fields.channel.values as {key, label}, i (key)}
                     <RadioSelector value={key} label={label} group={$store.channel} />
                 {/each}
@@ -74,7 +63,7 @@ const resetFilters = () => {
         <span slot="title">Operating System</span>
         <span slot="description">{getFieldValueLabel('os', $store.os)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => setOS(value)}>
+            <RadioGroup onSelect={(value) => { store.setField('os', value); }}>
                     {#each CONFIG.fields.os.values as {key, label}, i (key) }
                         <RadioSelector value={key} label={label} group={$store.os} /> 
                     {/each}
@@ -85,7 +74,7 @@ const resetFilters = () => {
         <span slot="title">Aggregate By</span>
         <span slot="description">{getFieldValueLabel('aggregationLevel', $store.aggregationLevel)}</span>
         <span slot="content">
-            <RadioGroup onSelect={(value) => setAggregationLevel(value)}>
+            <RadioGroup onSelect={(value) => { store.setField('aggregationLevel', value); }}>
                 {#each CONFIG.fields.aggregationLevel.values as {key, label}, i (key)}
                     <RadioSelector value={key} label={label} group={$store.aggregationLevel} />
                 {/each}
