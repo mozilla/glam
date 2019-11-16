@@ -59,6 +59,7 @@ async function onKeypress(event) {
     height: var(--increment);
     display: grid;
     align-items: center;
+    justify-items: center;
   }
 
   .inner-container {

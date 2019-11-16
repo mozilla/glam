@@ -24,7 +24,8 @@ const COMPACT = true;
   grid-auto-flow: column;
   grid-column-gap:var(--space-base);
   align-items: center;
-  margin-left: var(--space-4x);
+  justify-self: end;
+  margin-right: var(--space-4x);
 }
 
 .main-filter__label {
