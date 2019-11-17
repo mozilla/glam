@@ -6,7 +6,8 @@ import FloatingMenu from './FloatingMenu.svelte';
 const dispatch = createEventDispatcher();
 
 export let active = false;
-export let position = 'top-left';
+export let location = 'bottom';
+export let alignment = 'left';
 export let offset = 0;
 export let level = 'high';
 export let compact = false;
@@ -50,7 +51,7 @@ let button;
 </button>
 </div>
 {#if active}
-  <FloatingMenu bind:width={width} offset={offset} on:cancel={() => { active = false; }}  position='bottom-left' parent={button} onParentSelect={onParentSelect}>
+  <FloatingMenu bind:width={width} offset={offset} on:cancel={() => { active = false; }} location={location} alignment={alignment} parent={button} onParentSelect={onParentSelect}>
     <slot name='menu'></slot>
   </FloatingMenu>
 {/if}
