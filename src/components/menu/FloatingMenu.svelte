@@ -10,8 +10,9 @@ import Portal from '../Portal.svelte';
 export let active = false;
 export let parent;
 export let offset = 0;
-export let position = 'bottom-left';
 export let width;
+export let location = 'bottom';
+export let alignment = 'left';
 let y;
 export let onParentSelect = () => {};
 
@@ -23,6 +24,9 @@ let parentRight;
 let parentBottom;
 let parentLeft;
 let parentTop;
+let windowWidth;
+let windowHeight;
+
 
 let left;
 let top;
@@ -39,6 +43,7 @@ function handleKeypress(event) {
 }
 
 function placeMenu() {
+    if (!element || !parent) return;
     const parentPosition = parent.getBoundingClientRect();
     const elementPosition = element.getBoundingClientRect();
   
@@ -52,28 +57,48 @@ function placeMenu() {
     parentBottom = parentPosition.bottom + y;
 
     width = elementWidth;
-    if (position.startsWith('bottom')) {
+  
+    if (location === 'bottom') {
       top = parentBottom + offset;
-    } else if (position.startsWith('top')) {
+    } else if (location === 'top') {
       top = parentTop - elementHeight - offset;
+    } else if (location === 'left') {
+      // FIXME: is this the left / right default?
+      left = parentLeft - elementWidth - offset;
     } else {
-      // FIXME: is this the right default?
-      top = parentBottom + offset;
+      left = parentRight + offset;
     }
-    if (position.endsWith('left')) {
-      left = parentLeft;
-    } else if (position.endsWith('right')) {
+    // FIXME: throw warning when location & alignment don't make sense
+    if (alignment === 'right') {
       left = parentRight - elementWidth;
-    } else {
-      // FIXME: is this the right default?
+      // set right if off window
+      if (left < 0) {
+        left = parentLeft;
+      }
+    } else if (alignment === 'left') {
+      // make it alignment="right" if it exceeds windowWith - elementWidth.
       left = parentLeft;
+      if (left > windowWidth - elementWidth) {
+        left = parentRight - elementWidth;
+      }
+    } else if (alignment === 'top') {
+      top = parentTop;
+      // if bottom edge of float is below height
+      if (top + elementHeight > windowHeight) {
+        top = parentBottom - elementHeight;
+      }
+    } else {
+ 
+      top = parentBottom - elementHeight;
+      if (top < 0) {
+        top = parentTop;
+      }
     }
   }
 
 $: if (parent && element) {
     placeMenu();
 }
-
 </script>
 
 <style>
@@ -91,7 +116,7 @@ $: if (parent && element) {
 }
 </style>
 
-<svelte:window on:keydown={handleKeypress} bind:scrollY={y} />
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} on:keydown={handleKeypress} bind:scrollY={y} />
 
 
 <Portal>
