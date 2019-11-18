@@ -178,3 +178,23 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
   });
   return byKey;
 }
+
+function typeAndKind(probeType, probeKind) {
+  return (matchType, matchKind) => probeType === matchType && probeKind === matchKind;
+}
+
+export function getProbeViewType(probeType, probeKind) {
+  const m = typeAndKind(probeType, probeKind);
+  // histogram blocks
+  if (m('histogram', 'linear')) return 'histogram';
+  if (m('histogram', 'exponential')) return 'histogram';
+  // scalar (hist rep) blocks FIXME: maybe conflate w/ histogram
+  if (m('scalar', 'uint')) return 'scalar';
+  // categorical blocks
+  if (m('histogram', 'enumerated')) return 'categorical';
+  if (m('histogram', 'categorical')) return 'categorical';
+  if (m('histogram', 'flag')) return 'categorical';
+  if (m('histogram', 'boolean')) return 'categorical';
+  if (m('histogram', 'count')) return 'categorical';
+  return undefined;
+}
