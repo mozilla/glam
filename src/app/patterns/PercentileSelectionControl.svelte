@@ -4,7 +4,6 @@ import { percentileLineColorMap as cmp } from '../../components/data-graphics/ut
 // '../../../../../components/data-graphics/utils/color-maps';
 export let percentiles = [50];
 </script>
-
 <BodyControl
   options={[
       { label: '5%', value: 5, labelColor: cmp(5) },

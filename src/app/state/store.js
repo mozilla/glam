@@ -10,7 +10,7 @@ import { createCatColorMap } from '../../components/data-graphics/utils/color-ma
 
 import CONFIG from '../config.json';
 
-import { byKeyAndAggregation } from '../utils/probe-utils';
+import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -178,10 +178,6 @@ const cache = {};
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-function isCategoricalData(probe) {
-  return ((probe.type === 'histogram' && probe.kind === 'enumerated')
-  || probe.kind === 'categorical' || probe.kind === 'flag' || probe.kind === 'boolean');
-}
 
 // FIXME: let's remove this function. It's almost comically redundant.
 export function responseToData(data, probeClass = 'quantile', probeType, aggregationMethod = 'build_id') {
@@ -220,12 +216,36 @@ export function extractBucketMetadata(transformedData) {
   return etc;
 }
 
+// let's determine the probe type here
+// so we can handle things accordingly.
+
+// function probeTypeAndKind(probeTypeString) {
+//   const [probeType, probeKind] = probeTypeString.split('-');
+//   return { probeType, probeKind };
+// }
+
+
+export function isCategorical(probeType, probeKind) {
+  return ((probeType === 'histogram' && probeKind === 'enumerated')
+  || probeKind === 'categorical' || probeKind === 'flag' || probeKind === 'boolean');
+}
+
 export function fetchDataForGLAM(params) {
   return getProbeData(params).then(
     (payload) => {
+      // FIXME: this should not be reading from the store.
+      // the response is kind of messed up so once the API / data is fixed
+      // the response shluld consume from payload.response[0].metric_type;
       const { probe } = get(store);
-      const isCategorical = isCategoricalData(probe);
-      return responseToData(payload.response, isCategorical ? 'proportion' : 'quantile', `${probe.type}-${probe.kind}`);
+      const probeType = probe.type;
+      const probeKind = probe.kind;
+      return {
+        data: responseToData(payload.response,
+          isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
+          `${probeType}-${probeKind}`),
+        probeType,
+        probeKind,
+      };
     },
   );
 }
@@ -239,8 +259,11 @@ export const dataset = derived(store, ($store) => {
     store.setField('dashboardMode', message);
     return datasetResponse(message);
   }
-
-  if (!probeSelected($store.probe.name)) {
+  // FIXME probe update: we should not have to check for probe description
+  // but for now, we will, since the data API does not return the correct
+  // probe information and we will need to wait for the probe API
+  // to give us
+  if (!probeSelected($store.probe.name) || !$store.probe.description) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
       store.setField('dashboardMode', message);

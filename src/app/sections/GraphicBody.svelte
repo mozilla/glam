@@ -1,8 +1,17 @@
 <script>
 import { fade } from 'svelte/transition';
+
+// FIXME: get rid of this once the API / dataset is fixed.
+// until then, we will need to keep this, since it's our only
+// way of reading from the probe info service, which has the
+// accurate probe information.
+import { derived } from 'svelte/store';
+
 import {
   store, dataset, extractBucketMetadata,
 } from '../state/store';
+
+import { getProbeViewType } from '../utils/probe-utils';
 
 import ProbeDetails from './ProbeDetails.svelte';
 
@@ -11,18 +20,13 @@ import ProportionExplorerView from '../patterns/body/proportions/ProportionExplo
 
 import { firefoxVersionMarkers } from '../state/product-versions';
 
-function isScalarData(data) {
-  return (data && $store.probe.type === 'scalar' && $store.probe.kind === 'uint');
-}
-
-function isNumericHistogramData() {
-  return $store.probe.type === 'histogram' && ($store.probe.kind === 'linear' || $store.probe.kind === 'exponential');
-}
-
-function isCategoricalData() {
-  return (($store.probe.type === 'histogram' && $store.probe.kind === 'enumerated')
-  || $store.probe.kind === 'categorical' || $store.probe.kind === 'flag' || $store.probe.kind === 'boolean');
-}
+// const getProbeViewType = (probeType, probeKind) => {
+//   if (probeType === 'histogram' && probeKind === 'enumerated') return 'categorical';
+//   if (isCategorical(probeType, probeKind)) return 'categorical';
+//   if (probeType === 'histogram' && ['linear', 'exponential'].includes(probeKind)) return 'histogram';
+//   if (probeType === 'scalar' && probeKind === 'uint') return 'scalar';
+//   return undefined;
+// };
 
 let probeName;
 let output = Promise.resolve({});
@@ -34,25 +38,33 @@ let output = Promise.resolve({});
 // down the line, it would be good to figure out the right way to think
 // about this whole pipeline. At the moment it does feel kind of weird to
 // have the post-fetching step be in a component.
-$: if ($store.probe.name !== probeName && $dataset.data) {
+
+// ADDL FIXME: we should wait for the telemetry probes to load if that's what we're
+// looking for here.
+
+const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.probe.type, $st.probe.kind));
+
+$: if ($store.probe.name !== probeName && $dataset.data && $temporaryViewTypeStore) {
   probeName = $store.probe.name;
   output = $dataset.data.then(
-    (transformedData) => {
-      const isCategorical = isCategoricalData($store.probe);
-
+    ({ data, probeType, probeKind }) => {
+      const viewType = $temporaryViewTypeStore;// getProbeViewType(probeType, probeKind); // FIXME!!!
+      const isCategorical = viewType === 'categorical';
+      // const isCategoricalData = isCategorical(probeType, probeKind);
       let etc = {};
       if (isCategorical) {
-        etc = extractBucketMetadata(transformedData);
+        etc = extractBucketMetadata(data);
         if ($store.applicationStatus !== 'INITIALIZING') {
           store.setField('activeBuckets', etc.initialBuckets);
         }
       }
       store.setField('applicationStatus', 'ACTIVE');
-      return { data: transformedData, ...etc };
+      return { data, viewType, ...etc };
     },
   ).catch((err) => console.error(err));
 }
 
+// FIXME: remove this once the dataset + API are fixed.
 
 let container;
 let width;
@@ -73,7 +85,7 @@ function handleBodySelectors(event) {
 
 .graphic-body-container {
     display:grid;
-    grid-template-columns: auto max-content;
+    grid-template-columns: auto min-content;
     grid-template-rows: auto auto;
     grid-template-areas: "header header"
                          "content-body right";
@@ -143,11 +155,13 @@ function handleBodySelectors(event) {
                 running query
             {:then data}
                 <div in:fade>
-                    {#if isCategoricalData(data.response)}
+                    {#if $temporaryViewTypeStore === 'categorical'}
                         <ProportionExplorerView 
                             markers={$firefoxVersionMarkers} 
                             data={data.data}
+
                             probeType={`${$store.probe.type}-${$store.probe.kind}`}
+
                             metricType={$store.proportionMetricType}
                             activeBuckets={[...$store.activeBuckets]}
                             timeHorizon={$store.timeHorizon}
@@ -156,10 +170,10 @@ function handleBodySelectors(event) {
                             bucketSortOrder={data.bucketSortOrder}
                             on:selection={handleBodySelectors}
                         />
-                    {:else if isScalarData(data.response) || isNumericHistogramData(data.response)}                    
+                    {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
                         <QuantileExplorerView markers={$firefoxVersionMarkers}
                             data={data.data}
-                            probeType={isScalarData(data.response) ? 'scalar' : 'histogram'}
+                            probeType={$temporaryViewTypeStore}
                             timeHorizon={$store.timeHorizon}
                             percentiles={$store.visiblePercentiles}
                             on:selection={handleBodySelectors}
@@ -184,6 +198,3 @@ function handleBodySelectors(event) {
         <ProbeDetails />
     </div>
 </div>
-
-
-

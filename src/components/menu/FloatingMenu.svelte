@@ -47,7 +47,6 @@ function placeMenu() {
     const parentPosition = parent.getBoundingClientRect();
     const elementPosition = element.getBoundingClientRect();
   
-    // leftMarginOffset = +getComputedStyle(parent).marginLeft.slice(0, -2);
     elementWidth = elementPosition.width;
     elementHeight = elementPosition.height;
 
@@ -88,7 +87,6 @@ function placeMenu() {
         top = parentBottom - elementHeight;
       }
     } else {
- 
       top = parentBottom - elementHeight;
       if (top < 0) {
         top = parentTop;
