@@ -211,6 +211,11 @@ class Stage(Base):
 
     ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
     SECURE_SSL_REDIRECT = True
+    SECURE_REDIRECT_EXEMPT = [
+        r"^__heartbeat__/?$",
+        r"^__lbheartbeat__/?$",
+        r"^__version__/?$",
+    ]
     SECURE_HSTS_SECONDS = int(timedelta(days=365).total_seconds())
     # Mark session and CSRF cookies as being HTTPS-only.
     CSRF_COOKIE_SECURE = True
