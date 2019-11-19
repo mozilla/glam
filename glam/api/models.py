@@ -1,4 +1,5 @@
 from django.contrib.postgres.fields import JSONField
+from django.core.cache import caches
 from django.db import models
 
 from glam.api import constants
@@ -34,3 +35,14 @@ class Probe(models.Model):
 
     class Meta:
         db_table = "probe"
+
+    @classmethod
+    def populate_labels_cache(cls):
+        cache = caches["probe-labels"]
+
+        for probe in cls.objects.all():
+            if probe.info["labels"]:
+                cache.set(probe.info["name"], probe.info["labels"])
+
+        # Add a key/value to check if we've populated the cache.
+        cache.set("__labels__", True)
