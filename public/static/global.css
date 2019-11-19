@@ -127,6 +127,7 @@
     --blue-slate-900: hsl(240, 25%, 9%);
 
     /* UX GRAYS – use the cool gray variables. */
+    --cool-gray-050: #f5f9fb;
     --cool-gray-100: hsl(203, 55%, 96%);
     --cool-gray-200: hsl(203, 40%, 89%);
     --cool-gray-300: hsl(203, 30%, 82%);

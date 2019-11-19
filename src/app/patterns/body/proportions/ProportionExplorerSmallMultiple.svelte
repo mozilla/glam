@@ -1,5 +1,4 @@
 <script>
-import { getContext } from 'svelte';
 import { writable } from 'svelte/store';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
@@ -35,36 +34,13 @@ export let metricType;
 export let activeBuckets;
 export let colorMap = () => 'var(--digital-blue-500)';
 
-
-let valueFmt = format(',.4r');
 let countFmt = format(',d');
 const percentFormatter = format('.0%');
 
-
-const probeType = getContext('probeType');
-
 let yScaleType = 'linear';
 
-// let's get the maximum value here?
-// let yDomain = [-0.05, 1.05];
-
-// if (metricType === 'counts') {
 const counts = Math.max(...data.map((d) => Object.values(d[metricType])).flat());
 let yDomain = [0, counts];
-// }
-
-// if (probeType === 'histogram') {
-//   yScaleType = 'scalePoint';
-//   yDomain = data[0].histogram.map((d) => d.bin);
-// } else if (probeType === 'scalar') {
-//   yScaleType = 'log';
-//   let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
-//   yDomain = [0, upperDomain];
-//   whichTransformation = 'counts';
-// }
-
-// FIXME: after demo remove this requirement
-data = data.slice(0, -1);
 
 let domain = writable(data.map((d) => d.label));
 
@@ -83,9 +59,6 @@ $: setDomain(timeHorizon);
 
 let hovered = {};
 
-let WIDTH = 450;
-let HEIGHT = 350;
-
 // FIXME: this is for demo purposes. use better build data.
 let reference = data[data.length - 1];
 
@@ -95,10 +68,6 @@ $: movingAudienceSize.set(reference.audienceSize);
 
 function getProportion(bucket, datum) {
   return { label: datum.label, bin: bucket, value: datum[metricType][bucket] };
-}
-
-function getAllProportions(buckets, datum) {
-  return buckets.map((p) => getProportion(p, datum));
 }
 
 </script>
@@ -152,10 +121,6 @@ h4 {
   <div>
     <h4>{title}</h4>
   </div>
-  <!-- <div class=bignum>
-    <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
-    <div class=bignum__value>{valueFmt(reference.percentiles[50])}</div>
-  </div> -->
   <div class=bignum>
     <div class=bignum__label>⭑ Latest Total Clients</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
@@ -172,8 +137,6 @@ h4 {
     key={key}
     yScaleType={yScaleType}
     yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
-    width={WIDTH}
-    height={HEIGHT}
     transform={(p, d) => extractProportions(p, d, metricType)}
     metricKeys={activeBuckets}
     bind:reference={reference}
@@ -184,8 +147,6 @@ h4 {
   <DistributionComparison 
     yType={yScaleType}
     yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
-    width={125}
-    height={HEIGHT}
     showViolins={false}
     leftDistribution={hovered.datum ? hovered.datum[metricType] : undefined}
     rightDistribution={reference[metricType]}
@@ -205,6 +166,7 @@ h4 {
     rightLabel={reference.label}
     keySet={activeBuckets} 
     colorMap={colorMap}
+    hovered={!!hovered.datum}
     valueFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     />
 </div>

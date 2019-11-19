@@ -6,6 +6,7 @@ import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
 import BuildIDComparison from '../elements/BuildIDComparison.svelte';
+import TotalClientsGraph from '../elements/TotalClientsGraph.svelte';
 import QuantileDistributionComparison from '../elements/QuantileDistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
@@ -14,6 +15,7 @@ import { percentileLineColorMap } from '../../../../components/data-graphics/uti
 import {
   buildIDToDate,
 } from '../../../../components/data-graphics/utils/build-id-utils';
+
 
 import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
 
@@ -61,9 +63,6 @@ function setDomain(str) {
 $: setDomain(timeHorizon);
 
 let hovered = {};
-
-let WIDTH = 450;
-let HEIGHT = 350;
 
 // FIXME: this is for demo purposes. use better build data.
 let reference = data[data.length - 1];
@@ -153,8 +152,6 @@ h4 {
     lineColorMap={percentileLineColorMap}
     key={key}
     yScaleType={yScaleType}
-    width={WIDTH}
-    height={HEIGHT}
     transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
     metricKeys={percentiles}
     bind:reference={reference}
@@ -165,8 +162,6 @@ h4 {
 
   <QuantileDistributionComparison 
     yType={yScaleType}
-    width={125}
-    height={HEIGHT}
     leftDistribution={hovered.datum ? hovered.datum.histogram : undefined}
     rightDistribution={reference.histogram}
     leftLabel={hovered.x}
@@ -179,6 +174,7 @@ h4 {
   />
   
   <ComparisonSummary 
+    hovered={!!hovered.datum}
     left={hovered.datum ? hovered.datum.percentiles : hovered.datum} 
     right={reference.percentiles}
     leftLabel={hovered.x}
@@ -188,5 +184,18 @@ h4 {
     valueFormatter={valueFmt}
     keyFormatter={(perc) => `${perc}%`}
     />
+
+  <!-- <TotalClientsGraph 
+    data={data}
+    xDomain={$domain}
+    timeHorizon={timeHorizon}
+    key={key}
+    yScaleType={yScaleType}
+    metricKeys={percentiles}
+    hovered={!!hovered.datum}
+    reference={reference}
+    markers={markers}
+  /> -->
+
 </div>
     

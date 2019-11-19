@@ -5,7 +5,7 @@ import { derived } from 'svelte/store';
 import { spring } from 'svelte/motion';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
+import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import ReferenceSymbol from './ReferenceSymbol.svelte';
@@ -13,6 +13,8 @@ import ReferenceSymbol from './ReferenceSymbol.svelte';
 import { nearestBelow } from '../../../../utils/stats';
 
 import { twoPointSpring } from '../utils/animation';
+
+import { explorerComparisonSmallMultiple } from '../utils/constants';
 
 export let leftDistribution;
 export let rightDistribution;
@@ -26,8 +28,7 @@ export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
 
 export let yDomain;
-export let width;
-export let height;
+
 export let xType;
 export let yType;
 export let showViolins = true;
@@ -54,7 +55,7 @@ onMount(() => {
 });
 
 function placeShapeY(value) {
-  if (!yScale) return bottomPlot || height;
+  if (!yScale) return bottomPlot || explorerComparisonSmallMultiple.height;
   if (yScale.type !== 'scalePoint') return yScale(value);
   return yScale(nearestBelow(value, yDomain));
 }
@@ -84,15 +85,16 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
   xDomain={xDomain}
   yDomain={yDomain}
   yType={yType}
-  width={width}
-  height={height}
+  width={explorerComparisonSmallMultiple.width}
+  height={explorerComparisonSmallMultiple.height}
   bind:leftPlot={L}
   bind:rightPlot={R}
   bind:topPlot={T}
   bind:bottomPlot={B}
   bind:yScale={yScale}
-  left={10}
-  right={50}
+  left={explorerComparisonSmallMultiple.left}
+  right={explorerComparisonSmallMultiple.right}
+  bottom={explorerComparisonSmallMultiple.bottom}
   key={key}
 >
   <rect 
@@ -104,7 +106,7 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
     opacity=.25
   />
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
-  <BottomAxis ticks={xDomain}  />
+  <TopAxis ticks={xDomain}  />
 
   {#if leftPoints && rightPoints}
     {#each activeBins as bin, i}
@@ -122,13 +124,16 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
         r=3
         fill={$dotsAndLines[bin].color}
       />
-      <ReferenceSymbol 
-        xLocation={rightPlot} 
-        yLocation={$dotsAndLines[bin].rightY} 
-        color={$dotsAndLines[bin].color} 
-      />
+
     {/each}
   {/if}
+  {#each activeBins as bin, i}
+    <ReferenceSymbol 
+      xLocation={rightPlot} 
+      yLocation={$dotsAndLines[bin].rightY} 
+      color={$dotsAndLines[bin].color} 
+    />
+  {/each}
 
   {#if leftDistribution && showViolins}
   <g in:fade={{ duration: 50 }}>
