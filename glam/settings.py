@@ -123,6 +123,18 @@ class Base(Core):
     # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
     DATABASES = values.DatabaseURLValue("postgres://postgres@db/postgres")
 
+    # If we start using the cache for anything heavy, consider using a true
+    # cache instead of locmem as default cache. This is mostly a placeholder.
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        },
+        'probe-labels': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'probe-labels',
+        }
+    }
+
     LOGGING_USE_JSON = values.BooleanValue(False)
 
     def LOGGING(self):

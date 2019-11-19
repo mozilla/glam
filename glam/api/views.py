@@ -1,3 +1,4 @@
+from django.core.cache import caches
 from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
@@ -58,6 +59,10 @@ def aggregations(request):
         }
 
     """
+    labels_cache = caches["probe-labels"]
+    if labels_cache.get("__labels__") is None:
+        Probe.populate_labels_cache()
+
     REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
     body = request.data
 
@@ -115,11 +120,27 @@ def aggregations(request):
         if sub_key not in record:
             record[sub_key] = {}
 
-        new_data = {AGGREGATION_NAMES[row.agg_type]: aggs}
+        new_data = {}
+
         if row.agg_type == AGGREGATION_HISTOGRAM:
             new_data["total_users"] = row.total_users
+            # Check for labels.
+            labels = labels_cache.get(metadata["metric"])
+            if labels is not None:
+                # Replace the numeric indexes with their labels.
+                aggs_w_labels = {}
+                for k, v in aggs.items():
+                    try:
+                        aggs_w_labels[labels[int(k)]] = v
+                    except IndexError:
+                        pass
+                aggs = aggs_w_labels
+
+        new_data[AGGREGATION_NAMES[row.agg_type]] = aggs
+
         if row.metric_key:
             new_data["key"] = row.metric_key
+
         if row.client_agg_type:
             new_data["client_agg_type"] = row.client_agg_type
 
@@ -128,8 +149,6 @@ def aggregations(request):
 
         record[sub_key]["data"] = data
         response[key] = record
-
-        # TODO: Attach labels to categorical histograms.
 
     if not response:
         raise NotFound("No documents found for the given parameters")
