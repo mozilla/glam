@@ -23,6 +23,40 @@ class TestProbesApi:
         assert resp["probes"] == {"foo": {"test": True}, "bar": {"test": False}}
 
 
+class TestRandomProbesApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-random-probes")
+
+    def test_response(self, client):
+        Probe.objects.create(key="fee", info={"kind": "count"})
+        Probe.objects.create(key="fii", info={"kind": "count"})
+        Probe.objects.create(key="foo", info={"kind": "count"})
+        Probe.objects.create(key="fum", info={"kind": "count"})
+
+        resp = client.get(self.url).json()
+        assert len(resp["probes"].keys()) == 3
+
+        # Test that a non-integer defaults to 3
+        resp = client.get(self.url, {"n": "abc"}).json()
+        assert len(resp["probes"].keys()) == 3
+
+    def test_response_with_n(self, client):
+        Probe.objects.create(key="fee", info={"kind": "count"})
+        Probe.objects.create(key="fii", info={"kind": "count"})
+
+        resp = client.get(self.url, {"n": 1}).json()
+        assert len(resp["probes"].keys()) == 1
+
+    def test_n_too_large(self, client):
+        Probe.objects.create(key="fee", info={"kind": "count"})
+        Probe.objects.create(key="fii", info={"kind": "string"})
+
+        # We want 2, but only 1 is left after query exclusions.
+        resp = client.get(self.url, {"n": 2})
+        assert resp.status_code == 400
+
+
 class TestAggregationsApi:
     @classmethod
     def setup_class(cls):

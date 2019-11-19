@@ -1,3 +1,5 @@
+from random import sample
+
 from django.core.cache import caches
 from django.db.models import Q
 from rest_framework.decorators import api_view
@@ -5,7 +7,11 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
 from glam.api.constants import (
-    AGGREGATION_HISTOGRAM, AGGREGATION_NAMES, CHANNEL_IDS, CHANNEL_NAMES)
+    AGGREGATION_HISTOGRAM,
+    AGGREGATION_NAMES,
+    CHANNEL_IDS,
+    CHANNEL_NAMES,
+)
 from glam.api.models import Aggregation, Probe
 
 
@@ -168,4 +174,27 @@ def aggregations(request):
 def probes(request):
     return Response(
         {"probes": {probe.key: probe.info for probe in Probe.objects.all()}}
+    )
+
+
+@api_view(["GET"])
+def random_probes(request):
+    try:
+        n = int(request.GET.get("n", 3))
+    except ValueError:
+        n = 3
+
+    probe_ids = list(
+        Probe.objects.exclude(info__kind="string").values_list("id", flat=True)
+    )
+    if n > len(probe_ids):
+        raise ValidationError("Not enough probes to select `n` items.")
+
+    return Response(
+        {
+            "probes": {
+                probe.key: probe.info
+                for probe in Probe.objects.filter(id__in=sample(probe_ids, n))
+            }
+        }
     )
