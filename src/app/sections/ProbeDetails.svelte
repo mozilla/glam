@@ -175,7 +175,7 @@ h2 {
             {/if}
             {#if $store.versions && $store.versions.length}
                 <li class="detail--indented">
-                    available in {$store.channel}: {$store.probe.versions[$store.channel][0]}
+                    {$store.channel} {$store.probe.versions[$store.channel][0]}
                     &ndash; {$store.probe.versions[$store.channel][1]}
                 </li>
             {/if}

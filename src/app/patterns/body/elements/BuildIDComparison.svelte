@@ -229,13 +229,15 @@ $: if (dataGraphicMounted) {
     xLocation={xScale(label)} yLocation={yScale(value)} color={lineColorMap(bin)} 
   />
   {/each}
-<!-- transform="rotate(90 {xScale(reference.label) + margins.buffer} {topPlot + margins.buffer})" -->
-
-  <text
-    text-anchor="end"
-    font-size=12
-    x={$refLabelSpring - margins.buffer} y={bottomPlot - margins.buffer} fill={hovered.datum ? 'var(--cool-gray-600)' : 'var(--cool-gray-300)'}>ref.</text>
-
+  {#if xScale}
+    <text
+      text-anchor="end"
+      font-size=11
+      style='text-transform: uppercase;'
+      x={$refLabelSpring - margins.buffer - xScale.step() / 2} 
+      y={topPlot + margins.buffer} 
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-300)'}>ref.</text>
+  {/if}
 
   <FirefoxReleaseVersionMarkers />
 

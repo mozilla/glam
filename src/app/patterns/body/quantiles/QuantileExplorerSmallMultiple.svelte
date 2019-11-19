@@ -64,22 +64,17 @@ $: setDomain(timeHorizon);
 
 let hovered = {};
 
-// FIXME: this is for demo purposes. use better build data.
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
-
+const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
 $: movingAudienceSize.set(reference.audienceSize);
-
+$: refMedian.set(reference.percentiles[50]);
 function getPercentile(percentileBin, datum) {
   let percentileValue;
   if (probeType !== 'histogram') percentileValue = datum.percentiles[percentileBin];
   else percentileValue = datum.transformedPercentiles[percentileBin];
   return { label: datum.label, bin: percentileBin, value: percentileValue };
-}
-
-function getAllPercentiles(percentileBins, datum) {
-  return percentileBins.map((p) => getPercentile(p, datum));
 }
 
 </script>
@@ -134,11 +129,11 @@ h4 {
     <h4>{title}</h4>
   </div>
   <div class=bignum>
-    <div class=bignum__label>⭑ Latest Median (50th perc.)</div>
-    <div class=bignum__value>{valueFmt(reference.percentiles[50])}</div>
+    <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
+    <div class=bignum__value>{valueFmt($refMedian)}</div>
   </div>
   <div class=bignum>
-    <div class=bignum__label>⭑ Audience Size</div>
+    <div class=bignum__label>⭑ Total Clients</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div>
 </div>
