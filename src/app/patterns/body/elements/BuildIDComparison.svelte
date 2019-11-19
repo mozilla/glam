@@ -10,6 +10,8 @@ import BuildIDRollover from '../../../../components/data-graphics/rollovers/Buil
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ReferenceSymbol from './ReferenceSymbol.svelte';
 
+import { cartesianCoordSpring } from '../utils/animation';
+
 import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
 
 import { buildIDComparisonGraph } from '../utils/constants';
@@ -66,6 +68,38 @@ let bottomPlot;
 let dgRollover;
 let margins;
 
+// FIXME: this is kind of a confusing pattern
+function placeShapeY(value) {
+  if (!yScale) return bottomPlot || buildIDComparisonGraph.height;
+  return yScale(value);
+}
+
+function placeShapeX(value) {
+  if (!yScale) return buildIDComparisonGraph.width;
+  return xScale(value);
+}
+
+const referencePoints = cartesianCoordSpring(
+  extractMouseoverValues(reference),
+  placeShapeX,
+  placeShapeY,
+);
+
+const hoverPoints = cartesianCoordSpring(
+  extractMouseoverValues(reference),
+  placeShapeX,
+  placeShapeY,
+  { stiffness: 0.9, damping: 0.9 },
+);
+
+$: if (xScale && yScale) {
+  referencePoints.setValue(extractMouseoverValues(reference));
+  hoverPoints.setValue(extractMouseoverValues(hovered.datum ? hovered.datum : reference));
+}
+$: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
+$: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
+// $: console.log($referencePoints);
+
 // FIXME: get away from extractMouseoverValue and filter out the unused
 // points in the template.
 // function createPointSprings(
@@ -96,6 +130,9 @@ let margins;
 //     },
 //   };
 // }
+
+
+// step 1: convert reference to an obj of values?
 
 // let's make the reference points spring.
 // let refMatches = justValues(metricKeys.map((m) => extractMouseoverValues(m, reference)),
@@ -211,22 +248,21 @@ $: if (dataGraphicMounted) {
  </GraphicBody>
 
  {#if hovered.datum && extractMouseoverValues}
- {#each metricKeys.map((m) => extractMouseoverValues(m, hovered.datum)) as {label, bin, value}, i (bin)}
-  <circle 
-  cx={xScale(label)}
-  cy={yScale(value)}
-  r=2
-  stroke="none"
-  fill={lineColorMap(bin)}
-  />
-
+ {#each metricKeys as bin, i (bin)}
+    <circle 
+    cx={$hoverPoints[bin].x}
+    cy={$hoverPoints[bin].y}
+    r=2
+    stroke="none"
+    fill={lineColorMap(bin)}
+    />
   {/each}
 
  {/if}
- {#each metricKeys.map((m) => extractMouseoverValues(m, reference)) as {bin, value, label}, i (bin)}
+ {#each metricKeys as bin, i (bin)}
     <ReferenceSymbol
     size={20}
-    xLocation={xScale(label)} yLocation={yScale(value)} color={lineColorMap(bin)} 
+    xLocation={$referencePoints[bin].x} yLocation={$referencePoints[bin].y} color={lineColorMap(bin)} 
   />
   {/each}
   {#if xScale}

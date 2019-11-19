@@ -67,8 +67,12 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 
 $: movingAudienceSize.set(reference.audienceSize);
 
-function getProportion(bucket, datum) {
-  return { label: datum.label, bin: bucket, value: datum[metricType][bucket] };
+function getProportion(datum) {
+  const out = { ...datum[metricType] };
+  Object.keys(out).forEach((k) => {
+    out[k] = { y: out[k], x: datum.label };
+  });
+  return out;
 }
 
 </script>

@@ -69,11 +69,14 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
 $: movingAudienceSize.set(reference.audienceSize);
 $: refMedian.set(reference.percentiles[50]);
-function getPercentile(percentileBin, datum) {
-  let percentileValue;
-  if (probeType !== 'histogram') percentileValue = datum.percentiles[percentileBin];
-  else percentileValue = datum.transformedPercentiles[percentileBin];
-  return { label: datum.label, bin: percentileBin, value: percentileValue };
+
+function getPercentile(datum) {
+  let out = {};
+  out = probeType === 'histogram' ? { ...datum.transformedPercentiles } : { ...datum.percentiles };
+  Object.keys(out).forEach((k) => {
+    out[k] = { y: out[k], x: datum.label };
+  });
+  return out;
 }
 
 </script>
