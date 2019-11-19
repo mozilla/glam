@@ -1,8 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 
+const path = '__BASE_DOMAIN__';
+const url = `${path}/api/v1/data/`;
+
 export async function getProbeData(params) {
-  const URL = 'http://localhost:8000/api/v1/data/';
-  const data = await fetch(URL, {
+  const data = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

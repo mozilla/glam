@@ -4,8 +4,8 @@ import FlexSearch from 'flexsearch';
 import { store } from './store'; // eslint-disable-line
 
 // TODO: Make this dynamic based on prod vs local dev.
-const url = 'http://localhost:8000/api/v1/probes/';
-
+const path = '__BASE_DOMAIN__';
+const url = `${path}/api/v1/probes/`;
 
 const telemetrySearch = readable({ loaded: false }, async (set) => {
   const resp = await fetch(url).then((r) => r.json());

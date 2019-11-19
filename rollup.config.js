@@ -4,6 +4,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -17,6 +18,7 @@ export default {
   },
   plugins: [
     json(),
+    replace({ __BASE_DOMAIN__: production ? '' : 'http://localhost:8000' }),
     svelte({
       // enable run-time checks when not in production
       dev: !production,
