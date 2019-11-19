@@ -27,8 +27,8 @@
       "title": "Aggregation Level",
       "key": "aggregationLevel",
       "values": [
-        {"key": "version", "label": "by major version"},
-        {"key": "build_id", "label": "by build id"}
+        {"key": "build_id", "label": "by build id"},
+        {"key": "version", "label": "by major version"}
       ]
     },
     "versions" : {

@@ -263,11 +263,10 @@ export const dataset = derived(store, ($store) => {
   // but for now, we will, since the data API does not return the correct
   // probe information and we will need to wait for the probe API
   // to give us
-  if (!probeSelected($store.probe.name) || !$store.probe.description) {
+  if (!probeSelected($store.probe.name) || (probeSelected($store.probe.name) && !$store.probe.description)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
       store.setField('dashboardMode', message);
-      store.setField('applicationStatus', 'ACTIVE');
     }
     return message;
   }

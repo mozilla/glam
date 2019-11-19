@@ -7,6 +7,8 @@ import {
   dateToBuildID,
 } from '../../../../components/data-graphics/utils/build-id-utils';
 
+export let labels = true;
+
 const xScale = getContext('xScale');
 
 let markers = [];
@@ -17,7 +19,11 @@ firefoxVersionMarkers.subscribe((m) => { markers = m; });
 <g class='firefox-release-version-markers'>
   {#if markers && markers.length}
     {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) })).filter((d) => d.date !== undefined) as {label, date}, i (date)}
-      <Marker location={date}>{label}</Marker>
+      <Marker location={date}>
+        {#if labels}
+          {label}
+        {/if}
+      </Marker>
     {/each}
   {/if}
 </g>

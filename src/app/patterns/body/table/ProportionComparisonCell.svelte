@@ -101,6 +101,7 @@ $: referenceSpring.set(removeInactiveBuckets(referencePointValues));
               yLocation={comparisonSmallMultiple.height - 6} 
               color={colorMap(p)} /> -->
               <ReferenceSymbol
+              size={20}
               xLocation={distributionXScale($referenceSpring[p])} 
               yLocation={$hoverSpring.coords[p].y} 
               color={colorMap(p)} />

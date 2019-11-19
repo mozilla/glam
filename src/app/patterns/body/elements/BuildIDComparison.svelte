@@ -1,23 +1,23 @@
 <script>
-import { onMount } from 'svelte';
-import { writable, derived } from 'svelte/store';
-
+import { spring } from 'svelte/motion';
+import { derived } from 'svelte/store';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
-import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 import ReferenceSymbol from './ReferenceSymbol.svelte';
 
+import { cartesianCoordSpring } from '../utils/animation';
+
 import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
 
-import Marker from '../../../../components/data-graphics/Marker.svelte';
+import { buildIDComparisonGraph } from '../utils/constants';
 
 import {
-  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays, dateToBuildID,
+  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
 } from '../../../../components/data-graphics/utils/build-id-utils';
 
 export let data;
@@ -34,8 +34,6 @@ export let xDomain;
 export let yDomain;
 export let yScaleType;
 export let yTickFormatter;
-export let width;
-export let height;
 export let timeHorizon;
 
 
@@ -70,7 +68,45 @@ let bottomPlot;
 let dgRollover;
 let margins;
 
-function initiateRollover(rolloverStore) {
+// FIXME: this is kind of a confusing pattern
+function placeShapeY(value) {
+  if (!yScale) return bottomPlot || buildIDComparisonGraph.height;
+  return yScale(value);
+}
+
+function placeShapeX(value) {
+  if (!yScale) return buildIDComparisonGraph.width;
+  return xScale(value);
+}
+
+const referencePoints = cartesianCoordSpring(
+  extractMouseoverValues(reference),
+  placeShapeX,
+  placeShapeY,
+);
+
+const hoverPoints = cartesianCoordSpring(
+  extractMouseoverValues(reference),
+  placeShapeX,
+  placeShapeY,
+  { stiffness: 0.9, damping: 0.9 },
+);
+
+$: if (xScale && yScale) {
+  referencePoints.setValue(extractMouseoverValues(reference));
+  hoverPoints.setValue(extractMouseoverValues(hovered.datum ? hovered.datum : reference));
+}
+$: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
+$: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
+
+// let's make the current reference label spring.
+let refLabelPlacement = 0;
+$: refLabelPlacement = xScale ? xScale(reference.label) : 0;
+const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
+$: refLabelSpring.set(refLabelPlacement);
+
+
+function initiateRollover(rolloverStore) { // eslint-disable-line
   if (!rolloverStore) return undefined;
   derived(rolloverStore, ({ x, y }) => {
     // we need the whole data point?
@@ -98,8 +134,9 @@ $: if (dataGraphicMounted) {
  xDomain={xDomain}
  yDomain={yDomain}
  yType={yScaleType}
- width={width}
- height={height}
+ width={buildIDComparisonGraph.width}
+ height={buildIDComparisonGraph.height}
+ bottom={buildIDComparisonGraph.bottom}
  bind:rollover={dgRollover}
  bind:xScale={xScale}
  bind:yScale={yScale}
@@ -107,7 +144,7 @@ $: if (dataGraphicMounted) {
  bind:topPlot={T}
  bind:bottomPlot={B}
  bind:margins={margins}
- right={16}
+ right={buildIDComparisonGraph.right}
  key={key}
  bind:dataGraphicMounted={dataGraphicMounted}
  on:click={() => {
@@ -120,11 +157,12 @@ $: if (dataGraphicMounted) {
  x={hovered.x}
  label={hovered.datum.label}
 />
-<rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-fill="var(--cool-gray-100)" />
-<rect x={xScale(reference.label) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-fill="var(--cool-gray-100)" />
-{/if}
+
+  <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+    fill="var(--cool-gray-100)" />
+  {/if}
+  <rect x={$refLabelSpring - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+    fill="var(--cool-gray-100)" />
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
@@ -145,21 +183,32 @@ fill="var(--cool-gray-100)" />
  </GraphicBody>
 
  {#if hovered.datum && extractMouseoverValues}
- {#each metricKeys.map((m) => extractMouseoverValues(m, hovered.datum)) as {label, bin, value}, i (bin)}
-  <circle 
-  cx={xScale(label)}
-  cy={yScale(value)}
-  r=2
-  stroke="none"
-  fill={lineColorMap(bin)}
-  />
+ {#each metricKeys as bin, i (bin)}
+    <circle 
+    cx={$hoverPoints[bin].x}
+    cy={$hoverPoints[bin].y}
+    r=2
+    stroke="none"
+    fill={lineColorMap(bin)}
+    />
+  {/each}
 
-  {/each}
-  {#each metricKeys.map((m) => extractMouseoverValues(m, reference)) as {label, bin, value}, i (bin)}
-    <ReferenceSymbol xLocation={xScale(label)} yLocation={yScale(value)} color={lineColorMap(bin)} />
-  {/each}
  {/if}
-
+ {#each metricKeys as bin, i (bin)}
+    <ReferenceSymbol
+    size={20}
+    xLocation={$referencePoints[bin].x} yLocation={$referencePoints[bin].y} color={lineColorMap(bin)} 
+  />
+  {/each}
+  {#if xScale}
+    <text
+      text-anchor="end"
+      font-size=11
+      style='text-transform: uppercase;'
+      x={$refLabelSpring - margins.buffer - xScale.step() / 2} 
+      y={topPlot + margins.buffer} 
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-300)'}>ref.</text>
+  {/if}
 
   <FirefoxReleaseVersionMarkers />
 

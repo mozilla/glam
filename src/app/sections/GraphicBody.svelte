@@ -44,11 +44,13 @@ let output = Promise.resolve({});
 
 const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.probe.type, $st.probe.kind));
 
+
 $: if ($store.probe.name !== probeName && $dataset.data && $temporaryViewTypeStore) {
   probeName = $store.probe.name;
   output = $dataset.data.then(
-    ({ data, probeType, probeKind }) => {
-      const viewType = $temporaryViewTypeStore;// getProbeViewType(probeType, probeKind); // FIXME!!!
+    // ({ data, probeType, probeKind }) => {
+    ({ data }) => {
+      const viewType = $temporaryViewTypeStore; // getProbeViewType(probeType, probeKind); // FIXME!!!
       const isCategorical = viewType === 'categorical';
       // const isCategoricalData = isCategorical(probeType, probeKind);
       let etc = {};

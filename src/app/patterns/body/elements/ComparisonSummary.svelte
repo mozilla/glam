@@ -5,6 +5,7 @@ import { format } from 'd3-format';
 let fmt = format(',.4r');
 let pFmt = format('.0%');
 
+export let hovered = false;
 export let colorMap = () => 'black';
 export let left;
 export let right;
@@ -54,6 +55,7 @@ table {
   border-spacing: 0px;
   --heavy-border: 1px solid var(--line-gray-01);
   --lighter-border: 1px dotted var(--bg-gray-01);
+  width: 100%;
 }
 
 tbody tr td {
@@ -87,15 +89,12 @@ td, th {
   text-align: right;
   padding-top: var(--space-base);
   padding-bottom: var(--space-base);
+  transition: opacity 100ms;
 }
-/* 
-.label {
-  font-size: 12px;
-} */
 
-/* .summary-label {
-  font-size: 12px;
-} */
+.ref, .hov {
+  width: 50%;
+}
 
 .summary-label--main-date {
   font-family: var(--main-mono-font); 
@@ -103,14 +102,17 @@ td, th {
   font-weight: bold;
 }
 
+.hidden {
+  opacity: .2;
+}
 
 /* .value-label, .value-left, .value-right {
   text-align: right;
 } */
 
 
-.left-value, .right-value {
-  background-color: var(--cool-gray-100);
+.value-left, .value-right {
+  background-color: var(--cool-gray-050);
 
 }
 
@@ -125,25 +127,25 @@ td, th {
   <table>
     <thead>
       <tr>
-        <th>Perc.</th>
-        <th class=summary-label>
+        <th style="min-width: 54px; width: max-content">Perc.</th>
+        <th  class:hidden={!hovered} class="summary-label ref">
             Hovered<span class='small-shape'>●</span>
         </th>
-        <th class=summary-label>
+        <th class="summary-label hov">
             Ref.<span class='small-shape'>⭑</span>
           </th>
-          <th>Diff.</th>
+          <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
       </tr>
     </thead>
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}}
             <tr>
-              <td class=value-label>
+              <td  style="width: max-content" class=value-label>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
-              <td class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
+              <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
               <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
-              <td class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
+              <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
             </tr>
           {/each}
     </tbody>

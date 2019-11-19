@@ -10,15 +10,23 @@ export let xAccessor = 'x';
 export let yAccessor = 'y';
 export let data;
 export let color = 'var(--digital-blue-500)';
+export let areaColor = 'var(--digital-blue-400)';
 export let strokeWidth = 1;
 export let lineDrawAnimation = { duration: 0 };
 export let curve = 'curveMonotoneX';
+export let area = false;
 
 const curveFunction = SHAPE[curve];
 
 const lineGenerator = SHAPE.line()
   .x((d) => xScale(d[xAccessor]))
   .y((d) => yScale(d[yAccessor]))
+  .curve(curveFunction);
+
+const areaGenerator = SHAPE.area()
+  .x((d) => xScale(d[xAccessor]))
+  .y1((d) => yScale(d[yAccessor]))
+  .y0(yScale.range()[0])
   .curve(curveFunction);
 
 </script>
@@ -30,4 +38,10 @@ const lineGenerator = SHAPE.line()
     fill=none 
     in:draw={lineDrawAnimation}
     d={lineGenerator(data)} />
+  {#if area}
+  <path 
+    fill={areaColor} 
+    in:fade
+    d={areaGenerator(data)} />
+  {/if}
 </g>

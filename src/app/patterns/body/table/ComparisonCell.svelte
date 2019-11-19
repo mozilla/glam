@@ -56,6 +56,7 @@ let distributionXScale;
               <ReferenceSymbol
                 xLocation={distributionXScale(referencePointValues[p])} 
                 yLocation={comparisonSmallMultiple.height - 6} 
+                size={20}
                 color={colorMap(p)} />
           {/each}
         {/if}

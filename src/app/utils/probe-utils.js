@@ -198,3 +198,7 @@ export function getProbeViewType(probeType, probeKind) {
   if (m('histogram', 'count')) return 'categorical';
   return undefined;
 }
+
+export function clientCounts(arr) {
+  return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
+}
