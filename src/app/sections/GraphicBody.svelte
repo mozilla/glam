@@ -44,6 +44,8 @@ let output = Promise.resolve({});
 
 const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.probe.type, $st.probe.kind));
 
+let hasHadFirstResponse = false;
+
 $: if ($store.probe.name !== probeName && $dataset.data && $temporaryViewTypeStore) {
   probeName = $store.probe.name;
   output = $dataset.data.then(

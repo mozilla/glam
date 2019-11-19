@@ -60,6 +60,7 @@ $: setDomain(timeHorizon);
 let hovered = {};
 
 // FIXME: this is for demo purposes. use better build data.
+data = data.slice(0, -1);
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
@@ -122,7 +123,7 @@ h4 {
     <h4>{title}</h4>
   </div>
   <div class=bignum>
-    <div class=bignum__label>⭑ Latest Total Clients</div>
+    <div class=bignum__label>⭑ Total Clients</div>
     <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
   </div>
 </div>

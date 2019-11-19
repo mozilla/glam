@@ -63,7 +63,6 @@ function setDomain(str) {
 $: setDomain(timeHorizon);
 
 let hovered = {};
-
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
