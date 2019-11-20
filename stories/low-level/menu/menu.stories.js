@@ -1,18 +1,19 @@
-import { storiesOf } from '@storybook/svelte';
+import { storiesOf } from "@storybook/svelte";
 
-import BasicMenuStory from './BasicMenuStory.svelte';
-import FloatingMenuStory from './FloatingMenuStory.svelte';
-import MenuButtonStory from './MenuButtonStory.svelte';
+import BasicMenuStory from "./BasicMenuStory.svelte";
+import FloatingMenuStory from "./FloatingMenuStory.svelte";
+import MenuButtonStory from "./MenuButtonStory.svelte";
 
-import '../../../public/static/global.css';
-import '../../glean-design-stories.css';
+import "../../../public/static/global.css";
+import "../../glean-design-stories.css";
 
-storiesOf('UX Components|Menu', module)
-  .add('Basic Menus', () => ({
-    Component: BasicMenuStory,
-  })).add('Floating Menus', () => ({
-    Component: FloatingMenuStory,
+storiesOf("UX Components|Menu", module)
+  .add("Basic Menus", () => ({
+    Component: BasicMenuStory
   }))
-  .add('Menu Button', () => ({
-    Component: MenuButtonStory,
+  .add("Floating Menus", () => ({
+    Component: FloatingMenuStory
+  }))
+  .add("Menu Button", () => ({
+    Component: MenuButtonStory
   }));

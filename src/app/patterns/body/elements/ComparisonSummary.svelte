@@ -1,153 +1,169 @@
 <script>
-import { format } from 'd3-format';
+  import { format } from "d3-format";
 
+  let fmt = format(",.4r");
+  let pFmt = format(".0%");
 
-let fmt = format(',.4r');
-let pFmt = format('.0%');
+  export let hovered = false;
+  export let colorMap = () => "black";
+  export let left;
+  export let right;
+  export let leftLabel;
+  export let rightLabel;
+  export let keySet;
+  export let compareTo = "left-right";
+  export let valueFormatter = t => t;
+  export let keyFormatter = t => t;
 
-export let hovered = false;
-export let colorMap = () => 'black';
-export let left;
-export let right;
-export let leftLabel;
-export let rightLabel;
-export let keySet;
-export let compareTo = 'left-right';
-export let valueFormatter = (t) => t;
-export let keyFormatter = (t) => t;
+  function percentChange(l, r) {
+    return (r - l) / l;
+  }
 
-function percentChange(l, r) {
-  return (r - l) / l;
-}
+  let displayValues = [];
 
-let displayValues = [];
+  function createNewPercentiles() {
+    return keySet.map(key => {
+      const leftValue = left ? left[key] : undefined; // left.percentiles.find((p) => p.bin === percentile).value : undefined;
+      const rightValue = right ? right[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
+      return {
+        key,
+        leftValue,
+        rightValue,
+        percentageChange:
+          leftValue && rightValue
+            ? percentChange(leftValue, rightValue)
+            : undefined
+      };
+    });
+  }
 
-function createNewPercentiles() {
-  return keySet.map((key) => {
-    const leftValue = left ? left[key] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
-    const rightValue = right ? right[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
-    return {
-      key,
-      leftValue,
-      rightValue,
-      percentageChange: (leftValue && rightValue) ? percentChange(leftValue, rightValue) : undefined,
-    };
-  });
-}
-
-$: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles();
-
+  $: if (leftLabel || rightLabel || keySet)
+    displayValues = createNewPercentiles();
 </script>
 
 <style>
+  .summary {
+    padding-top: var(--space-2x);
+    padding-bottom: var(--space-2x);
+  }
 
-.summary {
-  padding-top: var(--space-2x);
-  padding-bottom: var(--space-2x);
-}
+  table {
+    font-family: var(--main-mono-font);
+    font-size: var(--text-015);
+    /* margin-left: var(--space-base); */
+    margin: auto;
+    /* width: 100%; */
+    border-spacing: 0px;
+    --heavy-border: 1px solid var(--line-gray-01);
+    --lighter-border: 1px dotted var(--bg-gray-01);
+    width: 100%;
+  }
 
-table {
-  font-family: var(--main-mono-font);
-  font-size: var(--text-015);
-  /* margin-left: var(--space-base); */
-  margin: auto;
-  /* width: 100%; */
-  border-spacing: 0px;
-  --heavy-border: 1px solid var(--line-gray-01);
-  --lighter-border: 1px dotted var(--bg-gray-01);
-  width: 100%;
-}
+  tbody tr td {
+    border: var(--lighter-border);
+  }
 
-tbody tr td {
-  border: var(--lighter-border);
-}
+  tbody tr td:first-child,
+  tbody tr td:last-child {
+    border-right: var(--heavy-border);
+    border-left: var(--heavy-border);
+  }
 
-tbody tr td:first-child, tbody tr td:last-child {
-  border-right: var(--heavy-border);
-  border-left: var(--heavy-border);
-}
+  tbody tr:last-child td {
+    border-bottom: var(--heavy-border);
+  }
 
-tbody tr:last-child td {
-  border-bottom: var(--heavy-border);
-}
+  th {
+    line-height: 1;
+    font-weight: normal;
+    text-transform: uppercase;
+    vertical-align: top;
+    border-bottom: var(--heavy-border);
+    font-size: var(--text-01);
+    color: var(--cool-gray-500);
+  }
 
-th {
-  line-height: 1;
-  font-weight: normal;
-  text-transform:uppercase;
-  vertical-align: top;
-  border-bottom: var(--heavy-border);
-  font-size: var(--text-01);
-  color: var(--cool-gray-500);
-}
-
-td, th {
-  padding-left: var(--space-base);
-  padding-right: var(--space-base);
-  /* min-width: var(--space-4x);
+  td,
+  th {
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+    /* min-width: var(--space-4x);
   max-width: var(--space-6x); */
-  text-align: right;
-  padding-top: var(--space-base);
-  padding-bottom: var(--space-base);
-  transition: opacity 100ms;
-}
+    text-align: right;
+    padding-top: var(--space-base);
+    padding-bottom: var(--space-base);
+    transition: opacity 100ms;
+  }
 
-.ref, .hov {
-  width: 50%;
-}
+  .ref,
+  .hov {
+    width: 50%;
+  }
 
-.summary-label--main-date {
-  font-family: var(--main-mono-font); 
-  color: var(--cool-gray-500); 
-  font-weight: bold;
-}
+  .summary-label--main-date {
+    font-family: var(--main-mono-font);
+    color: var(--cool-gray-500);
+    font-weight: bold;
+  }
 
-.hidden {
-  opacity: .2;
-}
+  .hidden {
+    opacity: 0.2;
+  }
 
-/* .value-label, .value-left, .value-right {
+  /* .value-label, .value-left, .value-right {
   text-align: right;
 } */
 
+  .value-left,
+  .value-right {
+    background-color: var(--cool-gray-050);
+  }
 
-.value-left, .value-right {
-  background-color: var(--cool-gray-050);
-
-}
-
-.small-shape {
-  padding-left:var(--space-1h);
-}
-
+  .small-shape {
+    padding-left: var(--space-1h);
+  }
 </style>
 
-<div class=summary>
+<div class="summary">
 
   <table>
     <thead>
       <tr>
         <th style="min-width: 54px; width: max-content">Perc.</th>
-        <th  class:hidden={!hovered} class="summary-label ref">
-            Hovered<span class='small-shape'>●</span>
+        <th class:hidden={!hovered} class="summary-label ref">
+          Hovered
+          <span class="small-shape">●</span>
         </th>
         <th class="summary-label hov">
-            Ref.<span class='small-shape'>⭑</span>
-          </th>
-          <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
+          Ref.
+          <span class="small-shape">⭑</span>
+        </th>
+        <th style="width: max-content" class:hidden={!hovered}>Diff.</th>
       </tr>
     </thead>
     <tbody>
-          {#each displayValues as {leftValue, rightValue, percentageChange, key}}
-            <tr>
-              <td  style="width: max-content" class=value-label>
-                <span class=percentile-label-block
-                style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
-              <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
-              <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
-              <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
-            </tr>
-          {/each}
+      {#each displayValues as { leftValue, rightValue, percentageChange, key }}
+        <tr>
+          <td style="width: max-content" class="value-label">
+            <span
+              class="percentile-label-block"
+              style="background-color:{colorMap(key)}" />
+            {keyFormatter(key)}
+          </td>
+          <td class:hidden={!hovered} class="value-left">
+            {left ? valueFormatter(leftValue) : ' '}
+          </td>
+          <td class="value-right">
+            {right ? valueFormatter(rightValue) : ' '}
+          </td>
+          <td
+            style="min-width: 54px; width: max-content"
+            class:hidden={!hovered}
+            class="value-change">
+            {percentageChange ? pFmt(percentageChange) : ' '}
+          </td>
+        </tr>
+      {/each}
     </tbody>
   </table>
 </div>

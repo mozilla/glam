@@ -1,29 +1,29 @@
 <script>
-import { onMount } from 'svelte';
-import { fade, fly } from 'svelte/transition';
+  import { onMount } from "svelte";
+  import { fade, fly } from "svelte/transition";
 
-export let size = 32;
-let mounted = false;
-onMount(() => { mounted = true; });
-let y = 50;
-let duration = 400;
-let delay = 200;
+  export let size = 32;
+  let mounted = false;
+  onMount(() => {
+    mounted = true;
+  });
+  let y = 50;
+  let duration = 400;
+  let delay = 200;
 </script>
 
 <style>
-
-svg {
+  svg {
     --dark: var(--digital-blue-300);
-    --medium:var(--digital-blue-600);
-    --light:var(--digital-blue-400);
+    --medium: var(--digital-blue-600);
+    --light: var(--digital-blue-400);
     /* --dark: var(--digital-blue-500);
     --medium:var(--digital-blue-600);
     --light:var(--digital-blue-300); */
     /* --dark: rgb(37, 92, 37);
     --medium:rgb(37, 129, 37);
     --light:forestgreen; */
-}
-
+  }
 </style>
 
 <!-- <svg width={size} height={size} viewBox="0 0 393 344" version="1.1"
@@ -69,38 +69,62 @@ style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlim
     </g>
 </svg> -->
 {#if mounted}
-<svg width="100%" height={size} viewBox="0 0 512 333" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  <svg
+    width="100%"
+    height={size}
+    viewBox="0 0 512 333"
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xml:space="preserve"
+    xmlns:serif="http://www.serif.com/"
+    style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(1,0,0,1,-686.333,-953.365)">
-        <g  transform="matrix(-0.866025,-0.5,-0.5,0.866025,2318.33,620.811)">
-            <g transform="matrix(1,0,0,1,-221.703,-128)">
-                <g in:fly={{ y, duration, delay }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--medium);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--light);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-                    style="fill:var(--dark);"/>
-                </g>
-            </g>
-            <g transform="matrix(1,0,0,1,-110.851,-64)">
-                <g in:fly={{ y, duration, delay: delay * 2 }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--medium);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--light);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-                    style="fill:var(--dark);"/>
-                </g>
-            </g>
-            <g>
-                <g in:fly={{ y, duration, delay: delay * 3 }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--medium);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--light);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-                    style="fill:var(--dark);"/>
-                </g>
-            </g>
+      <g transform="matrix(-0.866025,-0.5,-0.5,0.866025,2318.33,620.811)">
+        <g transform="matrix(1,0,0,1,-221.703,-128)">
+          <g in:fly={{ y, duration, delay }}>
+            <path
+              d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+              style="fill:var(--medium);" />
+            <path
+              d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+              style="fill:var(--light);" />
+            <path
+              d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+              style="fill:var(--dark);" />
+          </g>
         </g>
+        <g transform="matrix(1,0,0,1,-110.851,-64)">
+          <g in:fly={{ y, duration, delay: delay * 2 }}>
+            <path
+              d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+              style="fill:var(--medium);" />
+            <path
+              d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+              style="fill:var(--light);" />
+            <path
+              d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+              style="fill:var(--dark);" />
+          </g>
+        </g>
+        <g>
+          <g in:fly={{ y, duration, delay: delay * 3 }}>
+            <path
+              d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+              style="fill:var(--medium);" />
+            <path
+              d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+              style="fill:var(--light);" />
+            <path
+              d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+              style="fill:var(--dark);" />
+          </g>
+        </g>
+      </g>
     </g>
-</svg>
+  </svg>
 
-<!-- <svg width="100%" height={size} viewBox="0 0 432 405" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  <!-- <svg width="100%" height={size} viewBox="0 0 432 405" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g transform="matrix(1,0,0,1,-109.547,-913.394)">
         <g transform="matrix(-0.69233,-1.19915,1.19915,-0.69233,128.734,1993.43)">
             <path d="M498.831,496L436.477,596L346.41,528L401.836,440L498.831,496Z" style="fill:var(--dark);"/>

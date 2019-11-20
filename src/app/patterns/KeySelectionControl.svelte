@@ -1,14 +1,16 @@
 <script>
-import BodyControl from './BodyControl.svelte';
+  import BodyControl from "./BodyControl.svelte";
 
-export let selections;
-export let options;
+  export let selections;
+  export let options;
 
-export let sortFunction;
-export let colorMap = () => 'black';
-export let transformed = options.map((opt) => ({
-  label: opt, value: opt, labelColor: colorMap(opt),
-}));
+  export let sortFunction;
+  export let colorMap = () => "black";
+  export let transformed = options.map(opt => ({
+    label: opt,
+    value: opt,
+    labelColor: colorMap(opt)
+  }));
 </script>
 
 <BodyControl
@@ -17,5 +19,4 @@ export let transformed = options.map((opt) => ({
   selected={selections}
   multi={true}
   level="low"
-  on:selection
-/>
+  on:selection />

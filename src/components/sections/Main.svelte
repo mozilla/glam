@@ -1,9 +1,9 @@
-
 <style>
-main {
+  main {
     grid-column: main;
-}
+  }
 </style>
+
 <main>
-    <slot></slot>
+  <slot />
 </main>

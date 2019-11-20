@@ -1,10 +1,9 @@
-import { storiesOf } from '@storybook/svelte';
-import Depth01 from './Depth01.svelte';
+import { storiesOf } from "@storybook/svelte";
+import Depth01 from "./Depth01.svelte";
 
-import '../../../public/static/global.css';
-import '../../glean-design-stories.css';
+import "../../../public/static/global.css";
+import "../../glean-design-stories.css";
 
-storiesOf('Principles|Depth', module)
-  .add('Depth', () => ({
-    Component: Depth01,
-  }));
+storiesOf("Principles|Depth", module).add("Depth", () => ({
+  Component: Depth01
+}));

@@ -1,38 +1,37 @@
 <script>
-import { setContext, createEventDispatcher, onMount } from 'svelte';
+  import { setContext, createEventDispatcher, onMount } from "svelte";
 
-import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
-import KeySelectionControl from '../../KeySelectionControl.svelte';
-import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
+  import ProportionExplorerSmallMultiple from "./ProportionExplorerSmallMultiple.svelte";
+  import KeySelectionControl from "../../KeySelectionControl.svelte";
+  import TimeHorizonControl from "../../TimeHorizonControl.svelte";
+  import ProportionMetricTypeControl from "../../ProportionMetricTypeControl.svelte";
 
-export let data;
-export let probeType;
-export let activeBuckets;
-export let bucketColorMap;
-export let bucketOptions;
-export let bucketSortOrder = (a, b) => ((a < b) ? 1 : -1);
+  export let data;
+  export let probeType;
+  export let activeBuckets;
+  export let bucketColorMap;
+  export let bucketOptions;
+  export let bucketSortOrder = (a, b) => (a < b ? 1 : -1);
 
-const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-function makeSelection(type) {
-  return function onSelection(event) {
-    dispatch('selection', { selection: event.detail.selection, type });
-  };
-}
+  function makeSelection(type) {
+    return function onSelection(event) {
+      dispatch("selection", { selection: event.detail.selection, type });
+    };
+  }
 
-let totalAggs = Object.keys(Object.values(data)[0]).length;
+  let totalAggs = Object.keys(Object.values(data)[0]).length;
 
-export let timeHorizon = 'MONTH';
-export let metricType = 'proportions';
+  export let timeHorizon = "MONTH";
+  export let metricType = "proportions";
 
-let latest = Object.values(Object.values(data)[0])[0];
+  let latest = Object.values(Object.values(data)[0])[0];
 
-// FIXME: slicing here for the demo.
-[latest] = latest.slice(-1);
+  // FIXME: slicing here for the demo.
+  [latest] = latest.slice(-1);
 
-setContext('probeType', probeType);
-
+  setContext("probeType", probeType);
 </script>
 
 <style>
@@ -51,56 +50,51 @@ setContext('probeType', probeType);
   .hidden {
     visibility: hidden;
   }
-
 </style>
 
+<div class="body-content">
 
-<div class=body-content>
-  
-  <div class=body-control-row>
-    <div class=body-control-set>
-      <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl 
+  <div class="body-control-row">
+    <div class="body-control-set">
+      <label class="body-control-set--label">Time Horizon</label>
+      <TimeHorizonControl
         horizon={timeHorizon}
-        on:selection={makeSelection('timeHorizon')}
-      />
+        on:selection={makeSelection('timeHorizon')} />
     </div>
-  
-    <div class=body-control-set>
-      <label class=body-control-set--label>Categories</label>
-        <KeySelectionControl 
-          sortFunction={bucketSortOrder} 
-          options={bucketOptions} 
-          selections={activeBuckets} 
-          on:selection={makeSelection('activeBuckets')}
-          colorMap={bucketColorMap} />
+
+    <div class="body-control-set">
+      <label class="body-control-set--label">Categories</label>
+      <KeySelectionControl
+        sortFunction={bucketSortOrder}
+        options={bucketOptions}
+        selections={activeBuckets}
+        on:selection={makeSelection('activeBuckets')}
+        colorMap={bucketColorMap} />
     </div>
   </div>
 
-  <div class=body-control-row>
-    <div class=body-control-set>
-      <label class=body-control-set--label>Metric Type</label>
-      <ProportionMetricTypeControl 
-        metricType={metricType}
-        on:selection={makeSelection('metricType')}
-      />
+  <div class="body-control-row">
+    <div class="body-control-set">
+      <label class="body-control-set--label">Metric Type</label>
+      <ProportionMetricTypeControl
+        {metricType}
+        on:selection={makeSelection('metricType')} />
     </div>
   </div>
 
-  <div class=data-graphics>
-    {#each Object.entries(data) as [key, aggs], i (key)}  
+  <div class="data-graphics">
+    {#each Object.entries(data) as [key, aggs], i (key)}
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
-          <div class='small-multiple'>
-            <ProportionExplorerSmallMultiple
-              title={key === 'undefined' ? '' : key}
-              data={data}
-              probeType={probeType}
-              activeBuckets={activeBuckets}
-              timeHorizon={timeHorizon}
-              colorMap={bucketColorMap}
-              metricType={metricType}
-            />
-          </div>
+        <div class="small-multiple">
+          <ProportionExplorerSmallMultiple
+            title={key === 'undefined' ? '' : key}
+            {data}
+            {probeType}
+            {activeBuckets}
+            {timeHorizon}
+            colorMap={bucketColorMap}
+            {metricType} />
+        </div>
       {/each}
     {/each}
   </div>

@@ -3,50 +3,49 @@
   // get the parent element location;
   // set the position of this element based off the parent element.
   // include offset.
-import { setContext, onMount, createEventDispatcher } from 'svelte';
+  import { setContext, onMount, createEventDispatcher } from "svelte";
 
-import Portal from '../Portal.svelte';
+  import Portal from "../Portal.svelte";
 
-export let active = false;
-export let parent;
-export let offset = 0;
-export let width;
-export let location = 'bottom';
-export let alignment = 'left';
-let y;
-export let onParentSelect = () => {};
+  export let active = false;
+  export let parent;
+  export let offset = 0;
+  export let width;
+  export let location = "bottom";
+  export let alignment = "left";
+  let y;
+  export let onParentSelect = () => {};
 
-let element;
+  let element;
 
-let elementWidth = 0;
-let elementHeight = 0;
-let parentRight;
-let parentBottom;
-let parentLeft;
-let parentTop;
-let windowWidth;
-let windowHeight;
+  let elementWidth = 0;
+  let elementHeight = 0;
+  let parentRight;
+  let parentBottom;
+  let parentLeft;
+  let parentTop;
+  let windowWidth;
+  let windowHeight;
 
+  let left;
+  let top;
 
-let left;
-let top;
+  setContext("onChildSelect", onParentSelect);
 
-setContext('onChildSelect', onParentSelect);
+  const dispatch = createEventDispatcher();
 
-const dispatch = createEventDispatcher();
-
-function handleKeypress(event) {
+  function handleKeypress(event) {
     const { key } = event;
-    if (key === 'Escape') {
-      dispatch('cancel');
+    if (key === "Escape") {
+      dispatch("cancel");
     }
-}
+  }
 
-function placeMenu() {
+  function placeMenu() {
     if (!element || !parent) return;
     const parentPosition = parent.getBoundingClientRect();
     const elementPosition = element.getBoundingClientRect();
-  
+
     elementWidth = elementPosition.width;
     elementHeight = elementPosition.height;
 
@@ -56,31 +55,31 @@ function placeMenu() {
     parentBottom = parentPosition.bottom + y;
 
     width = elementWidth;
-  
-    if (location === 'bottom') {
+
+    if (location === "bottom") {
       top = parentBottom + offset;
-    } else if (location === 'top') {
+    } else if (location === "top") {
       top = parentTop - elementHeight - offset;
-    } else if (location === 'left') {
+    } else if (location === "left") {
       // FIXME: is this the left / right default?
       left = parentLeft - elementWidth - offset;
     } else {
       left = parentRight + offset;
     }
     // FIXME: throw warning when location & alignment don't make sense
-    if (alignment === 'right') {
+    if (alignment === "right") {
       left = parentRight - elementWidth;
       // set right if off window
       if (left < 0) {
         left = parentLeft;
       }
-    } else if (alignment === 'left') {
+    } else if (alignment === "left") {
       // make it alignment="right" if it exceeds windowWith - elementWidth.
       left = parentLeft;
       if (left > windowWidth - elementWidth) {
         left = parentRight - elementWidth;
       }
-    } else if (alignment === 'top') {
+    } else if (alignment === "top") {
       top = parentTop;
       // if bottom edge of float is below height
       if (top + elementHeight > windowHeight) {
@@ -94,35 +93,42 @@ function placeMenu() {
     }
   }
 
-$: if (parent && element) {
+  $: if (parent && element) {
     placeMenu();
-}
+  }
 </script>
 
 <style>
-.bound-menu {
-  position: absolute;
-  width: max-content;
-}
+  .bound-menu {
+    position: absolute;
+    width: max-content;
+  }
 
-.click-area {
-  position:fixed;
-  left:0;
-  top:0;
-  width: 100vw;
-  height: 100vh;
-}
+  .click-area {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+  }
 </style>
 
-<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} on:keydown={handleKeypress} bind:scrollY={y} />
-
+<svelte:window
+  bind:innerWidth={windowWidth}
+  bind:innerHeight={windowHeight}
+  on:keydown={handleKeypress}
+  bind:scrollY={y} />
 
 <Portal>
-  <div on:click={() => { dispatch('cancel'); }} class=click-area></div>
-  <div class=bound-menu bind:this={element} style="
-    left: {left}px;
-    top: {top}px;
-    ">
-    <slot></slot>
+  <div
+    on:click={() => {
+      dispatch('cancel');
+    }}
+    class="click-area" />
+  <div
+    class="bound-menu"
+    bind:this={element}
+    style=" left: {left}px; top: {top}px; ">
+    <slot />
   </div>
 </Portal>

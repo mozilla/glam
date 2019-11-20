@@ -1,32 +1,37 @@
-import svelte from 'rollup-plugin-svelte';
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
-import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
-import json from 'rollup-plugin-json';
-import replace from '@rollup/plugin-replace';
+import svelte from "rollup-plugin-svelte";
+import resolve from "rollup-plugin-node-resolve";
+import commonjs from "rollup-plugin-commonjs";
+import livereload from "rollup-plugin-livereload";
+import json from "rollup-plugin-json";
+import replace from "@rollup/plugin-replace";
+import { terser } from "rollup-plugin-terser";
+import { eslint } from "rollup-plugin-eslint";
 
-const production = process.env.NODE_ENV === 'production';
+const production = process.env.NODE_ENV === "production";
 
 export default {
-  input: 'src/main.js',
+  input: "src/main.js",
   output: {
     sourcemap: true,
-    format: 'iife',
-    name: 'app',
-    file: 'public/static/bundle.js',
+    format: "iife",
+    name: "app",
+    file: "public/static/bundle.js"
   },
   plugins: [
     json(),
-    replace({ __BASE_DOMAIN__: production ? '' : 'http://localhost:8000' }),
+    replace({ __BASE_DOMAIN__: production ? "" : "http://localhost:8000" }),
+    eslint({
+      include: "src",
+      throwOnError: true
+    }),
     svelte({
       // enable run-time checks when not in production
       dev: !production,
       // we'll extract any component CSS out into
       // a separate file — better for performance
-      css: (css) => {
-        css.write('public/static/bundle.css');
-      },
+      css: css => {
+        css.write("public/static/bundle.css");
+      }
     }),
 
     // If you have external dependencies installed from
@@ -39,13 +44,13 @@ export default {
 
     // Watch the `public/static/` directory and refresh
     // the browser on changes when not in production
-    !production && livereload('public/static/'),
+    !production && livereload("public/static/"),
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser(),
+    production && terser()
   ],
   watch: {
-    clearScreen: false,
-  },
+    clearScreen: false
+  }
 };

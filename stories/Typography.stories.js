@@ -1,13 +1,13 @@
-import { storiesOf } from '@storybook/svelte';
-import TypographySizes from './TypographySizes.svelte';
-import Fonts from './Fonts.svelte';
+import { storiesOf } from "@storybook/svelte";
+import TypographySizes from "./TypographySizes.svelte";
+import Fonts from "./Fonts.svelte";
 
-import '../public/static/global.css';
+import "../public/static/global.css";
 
-storiesOf('Principles|Typography', module)
-  .add('Sizes', () => ({
-    Component: TypographySizes,
+storiesOf("Principles|Typography", module)
+  .add("Sizes", () => ({
+    Component: TypographySizes
   }))
-  .add('Fonts', () => ({
-    Component: Fonts,
+  .add("Fonts", () => ({
+    Component: Fonts
   }));

@@ -1,39 +1,35 @@
 <script>
-import { getContext } from 'svelte';
-import { fade } from 'svelte/transition';
+  import { getContext } from "svelte";
+  import { fade } from "svelte/transition";
 
-import SimpleAxis from './SimpleAxis.svelte';
+  import SimpleAxis from "./SimpleAxis.svelte";
 
-// const defaults = getContext('defaults');
-// const margins = getContext('margins');
+  // const defaults = getContext('defaults');
+  // const margins = getContext('margins');
 
-// export let fadeValues = defaults.fadeParams;
+  // export let fadeValues = defaults.fadeParams;
 
-// export let height = getContext('bodyHeight');
-// export let bottomPlot = getContext('bottomPlot');
-// export let fontSize = defaults.axisTickFontSize;
-// export let xScale = getContext('xScale');
-// export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
+  // export let height = getContext('bodyHeight');
+  // export let bottomPlot = getContext('bottomPlot');
+  // export let fontSize = defaults.axisTickFontSize;
+  // export let xScale = getContext('xScale');
+  // export let ticks = xScale.ticks !== undefined ? xScale.ticks() : xScale.domain();
 
-// let _ticks;
-// if (Array.isArray(ticks)) {
-//   _ticks = ticks;
-// } else if (typeof ticks === 'function') {
-//   // if you pass in a function, the function operates
-//   // on the xScale accordingly and returns whatever it needs
-//   // to be an array
-//   _ticks = ticks(xScale);
-// }
+  // let _ticks;
+  // if (Array.isArray(ticks)) {
+  //   _ticks = ticks;
+  // } else if (typeof ticks === 'function') {
+  //   // if you pass in a function, the function operates
+  //   // on the xScale accordingly and returns whatever it needs
+  //   // to be an array
+  //   _ticks = ticks(xScale);
+  // }
 
-// export let tickFormatter = (t) => t;
-// export let every = 1;
+  // export let tickFormatter = (t) => t;
+  // export let every = 1;
 </script>
 
-<SimpleAxis 
-  {...$$props}
-  side='bottom'
-  mainScaleName='xScale'
-/>
+<SimpleAxis {...$$props} side="bottom" mainScaleName="xScale" />
 
 <!-- <g in:fade={fadeValues} class=bottom-axis>
   {#each _ticks as tick, i (tick)}

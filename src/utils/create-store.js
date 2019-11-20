@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
-import produce from 'immer';
-import { writable, get } from 'svelte/store';
+import produce from "immer";
+import { writable, get } from "svelte/store";
 
 export function createStore(initialStore) {
   const INTERNAL_STORE = writable(initialStore);
@@ -15,14 +15,14 @@ export function createStore(initialStore) {
   function dispatch(func) {
     // this is really just a slight addendum to update
     // that allows you to pass in produce-friendly functions.
-    if (func.constructor.name === 'AsyncFunction') {
+    if (func.constructor.name === "AsyncFunction") {
       // composite update (thunk). Async may or may not be
       // necessary here, but might as well make all of these async by
       // default.
       func(dispatch, getState);
     } else {
       // atomic update (singular state change).
-      INTERNAL_STORE.update((state) => produce(state, func));
+      INTERNAL_STORE.update(state => produce(state, func));
     }
   }
   // this is the pattern that @openjck and I worked out
@@ -32,9 +32,11 @@ export function createStore(initialStore) {
   // we call it setField to differentiate it from the store's
   // set function.
   function setField(key, value) {
-    INTERNAL_STORE.update((state) => produce(state, (draft) => {
-      draft[key] = value;
-    }));
+    INTERNAL_STORE.update(state =>
+      produce(state, draft => {
+        draft[key] = value;
+      })
+    );
   }
 
   function connect(func) {
@@ -46,6 +48,6 @@ export function createStore(initialStore) {
     connect,
     subscribe: INTERNAL_STORE.subscribe,
     getState,
-    setField,
+    setField
   };
 }

@@ -1,43 +1,39 @@
 <script>
-  import { tick, setContext } from 'svelte';
-import { fly } from 'svelte/transition';
-import {
-    store,
-} from '../state/store';
+  import { tick, setContext } from "svelte";
+  import { fly } from "svelte/transition";
+  import { store } from "../state/store";
 
+  import telemetrySearch from "../state/telemetry-search";
 
-import telemetrySearch from '../state/telemetry-search';
+  import TelemetrySearchResults from "./TelemetrySearchResults.svelte";
+  import SearchIcon from "../../components/icons/Search.svelte";
 
-import TelemetrySearchResults from './TelemetrySearchResults.svelte';
-import SearchIcon from '../../components/icons/Search.svelte';
+  let inputElement;
+  let searchContainer;
 
-let inputElement;
-let searchContainer;
+  function turnOnSearch() {
+    store.setField("searchIsActive", true);
+  }
 
-function turnOnSearch() {
-    store.setField('searchIsActive', true);
-}
-
-function turnOffSearch() {
+  function turnOffSearch() {
     setTimeout(() => {
-      store.setField('searchIsActive', false);
+      store.setField("searchIsActive", false);
     }, 100);
-}
+  }
 
-function unfocus() {
+  function unfocus() {
     inputElement.blur();
-}
+  }
 
-async function onKeypress(event) {
+  async function onKeypress(event) {
     if ($store.searchIsActive) {
       const { key } = event;
-      if (key === 'Escape') {
+      if (key === "Escape") {
         await tick();
         unfocus();
       }
     }
-}
-
+  }
 </script>
 
 <style>
@@ -67,7 +63,6 @@ async function onKeypress(event) {
     background-color: var(--input-background-color);
     /* background-color: white; */
     border-radius: var(--space-1h);
-
   }
 
   .icon-container {
@@ -75,7 +70,6 @@ async function onKeypress(event) {
     display: grid;
     align-items: center;
     justify-items: center;
-
   }
 
   .icon {
@@ -116,28 +110,28 @@ async function onKeypress(event) {
 
 <svelte:window on:keydown={onKeypress} />
 
-<div class=search-container>
-  <div class=inner-container bind:this={searchContainer}>
-      <div class=icon-container>
+<div class="search-container">
+  <div class="inner-container" bind:this={searchContainer}>
+    <div class="icon-container">
       {#if $telemetrySearch.loaded}
-      <div class=icon in:fly={{ y: -10, duration: 100 }}>
-        <SearchIcon  />
-      </div>
-      {:else}
-        <div class=icon out:fly={{ y: -10, duration: 100 }}>
-          uh..
+        <div class="icon" in:fly={{ y: -10, duration: 100 }}>
+          <SearchIcon />
         </div>
+      {:else}
+        <div class="icon" out:fly={{ y: -10, duration: 100 }}>uh..</div>
       {/if}
     </div>
-    <input on:focus={turnOnSearch}
+    <input
+      on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}
-      value={$store.searchQuery} on:input={(evt) => {
-          store.setField('searchQuery', evt.target.value);
-          store.setField('searchIsActive', true);
+      value={$store.searchQuery}
+      on:input={evt => {
+        store.setField('searchQuery', evt.target.value);
+        store.setField('searchIsActive', true);
       }} />
-    </div>
+  </div>
 </div>
 
 <TelemetrySearchResults parentElement={searchContainer} />
