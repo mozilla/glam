@@ -6,7 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import replace from '@rollup/plugin-replace';
 
-const production = !process.env.ROLLUP_WATCH;
+const production = process.env.NODE_ENV === 'production';
 
 export default {
   input: 'src/main.js',
