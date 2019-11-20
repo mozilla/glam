@@ -83,6 +83,7 @@ const referencePoints = cartesianCoordSpring(
   extractMouseoverValues(reference),
   placeShapeX,
   placeShapeY,
+  { stiffness: 0.4, damping: 0.8 },
 );
 
 const hoverPoints = cartesianCoordSpring(

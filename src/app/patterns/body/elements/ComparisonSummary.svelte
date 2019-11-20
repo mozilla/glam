@@ -42,7 +42,7 @@ $: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles()
 <style>
 
 .summary {
-  padding-top: var(--space-2x);
+  padding-top: 20px;
   padding-bottom: var(--space-2x);
 }
 
