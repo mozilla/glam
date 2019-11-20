@@ -146,7 +146,10 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
       density={leftDistribution} 
       densityAccessor='value'
       valueAccessor='bin'
-      densityRange={[0, 30]}
+      densityRange={[0,
+        (explorerComparisonSmallMultiple.width
+        - explorerComparisonSmallMultiple.left
+        - explorerComparisonSmallMultiple.right) / 2 - 5]}
       areaColor="var(--digital-blue-400)"
       lineColor="var(--digital-blue-500)"
     />
@@ -162,7 +165,9 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
       density={$animatedReferenceDistribution} 
       densityAccessor='value'
       valueAccessor='bin'
-      densityRange={[0, 30]}
+      densityRange={[0, (explorerComparisonSmallMultiple.width
+        - explorerComparisonSmallMultiple.left
+        - explorerComparisonSmallMultiple.right) / 2 - 5]}
       areaColor="var(--digital-blue-400)"
       lineColor="var(--digital-blue-500)"
     />

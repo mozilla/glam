@@ -2,17 +2,17 @@
 // For the explorer view.
 
 export const buildIDComparisonGraph = {
-  width: 450,
+  width: 425,
   height: 350,
-  right: 24,
+  right: 16,
   bottom: 24,
 };
 
 export const explorerComparisonSmallMultiple = {
-  width: 125,
+  width: 145,
   height: buildIDComparisonGraph.height,
   left: 8,
-  right: 50,
+  right: 64,
   bottom: buildIDComparisonGraph.bottom,
 };
 
