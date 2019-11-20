@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
             name='Aggregation',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('channel', models.IntegerField(choices=[(1, 'Nightly'), (2, 'Beta'), (3, 'Release')])),
+                ('channel', models.IntegerField(choices=[(1, 'nightly'), (2, 'beta'), (3, 'release')])),
                 ('version', models.CharField(max_length=100)),
-                ('agg_type', models.IntegerField(choices=[(1, 'Histogram'), (2, 'Percentile')])),
+                ('agg_type', models.IntegerField(choices=[(1, 'histogram'), (2, 'percentiles')])),
                 ('os', models.CharField(blank=True, max_length=100, null=True)),
                 ('build_id', models.CharField(blank=True, max_length=100, null=True)),
                 ('metric', models.CharField(max_length=200)),

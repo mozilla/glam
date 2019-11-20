@@ -1,9 +1,17 @@
 import json
+import re
 import urllib.request
 
 from django.core.management.base import BaseCommand
 
 from glam.api.models import Probe
+
+
+EXCLUDED_PROBES_RE = [re.compile(x) for x in [
+    r"histogram/SEARCH_COUNTS",
+    r"scalar/browser\.search.*",
+    r"scalar/browser\.engagement\.navigation\..*",
+]]
 
 
 class Command(BaseCommand):
@@ -14,14 +22,13 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
 
         probes = self.extract()
-        print("{} probes extracted".format(len(probes)))
-
         probes = map(self.transform, probes)
 
         for probe in probes:
             self.update_probe(probe)
 
-        print("Probes imported.")
+        count = Probe.objects.all().count()
+        print("{} probes imported into the database".format(count))
 
     def get_name(self, name):
         # Returns name with `histogram/` or `scalar/` removed, dots to underscores,
@@ -55,10 +62,18 @@ class Command(BaseCommand):
     def extract(self):
         # Read in all probes.
         probes_dict = json.loads(urllib.request.urlopen(self.PROBES_URL).read())
+        print("{} probes loaded from probe dictionary".format(len(probes_dict.keys())))
+
         # Filter probes by histograms or scalars only.
         keys = [
             k for k in probes_dict.keys() if k.startswith(("histogram/", "scalar/"))
         ]
+        # Remove any specifically excluded probes.
+        keys = [
+            k for k in keys if not any((regex.match(k) for regex in EXCLUDED_PROBES_RE))
+        ]
+        print("{} probes after filters and exclusions".format(len(keys)))
+
         # Restructure from one global dict to a list of dicts per probe, with `key`
         # being the original probe dict key.
         probes = [dict(probes_dict[k], key=k) for k in keys]
