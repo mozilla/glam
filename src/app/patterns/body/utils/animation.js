@@ -2,6 +2,24 @@
 import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 
+export function histogramSpring(initial, params = { damping: 1, stiffness: 0.9 }) {
+  function getHistValues(d) {
+    return d.map((di) => di.value);
+  }
+  let value = initial;
+  const referenceDistSpring = spring(getHistValues(value), params);
+
+  const { subscribe } = derived(referenceDistSpring,
+    ($d) => $d.map((di, i) => ({ value: di, bin: value[i].bin })));
+  return {
+    subscribe,
+    setValue: (v) => {
+      value = v;
+      referenceDistSpring.set(getHistValues(value));
+    },
+  };
+}
+
 export function twoPointSpring(initialHoverValue, initialReferenceValue, scale, colorMap = () => 'black') {
   function ptToSpringValue(pt) {
     if (pt === undefined) return undefined;
@@ -12,8 +30,10 @@ export function twoPointSpring(initialHoverValue, initialReferenceValue, scale, 
     return out;
   }
 
-  const leftValues = spring(ptToSpringValue(initialHoverValue), { damping: 1, stiffness: 0.7 });
-  const rightValues = spring(ptToSpringValue(initialReferenceValue), { damping: 0.55, stiffness: 1 });
+  const hovParams = { damping: 1, stiffness: 0.7 };
+  const refParams = { damping: 0.55, stiffness: 1 };
+  const leftValues = spring(ptToSpringValue(initialHoverValue), hovParams);
+  const rightValues = spring(ptToSpringValue(initialReferenceValue), refParams);
 
   const dotsAndLines = derived([leftValues, rightValues], ([$left, $right]) => {
     if (!$left || !$right) return [];
@@ -29,11 +49,11 @@ export function twoPointSpring(initialHoverValue, initialReferenceValue, scale, 
   return {
     transform: ptToSpringValue,
     subscribe: dotsAndLines.subscribe,
-    setHover: (p) => {
-      leftValues.set(ptToSpringValue(p));
+    setHover: (p, hard = false) => {
+      leftValues.set(ptToSpringValue(p), { hard });
     },
-    setReference: (p) => {
-      rightValues.set(ptToSpringValue(p));
+    setReference: (p, hard = false) => {
+      rightValues.set(ptToSpringValue(p), { hard });
     },
   };
 }
