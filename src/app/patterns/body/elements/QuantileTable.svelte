@@ -52,7 +52,7 @@ if (probeType === 'histogram') {
   position: relative;
 }
 
-thead tr th {
+thead {
   position: sticky;
   top: 0;
 }
@@ -124,10 +124,20 @@ thead tr th {
             </DataGraphic>
           </th>
         </tr>
+        <QuantileRow 
+        datum={reference} 
+          reference={reference}
+          biggestAudience={biggestAudience} 
+          isReference={true}
+          distributionScaleType={distributionScaleType}
+          xDomain={xDomain}
+          mainReference={true}
+          on:click={setReference} />
       </thead>
       <tbody>
         {#each data.slice(currentPage * pageSize, (currentPage + 1) * pageSize) as datum, i (datum.label)}
-          <QuantileRow 
+          <QuantileRow
+            disabled={datum.label === reference.label}
             datum={datum} 
             reference={reference}
             biggestAudience={biggestAudience} 

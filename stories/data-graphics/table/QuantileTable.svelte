@@ -19,17 +19,16 @@ function getExampleData(data) {
 }
 
 let probes = [
-
   {
-    name: 'browser_engagement_active_ticks',
-    data: responseToData(ACTIVE_TICKS.response),
-    probeType: 'scalar',
-  }, {
     name: 'gc_ms',
     data: responseToData(GCMS.response),
     probeType: 'histogram',
   },
-
+  {
+    name: 'browser_engagement_active_ticks',
+    data: responseToData(ACTIVE_TICKS.response),
+    probeType: 'scalar',
+  },
   {
     name: 'browser_engagement_navigation_urlbar',
     data: responseToData(NAV_URL.response),

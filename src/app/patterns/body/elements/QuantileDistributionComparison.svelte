@@ -12,7 +12,7 @@ import ReferenceSymbol from './ReferenceSymbol.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';
 
-import { twoPointSpring } from '../utils/animation';
+import { twoPointSpring, histogramSpring } from '../utils/animation';
 
 import { explorerComparisonSmallMultiple } from '../utils/constants';
 
@@ -60,18 +60,22 @@ function placeShapeY(value) {
   return yScale(nearestBelow(value, yDomain));
 }
 
+// function getHistValues(d) {
+//   return d.map((d) => d.value);
+// }
 
-function getHistValues(d) {
-  return d.map((d) => d.value);
-}
+// let referenceDistSpring;
 
-let referenceDistSpring;
+// if (rightDistribution) referenceDistSpring = spring(getHistValues(rightDistribution), { damping: 1, stiffness: 0.9 });
+// $: if (rightDistribution) referenceDistSpring.set(getHistValues(rightDistribution));
 
-if (rightDistribution) referenceDistSpring = spring(getHistValues(rightDistribution), { damping: 1, stiffness: 0.9 });
-$: if (rightDistribution) referenceDistSpring.set(getHistValues(rightDistribution));
+// const animatedReferenceDistribution = derived(referenceDistSpring,
+//   ($d) => $d.map((di, i) => ({ value: di, bin: rightDistribution[i].bin })));
 
-const animatedReferenceDistribution = derived(referenceDistSpring,
-  ($d) => $d.map((di, i) => ({ value: di, bin: rightDistribution[i].bin })));
+
+const animatedReferenceDistribution = histogramSpring(rightDistribution);
+$: if (rightDistribution) animatedReferenceDistribution.setValue(rightDistribution);
+
 
 const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
 

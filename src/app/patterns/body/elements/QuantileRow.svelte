@@ -10,22 +10,25 @@ import ComparisonCell from '../table/ComparisonCell.svelte';
 
 const numberFormat = format('.0f');
 
-const dispatch = createEventDispatcher();
-function onClick(v) {
-  dispatch('click', {
-    value: v,
-  });
-}
 
 export let datum;
 export let reference;
 export let biggestAudience = datum.audienceSize;
 export let isReference;
 export let distributionScaleType = 'scalePoint';
+export let disabled = false;
+export let mainReference = false;
 
 export let xDomain;
 
 let hovered = false;
+
+const dispatch = createEventDispatcher();
+function onClick(v) {
+  dispatch('click', {
+    value: v,
+  });
+}
 
 </script>
 
@@ -40,9 +43,39 @@ let hovered = false;
   background-color: var(--pantone-red-100);
 }
 
+.disabled {
+  opacity:.5;
+  background-color: var(--cool-gray-100);
+}
+
+/* :global(.reference td:last-child:before) {
+  content: 'reference';
+  position: absolute;
+  right: 0px;
+  padding-left: var(--space-1h);
+  padding-right: var(--space-1h);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--pantone-red-600);
+
+}
+
+:global(.disabled td:last-child:before) {
+  content: 'current reference';
+  position: absolute;
+  right: 0px;
+  padding-left: var(--space-1h);
+  padding-right: var(--space-1h);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--cool-gray-600);
+} */
+
 </style>
 
-<tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
+<tr class:disabled class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
   
     <BuildIDCell label={datum.label} />
 
@@ -65,12 +98,16 @@ let hovered = false;
       distributionScaleType={distributionScaleType}
       xDomain={xDomain}
       colorMap={(v) => percentileLineColorMap(+v)}
-      hovered={hovered}
+      hovered={!isReference && hovered}
       hoverDistributionValues={datum.histogram}
       referenceDistributionValues={reference.histogram}
       hoverPointValues={datum.transformedPercentiles}
       referencePointValues={reference.transformedPercentiles}
       isReference={isReference}
+      disabled={disabled}
+      mainReference={mainReference}
+      topLabel={datum.label}
+      bottomLabel={reference.label}
     />
 
   </tr>
