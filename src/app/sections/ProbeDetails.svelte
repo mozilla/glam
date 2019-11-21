@@ -9,6 +9,7 @@ import { store, dataset } from '../state/store';
 import { downloadString } from '../../utils/download';
 
 import Button from '../../components/Button.svelte';
+import StatusLabel from '../../components/StatusLabel.svelte';
 
 const paneTransition = { x: 10, duration: 300 };
 
@@ -80,53 +81,54 @@ h2 {
     margin-top: var(--space-base);
 }
 
-.probe-labels {
-    padding: 0;
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
-    grid-column-gap: var(--space-2x);
-    height: var(--increment);
-}
-
-.drawer-header {
-    background: transparent;
-    border: 0;
-    color: var(--body-gray-02);
-    height: auto;
-    margin-bottom: var(--space-base);
-}
-
-.details-list {
+.probe-details-overview-left {
     margin: 0;
-    padding: 0;
-    list-style: none;
 }
 
-.details-list > * {
-    margin: 0 0 var(--space-base) 0;
+.probe-details-overview-left > * {
+    line-height: 1.2;
 }
 
-.details-list > *:last-child {
-    margin-bottom: 0;
+.probe-details-overview-left dt {
+    text-transform: capitalize;
+    color: var(--subhead-gray-01);
+    font-size: var(--text-04);
+    font-weight: 500;
 }
 
-.detail--indented {
-    position: relative;
-    padding-left: var(--space-2x);
+.probe-details-overview-left dd {
+    margin: 0;
     font-size: var(--text-015);
+    color: var(--subhead-gray-01);
 }
 
-.detail--indented::before {
-    content: ">";
-    position: absolute;
-    height: var(--space-base);
-    width: var(--space-base);
-    top: 0;
-    left: 0;
-    color: var(--cool-gray-400);
+.probe-details-overview-left--padded {
+    padding: 0 calc(var(--space-base) - 1px);
+}
+
+.probe-details-overview-left--subtle {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0;
+    align-items: baseline;
+}
+
+.probe-details-overview-left--subtle dt {
+    text-transform: none;
+    font-size: var(--text-02);
+}
+
+.probe-details-overview-left--subtle dd {
+    font-size: var(--text-01);
+}
+
+.probe-details-overview {
+    display: flex;
+    justify-content: space-between;
+}
+
+.probe-details-overview-right {
+    padding: var(--space-2x);
 }
 
 </style>
@@ -145,39 +147,32 @@ h2 {
 <div in:fly={paneTransition} class="drawer-section-container probe-details">
     <!-- probe-details-content -->
     <div class="probe-details-content">
+        <div class="probe-details-overview">
         {#if $store.probe.type}
-            <div class="drawer-section probe-labels">
-                <div>
-                    <span
-                        style="display: inline-block;"
-                        class="label label-text--01 label--{$store.probe.type}">{$store.probe.type}</span>
-                </div>
+            <dl class="drawer-section probe-details-overview-left">
+                <dt>{$store.probe.type}</dt>
                 {#if $store.probe.kind}
-                    <div class="probe-kind label-text--01">
-                        {$store.probe.kind}
-                    </div>
+                    <dd>{$store.probe.kind}</dd>
                 {/if}
+            </dl>
+        {/if}
+        {#if $store.probe.active !== undefined}
+            <div class="probe-details-overview-right">
+                <StatusLabel level={$store.probe.active ? 'success' : 'info'}>
+                    {$store.probe.active ? 'active' : 'inactive'}
+                </StatusLabel>
             </div>
         {/if}
-        <div class="drawer-section">
-            <ul class="details-list">
-            {#if $store.probe.active !== undefined}
-                <li class="detail--indented">
-                {#if $store.probe.active}
-                    active
-                {:else}
-                    inactive
-                {/if}
-                </li>
-            {/if}
-            {#if $store.versions && $store.versions.length}
-                <li class="detail--indented">
-                    {$store.channel} {$store.probe.versions[$store.channel][0]}
-                    &ndash; {$store.probe.versions[$store.channel][1]}
-                </li>
-            {/if}
-            </ul>
         </div>
+        {#if $store.versions && $store.versions.length}
+            <dl class="drawer-section probe-details-overview-left probe-details-overview-left--subtle">
+                <dt>{$store.channel}</dt>
+                <dd class="probe-details-overview-left--padded">
+                    {$store.probe.versions[$store.channel][0]}
+                    &ndash; {$store.probe.versions[$store.channel][1]}
+                </dd>
+            </dl>
+        {/if}
         <div class=drawer-section>
             {#if $store.probe.description}
                 <h2 class="detail__heading--01">description</h2>
