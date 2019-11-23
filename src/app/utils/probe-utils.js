@@ -29,9 +29,34 @@ export const responseHistogramToGraphicFormat = (histogram, keyTransform = (k) =
   return formatted;
 };
 
+const errors = {
+  MISSING_PERCENTILES: {
+    message: 'This probe is missing data.',
+    moreInformation: 'We can\'t find the percentile calculations for this probe.',
+  },
+  MISSING_HISTOGRAM: {
+    message: 'This probe is missing data.',
+    moreInformation: 'We can\'t find the histogram aggregations for this probe.',
+  },
+};
+
+function createNewError(which) {
+  const error = new Error(errors[which].message);
+  error.moreInformation = errors[which].moreInformation;
+  return error;
+}
+
+
 export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.map((probe) => {
-  const histogram = responseHistogramToGraphicFormat(probe.data[0].histogram);
+  const h = probe.data[0].histogram;
+  if (!h) {
+    throw createNewError('MISSING_HISTOGRAM');
+  }
+  const histogram = responseHistogramToGraphicFormat(h);
   const { percentiles } = probe.data[0];
+  if (!percentiles) {
+    throw createNewError('MISSING_PERCENTILES');
+  }
   const transformedPercentiles = Object.entries(percentiles).reduce((acc, [bin, value]) => {
     acc[bin] = nearestBelow(value, histogram.map((h) => h.bin));
     return acc;
