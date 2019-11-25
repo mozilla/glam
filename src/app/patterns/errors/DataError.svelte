@@ -45,7 +45,7 @@ export let moreInformation;
 .data-error-msg__more-information {
   width: var(--error-msg-width);
   color: var(--error-msg-color);
-  line-height:1.2;
+  line-height:1.5;
   margin-bottom: var(--space-2x);
   font-style: italic;
   color: var(--error-msg-color);
@@ -73,6 +73,6 @@ export let moreInformation;
     </div>
   {/if}
   <div class="data-error-msg__call-to-action">
-    Report this on the <a href='#'>#glam</a> channel on Mozilla's Slack instance or in the <a href='https://github.com/mozilla/glam/issues/new'>GLAM github repository</a>.
+    If you think this is a bug, report this on the <a href='#'>#glam</a> channel on Mozilla's Slack instance or in the <a href='https://github.com/mozilla/glam/issues/new'>GLAM github repository</a>.
   </div>
 </div>

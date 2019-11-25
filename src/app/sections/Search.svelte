@@ -10,6 +10,7 @@ import telemetrySearch from '../state/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
+import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 let inputElement;
 let searchContainer;
@@ -124,8 +125,8 @@ async function onKeypress(event) {
         <SearchIcon  />
       </div>
       {:else}
-        <div class=icon out:fly={{ y: -10, duration: 100 }}>
-          uh..
+        <div class=icon transition:fly={{ y: -10, duration: 100 }}>
+          <LineSegSpinner />
         </div>
       {/if}
     </div>

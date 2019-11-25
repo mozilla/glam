@@ -237,6 +237,13 @@ export function fetchDataForGLAM(params) {
       // the response is kind of messed up so once the API / data is fixed
       // the response shluld consume from payload.response[0].metric_type;
       const { probe } = get(store);
+
+      if (!('response' in payload)) {
+        const er = new Error('The data for this probe is unavailable.');
+        if (!probe.active) er.moreInformation = 'This probe appears to be inactive, so it\'s possible we don\'t have data for it.';
+        throw er;
+      }
+
       const probeType = probe.type;
       const probeKind = probe.kind;
       return {

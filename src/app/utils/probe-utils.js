@@ -42,6 +42,7 @@ const errors = {
 
 function createNewError(which) {
   const error = new Error(errors[which].message);
+  console.error(error);
   error.moreInformation = errors[which].moreInformation;
   return error;
 }
