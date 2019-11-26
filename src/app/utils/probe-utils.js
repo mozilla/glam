@@ -185,7 +185,7 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
     Object.keys(byKey[k]).forEach((aggKey) => {
       byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel, prepareArgs);
-      byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
+      if (aggregationLevel === 'build_id') byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
       byKey[k][aggKey].sort(sortByKey('label'));
       if (postProcessArgs.removeZeroes) {
         // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
