@@ -194,7 +194,7 @@ const makeSortOrder = (latest) => (a, b) => {
 function latestDatapoint(tr) {
   const series = Object.values(Object.values(tr)[0])[0];
   // FIXME: this should be the last value, not the second to last
-  return series[series.length - 2];
+  return series[series.length - 1];
 }
 
 function getBucketKeys(tr) {
@@ -236,13 +236,22 @@ export function fetchDataForGLAM(params) {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed
       // the response shluld consume from payload.response[0].metric_type;
-      const { probe } = get(store);
+      const st = get(store);
+      const { probe } = st;
+      const { aggregationLevel } = st;
+
+      if (!('response' in payload)) {
+        const er = new Error('The data for this probe is unavailable.');
+        if (!probe.active) er.moreInformation = 'This probe appears to be inactive, so it\'s possible we don\'t have data for it.';
+        throw er;
+      }
+
       const probeType = probe.type;
       const probeKind = probe.kind;
       return {
         data: responseToData(payload.response,
           isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-          `${probeType}-${probeKind}`),
+          `${probeType}-${probeKind}`, aggregationLevel),
         probeType,
         probeKind,
       };

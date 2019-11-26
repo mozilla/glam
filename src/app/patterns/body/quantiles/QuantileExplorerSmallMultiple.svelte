@@ -45,7 +45,7 @@ if (probeType === 'histogram') {
 }
 
 // FIXME: after demo remove this requirement
-data = data.slice(0, -1);
+// data = data.slice(0, -1);
 
 let domain = writable(data.map((d) => d.label));
 

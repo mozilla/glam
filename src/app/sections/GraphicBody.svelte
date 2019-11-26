@@ -1,5 +1,5 @@
 <script>
-import { fade } from 'svelte/transition';
+import { fade, fly } from 'svelte/transition';
 
 // FIXME: get rid of this once the API / dataset is fixed.
 // until then, we will need to keep this, since it's our only
@@ -19,6 +19,8 @@ import QuantileExplorerView from '../patterns/body/quantiles/QuantileExplorerVie
 import ProportionExplorerView from '../patterns/body/proportions/ProportionExplorerView.svelte';
 
 import { firefoxVersionMarkers } from '../state/product-versions';
+
+import DataError from '../patterns/errors/DataError.svelte';
 
 // const getProbeViewType = (probeType, probeKind) => {
 //   if (probeType === 'histogram' && probeKind === 'enumerated') return 'categorical';
@@ -63,7 +65,7 @@ $: if ($store.probe.name !== probeName && $dataset.data && $temporaryViewTypeSto
       store.setField('applicationStatus', 'ACTIVE');
       return { data, viewType, ...etc };
     },
-  ).catch((err) => console.error(err));
+  );
 }
 
 // FIXME: remove this once the dataset + API are fixed.
@@ -189,7 +191,9 @@ function handleBodySelectors(event) {
                     {/if}
                 </div>
             {:catch err}
-                An error was caught: {err}
+              <div in:fly={{ duration: 400, y: 10 }}>
+                <DataError reason={err.message} moreInformation={err.moreInformation} />
+              </div>
             {/await}
         {:else}
             <div>{$dataset.key}</div>
