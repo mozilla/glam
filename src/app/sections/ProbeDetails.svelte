@@ -61,6 +61,7 @@ h2 {
 
 .probe-description {
     color: var(--subhead-gray-02);
+    word-break: break-word;
 }
 
 .bug-list {
