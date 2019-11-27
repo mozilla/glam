@@ -40,6 +40,7 @@ class Core(Configuration):
         # Django apps
         "django.contrib.admin",
         "django.contrib.auth",
+        "mozilla_django_oidc",
         "django.contrib.contenttypes",
         "django.contrib.sessions",
         "django.contrib.messages",
@@ -66,7 +67,9 @@ class Core(Configuration):
 
     DEFAULT_FROM_EMAIL = "telemetry-alerts@mozilla.com"
 
-    AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
+    AUTHENTICATION_BACKENDS = [
+        "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
+    ]
 
     # Internationalization
     # https://docs.djangoproject.com/en/1.9/topics/i18n/
@@ -108,6 +111,29 @@ class Core(Configuration):
             },
         }
     ]
+
+    # Auth0
+    OIDC_RP_SIGN_ALGO = "RS256"
+    OIDC_OP_JWKS_ENDPOINT = "https://auth.mozilla.auth0.com/.well-known/jwks.json"
+    OIDC_RP_CLIENT_ID = values.Value(
+        environ_name="OIDC_RP_CLIENT_ID", environ_prefix=None
+    )
+    OIDC_RP_CLIENT_SECRET = values.Value(
+        environ_name="OIDC_RP_CLIENT_SECRET", environ_prefix=None
+    )
+
+    # Django REST Framework
+    REST_FRAMEWORK = {
+        "DEFAULT_AUTHENTICATION_CLASSES": [
+            "glam.auth.drf.OIDCTokenAuthentication",
+        ],
+        "DEFAULT_PARSER_CLASSES": [
+            "rest_framework.parsers.JSONParser",
+        ],
+        "DEFAULT_RENDERER_CLASSES": [
+            "rest_framework.renderers.JSONRenderer",
+        ],
+    }
 
 
 class Base(Core):

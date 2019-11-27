@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from glam.api import constants
 from glam.api.models import Aggregation, Probe
+from glam.auth.drf import OIDCTokenAuthentication, TokenUser
 
 
 class TestProbesApi:
@@ -201,6 +202,13 @@ class TestAggregationsApi:
             for version in versions:
                 cursor.execute(
                     f"""
+                    CREATE TABLE glam_aggregation_release_{version}
+                    PARTITION OF glam_aggregation_release
+                    FOR VALUES IN ('{version}')
+                    """
+                )
+                cursor.execute(
+                    f"""
                     CREATE TABLE glam_aggregation_nightly_{version}
                     PARTITION OF glam_aggregation_nightly
                     FOR VALUES IN ('{version}')
@@ -302,3 +310,40 @@ class TestAggregationsApi:
                 "total_users": 1110,
             }
         ]
+
+    def test_release_denied(self, client):
+        query = {
+            "query": {
+                "channel": "release",
+                "probe": "gc_ms",
+                "versions": ["70"],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 403
+
+    def test_release_allowed(self, client, monkeypatch):
+        monkeypatch.setattr(
+            OIDCTokenAuthentication,
+            "authenticate",
+            lambda self, request: (TokenUser(), {"scope": "read:foo"}),
+        )
+
+        self._make_partitions(versions=["70"])
+        self._create_aggregation({"channel": constants.CHANNEL_RELEASE})
+        query = {
+            "query": {
+                "channel": "release",
+                "probe": "gc_ms",
+                "versions": ["70"],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(
+            self.url,
+            data=query,
+            content_type="application/json",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+        assert resp.status_code == 200

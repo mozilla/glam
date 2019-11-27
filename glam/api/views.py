@@ -3,20 +3,14 @@ from random import shuffle
 from django.core.cache import caches
 from django.db.models import Q
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
 
-from glam.api.constants import (
-    AGGREGATION_HISTOGRAM,
-    AGGREGATION_NAMES,
-    CHANNEL_IDS,
-    CHANNEL_NAMES,
-    PROCESS_NAMES,
-)
+from glam.api import constants
 from glam.api.models import Aggregation, Probe
 
 
-def get_aggregations(**kwargs):
+def get_aggregations(request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
     labels_cache = caches["probe-labels"]
@@ -30,9 +24,14 @@ def get_aggregations(**kwargs):
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
+    # If release channel, make sure the user is authenticated.
+    if q.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
+
     dimensions = [
         Q(metric=kwargs["probe"]),
-        Q(channel=CHANNEL_IDS[kwargs["channel"]]),
+        Q(channel=constants.CHANNEL_IDS[kwargs["channel"]]),
         Q(version__in=list(map(str, kwargs["versions"]))),
         Q(os=kwargs.get("os") or "*"),
     ]
@@ -51,18 +50,20 @@ def get_aggregations(**kwargs):
     for row in result:
 
         metadata = {
-            "channel": CHANNEL_NAMES[row.channel],
+            "channel": constants.CHANNEL_NAMES[row.channel],
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
-            "process": PROCESS_NAMES[row.process],
+            "process": constants.PROCESS_NAMES[row.process],
             "metric": row.metric,
             "metric_type": row.metric_type,
         }
         aggs = {d["key"]: round(d["value"], 4) for d in row.data}
 
         # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(**metadata)
+        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(
+            **metadata
+        )
         sub_key = "{key}-{client_agg_type}".format(
             key=row.metric_key, client_agg_type=row.client_agg_type
         )
@@ -76,7 +77,7 @@ def get_aggregations(**kwargs):
 
         new_data = {}
 
-        if row.agg_type == AGGREGATION_HISTOGRAM:
+        if row.agg_type == constants.AGGREGATION_HISTOGRAM:
             new_data["total_users"] = row.total_users
             # Check for labels.
             labels = labels_cache.get(metadata["metric"])
@@ -90,7 +91,7 @@ def get_aggregations(**kwargs):
                         pass
                 aggs = aggs_w_labels
 
-        new_data[AGGREGATION_NAMES[row.agg_type]] = aggs
+        new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
 
         if row.metric_key:
             new_data["key"] = row.metric_key
@@ -167,7 +168,7 @@ def aggregations(request):
     if body is None or body.get("query") is None:
         raise ValidationError("Unexpected JSON body")
 
-    response = get_aggregations(**body["query"])
+    response = get_aggregations(request, **body["query"])
 
     if not response:
         raise NotFound("No documents found for the given parameters")
@@ -202,8 +203,9 @@ def random_probes(request):
     for id in probe_ids:
         probe = Probe.objects.get(id=id)
         # do not proceed if the probe is a boolean scalar
-        if not (probe.info["type"] == 'scalar' and probe.info["kind"] == "boolean"):
+        if not (probe.info["type"] == "scalar" and probe.info["kind"] == "boolean"):
             aggregations = get_aggregations(
+                request,
                 probe=probe.info["name"],
                 channel="nightly",
                 os="Windows",
