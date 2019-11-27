@@ -118,7 +118,11 @@ async function onKeypress(event) {
 <svelte:window on:keydown={onKeypress} />
 
 <div class=search-container>
-  <div class=inner-container bind:this={searchContainer}>
+  <div class=inner-container bind:this={searchContainer}
+    aria-expanded={!!($store.searchIsActive && $store.searchQuery.length)}
+    aria-haspopup="listbox"
+    aria-owns="telemetry-search-results"
+  >
       <div class=icon-container>
       {#if $telemetrySearch.loaded}
       <div class=icon in:fly={{ y: -10, duration: 100 }}>
@@ -130,7 +134,10 @@ async function onKeypress(event) {
         </div>
       {/if}
     </div>
-    <input on:focus={turnOnSearch}
+    <input 
+      aria-autocomplete="list"
+      aria-controls="telemetry-search-results" 
+      on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       on:blur={turnOffSearch}

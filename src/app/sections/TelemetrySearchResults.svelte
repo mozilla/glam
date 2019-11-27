@@ -16,6 +16,7 @@ export let parentElement;
 // when search query changes for any reason, always center back to first item,
 // even if the result set is the exact same (for now, potential FIXME)
 
+let windowWidth;
 let searchListElement;
 let formatTotal = format(',.4d');
 let focusedItem = 0;
@@ -77,7 +78,7 @@ let y;
 let width;
 
 // update the location once parentElement is defined (that is, the parentElement's component mounts)
-$: if (parentElement) {
+$: if (parentElement && windowWidth) {
   const bounds = parentElement.getBoundingClientRect();
   y = bounds.top + bounds.height;
   x = bounds.left;
@@ -198,11 +199,12 @@ li {
 
 </style>
 
-<svelte:window on:keydown={handleKeypress} />
+<svelte:window bind:innerWidth={windowWidth} on:keydown={handleKeypress} />
 
 <Portal>
 {#if $store.searchIsActive && $store.searchQuery.length}
   <div 
+  id="telemetry-search-results"
   style="left: calc({x}px + var(--space-base)); top: {y}px; width:
   calc({width}px - var(--space-base));"
     transition:fly={{ duration: 20, y: -10 }}
@@ -225,11 +227,15 @@ li {
           
       </div>
       {#if $searchResults.results.length}
-          <ul bind:this={searchListElement}>
-          {#each $searchResults.results.slice(0, 30) as {id, name, type, description, versions}, i (id)}
+          <ul bind:this={searchListElement}
+            aria-label="probe search results"
+            activedescendent={$searchResults.results[focusedItem].name}>
+          {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
               <li 
+                  role="option"
+                  id={name}
                   class:focused={focusedItem === i} on:click={() => {
-                  store.setField('probe', $searchResults.results[focusedItem]);
+                    store.setField('probe', $searchResults.results[focusedItem]);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>
