@@ -181,11 +181,15 @@ export function gatherBy(payload, by) {
 export function byKeyAndAggregation(data, preparationType = 'quantile', aggregationLevel = 'build_id', prepareArgs = {}, postProcessArgs = {}) {
   const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
   const byKey = gatherBy(data, (entry) => entry.key);
+
   Object.keys(byKey).forEach((k) => {
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
+
     Object.keys(byKey[k]).forEach((aggKey) => {
       byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel, prepareArgs);
+
       if (aggregationLevel === 'build_id') byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
+
       byKey[k][aggKey].sort(sortByKey('label'));
       if (postProcessArgs.removeZeroes) {
         // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
@@ -202,6 +206,7 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
       }
     });
   });
+
   return byKey;
 }
 

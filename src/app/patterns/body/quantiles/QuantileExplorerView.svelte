@@ -13,10 +13,11 @@ export let actions = getContext('actions');
 export let data;
 export let probeType;
 export let markers;
-
+export let aggregationLevel = 'build_id';
 
 let totalAggs = Object.keys(Object.values(data)[0]).length;
 
+// FIXME: these should be derived explicitly from the data prop.
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 
 // FIXME: these are selections that should be put in a level above this
@@ -54,11 +55,13 @@ function makeSelection(type) {
   
   <div class=body-control-row>
     <div class=body-control-set>
-      <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl 
-      horizon={timeHorizon}
-      on:selection={makeSelection('timeHorizon')}
-       />
+      {#if aggregationLevel === 'build_id'}
+        <label class=body-control-set--label>Time Horizon</label>
+        <TimeHorizonControl 
+        horizon={timeHorizon}
+        on:selection={makeSelection('timeHorizon')}
+        />
+       {/if}
     </div>
   
     <div class=body-control-set>
@@ -97,6 +100,7 @@ function makeSelection(type) {
               percentiles={percentiles}
               timeHorizon={timeHorizon}
               markers={markers}
+              aggregationLevel={aggregationLevel}
             />
           </div>
         {/if}

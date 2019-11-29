@@ -15,6 +15,8 @@ export let keySet;
 export let compareTo = 'left-right';
 export let valueFormatter = (t) => t;
 export let keyFormatter = (t) => t;
+// FIXME: SWITCH TO  = 'ONE', "TWO", "MANY"
+export let dataVolume = 10;
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -126,16 +128,34 @@ td, th {
 
   <table>
     <thead>
+
       <tr>
+
         <th style="min-width: 54px; width: max-content">Perc.</th>
-        <th  class:hidden={!hovered} class="summary-label ref">
-            Hovered<span class='small-shape'>●</span>
+
+        {#if dataVolume > 1}
+        <!-- keep the comparison if more than one data point -->
+        <!-- FIXME: let's move to slots here -->
+        <th class:hidden={!hovered} class="summary-label ref">
+            <div>{leftLabel || ''}</div>
+            {#if dataVolume > 2}
+              Hovered<span class='small-shape'>●</span>
+            {/if}
         </th>
+        {/if}
+
+        <!-- FIXME: let's move to slots here -->
         <th class="summary-label hov">
-            Ref.<span class='small-shape'>⭑</span>
-          </th>
+          <div>{rightLabel || ''}</div>
+          {#if dataVolume > 2}Ref.<span class='small-shape'>⭑</span>{/if}
+        </th>
+        
+        {#if dataVolume > 1}
           <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
+        {/if}
+
       </tr>
+
     </thead>
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}}
@@ -143,9 +163,15 @@ td, th {
               <td  style="width: max-content" class=value-label>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
+              {#if dataVolume > 1}
               <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
+              {/if}
               <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
+
+              {#if dataVolume > 1}
               <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
+              {/if}
+
             </tr>
           {/each}
     </tbody>

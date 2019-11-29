@@ -9,6 +9,7 @@ import BuildIDComparison from '../elements/BuildIDComparison.svelte';
 import TotalClientsGraph from '../elements/TotalClientsGraph.svelte';
 import QuantileDistributionComparison from '../elements/QuantileDistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
+import { formatBuildIDToDateString } from '../utils/formatters';
 
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
@@ -24,7 +25,18 @@ export let title;
 export let markers;
 export let key;
 export let timeHorizon;
+export let aggregationLevel;
 export let percentiles = [50];
+
+// If there isn't more than one other point to compare,
+// let's turn off the hover.
+let hoverActive = data.length > 2;
+$: hoverActive = data.length > 2;
+
+// If insufficient data, suppress the main graph
+// and blow up the other.
+let insufficientData = data.length <= 2;
+$: insufficientData = data.length <= 2;
 
 let valueFmt = format(',.2f');
 let countFmt = format(',d');
@@ -60,9 +72,9 @@ function setDomain(str) {
   domain.set(filtered.map((d) => d.label));
 }
 
-$: setDomain(timeHorizon);
+$: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 
-let hovered = {};
+let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
@@ -141,45 +153,51 @@ h4 {
 </div>
 
 <div class=graphic-and-summary>
-  <BuildIDComparison
-    data={data}
-    xDomain={$domain}
-    yDomain={yDomain}
-    timeHorizon={timeHorizon}
-    lineColorMap={percentileLineColorMap}
-    key={key}
-    yScaleType={yScaleType}
-    transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
-    metricKeys={percentiles}
-    bind:reference={reference}
-    bind:hovered={hovered}
-    extractMouseoverValues={getPercentile}
-    markers={markers}
-  />
-
+  <div style="visibility: {insufficientData ? 'hidden' : 'visible'}">
+    <BuildIDComparison
+      data={data}
+      xDomain={$domain}
+      yDomain={yDomain}
+      timeHorizon={timeHorizon}
+      lineColorMap={percentileLineColorMap}
+      key={key}
+      yScaleType={yScaleType}
+      transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
+      metricKeys={percentiles}
+      bind:reference={reference}
+      bind:hovered={hovered}
+      extractMouseoverValues={getPercentile}
+      markers={markers}
+      aggregationLevel={aggregationLevel}
+      hoverActive={hoverActive}
+      insufficientData={insufficientData}
+    />
+  </div>
   <QuantileDistributionComparison 
     yType={yScaleType}
     leftDistribution={hovered.datum ? hovered.datum.histogram : undefined}
     rightDistribution={reference.histogram}
-    leftLabel={hovered.x}
-    rightLabel={reference.label}
+    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
+    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     colorMap={(v) => percentileLineColorMap(+v)}
     leftPoints={hovered.datum ? hovered.datum.percentiles : undefined}
     rightPoints={reference.percentiles}
     activeBins={percentiles}
     yDomain={yDomain}
+    dataVolume={data.length}
   />
   
   <ComparisonSummary 
     hovered={!!hovered.datum}
     left={hovered.datum ? hovered.datum.percentiles : hovered.datum} 
     right={reference.percentiles}
-    leftLabel={hovered.x}
-    rightLabel={reference.label}
+    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
+    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     keySet={percentiles}
     colorMap={percentileLineColorMap}
     valueFormatter={valueFmt}
     keyFormatter={(perc) => `${perc}%`}
+    dataVolume={data.length}
     />
 
   <!-- <TotalClientsGraph 

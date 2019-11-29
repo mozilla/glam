@@ -1,4 +1,13 @@
 <script>
+
+// FIXME: this axis component should probably be refactored for the following:
+// - easier maintenance: there's a lot of specific stuff to keep up.
+// - slots / slot props: it would be great if you could easily use your own
+//   components for labels, for instance. To do this, we should probably use
+//   slots for each piece (main line, ticks, labels) and use slot props to surface up
+//   the numeric values, placement, etc. for each. This would let the implementer
+//   do whatever they want without having to make the same tedious calculations.
+
 import { getContext } from 'svelte';
 import { fade } from 'svelte/transition';
 
@@ -102,6 +111,7 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
 </script>
 
 <g in:fade={fadeValues} class="{side}-axis">
+  <slot name="ticks">
     {#each TICKS as tick, i (tick)}
       {#if showTicks}
         <line
@@ -127,7 +137,14 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
           stroke='var(--line-gray-01)'
           stroke-width=1 />
       {/if}
+    {/each}
+  </slot>
+  <slot name="labels">
+      {#each TICKS as tick, i (tick)}
       {#if showLabels}
+        <!-- FIXME: a TickLabel component might be able to easily consume the relevant stores + params
+        to deal with placement (the hard part), while exposing a slot that allows for the child to 
+        have whatever it needs. -->
         <text 
           {...{
             [`${mainDim}`]: $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector,
@@ -138,5 +155,6 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
           font-size={tickFontSize}
         >{tickFormatter ? tickFormatter(tick) : tick}</text>
       {/if}
-  {/each}
+    {/each}
+  </slot>
   </g>

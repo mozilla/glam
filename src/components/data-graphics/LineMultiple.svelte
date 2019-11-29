@@ -8,6 +8,8 @@ export let xScale = getContext('xScale');
 export let yScale = getContext('yScale');
 export let xAccessor = 'x';
 export let yAccessor = 'y';
+export let useXScale = true;
+export let useYScale = true;
 export let data;
 export let color = 'var(--digital-blue-500)';
 export let areaColor = 'var(--digital-blue-400)';
@@ -15,12 +17,11 @@ export let strokeWidth = 1;
 export let lineDrawAnimation = { duration: 0 };
 export let curve = 'curveMonotoneX';
 export let area = false;
-
 const curveFunction = SHAPE[curve];
 
 const lineGenerator = SHAPE.line()
-  .x((d) => xScale(d[xAccessor]))
-  .y((d) => yScale(d[yAccessor]))
+  .x((d) => (useXScale ? xScale(d[xAccessor]) : d[xAccessor]))
+  .y((d) => (useYScale ? yScale(d[yAccessor]) : d[yAccessor]))
   .curve(curveFunction);
 
 const areaGenerator = SHAPE.area()
