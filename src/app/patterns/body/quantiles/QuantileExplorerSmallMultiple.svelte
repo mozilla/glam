@@ -9,9 +9,16 @@ import BuildIDComparison from '../elements/BuildIDComparison.svelte';
 import TotalClientsGraph from '../elements/TotalClientsGraph.svelte';
 import QuantileDistributionComparison from '../elements/QuantileDistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
+import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+
+import { explorerComparisonSmallMultiple } from '../utils/constants';
+
 import { formatBuildIDToDateString } from '../utils/formatters';
 
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+
+import { histogramSpring } from '../utils/animation';
+
 
 import {
   buildIDToDate,
@@ -90,6 +97,10 @@ function getPercentile(datum) {
   });
   return out;
 }
+
+// This will lightly animate the reference distribution part of the violin plot.
+const animatedReferenceDistribution = histogramSpring(reference.histogram);
+$: if (reference.histogram) animatedReferenceDistribution.setValue(reference.histogram);
 
 </script>
 
@@ -173,10 +184,9 @@ h4 {
       insufficientData={insufficientData}
     />
   </div>
+
   <QuantileDistributionComparison 
     yType={yScaleType}
-    leftDistribution={hovered.datum ? hovered.datum.histogram : undefined}
-    rightDistribution={reference.histogram}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     colorMap={(v) => percentileLineColorMap(+v)}
@@ -185,7 +195,46 @@ h4 {
     activeBins={percentiles}
     yDomain={yDomain}
     dataVolume={data.length}
-  />
+  >
+    <!-- add violin plots on the quantiles -->
+    <g slot='body' let:leftPlot={lp} let:rightPlot={rp}>
+      {#if hovered.datum}
+        <Violin
+          orientation="vertical"
+          showLeft={false}
+          rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
+          key={hovered.x}
+          opacity=.9
+          density={hovered.datum.histogram} 
+          densityAccessor='value'
+          valueAccessor='bin'
+          densityRange={[0,
+            (explorerComparisonSmallMultiple.width
+            - explorerComparisonSmallMultiple.left
+            - explorerComparisonSmallMultiple.right) / 2 - 5]}
+          areaColor="var(--digital-blue-400)"
+          lineColor="var(--digital-blue-500)"
+        />
+      {/if}
+      {#if reference}
+        <Violin
+          orientation="vertical"
+          showRight={false}
+          rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
+          opacity=.9
+          key={reference.label}
+          density={$animatedReferenceDistribution} 
+          densityAccessor='value'
+          valueAccessor='bin'
+          densityRange={[0, (explorerComparisonSmallMultiple.width
+            - explorerComparisonSmallMultiple.left
+            - explorerComparisonSmallMultiple.right) / 2 - 5]}
+          areaColor="var(--digital-blue-400)"
+          lineColor="var(--digital-blue-500)"
+        />
+      {/if}
+    </g>
+  </QuantileDistributionComparison>
   
   <ComparisonSummary 
     hovered={!!hovered.datum}
@@ -198,7 +247,10 @@ h4 {
     valueFormatter={valueFmt}
     keyFormatter={(perc) => `${perc}%`}
     dataVolume={data.length}
-    />
+    showLeft={data.length > 1}
+    showDiff={data.length > 1}
+  >
+  </ComparisonSummary>
 
   <!-- <TotalClientsGraph 
     data={data}

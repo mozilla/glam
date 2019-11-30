@@ -1,18 +1,16 @@
 <script>
 import { onMount } from 'svelte';
-import { fade } from 'svelte/transition';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
-import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 import ReferenceSymbol from './ReferenceSymbol.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';
 
-import { twoPointSpring, histogramSpring } from '../utils/animation';
+import { twoPointSpring } from '../utils/animation';
 
 import { explorerComparisonSmallMultiple } from '../utils/constants';
 
@@ -64,9 +62,6 @@ function placeShapeY(value) {
   if (yScale.type !== 'scalePoint') return yScale(value);
   return yScale(nearestBelow(value, yDomain));
 }
-
-const animatedReferenceDistribution = histogramSpring(rightDistribution);
-$: if (rightDistribution) animatedReferenceDistribution.setValue(rightDistribution);
 
 const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
 
@@ -158,44 +153,14 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
       color={$dotsAndLines[bin].color} 
     />
   {/each}
-
-  {#if leftDistribution && showViolins}
-  <g in:fade={{ duration: 50 }}>
-    <Violin
-      orientation="vertical"
-      showLeft={false}
-      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot - Boolean(dataVolume > 2)}
-      key={leftLabel}
-      opacity=.9
-      density={leftDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0,
-        (explorerComparisonSmallMultiple.width
-        - explorerComparisonSmallMultiple.left
-        - explorerComparisonSmallMultiple.right) / 2 - 5]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    />
-  </g>
-  {/if}
-  {#if rightDistribution && showViolins}
-    <Violin
-      orientation="vertical"
-      showRight={false}
-      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot + Boolean(dataVolume > 2)}
-      opacity=.9
-      key={rightLabel}
-      density={$animatedReferenceDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0, (explorerComparisonSmallMultiple.width
-        - explorerComparisonSmallMultiple.left
-        - explorerComparisonSmallMultiple.right) / 2 - 5]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    />
-  {/if}
-
+  
+  <slot name='body'
+    leftPlot={leftPlot} 
+    rightPlot={rightPlot} 
+    topPlot={topPlot} 
+    bottomPlot={bottomPlot}
+  >
+  
+  </slot>
 
 </DataGraphic>    

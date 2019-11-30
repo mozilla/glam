@@ -15,8 +15,12 @@ export let keySet;
 export let compareTo = 'left-right';
 export let valueFormatter = (t) => t;
 export let keyFormatter = (t) => t;
-// FIXME: SWITCH TO  = 'ONE', "TWO", "MANY"
+// FIXME: switch to showLeft, showRight, showDiff, showLabels
 export let dataVolume = 10;
+export let showCategories = true;
+export let showLeft = true;
+export let showRight = true;
+export let showDiff = true;
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -133,24 +137,40 @@ td, th {
 
         <th style="min-width: 54px; width: max-content">Perc.</th>
 
-        {#if dataVolume > 1}
-        <!-- keep the comparison if more than one data point -->
-        <!-- FIXME: let's move to slots here -->
-        <th class:hidden={!hovered} class="summary-label ref">
-            <div>{leftLabel || ''}</div>
-            {#if dataVolume > 2}
-              Hovered<span class='small-shape'>●</span>
+            {#if showLeft}
+            <!-- keep the comparison if more than one data point -->
+            <!-- FIXME: let's move to slots here -->
+            <th class:hidden={!hovered} class="summary-label ref">
+                <slot name='left-label'>
+                  <div>
+                    <slot name='left-label-text'>
+                      {leftLabel || ''}
+                    </slot>
+                    {#if hovered}<span class='small-shape'>●</span>{/if}
+                  </div>
+                  <!-- {#if dataVolume > 2}
+                    Hovered
+                  {/if} -->
+              </slot>
+            </th>
             {/if}
-        </th>
-        {/if}
+
 
         <!-- FIXME: let's move to slots here -->
+        {#if showRight}
         <th class="summary-label hov">
-          <div>{rightLabel || ''}</div>
-          {#if dataVolume > 2}Ref.<span class='small-shape'>⭑</span>{/if}
+          <slot name='right-label'>
+            <div>
+              <slot name='right-label-text'>
+                {rightLabel || ''}
+              </slot>
+            <span class='small-shape'>⭑</span></div>
+            <!-- {#if dataVolume > 2}Ref.{/if} -->
+          </slot>
         </th>
+        {/if}
         
-        {#if dataVolume > 1}
+        {#if showDiff}
           <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
         {/if}
 
@@ -163,12 +183,16 @@ td, th {
               <td  style="width: max-content" class=value-label>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
-              {#if dataVolume > 1}
+
+              {#if showLeft}
               <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
               {/if}
-              <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
 
-              {#if dataVolume > 1}
+              {#if showRight}
+              <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
+              {/if}
+
+              {#if showDiff}
               <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
               {/if}
 

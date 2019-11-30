@@ -6,6 +6,7 @@ import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
 
+export let aggregationLevel = 'build_id';
 export let data;
 export let probeType;
 export let activeBuckets;
@@ -27,9 +28,6 @@ export let timeHorizon = 'MONTH';
 export let metricType = 'proportions';
 
 let latest = Object.values(Object.values(data)[0])[0];
-
-// FIXME: slicing here for the demo.
-[latest] = latest.slice(-1);
 
 setContext('probeType', probeType);
 
@@ -59,11 +57,13 @@ setContext('probeType', probeType);
   
   <div class=body-control-row>
     <div class=body-control-set>
+      {#if aggregationLevel === 'build_id'}
       <label class=body-control-set--label>Time Horizon  </label>
       <TimeHorizonControl 
         horizon={timeHorizon}
         on:selection={makeSelection('timeHorizon')}
       />
+      {/if}
     </div>
   
     <div class=body-control-set>
@@ -99,6 +99,7 @@ setContext('probeType', probeType);
               timeHorizon={timeHorizon}
               colorMap={bucketColorMap}
               metricType={metricType}
+              aggregationLevel={aggregationLevel}
             />
           </div>
       {/each}

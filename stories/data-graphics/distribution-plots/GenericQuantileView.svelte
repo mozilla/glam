@@ -24,7 +24,6 @@ let gcmsVersionFaked = [...GCMS_VERSION.response.map((d) => {
 }), ...GCMS_VERSION.response];
 
 let probes = [
-
   {
     name: 'browser_engagement_active_ticks',
     build_id: responseToData(ACTIVE_TICKS_BUILD_ID.response),
