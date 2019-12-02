@@ -7,7 +7,7 @@ import { format } from 'd3-format';
 
 import BuildIDComparison from '../elements/BuildIDComparison.svelte';
 import TotalClientsGraph from '../elements/TotalClientsGraph.svelte';
-import QuantileDistributionComparison from '../elements/QuantileDistributionComparison.svelte';
+import DistributionComparison from '../elements/DistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
 
@@ -185,7 +185,7 @@ h4 {
     />
   </div>
 
-  <QuantileDistributionComparison 
+  <DistributionComparison 
     yType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
@@ -234,7 +234,7 @@ h4 {
         />
       {/if}
     </g>
-  </QuantileDistributionComparison>
+  </DistributionComparison>
   
   <ComparisonSummary 
     hovered={!!hovered.datum}

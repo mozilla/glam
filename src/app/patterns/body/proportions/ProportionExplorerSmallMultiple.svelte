@@ -5,7 +5,7 @@ import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
 import BuildIDComparison from '../elements/BuildIDComparison.svelte';
-import DistributionComparison from '../elements/QuantileDistributionComparison.svelte';
+import DistributionComparison from '../elements/DistributionComparison.svelte';
 import ComparisonSummary from '../elements/ComparisonSummary.svelte';
 
 import { formatBuildIDToDateString } from '../utils/formatters';
