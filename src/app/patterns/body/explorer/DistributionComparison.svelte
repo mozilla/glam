@@ -37,7 +37,7 @@ export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
 
-export let xDomain = dataVolume <= 2 ? [leftLabel, rightLabel] : ['hovered', 'ref.'];
+export let xDomain = dataVolume <= 2 ? [leftLabel, rightLabel] : ['HOV.', 'REF.'];
 
 let L;
 let R;
@@ -98,11 +98,7 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
     opacity=.25
   />
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
-  {#if dataVolume > 2}
-    <TopAxis ticks={xDomain}  />
-  {:else}
-    <BottomAxis ticks={xDomain}  />
-  {/if}
+  <TopAxis ticks={xDomain}  />
 
   {#if leftPoints && rightPoints}
     {#each activeBins as bin, i}
