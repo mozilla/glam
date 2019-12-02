@@ -8,11 +8,11 @@ import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
-import ReferenceSymbol from './ReferenceSymbol.svelte';
+import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { cartesianCoordSpring } from '../utils/animation';
 
-import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
 
 import { buildIDComparisonGraph } from '../utils/constants';
 

@@ -5,7 +5,7 @@ import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte
 import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
 import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
-import ReferenceSymbol from './ReferenceSymbol.svelte';
+import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';

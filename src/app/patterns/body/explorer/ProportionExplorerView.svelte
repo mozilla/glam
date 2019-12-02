@@ -1,7 +1,7 @@
 <script>
-import { setContext, createEventDispatcher, onMount } from 'svelte';
+import { setContext, createEventDispatcher } from 'svelte';
 
-import ProportionExplorerSmallMultiple from './ProportionExplorerSmallMultiple.svelte';
+import ProportionExplorer from './ProportionExplorer.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
@@ -91,7 +91,7 @@ setContext('probeType', probeType);
     {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
-            <ProportionExplorerSmallMultiple
+            <ProportionExplorer
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}

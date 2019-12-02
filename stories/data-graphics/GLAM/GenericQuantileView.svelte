@@ -1,5 +1,5 @@
 <script>
-import QuantileExplorerView from '../../../src/app/patterns/body/quantiles/QuantileExplorerView.svelte';
+import QuantileExplorerView from '../../../src/app/patterns/body/explorer/QuantileExplorerView.svelte';
 import NAV_URL_BUILD_ID from '../../../tests/data/browser_engagement_navigation_urlbar_build_id.json';
 import ACTIVE_TICKS_BUILD_ID from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS_BUILD_ID from '../../../tests/data/gc_ms_build_id.json';
@@ -13,10 +13,9 @@ import { responseToData } from '../../../src/app/state/store';
 import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
 
 let which = 1;
-let aggregationLevel = 'version';
+let aggregationLevel = 'build_id';
 
-// let's double or tripple GCMS_VERSION.response
-
+// let's double or triple GCMS_VERSION.response
 let gcmsVersionFaked = [...GCMS_VERSION.response.map((d) => {
   const di = { data: [...d.data], metadata: { ...d.metadata } };
   di.metadata.version = di.metadata.version === '70' ? '68' : '67'; // eslint-disable-line
@@ -49,7 +48,7 @@ let probes = [
   },
 ];
 
-let timeHorizon = 'ALL_TIME';
+let timeHorizon = 'MONTH';
 let percentiles = [95, 75, 50, 25, 5];
 let aggregationOptions = [{ name: 'By Build ID', key: 'build_id' }, { name: 'By Version', key: 'version' }];
 
