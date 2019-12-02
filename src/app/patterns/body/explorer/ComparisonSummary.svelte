@@ -50,6 +50,8 @@ $: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles()
 .summary {
   padding-top: 20px;
   padding-bottom: var(--space-2x);
+  max-width: 345px;
+  width: 100%;
 }
 
 table {
@@ -60,7 +62,6 @@ table {
   --heavy-border: 1px solid var(--line-gray-01);
   --lighter-border: 1px dotted var(--bg-gray-01);
   width: 100%;
-  max-width: 345px;
 }
 
 tbody tr td {

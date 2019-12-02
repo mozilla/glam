@@ -4,7 +4,7 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
-import BuildIDComparison from './BuildIDComparison.svelte';
+import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
 
@@ -93,6 +93,11 @@ function getProportion(datum) {
   grid-template-columns: max-content max-content auto;
 }
 
+.no-line-chart {
+  grid-template-columns: max-content auto;
+  justify-items: start;
+}
+
 .summary {
   display:grid;
   grid-auto-flow:column;
@@ -142,10 +147,10 @@ h4 {
   </div>
 </div>
 
-<div class=graphic-and-summary>
+<div class=graphic-and-summary class:no-line-chart={insufficientData}>
 
   <div style="display: {insufficientData ? 'none' : 'block'}">
-    <BuildIDComparison
+    <CompareOverTimeGraph
       data={data}
       xDomain={$domain}
       yDomain={yDomain}
