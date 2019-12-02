@@ -55,13 +55,12 @@ $: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles()
 table {
   font-family: var(--main-mono-font);
   font-size: var(--text-015);
-  /* margin-left: var(--space-base); */
   margin: auto;
-  /* width: 100%; */
   border-spacing: 0px;
   --heavy-border: 1px solid var(--line-gray-01);
   --lighter-border: 1px dotted var(--bg-gray-01);
   width: 100%;
+  max-width: 345px;
 }
 
 tbody tr td {

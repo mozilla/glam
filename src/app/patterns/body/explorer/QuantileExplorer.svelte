@@ -164,24 +164,24 @@ h4 {
 </div>
 
 <div class=graphic-and-summary>
-  <div style="visibility: {insufficientData ? 'hidden' : 'visible'}">
-    <BuildIDComparison
-      data={data}
-      xDomain={$domain}
-      yDomain={yDomain}
-      timeHorizon={timeHorizon}
-      lineColorMap={percentileLineColorMap}
-      key={key}
-      yScaleType={yScaleType}
-      transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
-      metricKeys={percentiles}
-      bind:reference={reference}
-      bind:hovered={hovered}
-      extractMouseoverValues={getPercentile}
-      markers={markers}
-      aggregationLevel={aggregationLevel}
-      hoverActive={hoverActive}
-      insufficientData={insufficientData}
+    <div style="display: {insufficientData ? 'none' : 'block'}">
+      <BuildIDComparison
+        data={data}
+        xDomain={$domain}
+        yDomain={yDomain}
+        timeHorizon={timeHorizon}
+        lineColorMap={percentileLineColorMap}
+        key={key}
+        yScaleType={yScaleType}
+        transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
+        metricKeys={percentiles}
+        bind:reference={reference}
+        bind:hovered={hovered}
+        extractMouseoverValues={getPercentile}
+        markers={markers}
+        aggregationLevel={aggregationLevel}
+        hoverActive={hoverActive}
+        insufficientData={insufficientData}
     />
   </div>
 

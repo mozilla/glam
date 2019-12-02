@@ -143,7 +143,8 @@ h4 {
 </div>
 
 <div class=graphic-and-summary>
-  <div style="visibility: {insufficientData ? 'hidden' : 'visible'}">
+
+  <div style="display: {insufficientData ? 'none' : 'block'}">
     <BuildIDComparison
       data={data}
       xDomain={$domain}
