@@ -8,11 +8,11 @@ import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../../components/data-graphics/LineMultiple.svelte';
-import ReferenceSymbol from './ReferenceSymbol.svelte';
+import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { cartesianCoordSpring } from '../utils/animation';
 
-import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
 
 import { buildIDComparisonGraph } from '../utils/constants';
 
@@ -23,32 +23,42 @@ import {
 export let data;
 export let markers;
 export let metricKeys;
-export let reference; // used to be latest
+export let reference;
 export let hovered = {};
-export let key; // ???????
-export let transform; // extractPercentiles?
-export let lineColorMap = () => 'gray'; // percentileLineColorMap
-export let strokeWidthMap = () => 1; // percentileLineStrokewidthMap
+export let key;
+export let transform;
+export let lineColorMap = () => 'gray';
+export let strokeWidthMap = () => 1;
 export let extractMouseoverValues;
 export let xDomain;
 export let yDomain;
 export let yScaleType;
 export let yTickFormatter;
 export let timeHorizon;
-
+export let aggregationLevel; // build_id or version.
+// if !hoverActive, do not allow hovering.
+export let hoverActive = true;
+// if data.length < 2, then suppress this graph.
+export let insufficientData = false;
 
 let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
 
-$: if (timeHorizon === 'ALL_TIME') {
-  tickFormatter = buildIDToMonth;
-  ticks = firstOfMonth;
-} else if (timeHorizon === 'MONTH') {
-  tickFormatter = buildIDToMonth;
-  ticks = mondays;
+// FIXME: add version tick formatter;
+$: if (aggregationLevel === 'build_id') {
+  if (timeHorizon === 'ALL_TIME') {
+    tickFormatter = buildIDToMonth;
+    ticks = firstOfMonth;
+  } else if (timeHorizon === 'MONTH') {
+    tickFormatter = buildIDToMonth;
+    ticks = mondays;
+  } else {
+    tickFormatter = buildIDToMonth;
+    ticks = getFirstBuildOfDays;
+  }
 } else {
-  tickFormatter = buildIDToMonth;
-  ticks = getFirstBuildOfDays;
+  ticks = xDomain;
+  tickFormatter = (v) => v;
 }
 
 let transformedData = [];
@@ -62,8 +72,10 @@ let yScale;
 let H;
 let T;
 let B;
+let L;
 let bodyHeight;
 let topPlot;
+let leftPlot;
 let bottomPlot;
 let dgRollover;
 let margins;
@@ -108,7 +120,7 @@ $: refLabelSpring.set(refLabelPlacement);
 
 
 function initiateRollover(rolloverStore) { // eslint-disable-line
-  if (!rolloverStore) return undefined;
+  if (!rolloverStore || !hoverActive) return undefined;
   derived(rolloverStore, ({ x, y }) => {
     // we need the whole data point?
     // use only x to fetch the data point.
@@ -126,6 +138,22 @@ $: if (dataGraphicMounted) {
   T.subscribe((t) => { topPlot = t; });
   B.subscribe((b) => { bottomPlot = b; });
   H.subscribe((h) => { bodyHeight = h; });
+  L.subscribe((l) => { leftPlot = l; });
+}
+
+// handle Ref element hover-over placement.
+let referenceTextElement;
+let referenceBackgroundElement;
+let refTextPlacement = 'outside';
+let refTextSpace = 8;
+let refTextWidth = 0;
+let refBGWidth = 0;
+$: if (referenceTextElement && referenceBackgroundElement) {
+  refTextWidth = referenceTextElement.getBoundingClientRect().width;
+  refBGWidth = referenceBackgroundElement.getBoundingClientRect().width;
+  if (refTextWidth + refTextSpace * 2 <= refBGWidth) {
+    refTextPlacement = 'inside';
+  }
 }
 
 </script>
@@ -135,7 +163,8 @@ $: if (dataGraphicMounted) {
  xDomain={xDomain}
  yDomain={yDomain}
  yType={yScaleType}
- width={buildIDComparisonGraph.width}
+ width={buildIDComparisonGraph.width
+  - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
  height={buildIDComparisonGraph.height}
  bottom={buildIDComparisonGraph.bottom}
  bind:rollover={dgRollover}
@@ -143,6 +172,7 @@ $: if (dataGraphicMounted) {
  bind:yScale={yScale}
  bind:bodyHeight={H}
  bind:topPlot={T}
+ bind:leftPlot={L}
  bind:bottomPlot={B}
  bind:margins={margins}
  right={buildIDComparisonGraph.right}
@@ -154,16 +184,26 @@ $: if (dataGraphicMounted) {
 >
 
 {#if hovered.x && xScale && topPlot && bodyHeight}
-<BuildIDRollover 
- x={hovered.x}
- label={hovered.datum.label}
-/>
-
+ {#if aggregationLevel === 'build_id'}
+    <BuildIDRollover 
+      x={hovered.x}
+      label={hovered.datum.label}
+    />
+  {/if}
+  <!-- this is the hovered value rect -->
   <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
     fill="var(--cool-gray-100)" />
+
   {/if}
-  <rect x={$refLabelSpring - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+  <!-- this is the reference rect -->
+  <rect
+    bind:this={referenceBackgroundElement}
+    x={$refLabelSpring - xScale.step() / 2} 
+    y={topPlot} 
+    width={xScale.step()} 
+    height={bodyHeight}
     fill="var(--cool-gray-100)" />
+  
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
 
@@ -202,13 +242,28 @@ $: if (dataGraphicMounted) {
   />
   {/each}
   {#if xScale}
+    <!-- FIXME: let's not do all this calculation in the template itself. -->
     <text
-      text-anchor="end"
+      bind:this={referenceTextElement}
+      text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
       font-size=11
-      style='text-transform: uppercase;'
-      x={$refLabelSpring - margins.buffer - xScale.step() / 2} 
-      y={topPlot + margins.buffer} 
-      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-300)'}>ref.</text>
+      style='
+        text-transform: uppercase;
+        text-shadow: 
+          -3px 0px 3px rgba(255,255,255, 1),
+           3px 0px 0px rgba(255,255,255, 1),
+          0px 3px 0px rgba(255,255,255, 1),
+          0px -3px 0px rgba(255,255,255, 1),
+          -3px -3px 0px rgba(255,255,255, 1),
+          3px -3px 0px rgba(255,255,255, 1),
+          3px 3px 0px rgba(255,255,255, 1),
+          -3px 3px 0px rgba(255,255,255, 1);'
+      x={
+        refTextPlacement === 'outside'
+        ? Math.max($refLabelSpring - margins.buffer - xScale.step(), leftPlot + refTextWidth + margins.buffer)
+        : $refLabelSpring - xScale.step() / 2 + margins.buffer} 
+      y={topPlot + 11 + margins.buffer} 
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
   {/if}
 
   <FirefoxReleaseVersionMarkers />

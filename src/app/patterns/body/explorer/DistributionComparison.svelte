@@ -1,18 +1,16 @@
 <script>
 import { onMount } from 'svelte';
-import { fade } from 'svelte/transition';
-import { derived } from 'svelte/store';
-import { spring } from 'svelte/motion';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
+import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
 import RightAxis from '../../../../components/data-graphics/RightAxis.svelte';
-import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
-import ReferenceSymbol from './ReferenceSymbol.svelte';
+import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
+import Line from '../../../../components/data-graphics/LineMultiple.svelte';
 
 import { nearestBelow } from '../../../../utils/stats';
 
-import { twoPointSpring, histogramSpring } from '../utils/animation';
+import { twoPointSpring } from '../utils/animation';
 
 import { explorerComparisonSmallMultiple } from '../utils/constants';
 
@@ -23,6 +21,10 @@ export let rightLabel;
 export let leftPoints;
 export let rightPoints;
 export let activeBins;
+
+// this is the case of having only 2 points.
+export let insufficientData = false;
+export let dataVolume = Infinity;
 
 export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
@@ -35,7 +37,7 @@ export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
 
-const xDomain = ['hovered', 'ref.'];
+export let xDomain = dataVolume <= 2 ? [leftLabel, rightLabel] : ['HOV.', 'REF.'];
 
 let L;
 let R;
@@ -45,6 +47,7 @@ let leftPlot;
 let rightPlot;
 let topPlot;
 let bottomPlot;
+let xScale;
 let yScale;
 
 onMount(() => {
@@ -60,41 +63,26 @@ function placeShapeY(value) {
   return yScale(nearestBelow(value, yDomain));
 }
 
-// function getHistValues(d) {
-//   return d.map((d) => d.value);
-// }
-
-// let referenceDistSpring;
-
-// if (rightDistribution) referenceDistSpring = spring(getHistValues(rightDistribution), { damping: 1, stiffness: 0.9 });
-// $: if (rightDistribution) referenceDistSpring.set(getHistValues(rightDistribution));
-
-// const animatedReferenceDistribution = derived(referenceDistSpring,
-//   ($d) => $d.map((di, i) => ({ value: di, bin: rightDistribution[i].bin })));
-
-
-const animatedReferenceDistribution = histogramSpring(rightDistribution);
-$: if (rightDistribution) animatedReferenceDistribution.setValue(rightDistribution);
-
-
 const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
 
-$: if (leftPoints) dotsAndLines.setHover(leftPoints);
-$: if (rightPoints) dotsAndLines.setReference(rightPoints);
+// If insufficient data, let's not use the spring on mount.
+$: if (leftPoints) dotsAndLines.setHover(leftPoints, dataVolume <= 2);
+$: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 
 </script>
-
 
 <DataGraphic
   xDomain={xDomain}
   yDomain={yDomain}
   yType={yType}
-  width={explorerComparisonSmallMultiple.width}
+  width={explorerComparisonSmallMultiple.width
+    + (dataVolume <= 2 ? explorerComparisonSmallMultiple.insufficientDataAdjustment : 0)}
   height={explorerComparisonSmallMultiple.height}
   bind:leftPlot={L}
   bind:rightPlot={R}
   bind:topPlot={T}
   bind:bottomPlot={B}
+  bind:xScale={xScale}
   bind:yScale={yScale}
   left={explorerComparisonSmallMultiple.left}
   right={explorerComparisonSmallMultiple.right}
@@ -114,68 +102,61 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints);
 
   {#if leftPoints && rightPoints}
     {#each activeBins as bin, i}
+      {#if dataVolume !== 2}
       <line 
         x1={leftPlot}
         x2={rightPlot}
         y1={$dotsAndLines[bin].leftY}
         y2={$dotsAndLines[bin].rightY}
         stroke={$dotsAndLines[bin].color}
-        stroke-width=2
+        stroke-width={dataVolume === 1 ? 1 : 2}
+        stroke-opacity={dataVolume === 1 ? 0.5 : 1}
       />
+
+      {:else}
+        <!-- This is the case of only having two points. -->
+        <Line
+          yAccessor={'y'}
+          xAccessor={'label'}
+          useYScale={false}
+          curve={'curveStep'}
+          color={$dotsAndLines[bin].color}
+          data={[
+            {
+              y: $dotsAndLines[bin].leftY,
+              label: leftLabel,
+            },
+            {
+              y: $dotsAndLines[bin].rightY,
+              label: rightLabel,
+
+           },
+          ]}
+        />
+      {/if}
       <circle 
-        cx={leftPlot} 
+        cx={dataVolume === 2 ? xScale(leftLabel) : leftPlot} 
         cy={$dotsAndLines[bin].leftY} 
         r=3
         fill={$dotsAndLines[bin].color}
       />
-
     {/each}
   {/if}
   {#each activeBins as bin, i}
     <ReferenceSymbol 
-      xLocation={rightPlot} 
+      xLocation={dataVolume === 2 ? xScale(rightLabel) : rightPlot} 
       yLocation={$dotsAndLines[bin].rightY} 
       color={$dotsAndLines[bin].color} 
     />
   {/each}
-
-  {#if leftDistribution && showViolins}
-  <g in:fade={{ duration: 50 }}>
-    <Violin
-      orientation="vertical"
-      showLeft={false}
-      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot - 1}
-      key={leftLabel}
-      opacity=.9
-      density={leftDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0,
-        (explorerComparisonSmallMultiple.width
-        - explorerComparisonSmallMultiple.left
-        - explorerComparisonSmallMultiple.right) / 2 - 5]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    />
-  </g>
-  {/if}
-  {#if rightDistribution && showViolins}
-    <Violin
-      orientation="vertical"
-      showRight={false}
-      rawPlacement={(rightPlot - leftPlot) / 2 + leftPlot + 1}
-      opacity=.9
-      key={rightLabel}
-      density={$animatedReferenceDistribution} 
-      densityAccessor='value'
-      valueAccessor='bin'
-      densityRange={[0, (explorerComparisonSmallMultiple.width
-        - explorerComparisonSmallMultiple.left
-        - explorerComparisonSmallMultiple.right) / 2 - 5]}
-      areaColor="var(--digital-blue-400)"
-      lineColor="var(--digital-blue-500)"
-    />
-  {/if}
-
+  
+  <slot name='body'
+    leftPlot={leftPlot} 
+    rightPlot={rightPlot} 
+    topPlot={topPlot} 
+    bottomPlot={bottomPlot}
+  >
+  
+  </slot>
 
 </DataGraphic>    

@@ -15,6 +15,12 @@ export let keySet;
 export let compareTo = 'left-right';
 export let valueFormatter = (t) => t;
 export let keyFormatter = (t) => t;
+// FIXME: switch to showLeft, showRight, showDiff, showLabels
+export let dataVolume = 10;
+export let showCategories = true;
+export let showLeft = true;
+export let showRight = true;
+export let showDiff = true;
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -44,14 +50,14 @@ $: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles()
 .summary {
   padding-top: 20px;
   padding-bottom: var(--space-2x);
+  max-width: 345px;
+  width: 100%;
 }
 
 table {
   font-family: var(--main-mono-font);
   font-size: var(--text-015);
-  /* margin-left: var(--space-base); */
   margin: auto;
-  /* width: 100%; */
   border-spacing: 0px;
   --heavy-border: 1px solid var(--line-gray-01);
   --lighter-border: 1px dotted var(--bg-gray-01);
@@ -126,16 +132,50 @@ td, th {
 
   <table>
     <thead>
+
       <tr>
+
         <th style="min-width: 54px; width: max-content">Perc.</th>
-        <th  class:hidden={!hovered} class="summary-label ref">
-            Hovered<span class='small-shape'>●</span>
-        </th>
+
+            {#if showLeft}
+            <!-- keep the comparison if more than one data point -->
+            <!-- FIXME: let's move to slots here -->
+            <th class:hidden={!hovered} class="summary-label ref">
+                <slot name='left-label'>
+                  <div>
+                    <slot name='left-label-text'>
+                      {leftLabel || ''}
+                    </slot>
+                    {#if hovered}<span class='small-shape'>●</span>{/if}
+                  </div>
+                  <!-- {#if dataVolume > 2}
+                    Hovered
+                  {/if} -->
+              </slot>
+            </th>
+            {/if}
+
+
+        <!-- FIXME: let's move to slots here -->
+        {#if showRight}
         <th class="summary-label hov">
-            Ref.<span class='small-shape'>⭑</span>
-          </th>
+          <slot name='right-label'>
+            <div>
+              <slot name='right-label-text'>
+                {rightLabel || ''}
+              </slot>
+            <span class='small-shape'>⭑</span></div>
+            <!-- {#if dataVolume > 2}Ref.{/if} -->
+          </slot>
+        </th>
+        {/if}
+        
+        {#if showDiff}
           <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
+        {/if}
+
       </tr>
+
     </thead>
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}}
@@ -143,9 +183,19 @@ td, th {
               <td  style="width: max-content" class=value-label>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
+
+              {#if showLeft}
               <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
+              {/if}
+
+              {#if showRight}
               <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
+              {/if}
+
+              {#if showDiff}
               <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
+              {/if}
+
             </tr>
           {/each}
     </tbody>

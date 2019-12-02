@@ -4,9 +4,11 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
-import BuildIDComparison from '../elements/BuildIDComparison.svelte';
-import DistributionComparison from '../elements/ProportionDistributionComparison.svelte';
-import ComparisonSummary from '../elements/ComparisonSummary.svelte';
+import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
+import DistributionComparison from './DistributionComparison.svelte';
+import ComparisonSummary from './ComparisonSummary.svelte';
+
+import { formatBuildIDToDateString } from '../utils/formatters';
 
 import {
   buildIDToDate,
@@ -24,7 +26,7 @@ export function extractProportions(activeKeys, convertedData, which = 'proportio
     }));
 }
 
-
+export let aggregationLevel = 'build_id';
 export let data;
 export let title;
 export let key;
@@ -33,6 +35,16 @@ export let proportions;
 export let metricType;
 export let activeBuckets;
 export let colorMap = () => 'var(--digital-blue-500)';
+
+// If there isn't more than one other point to compare,
+// let's turn off the hover.
+let hoverActive = data.length > 2;
+$: hoverActive = data.length > 2;
+
+// If insufficient data, suppress the main graph
+// and blow up the other.
+let insufficientData = data.length <= 2;
+$: insufficientData = data.length <= 2;
 
 let countFmt = format(',d');
 const percentFormatter = format('.0%');
@@ -55,12 +67,10 @@ function setDomain(str) {
   domain.set(filtered.map((d) => d.label));
 }
 
-$: setDomain(timeHorizon);
+$: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 
-let hovered = {};
+let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
-// FIXME: this is for demo purposes. use better build data.
-data = data.slice(0, -1);
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
@@ -81,6 +91,11 @@ function getProportion(datum) {
 .graphic-and-summary {
   display: grid;
   grid-template-columns: max-content max-content auto;
+}
+
+.no-line-chart {
+  grid-template-columns: max-content auto;
+  justify-items: start;
 }
 
 .summary {
@@ -132,47 +147,54 @@ h4 {
   </div>
 </div>
 
-<div class=graphic-and-summary>
-  <BuildIDComparison
-    data={data}
-    xDomain={$domain}
-    yDomain={yDomain}
-    timeHorizon={timeHorizon}
-    lineColorMap={colorMap}
-    key={key}
-    yScaleType={yScaleType}
-    yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
-    transform={(p, d) => extractProportions(p, d, metricType)}
-    metricKeys={activeBuckets}
-    bind:reference={reference}
-    bind:hovered={hovered}
-    extractMouseoverValues={getProportion}
-  />
+<div class=graphic-and-summary class:no-line-chart={insufficientData}>
+
+  <div style="display: {insufficientData ? 'none' : 'block'}">
+    <CompareOverTimeGraph
+      data={data}
+      xDomain={$domain}
+      yDomain={yDomain}
+      timeHorizon={timeHorizon}
+      lineColorMap={colorMap}
+      key={key}
+      yScaleType={yScaleType}
+      yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
+      transform={(p, d) => extractProportions(p, d, metricType)}
+      metricKeys={activeBuckets}
+      bind:reference={reference}
+      bind:hovered={hovered}
+      extractMouseoverValues={getProportion}
+      hoverActive={hoverActive}
+      insufficientData={insufficientData}
+      aggregationLevel={aggregationLevel}
+    />
+  </div>
 
   <DistributionComparison 
     yType={yScaleType}
     yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
-    showViolins={false}
-    leftDistribution={hovered.datum ? hovered.datum[metricType] : undefined}
-    rightDistribution={reference[metricType]}
-    leftLabel={hovered.x}
-    rightLabel={reference.label}
+    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
+    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     colorMap={colorMap}
     leftPoints={hovered.datum ? hovered.datum[metricType] : undefined}
     rightPoints={reference[metricType]}
     activeBins={activeBuckets}
     yDomain={yDomain}
+    dataVolume={data.length}
   />
   
   <ComparisonSummary 
     left={hovered.datum ? hovered.datum[metricType] : hovered.datum} 
     right={reference[metricType]}
-    leftLabel={hovered.x}
-    rightLabel={reference.label}
+    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
+    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     keySet={activeBuckets} 
     colorMap={colorMap}
     hovered={!!hovered.datum}
     valueFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
+    dataVolume={data.length}
+    showLeft={data.length > 1}
+    showDiff={data.length > 1}
     />
 </div>
     
