@@ -179,6 +179,7 @@ h4 {
         key={key}
         yScaleType={yScaleType}
         transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
+        yTickFormatter={countFmt}
         metricKeys={percentiles}
         bind:reference={reference}
         bind:hovered={hovered}
@@ -195,6 +196,7 @@ h4 {
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     colorMap={(v) => percentileLineColorMap(+v)}
+    yTickFormatter={countFmt}
     leftPoints={hovered.datum ? hovered.datum.percentiles : undefined}
     rightPoints={reference.percentiles}
     activeBins={percentiles}
