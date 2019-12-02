@@ -32,6 +32,7 @@ import DataError from '../patterns/errors/DataError.svelte';
 
 let probeName;
 let output = Promise.resolve({});
+
 // FIXME: for now, once we have retreived the data set, there are
 // a few additional operations that need to be performed.
 // to start, we will need to reset the activeBuckets in the non-
@@ -46,9 +47,13 @@ let output = Promise.resolve({});
 
 const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.probe.type, $st.probe.kind));
 
+let key;
 
-$: if ($store.probe.name !== probeName && $dataset.data && $temporaryViewTypeStore) {
-  probeName = $store.probe.name;
+$: if (
+  $store.probe.name !== probeName
+  && $dataset.key !== key
+  && $temporaryViewTypeStore) {
+  key = $dataset.key;
   output = $dataset.data.then(
     // ({ data, probeType, probeKind }) => {
     ({ data }) => {
@@ -163,9 +168,7 @@ function handleBodySelectors(event) {
                         <ProportionExplorerView 
                             markers={$firefoxVersionMarkers} 
                             data={data.data}
-
                             probeType={`${$store.probe.type}-${$store.probe.kind}`}
-
                             metricType={$store.proportionMetricType}
                             activeBuckets={[...$store.activeBuckets]}
                             timeHorizon={$store.timeHorizon}
@@ -173,6 +176,7 @@ function handleBodySelectors(event) {
                             bucketColorMap={data.bucketColorMap}
                             bucketSortOrder={data.bucketSortOrder}
                             on:selection={handleBodySelectors}
+                            aggregationLevel={$store.aggregationLevel}
                         />
                     {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
                         <QuantileExplorerView markers={$firefoxVersionMarkers}
@@ -181,6 +185,7 @@ function handleBodySelectors(event) {
                             timeHorizon={$store.timeHorizon}
                             percentiles={$store.visiblePercentiles}
                             on:selection={handleBodySelectors}
+                            aggregationLevel={$store.aggregationLevel}
                         />
                     {:else}
                       <div style="width: 100%">

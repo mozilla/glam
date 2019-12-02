@@ -284,7 +284,11 @@ export const dataset = derived(store, ($store) => {
   }
 
   return {
-    level: 'SUCCESS', key: 'EXPLORER_VIEW', data: cache[qs], probeType: `${$store.probe.type}-${$store.probe.kind}`,
+    level: 'SUCCESS',
+    key: 'EXPLORER_VIEW',
+    data: cache[qs],
+    key: qs,
+    robeType: `${$store.probe.type}-${$store.probe.kind}`,
   };
 });
 
