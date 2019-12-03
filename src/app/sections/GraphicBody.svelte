@@ -156,7 +156,7 @@ function handleBodySelectors(event) {
     {/if}
     </div>
 
-    <div class=graphic-body__content>
+    <div class="graphic-body__content">
         {#if $dataset.key === 'DEFAULT_VIEW'}
             <div>Telemetry dashboard default view goes here</div>
         {:else if $dataset.data}
@@ -205,7 +205,11 @@ function handleBodySelectors(event) {
         {/if}
         
     </div>
-    <div class=graphic-body__details>
+
+    {#if $dataset.data}
+      <div class="graphic-body__details">
         <ProbeDetails />
-    </div>
+      </div>
+    {/if}
+
 </div>

@@ -10,11 +10,9 @@ import { downloadString } from '../../utils/download';
 
 import Button from '../../components/Button.svelte';
 
-// import AudienceSize from './AudienceSize.svelte';
-const rightDrawerTransition = { x: 10, duration: 300 };
+const paneTransition = { x: 10, duration: 300 };
 
-let paneVisible = true;
-let visible = false; // this is unused for the time being.
+let visible = false;
 onMount(() => { visible = true; });
 
 function probeIsSelected(probe) {
@@ -27,7 +25,6 @@ function probeIsSelected(probe) {
 
 .drawer-section {
     padding: var(--space-2x);
-    border-bottom: 1px solid var(--line-gray-01);
 }
 
 .drawer-section--end {
@@ -134,18 +131,18 @@ h2 {
 
 </style>
 
-<RightDrawer visible={paneVisible}>
+<RightDrawer>
 {#if !$telemetrySearch.loaded}
     {#if visible}
-    <div in:fly={rightDrawerTransition} class="drawer-section">
+    <div in:fly={paneTransition} class="drawer-section">
         <div class="spinner-and-text">
             <LineSegSpinner size={48} color={'var(--cool-gray-400)'} /> 
-            <div in:fade={{ duration: rightDrawerTransition.duration * 2 }}>Loading Probes</div>
+            <div in:fade={{ duration: paneTransition.duration * 2 }}>Loading Probes</div>
         </div>
     </div>
     {/if}
 {:else if probeIsSelected($store.probe)}
-<div in:fly={rightDrawerTransition} class="drawer-section-container probe-details">
+<div in:fly={paneTransition} class="drawer-section-container probe-details">
     <!-- probe-details-content -->
     <div class="probe-details-content">
         {#if $store.probe.type}
@@ -213,7 +210,7 @@ h2 {
                     <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
                 </div>
             {:then value}
-                <div in:fly={rightDrawerTransition}>
+                <div in:fly={paneTransition}>
                 <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }} level=medium compact>to JSON</Button>
                 </div>
             {:catch err}
