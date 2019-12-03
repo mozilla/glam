@@ -15,7 +15,6 @@ import { explorerComparisonSmallMultiple } from '../utils/constants';
 
 import { formatBuildIDToDateString } from '../utils/formatters';
 
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 import { histogramSpring } from '../utils/animation';
 
@@ -25,7 +24,7 @@ import {
 } from '../../../../components/data-graphics/utils/build-id-utils';
 
 
-import { extractPercentiles } from '../../../../components/data-graphics/utils/percentiles';
+import { extractBinValues } from '../../../utils/probe-utils';
 
 export let data;
 export let title;
@@ -33,7 +32,21 @@ export let markers;
 export let key;
 export let timeHorizon;
 export let aggregationLevel;
-export let percentiles = [50];
+export let activeBins = [50];
+// ADDITIONS / changes IN PREPARATION FOR REFACTOR
+export let showViolins = true;
+export let binColorMap;
+export let pointMetricType;
+// use overTimeMetricType in cases where, for instance, we need
+// to use the transformedPercentiles instead of percentiles.
+export let overTimePointMetricType = pointMetricType;
+export let yScaleType;
+export let yDomain;
+export let densityMetricType = 'histogram';
+export let yTickFormatter = format(',d');
+export let comparisonKeyFormatter = (v) => v;
+// we currently need probeType
+
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -49,22 +62,6 @@ let valueFmt = format(',.2f');
 let countFmt = format(',d');
 
 const probeType = getContext('probeType');
-
-let yScaleType;
-let yDomain;
-let whichPercentileVersion = 'transformedPercentiles';
-if (probeType === 'histogram') {
-  yScaleType = 'scalePoint';
-  yDomain = data[0].histogram.map((d) => d.bin);
-} else if (probeType === 'scalar') {
-  yScaleType = 'log';
-  let upperDomain = Math.max(...data.map((d) => d.percentiles[95]));
-  yDomain = [0, upperDomain];
-  whichPercentileVersion = 'percentiles';
-}
-
-// FIXME: after demo remove this requirement
-// data = data.slice(0, -1);
 
 let domain = writable(data.map((d) => d.label));
 
@@ -85,13 +82,14 @@ let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 let reference = data[data.length - 1];
 
 const movingAudienceSize = tweened(0, { duration: 500, easing });
+
 const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
 $: movingAudienceSize.set(reference.audienceSize);
 $: refMedian.set(reference.percentiles[50]);
 
-function getPercentile(datum) {
+function getBinValueFromMouseover(datum) {
   let out = {};
-  out = probeType === 'histogram' ? { ...datum.transformedPercentiles } : { ...datum.percentiles };
+  out = { ...datum[overTimePointMetricType] };
   Object.keys(out).forEach((k) => {
     out[k] = { y: out[k], x: datum.label };
   });
@@ -99,8 +97,9 @@ function getPercentile(datum) {
 }
 
 // This will lightly animate the reference distribution part of the violin plot.
-const animatedReferenceDistribution = histogramSpring(reference.histogram);
-$: if (reference.histogram) animatedReferenceDistribution.setValue(reference.histogram);
+// FIXME: for quantile plots, let's move this up a level to the view.
+const animatedReferenceDistribution = histogramSpring(reference[densityMetricType]);
+$: if (reference[densityMetricType]) animatedReferenceDistribution.setValue(reference[densityMetricType]);
 
 </script>
 
@@ -158,14 +157,16 @@ h4 {
   <div>
     <h4>{title}</h4>
   </div>
-  <div class=bignum>
-    <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
-    <div class=bignum__value>{valueFmt($refMedian)}</div>
-  </div>
-  <div class=bignum>
-    <div class=bignum__label>⭑ Total Clients</div>
-    <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
-  </div>
+  <slot name='summary'>
+    <div class=bignum>
+      <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
+      <div class=bignum__value>{valueFmt($refMedian)}</div>
+    </div>
+    <div class=bignum>
+      <div class=bignum__label>⭑ Total Clients</div>
+      <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
+    </div>
+  </slot>
 </div>
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
@@ -175,15 +176,15 @@ h4 {
         xDomain={$domain}
         yDomain={yDomain}
         timeHorizon={timeHorizon}
-        lineColorMap={percentileLineColorMap}
+        lineColorMap={binColorMap}
         key={key}
         yScaleType={yScaleType}
-        transform={(p, d) => extractPercentiles(p, d, whichPercentileVersion)}
-        yTickFormatter={countFmt}
-        metricKeys={percentiles}
+        transform={(p, d) => extractBinValues(p, d, overTimePointMetricType)}
+        yTickFormatter={yTickFormatter}
+        metricKeys={activeBins}
         bind:reference={reference}
         bind:hovered={hovered}
-        extractMouseoverValues={getPercentile}
+        extractMouseoverValues={getBinValueFromMouseover}
         markers={markers}
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
@@ -192,67 +193,70 @@ h4 {
   </div>
 
   <DistributionComparison 
-    yType={yScaleType}
+    yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
-    colorMap={(v) => percentileLineColorMap(+v)}
-    yTickFormatter={countFmt}
-    leftPoints={hovered.datum ? hovered.datum.percentiles : undefined}
-    rightPoints={reference.percentiles}
-    activeBins={percentiles}
+    colorMap={(v) => binColorMap(+v)}
+    yTickFormatter={yTickFormatter}
+    leftPoints={hovered.datum ? hovered.datum[pointMetricType] : undefined}
+    rightPoints={reference[pointMetricType]}
+    activeBins={activeBins}
     yDomain={yDomain}
     dataVolume={data.length}
   >
     <!-- add violin plots on the quantiles -->
+    
     <g slot='body' let:leftPlot={lp} let:rightPlot={rp}>
-      {#if hovered.datum}
-        <Violin
-          orientation="vertical"
-          showLeft={false}
-          rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
-          key={hovered.x}
-          opacity=.9
-          density={hovered.datum.histogram} 
-          densityAccessor='value'
-          valueAccessor='bin'
-          densityRange={[0,
-            (explorerComparisonSmallMultiple.width
-            - explorerComparisonSmallMultiple.left
-            - explorerComparisonSmallMultiple.right) / 2 - 5]}
-          areaColor="var(--digital-blue-400)"
-          lineColor="var(--digital-blue-500)"
-        />
-      {/if}
-      {#if reference}
-        <Violin
-          orientation="vertical"
-          showRight={false}
-          rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
-          opacity=.9
-          key={reference.label}
-          density={$animatedReferenceDistribution} 
-          densityAccessor='value'
-          valueAccessor='bin'
-          densityRange={[0, (explorerComparisonSmallMultiple.width
-            - explorerComparisonSmallMultiple.left
-            - explorerComparisonSmallMultiple.right) / 2 - 5]}
-          areaColor="var(--digital-blue-400)"
-          lineColor="var(--digital-blue-500)"
-        />
+      {#if showViolins}
+        {#if hovered.datum}
+          <Violin
+            orientation="vertical"
+            showLeft={false}
+            rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
+            key={hovered.x}
+            opacity=.9
+            density={hovered.datum[densityMetricType]} 
+            densityAccessor='value'
+            valueAccessor='bin'
+            densityRange={[0,
+              (explorerComparisonSmallMultiple.width
+              - explorerComparisonSmallMultiple.left
+              - explorerComparisonSmallMultiple.right) / 2 - 5]}
+            areaColor="var(--digital-blue-400)"
+            lineColor="var(--digital-blue-500)"
+          />
+        {/if}
+        {#if reference}
+          <Violin
+            orientation="vertical"
+            showRight={false}
+            rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
+            opacity=.9
+            key={reference.label}
+            density={$animatedReferenceDistribution} 
+            densityAccessor='value'
+            valueAccessor='bin'
+            densityRange={[0, (explorerComparisonSmallMultiple.width
+              - explorerComparisonSmallMultiple.left
+              - explorerComparisonSmallMultiple.right) / 2 - 5]}
+            areaColor="var(--digital-blue-400)"
+            lineColor="var(--digital-blue-500)"
+          />
+        {/if}
       {/if}
     </g>
   </DistributionComparison>
   
   <ComparisonSummary 
     hovered={!!hovered.datum}
-    left={hovered.datum ? hovered.datum.percentiles : hovered.datum} 
-    right={reference.percentiles}
+    left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum} 
+    right={reference[pointMetricType]}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
-    keySet={percentiles}
-    colorMap={percentileLineColorMap}
+    keySet={activeBins}
+    colorMap={binColorMap}
     valueFormatter={valueFmt}
-    keyFormatter={(perc) => `${perc}%`}
+    keyFormatter={comparisonKeyFormatter}
     dataVolume={data.length}
     showLeft={data.length > 1}
     showDiff={data.length > 1}

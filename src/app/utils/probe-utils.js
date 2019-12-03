@@ -233,3 +233,15 @@ export function getProbeViewType(probeType, probeKind) {
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
+
+export function extractBinValues(binValues, convertedData, which = 'percentiles') {
+  return binValues
+    .map((bin) => convertedData.map((data) => {
+      const value = data[which][bin];
+      return {
+        label: data.label,
+        bin,
+        value,
+      };
+    }));
+}

@@ -32,7 +32,7 @@ export let colorMap = () => 'black';
 export let yDomain;
 
 export let xType;
-export let yType;
+export let yScaleType;
 export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
@@ -74,7 +74,7 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 <DataGraphic
   xDomain={xDomain}
   yDomain={yDomain}
-  yType={yType}
+  yType={yScaleType}
   width={explorerComparisonSmallMultiple.width
     + (dataVolume <= 2 ? explorerComparisonSmallMultiple.insufficientDataAdjustment : 0)}
   height={explorerComparisonSmallMultiple.height}

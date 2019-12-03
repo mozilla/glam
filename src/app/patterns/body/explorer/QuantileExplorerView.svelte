@@ -4,6 +4,7 @@ import QuantileExplorer from './QuantileExplorer.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
+import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
 
 const dispatch = createEventDispatcher();
 
@@ -97,10 +98,22 @@ function makeSelection(type) {
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
-              percentiles={percentiles}
+              activeBins={percentiles}
               timeHorizon={timeHorizon}
               markers={markers}
+              showViolins={true}
               aggregationLevel={aggregationLevel}
+
+              binColorMap={percentileLineColorMap}
+              pointMetricType={'percentiles'}
+              overTimePointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
+              densityMetricType={'histogram'}
+              comparisonKeyFormatter={(perc) => `${perc}%`}
+              yScaleType={probeType === 'histogram' ? 'scalePoint' : 'log'}
+              
+              yDomain={
+                probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
+                : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
             />
           </div>
         {/if}

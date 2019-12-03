@@ -171,7 +171,7 @@ h4 {
   </div>
 
   <DistributionComparison 
-    yType={yScaleType}
+    yScaleType={yScaleType}
     yTickFormatter={metricType === 'proportions' ? percentFormatter : countFmt}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
