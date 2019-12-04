@@ -6,7 +6,7 @@ import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 // import TotalClientsGraph from './TotalClientsGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
-import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+import Violin from '../../../../components/data-graphics/shapes/Violin.svelte';
 
 import { explorerComparisonSmallMultiple } from '../utils/constants';
 
@@ -16,7 +16,7 @@ import { histogramSpring } from '../utils/animation';
 
 import {
   buildIDToDate,
-} from '../../../../components/data-graphics/utils/build-id-utils';
+} from '../utils/build-id-utils';
 
 
 import { extractBinValues } from '../../../utils/probe-utils';

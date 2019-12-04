@@ -9,11 +9,11 @@ const data = responseToData(activeTicksBuild);
 const dataset = data['undefined']['avg']; // eslint-disable-line
 
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import RightAxis from '../../../src/components/data-graphics/RightAxis.svelte';
-import TopAxis from '../../../src/components/data-graphics/TopAxis.svelte';
-import { firstOfMonth, buildIDToMonth } from '../../../src/components/data-graphics/utils/build-id-utils';
+import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
+import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
+import RightAxis from '../../../src/components/data-graphics/guides/RightAxis.svelte';
+import TopAxis from '../../../src/components/data-graphics/guides/TopAxis.svelte';
+import { firstOfMonth, buildIDToMonth } from '../../../src/app/patterns/body/utils/build-id-utils';
 
 let sides = {
   left: {

@@ -3,14 +3,14 @@ import { onMount } from 'svelte';
 import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Heatmap from '../../../src/components/data-graphics/Heatmap.svelte';
-import Line from '../../../src/components/data-graphics/LineMultiple.svelte';
-import LeftAxis from '../../../src/components/data-graphics/LeftAxis.svelte';
-import BottomAxis from '../../../src/components/data-graphics/BottomAxis.svelte';
+import Line from '../../../src/components/data-graphics/shapes/Line.svelte';
+import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
 
 import {
   firstOfMonth, buildIDToMonth,
-} from '../../../src/components/data-graphics/utils/build-id-utils';
+} from '../../../src/app/patterns/body/utils/build-id-utils';
 
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 

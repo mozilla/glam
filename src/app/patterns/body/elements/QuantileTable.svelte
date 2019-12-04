@@ -1,6 +1,6 @@
 <script>
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
+import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
 import QuantileRow from './QuantileRow.svelte';
 import Pagination from './Pagination.svelte';
 

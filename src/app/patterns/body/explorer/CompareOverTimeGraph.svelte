@@ -3,11 +3,11 @@ import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
-import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
+import LeftAxis from '../../../../components/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../../components/data-graphics/LineMultiple.svelte';
+import Line from '../../../../components/data-graphics/shapes/Line.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { cartesianCoordSpring } from '../utils/animation';
@@ -18,7 +18,7 @@ import { buildIDComparisonGraph } from '../utils/constants';
 
 import {
   firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
-} from '../../../../components/data-graphics/utils/build-id-utils';
+} from '../utils/build-id-utils';
 
 export let data;
 export let markers;

@@ -5,7 +5,7 @@ import { firefoxVersionMarkers } from '../../../state/product-versions';
 
 import {
   dateToBuildID,
-} from '../../../../components/data-graphics/utils/build-id-utils';
+} from '../utils/build-id-utils';
 
 export let labels = true;
 

@@ -1,11 +1,10 @@
 <script>
 import { onMount } from 'svelte';
 import { fly } from 'svelte/transition';
-import { writable } from 'svelte/store';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/TopAxis.svelte';
-import Violin from '../../../../components/data-graphics/ViolinPlotMultiple.svelte';
+import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
+import Violin from '../../../../components/data-graphics/shapes/Violin.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 import { nearestBelow } from '../../../../utils/stats';
 

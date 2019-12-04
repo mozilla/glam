@@ -2,10 +2,10 @@
 import { derived } from 'svelte/store';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../../components/data-graphics/LeftAxis.svelte';
-import BottomAxis from '../../../../components/data-graphics/BottomAxis.svelte';
+import LeftAxis from '../../../../components/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
-import Line from '../../../../components/data-graphics/LineMultiple.svelte';
+import Line from '../../../../components/data-graphics/shapes/Line.svelte';
 
 import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
 
@@ -14,7 +14,7 @@ import { buildIDComparisonGraph } from '../utils/constants';
 
 import {
   firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
-} from '../../../../components/data-graphics/utils/build-id-utils';
+} from '../utils/build-id-utils';
 
 import {
   clientCounts,
