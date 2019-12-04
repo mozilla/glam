@@ -651,3 +651,28 @@ main .details {
     vertical-align: center;
     background-color: var(--cool-gray-100);
   }
+
+.probe-body-overview__numbers {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    grid-column-gap: var(--space-4x);
+    justify-items: right;
+}
+
+
+/* bignum is used in the body element in GLAM */
+
+.bignum {
+width: max-content;
+}
+
+.bignum__label {
+font-size: var(--text-015);
+text-transform: uppercase;
+color: var(--cool-gray-500);
+}
+
+.bignum__value {
+font-size: var(--text-06);
+text-align: right;
+}
