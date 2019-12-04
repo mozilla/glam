@@ -1,4 +1,4 @@
-Django==2.2.7
+Django==2.2.8
 PyOpenSSL==19.0.0
 django-configurations==2.1
 djangorestframework==3.10.3
