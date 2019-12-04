@@ -1,6 +1,6 @@
 <script>
-import RadioGroup from '../src/components/RadioGroup.svelte';
-import RadioSelector from '../src/components/RadioSelector.svelte';
+import RadioGroup from '../../src/components/RadioGroup.svelte';
+import RadioSelector from '../../src/components/RadioSelector.svelte';
 
 const basicRadioSelectorGroups = ['first option', 'second option'];
 let currentBasic = basicRadioSelectorGroups[0];

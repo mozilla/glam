@@ -1,6 +1,6 @@
 <script>
 
-import Button from '../src/components/Button.svelte';
+import Button from '../../src/components/Button.svelte';
 
 </script>
 <style>

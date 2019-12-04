@@ -1,6 +1,6 @@
 <script>
-import Button from '../src/components/Button.svelte';
-import ButtonGroup from '../src/components/ButtonGroup.svelte';
+import Button from '../../src/components/Button.svelte';
+import ButtonGroup from '../../src/components/ButtonGroup.svelte';
 
 let first = 0;
 
