@@ -1,7 +1,12 @@
 {
-  "extends": [
-    "config:base",
-    "group:all",
-    "schedule:weekly"
-  ]
+    "extends": [
+        "config:base",
+        "group:all"
+    ],
+    "js": {
+        "managerBranchPrefix": "js-"
+    },
+    "python": {
+        "managerBranchPrefix": "python-"
+    }
 }
