@@ -1,10 +1,15 @@
 <script>
 import { setContext, getContext, createEventDispatcher } from 'svelte';
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
+
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
 import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+
+import { formatCount, formatValue } from '../utils/formatters';
 
 const dispatch = createEventDispatcher();
 
@@ -21,7 +26,6 @@ let totalAggs = Object.keys(Object.values(data)[0]).length;
 // FIXME: these should be derived explicitly from the data prop.
 let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 
-// FIXME: these are selections that should be put in a level above this
 export let timeHorizon = 'MONTH';
 export let percentiles = [95, 75, 50, 25, 5];
 let currentAggregation = aggregationTypes[0];
@@ -35,6 +39,16 @@ function makeSelection(type) {
     dispatch('selection', { selection: event.detail.selection, type });
   };
 }
+
+// we are going to use this for the summary display
+let reference;
+let hovered;
+
+const movingAudienceSize = tweened(0, { duration: 500, easing });
+
+const refMedian = tweened(0, { duration: 500, easing });
+$: if (reference) movingAudienceSize.set(reference.audienceSize);
+$: if (reference) refMedian.set(reference.percentiles[50]);
 
 </script>
 
@@ -95,6 +109,9 @@ function makeSelection(type) {
         {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
           <div class='small-multiple'>
             <ProbeExplorer
+              bind:reference={reference}
+              bind:hovered={hovered}
+
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
@@ -114,7 +131,21 @@ function makeSelection(type) {
               yDomain={
                 probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
-            />
+            >
+
+                <!-- summary bignums -->
+                <div class='probe-body-overview__numbers' slot='summary'>
+                  <div class=bignum>
+                    <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
+                    <div class=bignum__value>{formatValue($refMedian)}</div>
+                  </div>
+                  <div class=bignum>
+                    <div class=bignum__label>⭑ Total Clients</div>
+                    <div class=bignum__value>{formatCount($movingAudienceSize)}</div>
+                  </div>
+                </div>
+                
+            </ProbeExplorer>
           </div>
         {/if}
       {/each}

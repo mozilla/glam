@@ -12,9 +12,7 @@ import { explorerComparisonSmallMultiple } from '../utils/constants';
 
 import { formatBuildIDToDateString } from '../utils/formatters';
 
-
 import { histogramSpring } from '../utils/animation';
-
 
 import {
   buildIDToDate,
@@ -30,20 +28,15 @@ export let key;
 export let timeHorizon;
 export let aggregationLevel;
 export let activeBins = [50];
-// ADDITIONS / changes IN PREPARATION FOR REFACTOR
 export let showViolins = true;
 export let binColorMap;
 export let pointMetricType;
-// use overTimeMetricType in cases where, for instance, we need
-// to use the transformedPercentiles instead of percentiles.
 export let overTimePointMetricType = pointMetricType;
 export let yScaleType;
 export let yDomain;
 export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
-// we currently need probeType
-
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -70,8 +63,8 @@ function setDomain(str) {
 
 $: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 
-let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
-let reference = data[data.length - 1];
+export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
+export let reference = data[data.length - 1];
 
 // const movingAudienceSize = tweened(0, { duration: 500, easing });
 
@@ -92,8 +85,12 @@ function getBinValueFromMouseover(datum) {
 // FIXME: for quantile plots, let's move this up a level to the view.
 // This is pretty inelegant.
 let animatedReferenceDistribution = writable(0);
-$: if (densityMetricType) animatedReferenceDistribution = histogramSpring(reference[densityMetricType]);
-$: if (densityMetricType && reference[densityMetricType]) animatedReferenceDistribution.setValue(reference[densityMetricType]);
+$: if (densityMetricType) {
+  animatedReferenceDistribution = histogramSpring(reference[densityMetricType]);
+}
+$: if (densityMetricType && reference[densityMetricType]) {
+  animatedReferenceDistribution.setValue(reference[densityMetricType]);
+}
 
 </script>
 
@@ -122,45 +119,26 @@ h4 {
   color: var(--cool-gray-500);
 }
 
-.title-and-summary {
+.probe-body-overview {
   display:grid;
-  grid-template-columns: auto max-content max-content;
+  grid-template-columns: auto max-content;
   grid-column-gap: var(--space-4x);
   justify-items: start;
   margin-bottom: var(--space-4x);
 }
 
-.bignum {
-  width: max-content;
-}
-
-.bignum__label {
-  font-size: var(--text-015);
-  text-transform: uppercase;
-  color: var(--cool-gray-500);
-}
-
-.bignum__value {
-  font-size: var(--text-06);
-  text-align: right;
-}
 </style>
 
 
-<div class='title-and-summary'>
+<div class='probe-body-overview'>
   <div>
-    <h4>{title}</h4>
+    <h4>
+      <slot name='title'>
+        {title}
+      </slot>
+    </h4>
   </div>
-  <slot name='summary'>
-    <!-- <div class=bignum>
-      <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
-      <div class=bignum__value>{valueFmt($refMedian)}</div>
-    </div>
-    <div class=bignum>
-      <div class=bignum__label>⭑ Total Clients</div>
-      <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
-    </div> -->
-  </slot>
+    <slot name='summary' reference={reference} hovered={hovered}></slot>
 </div>
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>

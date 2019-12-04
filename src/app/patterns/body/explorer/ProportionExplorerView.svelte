@@ -1,5 +1,7 @@
 <script>
-import { setContext, createEventDispatcher } from 'svelte';
+import { createEventDispatcher } from 'svelte';
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
@@ -26,25 +28,25 @@ function makeSelection(type) {
   };
 }
 
+// set the audience size when the reference updates.
+let reference;
+const movingAudienceSize = tweened(0, { duration: 500, easing });
+$: if (reference) movingAudienceSize.set(reference.audienceSize);
+
 </script>
 
 <style>
-  .body-content {
-    margin-top: var(--space-2x);
-  }
+.body-content {
+  margin-top: var(--space-2x);
+}
 
-  .data-graphics {
-    margin-top: var(--space-8x);
-  }
+.data-graphics {
+  margin-top: var(--space-8x);
+}
 
-  .small-multiple {
-    margin-bottom: var(--space-8x);
-  }
-
-  .hidden {
-    visibility: hidden;
-  }
-
+.small-multiple {
+  margin-bottom: var(--space-8x);
+}
 </style>
 
 
@@ -87,6 +89,7 @@ function makeSelection(type) {
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
             <ProbeExplorer
+              bind:reference={reference}
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
@@ -96,15 +99,21 @@ function makeSelection(type) {
               metricType={metricType}
               showViolins={false}
               aggregationLevel={aggregationLevel}
-
               pointMetricType={metricType}
-              
-              
               yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
               yScaleType={'linear'}
-              
               yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
-            />
+            >
+
+              <!-- summary bignums -->
+              <div class="probe-body-overview__numbers" slot="summary">
+                  <div class=bignum>
+                    <div class=bignum__label>⭑ Total Clients</div>
+                    <div class=bignum__value>{formatCount($movingAudienceSize)}</div>
+                  </div>
+              </div>
+
+            </ProbeExplorer>
           </div>
       {/each}
     {/each}
