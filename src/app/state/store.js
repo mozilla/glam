@@ -145,6 +145,7 @@ function getParamsForDataAPI(obj) {
   delete params.timeHorizon;
   delete params.proportionMetricType;
   delete params.activeBuckets;
+  delete params.visiblePercentiles;
   params.os = osValue;
   params.channel = channelValue;
   return params;
@@ -287,7 +288,7 @@ export const dataset = derived(store, ($store) => {
     level: 'SUCCESS',
     key: 'EXPLORER_VIEW',
     data: cache[qs],
-    key: qs,
+    queryKey: qs,
     robeType: `${$store.probe.type}-${$store.probe.kind}`,
   };
 });

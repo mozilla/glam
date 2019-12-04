@@ -51,9 +51,9 @@ let key;
 
 $: if (
   $store.probe.name !== probeName
-  && $dataset.key !== key
+  && $dataset.queryKey !== key
   && $temporaryViewTypeStore) {
-  key = $dataset.key;
+  key = $dataset.queryKey;
   output = $dataset.data.then(
     // ({ data, probeType, probeKind }) => {
     ({ data }) => {
