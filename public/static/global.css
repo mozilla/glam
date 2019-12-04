@@ -405,15 +405,18 @@ main .main-content {
     justify-self: stretch;
     display: grid;
     grid-template-columns: auto max-content;
+    padding-top: var(--space-6x);
 }
 
 main .main-action {
     background-color: var(--blue-slate-700);
-    position: relative;
+    position: fixed;
     width: 100%;
     display: grid;
     grid-auto-flow: column;
     grid-column-gap: var(--space-2x);
+    top: 0;
+    z-index: 10;
 }
 
 main .details {
