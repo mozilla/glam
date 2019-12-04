@@ -5,7 +5,7 @@ import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte
 import LeftAxis from '../../../../components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
-import Line from '../../../../components/data-graphics/shapes/Line.svelte';
+import Line from '../../../../components/data-graphics/elements/Line.svelte';
 
 import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
 

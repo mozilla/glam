@@ -6,7 +6,7 @@ import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 // import TotalClientsGraph from './TotalClientsGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
-import Violin from '../../../../components/data-graphics/shapes/Violin.svelte';
+import Violin from '../../../../components/data-graphics/elements/Violin.svelte';
 
 import { explorerComparisonSmallMultiple } from '../utils/constants';
 

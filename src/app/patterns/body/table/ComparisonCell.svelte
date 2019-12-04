@@ -4,7 +4,7 @@ import { fly } from 'svelte/transition';
 
 import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
-import Violin from '../../../../components/data-graphics/shapes/Violin.svelte';
+import Violin from '../../../../components/data-graphics/elements/Violin.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 import { nearestBelow } from '../../../../utils/stats';
 

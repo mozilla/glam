@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
 import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Heatmap from '../../../src/components/data-graphics/Heatmap.svelte';
-import Line from '../../../src/components/data-graphics/shapes/Line.svelte';
+import Line from '../../../src/components/data-graphics/elements/Line.svelte';
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
