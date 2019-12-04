@@ -1,14 +1,14 @@
 <script>
 import { onMount } from 'svelte';
 
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
-import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
-import RightAxis from '../../../../components/data-graphics/guides/RightAxis.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
+import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
+import RightAxis from '../../../components/data-graphics/guides/RightAxis.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
-import Line from '../../../../components/data-graphics/elements/Line.svelte';
+import Line from '../../../components/data-graphics/elements/Line.svelte';
 
-import { nearestBelow } from '../../../../utils/stats';
+import { nearestBelow } from '../../../utils/stats';
 
 import { twoPointSpring } from '../utils/animation';
 

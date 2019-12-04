@@ -2,11 +2,11 @@
 import { onMount } from 'svelte';
 import { fly } from 'svelte/transition';
 
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
-import Violin from '../../../../components/data-graphics/elements/Violin.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
+import Violin from '../../../components/data-graphics/elements/Violin.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
-import { nearestBelow } from '../../../../utils/stats';
+import { nearestBelow } from '../../../utils/stats';
 
 import { twoPointSpring, histogramSpring } from '../utils/animation';
 import { comparisonSmallMultiple } from '../utils/constants';

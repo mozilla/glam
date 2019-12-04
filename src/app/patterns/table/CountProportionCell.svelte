@@ -4,7 +4,7 @@ import { tweened, spring } from 'svelte/motion';
 import { format } from 'd3-format';
 import { cubicOut as easing } from 'svelte/easing';
 
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { proportionSmallMultiple } from '../utils/constants';

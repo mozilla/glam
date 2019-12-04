@@ -2,12 +2,12 @@
 import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../../components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
-import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
-import BuildIDRollover from '../../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
-import Line from '../../../../components/data-graphics/elements/Line.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import LeftAxis from '../../../components/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
+import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
+import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
+import Line from '../../../components/data-graphics/elements/Line.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { cartesianCoordSpring } from '../utils/animation';

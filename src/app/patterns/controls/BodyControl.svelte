@@ -1,7 +1,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import Button from '../../components/Button.svelte';
-import ButtonGroup from '../../components/ButtonGroup.svelte';
+import Button from '../../../components/Button.svelte';
+import ButtonGroup from '../../../components/ButtonGroup.svelte';
 
 export let level = 'medium';
 export let compact = true;

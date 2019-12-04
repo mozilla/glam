@@ -1,7 +1,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
 import { format } from 'd3-format';
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 import BuildIDCell from '../table/BuildIDCell.svelte';
 import CountProportionCell from '../table/CountProportionCell.svelte';

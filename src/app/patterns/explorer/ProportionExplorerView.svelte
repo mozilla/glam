@@ -4,9 +4,9 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
-import KeySelectionControl from '../../KeySelectionControl.svelte';
-import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
+import KeySelectionControl from '../controls/KeySelectionControl.svelte';
+import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
+import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
 
 import { formatPercent, formatCount } from '../utils/formatters';
 

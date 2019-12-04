@@ -4,10 +4,10 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
-import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
-import TimeHorizonControl from '../../TimeHorizonControl.svelte';
-import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
+import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
+import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 import { formatCount, formatValue } from '../utils/formatters';
 

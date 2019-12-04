@@ -1,6 +1,6 @@
 <script>
 import BodyControl from './BodyControl.svelte';
-import { percentileLineColorMap as cmp } from '../../components/data-graphics/utils/color-maps';
+import { percentileLineColorMap as cmp } from '../../../components/data-graphics/utils/color-maps';
 // '../../../../../components/data-graphics/utils/color-maps';
 export let percentiles = [50];
 </script>

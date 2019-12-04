@@ -1,5 +1,5 @@
 <script>
-import ProportionTable from '../../../src/app/patterns/body/elements/ProportionTable.svelte';
+import ProportionTable from '../../../src/app/patterns/elements/ProportionTable.svelte';
 import SSL_RESUMED_SESSION from '../../../tests/data/ssl_resumed_session_build_id.json';
 import SSL_HANDSHAKE_VERSION from '../../../tests/data/ssl_handshake_version_build_id.json';
 import CRYPTO from '../../../tests/data/cryptominers_blocked_count_build_id.json';

@@ -1,12 +1,12 @@
 <script>
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
 import QuantileRow from './QuantileRow.svelte';
 import Pagination from './Pagination.svelte';
 
 import { comparisonSmallMultiple } from '../utils/constants';
 
-import { percentileLineColorMap } from '../../../../components/data-graphics/utils/color-maps';
+import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 export let data;
 export let pageSize = 30;

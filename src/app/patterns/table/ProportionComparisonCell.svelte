@@ -1,9 +1,8 @@
 <script>
 import { spring, tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../../components/data-graphics/guides/TopAxis.svelte';
-import Violin from '../../../../components/data-graphics/elements/Violin.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
 import { comparisonSmallMultiple } from '../utils/constants';

@@ -1,8 +1,8 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import Button from '../../../../components/Button.svelte';
-import LeftCarat from '../../../../components/icons/LeftCarat.svelte';
-import RightCarat from '../../../../components/icons/RightCarat.svelte';
+import Button from '../../../components/Button.svelte';
+import LeftCarat from '../../../components/icons/LeftCarat.svelte';
+import RightCarat from '../../../components/icons/RightCarat.svelte';
 
 export let totalPages;
 export let currentPage;

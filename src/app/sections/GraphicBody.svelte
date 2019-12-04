@@ -15,8 +15,8 @@ import { getProbeViewType } from '../utils/probe-utils';
 
 import ProbeDetails from './ProbeDetails.svelte';
 
-import QuantileExplorerView from '../patterns/body/explorer/QuantileExplorerView.svelte';
-import ProportionExplorerView from '../patterns/body/explorer/ProportionExplorerView.svelte';
+import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';
+import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.svelte';
 
 import { firefoxVersionMarkers } from '../state/product-versions';
 

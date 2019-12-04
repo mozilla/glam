@@ -1,13 +1,13 @@
 <script>
 import { derived } from 'svelte/store';
 
-import DataGraphic from '../../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../../components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../../components/data-graphics/guides/BottomAxis.svelte';
-import GraphicBody from '../../../../components/data-graphics/GraphicBody.svelte';
-import Line from '../../../../components/data-graphics/elements/Line.svelte';
+import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
+import LeftAxis from '../../../components/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
+import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
+import Line from '../../../components/data-graphics/elements/Line.svelte';
 
-import FirefoxReleaseVersionMarkers from './FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
 
 
 import { buildIDComparisonGraph } from '../utils/constants';
@@ -18,7 +18,7 @@ import {
 
 import {
   clientCounts,
-} from '../../../utils/probe-utils';
+} from '../../utils/probe-utils';
 
 
 export let data;
