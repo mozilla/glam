@@ -1,6 +1,6 @@
 <script>
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Marker from '../../../src/components/data-graphics/Marker.svelte';
+import Marker from '../../../src/components/data-graphics/guides/Marker.svelte';
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 
