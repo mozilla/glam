@@ -42,7 +42,7 @@ export let pointMetricType;
 export let overTimePointMetricType = pointMetricType;
 export let yScaleType;
 export let yDomain;
-export let densityMetricType = 'histogram';
+export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
 // we currently need probeType
@@ -57,11 +57,6 @@ $: hoverActive = data.length > 2;
 // and blow up the other.
 let insufficientData = data.length <= 2;
 $: insufficientData = data.length <= 2;
-
-let valueFmt = format(',.2f');
-let countFmt = format(',d');
-
-const probeType = getContext('probeType');
 
 let domain = writable(data.map((d) => d.label));
 
@@ -81,11 +76,11 @@ $: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 let reference = data[data.length - 1];
 
-const movingAudienceSize = tweened(0, { duration: 500, easing });
+// const movingAudienceSize = tweened(0, { duration: 500, easing });
 
-const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
-$: movingAudienceSize.set(reference.audienceSize);
-$: refMedian.set(reference.percentiles[50]);
+// const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
+// $: movingAudienceSize.set(reference.audienceSize);
+// $: refMedian.set(reference.percentiles[50]);
 
 function getBinValueFromMouseover(datum) {
   let out = {};
@@ -98,8 +93,10 @@ function getBinValueFromMouseover(datum) {
 
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.
-const animatedReferenceDistribution = histogramSpring(reference[densityMetricType]);
-$: if (reference[densityMetricType]) animatedReferenceDistribution.setValue(reference[densityMetricType]);
+// This is pretty inelegant.
+let animatedReferenceDistribution = writable(0);
+$: if (densityMetricType) animatedReferenceDistribution = histogramSpring(reference[densityMetricType]);
+$: if (densityMetricType && reference[densityMetricType]) animatedReferenceDistribution.setValue(reference[densityMetricType]);
 
 </script>
 
@@ -158,14 +155,14 @@ h4 {
     <h4>{title}</h4>
   </div>
   <slot name='summary'>
-    <div class=bignum>
+    <!-- <div class=bignum>
       <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
       <div class=bignum__value>{valueFmt($refMedian)}</div>
     </div>
     <div class=bignum>
       <div class=bignum__label>⭑ Total Clients</div>
       <div class=bignum__value>{countFmt($movingAudienceSize)}</div>
-    </div>
+    </div> -->
   </slot>
 </div>
 
@@ -196,7 +193,7 @@ h4 {
     yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
-    colorMap={(v) => binColorMap(+v)}
+    colorMap={binColorMap}
     yTickFormatter={yTickFormatter}
     leftPoints={hovered.datum ? hovered.datum[pointMetricType] : undefined}
     rightPoints={reference[pointMetricType]}
@@ -255,7 +252,7 @@ h4 {
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
     keySet={activeBins}
     colorMap={binColorMap}
-    valueFormatter={valueFmt}
+    valueFormatter={yTickFormatter}
     keyFormatter={comparisonKeyFormatter}
     dataVolume={data.length}
     showLeft={data.length > 1}

@@ -1,10 +1,12 @@
 <script>
 import { setContext, createEventDispatcher } from 'svelte';
 
-import ProportionExplorer from './ProportionExplorer.svelte';
+import Explorer from './QuantileExplorer.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
+
+import { formatPercent, formatCount } from '../utils/formatters';
 
 export let aggregationLevel = 'build_id';
 export let data;
@@ -91,15 +93,24 @@ setContext('probeType', probeType);
     {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
-            <ProportionExplorer
+            <Explorer
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
-              activeBuckets={activeBuckets}
+              activeBins={activeBuckets}
               timeHorizon={timeHorizon}
-              colorMap={bucketColorMap}
+              binColorMap={bucketColorMap}
               metricType={metricType}
+              showViolins={false}
               aggregationLevel={aggregationLevel}
+
+              pointMetricType={metricType}
+              
+              
+              yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
+              yScaleType={'linear'}
+              
+              yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
             />
           </div>
       {/each}

@@ -51,8 +51,7 @@ const percentFormatter = format('.0%');
 
 let yScaleType = 'linear';
 
-const counts = Math.max(...data.map((d) => Object.values(d[metricType])).flat());
-let yDomain = [0, counts];
+export let yDomain = [0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())];
 
 let domain = writable(data.map((d) => d.label));
 
