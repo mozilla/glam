@@ -1,6 +1,6 @@
 <script>
 import { setContext, getContext, createEventDispatcher } from 'svelte';
-import QuantileExplorer from './QuantileExplorer.svelte';
+import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../../PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../../AggregationTypeSelector.svelte';
@@ -94,7 +94,7 @@ function makeSelection(type) {
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
         {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
           <div class='small-multiple'>
-            <QuantileExplorer
+            <ProbeExplorer
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}

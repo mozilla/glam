@@ -1,8 +1,5 @@
 <script>
-import { getContext } from 'svelte';
 import { writable } from 'svelte/store';
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing } from 'svelte/easing';
 import { format } from 'd3-format';
 
 import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';

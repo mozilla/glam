@@ -1,7 +1,7 @@
 <script>
 import { setContext, createEventDispatcher } from 'svelte';
 
-import Explorer from './QuantileExplorer.svelte';
+import ProbeExplorer from './ProbeExplorer.svelte';
 import KeySelectionControl from '../../KeySelectionControl.svelte';
 import TimeHorizonControl from '../../TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../../ProportionMetricTypeControl.svelte';
@@ -14,6 +14,8 @@ export let probeType;
 export let activeBuckets;
 export let bucketColorMap;
 export let bucketOptions;
+export let timeHorizon = 'MONTH';
+export let metricType = 'proportions';
 export let bucketSortOrder = (a, b) => ((a < b) ? 1 : -1);
 
 const dispatch = createEventDispatcher();
@@ -23,15 +25,6 @@ function makeSelection(type) {
     dispatch('selection', { selection: event.detail.selection, type });
   };
 }
-
-let totalAggs = Object.keys(Object.values(data)[0]).length;
-
-export let timeHorizon = 'MONTH';
-export let metricType = 'proportions';
-
-let latest = Object.values(Object.values(data)[0])[0];
-
-setContext('probeType', probeType);
 
 </script>
 
@@ -93,7 +86,7 @@ setContext('probeType', probeType);
     {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
           <div class='small-multiple'>
-            <Explorer
+            <ProbeExplorer
               title={key === 'undefined' ? '' : key}
               data={data}
               probeType={probeType}
