@@ -10,7 +10,7 @@ import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelt
 
 import {
   firstOfMonth, buildIDToMonth,
-} from '../../../src/app/patterns/body/utils/build-id-utils';
+} from '../../../src/app/patterns/utils/build-id-utils';
 
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
