@@ -131,16 +131,24 @@ export let xScale = createXPointScale(xDomain);
 setContext('xScale', xScale);
 setContext('yScale', yScale);
 
-function createMouseStore(parentSVG) {
-  const { set, subscribe } = writable({
-    x: undefined, y: undefined, px: undefined, py: undefined,
-  });
+const internalRolloverStore = writable({
+  x: undefined, y: undefined, px: undefined, py: undefined,
+});
 
+function createMouseStore(svgElem) {
+  let parentSVG = svgElem;
   return {
-    subscribe,
+    setSVG(mountedSVG) {
+      parentSVG = mountedSVG;
+    },
+    subscribe: internalRolloverStore.subscribe,
     onMouseleave() {
-      set({
-        x: undefined, y: undefined, px: undefined, py: undefined,
+      internalRolloverStore.set({
+        x: undefined,
+        y: undefined,
+        px: undefined,
+        py: undefined,
+        body: false,
       });
     },
     onMousemove(e) {
@@ -155,6 +163,14 @@ function createMouseStore(parentSVG) {
       let actualY = svgP.y;
       let x;
       let y;
+      // set if cursor is in body area.
+      let body = false;
+      if (actualX > $leftPlot
+        && actualX < $rightPlot
+        && actualY > $topPlot
+        && actualY < $bottomPlot) {
+        body = true;
+      }
       if (xScale.type === 'scalePoint') {
         const step = xScale.step();
         const xCandidates = xScale.domain()
@@ -171,30 +187,42 @@ function createMouseStore(parentSVG) {
         // but this shoudl be easy. just reverse the value and return it as y.
         y = yScale.invert(actualY);
       }
-      set({
-        x, y, px: actualX, py: actualY,
+      internalRolloverStore.set({
+        x, y, px: actualX, py: actualY, body,
       });
     },
   };
 }
 
-export let rollover;
+// function initiateRollovers(parentSVG) {
+//   // if (parentSVG === undefined) return;
+//   rollover = createMouseStore(parentSVG);
+// }
+
+// use bind:rollover to get the current x / y (in domain-land) and px / py (range-land)
+export let rollover = createMouseStore(svg);
+
 let onMousemove = (e) => { rollover.onMousemove(e); };
 let onMouseleave = (e) => { rollover.onMouseleave(e); };
 
-function initiateRollovers(parentSVG) {
-  if (parentSVG === undefined) return;
-  rollover = createMouseStore(parentSVG);
-}
-initiateRollovers();
 
 export let dataGraphicMounted = false;
+
+export let hoverValue = {
+  x: undefined, y: undefined, px: undefined, py: undefined,
+};
 
 onMount(() => {
   dataGraphicMounted = true;
 });
 
-$: if (dataGraphicMounted) initiateRollovers(svg);
+$: if (dataGraphicMounted) {
+  // initiateRollovers(svg);
+  rollover.setSVG(svg);
+  rollover.subscribe((v) => {
+    hoverValue = v;
+  });
+}
 
 </script>
 
@@ -229,5 +257,10 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
       <slot></slot>
     {/if}
     <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
+
+    <!-- pass the rollover value into the scale -->
+    {#if dataGraphicMounted}
+      <slot name='mouseover' value={hoverValue} xScale={xScale} yScale={yScale}></slot>
+    {/if}
   </svg>
 </div>
