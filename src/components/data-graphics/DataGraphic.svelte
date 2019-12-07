@@ -14,7 +14,12 @@ export let key = Math
   .substring(2, 15) + Math.random()
   .toString(36).substring(2, 15);
 
-export let xDomain;
+export let xDomainMin;
+export let xDomainMax;
+export let xDomain = [xDomainMin, xDomainMax];
+
+let internalXDomain = writable(xDomain);
+
 export let yDomain;
 export let xType = 'scalePoint';
 export let yType = 'scalePoint';

@@ -14,7 +14,9 @@ import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.
 
 import Button from '../../../src/components/Button.svelte';
 
-const fmt = format(',.2f');
+const fmt = (v) => (v ? format(',.2f')(v) : '');
+const perc = format('.2p');
+const M = 6;
 
 function makeLine(m = 3, n = 1) {
   let v = 50;
@@ -25,14 +27,13 @@ function makeLine(m = 3, n = 1) {
   });
 }
 
-// let's make 25 lines.
 const K = 16;
 let lines = Array.from({ length: K })
-  .map((_, i) => spring(makeLine(5), { stiffness: 0.3, damping: 0.3 }));
+  .map((_, i) => spring(makeLine(M), { stiffness: 0.3, damping: 0.3 }));
 
 const lineSet = derived(lines, ($lines) => $lines);
 
-let hoverValue;
+let hoverValue = {};
 
 function getY(data, x) {
   const match = data.find((v) => v.x === x);
@@ -60,11 +61,25 @@ const labels = Array.from({ length: K }).map((_, i) => `Group-${i}`);
   grid-column-gap: var(--space-2x);
   grid-row-gap: var(--space-4x);
   margin-top: var(--space-4x);
+  font-family: var(--main-mono-font);
+
+}
+
+.small-multiple__header {
+  display: grid;
+  grid-template-columns: max-content auto;
+  grid-column-gap: var(--space-2x);
+}
+
+.small-multiple__metric {
+  font-size: 14px;
+  font-weight: 300;
+  justify-self: end;
 }
 
 .offset-for-graphs {
-  padding-left: 45px;
-  padding-right: 20px;
+  padding-left: 48px;
+  margin-right: 15px;
 }
 
 h3 {
@@ -72,7 +87,6 @@ h3 {
   /* font-weight: 300; */
   font-size: 14px;
   text-align: center;
-
 }
 
 </style>
@@ -83,8 +97,8 @@ h3 {
 
   <div class=offset-for-graphs>
     <Button compact level=medium on:click={() => {
-      lines.forEach((line, i) => {
-        line.set(makeLine(5));
+      lines.forEach((line) => {
+        line.set(makeLine(M));
       });
     }}>randomize</Button>
   </div>
@@ -92,7 +106,10 @@ h3 {
 <div class=lines>
   {#each $lineSet as line, i}
   <div class=small-multiple in:fly={{ duration: 500, delay: (i) * 50, x: -5 }}>
-    <h3 class=offset-for-graphs>{labels[i]}</h3>
+    <div class="small-multiple__header offset-for-graphs">
+      <h3>{labels[i]}</h3>
+      <div class='small-multiple__metric'>{fmt(getY(line, Math.floor(hoverValue.x ? hoverValue.x : line[line.length - 1].x)))}</div>
+    </div>
     <DataGraphic
       xDomain={[1900, 2000]}
       yDomain={[0, 100]}
@@ -123,8 +140,8 @@ h3 {
             r={1 + 10 * (getY(line, Math.floor(hoverValue.x)) / 100)} 
             opacity={0.2}
             />
-          <MarginText justify=left temporaryLabel={Math.floor(value.x) || ''} />
-          <MarginText justify=right temporaryLabel={value.y ? fmt(getY(line, Math.floor(hoverValue.x))) : ''} />
+          <MarginText fontSize=11.5 justify=left temporaryLabel={Math.floor(value.x) || ''} />
+          <MarginText fontSize=11.5 justify=right temporaryLabel={value.y ? perc(getY(line, Math.floor(hoverValue.x)) / line[0].y - 1) : ''} />
         {/if}
       </g>
 
