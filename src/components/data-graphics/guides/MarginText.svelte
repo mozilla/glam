@@ -21,4 +21,5 @@ let topPlot = getContext('topPlot');
   text-anchor={justify === 'left' ? 'start' : 'end'}
 >
   {temporaryLabel}
+  <slot></slot>
 </text>
