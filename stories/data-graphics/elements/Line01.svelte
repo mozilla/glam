@@ -58,7 +58,7 @@ const labels = Array.from({ length: K }).map((_, i) => `Group-${i}`);
   grid-template-columns: repeat(4, 200px);
   justify-items: start;
   align-items: start;
-  grid-column-gap: var(--space-2x);
+  grid-column-gap: var(--space-base);
   grid-row-gap: var(--space-4x);
   margin-top: var(--space-4x);
   font-family: var(--main-mono-font);
