@@ -308,7 +308,17 @@ $: if (dataGraphicMounted) {
 
     <!-- pass the rollover value into the scale -->
     {#if dataGraphicMounted}
-      <slot name='mouseover' value={hoverValue} xScale={xScale} yScale={yScale}></slot>
+      <slot name='mouseover' 
+        value={hoverValue} 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
     {/if}
 
       <!-- data graphic borders -->

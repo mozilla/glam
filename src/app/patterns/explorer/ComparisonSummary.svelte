@@ -1,6 +1,6 @@
 <script>
 import { format } from 'd3-format';
-
+import Tweenable from '../../../components/data-graphics/motion/Tweenable.svelte';
 
 let fmt = format(',.4r');
 let pFmt = format('.0%');
@@ -185,11 +185,20 @@ td, th {
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
 
               {#if showLeft}
-              <td  class:hidden={!hovered} class=value-left>{left ? valueFormatter(leftValue) : ' '}</td>
+              <td  class:hidden={!hovered} class=value-left>
+                  {leftValue ? valueFormatter(leftValue) : ' '}
+              </td>
               {/if}
 
               {#if showRight}
-              <td class=value-right>{right ? valueFormatter(rightValue) : ' '}</td>
+              <td class=value-right>
+                  {#if rightValue}
+                  <Tweenable value={rightValue} let:tweenValue>{valueFormatter(tweenValue)}</Tweenable>
+                {:else}
+                    {' '}
+                {/if}
+                <!-- {right ? valueFormatter(rightValue) : ' '} -->
+              </td>
               {/if}
 
               {#if showDiff}
