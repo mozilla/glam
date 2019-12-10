@@ -287,8 +287,19 @@ $: if (referenceTextElement && referenceBackgroundElement) {
     />
   {/if}
   <!-- this is the hovered value rect -->
-  <!-- <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-    fill="var(--cool-gray-100)" /> -->
+  {#if aggregationLevel === 'build_id'}
+  <rect 
+    x={(xScale(hovered.prior.label)) + (xScale(hovered.next ? hovered.next.label : hovered.x) - xScale(hovered.prior.label)) / 4}
+    y={topPlot} 
+    width={(xScale(hovered.next ? hovered.next.label : hovered.x) - xScale(hovered.prior.label)) / 2}
+    height={bodyHeight}
+    fill="var(--cool-gray-100)"
+  />
+  {:else}
+  <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+    fill="var(--cool-gray-100)" />
+  {/if}
+  
 
   {/if}
   <!-- this is the reference rect -->
