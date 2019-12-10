@@ -77,9 +77,11 @@ let H;
 let T;
 let B;
 let L;
+let R;
 let bodyHeight;
 let topPlot;
 let leftPlot;
+let rightPlot;
 let bottomPlot;
 let dgRollover;
 let margins;
@@ -166,21 +168,26 @@ $: if (xScale) {
     refLabelPlacement = xScale(reference.label) - referenceWidth / 2;
   }
   if (aggregationLevel === 'build_id') {
-    const refPoint = g(data, reference.label, 'label', xDomain);
-    let r;
-    let prior;
-    let next;
-    if (!refPoint) {
-      prior = reference.index;
-      next = prior + 1;
-    } else {
-      r = refPoint.index;
-      prior = data[r].label <= xDomain[0] ? r : r - 1;
-      next = data[r].label >= xDomain[1] ? r : r + 1;
-    }
+    if (data.length > 1) {
+      const refPoint = g(data, reference.label, 'label', xDomain);
+      let r;
+      let prior;
+      let next;
+      if (!refPoint) {
+        prior = reference.index;
+        next = prior + 1;
+      } else {
+        r = refPoint.index;
+        prior = data[r].label <= xDomain[0] ? r : r - 1;
+        next = data[r].label >= xDomain[1] ? r : r + 1;
+      }
 
-    referenceWidth = (xScale(data[next].label) - xScale(data[prior].label)) / 2;
-    refLabelPlacement = xScale(data[prior].label) + referenceWidth / 2;
+      referenceWidth = (xScale(data[next].label) - xScale(data[prior].label)) / 2;
+      refLabelPlacement = xScale(data[prior].label) + referenceWidth / 2;
+    } else {
+      referenceWidth = rightPlot - leftPlot;
+      refLabelPlacement = leftPlot - (rightPlot - leftPlot) / 2;
+    }
   }
 }
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
@@ -219,6 +226,7 @@ $: if (dataGraphicMounted) {
   B.subscribe((b) => { bottomPlot = b; });
   H.subscribe((h) => { bodyHeight = h; });
   L.subscribe((l) => { leftPlot = l; });
+  R.subscribe((r) => { rightPlot = r; });
 }
 
 // handle Ref element hover-over placement.
@@ -254,6 +262,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  bind:bodyHeight={H}
  bind:topPlot={T}
  bind:leftPlot={L}
+ bind:rightPlot={R}
  bind:bottomPlot={B}
  bind:margins={margins}
  right={buildIDComparisonGraph.right}
@@ -283,7 +292,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 
   {/if}
   <!-- this is the reference rect -->
-    {#if aggregationLevel === 'build_id'}
+  
+  {#if aggregationLevel === 'build_id'}
     <rect
       bind:this={referenceBackgroundElement}
       x={$refLabelSpring} 

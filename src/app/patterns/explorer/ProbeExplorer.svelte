@@ -14,11 +14,6 @@ import { formatBuildIDToDateString } from '../utils/formatters';
 
 import { histogramSpring } from '../utils/animation';
 
-import {
-  buildIDToDate,
-} from '../utils/build-id-utils';
-
-
 import { extractBinValues } from '../../utils/probe-utils';
 
 export let data;
@@ -78,12 +73,6 @@ $: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 export let reference = data[data.length - 1];
-
-// const movingAudienceSize = tweened(0, { duration: 500, easing });
-
-// const refMedian = tweened(reference.percentiles[50], { duration: 500, easing });
-// $: movingAudienceSize.set(reference.audienceSize);
-// $: refMedian.set(reference.percentiles[50]);
 
 function getBinValueFromMouseover(datum) {
   let out = {};
