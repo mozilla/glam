@@ -48,17 +48,30 @@ $: hoverActive = data.length > 2;
 let insufficientData = data.length <= 2;
 $: insufficientData = data.length <= 2;
 
-let domain = writable(data.map((d) => d.label));
+let domain = writable(aggregationLevel === 'version' ? data.map((d) => d.label) : [
+  new Date(Math.min(...data.map((d) => d.label))), new Date(Math.max(...data.map((d) => d.label))),
+]);
 
 function setDomain(str) {
-  const start = buildIDToDate(data[data.length - 1].label);
-  let filtered = data;
-  let daysAgo = str === 'WEEK' ? 7 : 30;
-  if (str !== 'ALL_TIME') {
-    start.setDate(start.getDate() - daysAgo);
-    filtered = data.filter((d) => buildIDToDate(d.label) >= start);
+  if (aggregationLevel === 'build_id') {
+    const start = str === 'ALL_TIME' ? new Date(+data[0].label) : new Date(+data[data.length - 1].label);
+    const end = new Date(+data[data.length - 1].label);
+
+    let daysAgo = str === 'WEEK' ? 7 : 30;
+    if (str !== 'ALL_TIME') {
+      start.setDate(start.getDate() - daysAgo);
+    }
+    domain.set([start, end]);
+  } else {
+    const start = data[data.length - 1].label;
+    let filtered = data;
+    let daysAgo = str === 'WEEK' ? 7 : 30;
+    if (str !== 'ALL_TIME') {
+      start.setDate(start.getDate() - daysAgo);
+      filtered = data.filter((d) => d.label >= start);
+    }
+    domain.set(filtered.map((d) => d.label));
   }
-  domain.set(filtered.map((d) => d.label));
 }
 
 $: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
@@ -150,6 +163,7 @@ h4 {
         timeHorizon={timeHorizon}
         lineColorMap={binColorMap}
         key={key}
+        xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
         yScaleType={yScaleType}
         transform={(p, d) => extractBinValues(p, d, overTimePointMetricType)}
         yTickFormatter={yTickFormatter}

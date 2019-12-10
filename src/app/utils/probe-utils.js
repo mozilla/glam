@@ -1,10 +1,11 @@
 import produce from 'immer';
-
+import { fullBuildIDToDate } from '../patterns/utils/build-id-utils';
 import { nearestBelow } from '../../utils/stats';
+import { formatBuildIDToOnlyDate } from '../patterns/utils/formatters';
 
 export function sortByKey(key) {
   return (a, b) => {
-    if (a[key] < b[key]) return -1;
+    if (a[key] <= b[key]) return -1;
     if (a[key] > b[key]) return 1;
     return 0;
   };
@@ -55,15 +56,17 @@ export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.
   }
   const histogram = responseHistogramToGraphicFormat(h);
   const { percentiles } = probe.data[0];
+
   if (!percentiles) {
     throw createNewError('MISSING_PERCENTILES');
   }
+
   const transformedPercentiles = Object.entries(percentiles).reduce((acc, [bin, value]) => {
     acc[bin] = nearestBelow(value, histogram.map((h) => h.bin));
     return acc;
   }, {});
   return {
-    label: probe.metadata[key],
+    label: key === 'version' ? probe.metadata[key] : fullBuildIDToDate(probe.metadata[key]),
     histogram,
     percentiles,
     transformedPercentiles,
@@ -71,6 +74,7 @@ export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.
     audienceSize: probe.data[0].total_users,
   };
 });
+
 
 function toProportions(obj) {
   const proportions = { ...obj };
@@ -92,7 +96,7 @@ export const prepareForProportionPlot = (probeData, key = 'version', prepareArgs
   }
   const proportions = toProportions(counts);
   return {
-    label: probe.metadata[key],
+    label: key === 'version' ? probe.metadata[key] : fullBuildIDToDate(probe.metadata[key]),
     counts,
     version: probe.metadata.version,
     proportions,
@@ -143,13 +147,15 @@ export function zipByAggregationType(payload) {
 function groupBy(xs, key, transform = (_) => _) {
   return xs.reduce((rv, x) => {
     const K = transform(x[key]);
-    (rv[K] = rv[K] || []).push(x);
+    (rv[K] = rv[K] || []).push(produce(x, (xi) => xi));
     return rv;
   }, {});
 }
 
 export function topKBuildsPerDay(dataset, k = 2) {
-  const byBuildID = groupBy(dataset, 'label', (buildID) => buildID.slice(0, 8));
+  // const byBuildID = groupBy(dataset, 'label', (buildID) => buildID.slice(0, 8));
+  const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
+  // console.log(dataset.map((d) => [formatBuildIDToOnlyDate(d.label), d.label]).filter((d) => d[0] === '2019-09-01'));
   // by buildID, return the top 2 of each.
   const topK = Object.entries(byBuildID).map(([_, matches]) => {
     const out = matches.filter((m) => m.audienceSize > 10);
@@ -178,7 +184,8 @@ export function gatherBy(payload, by) {
 }
 
 
-export function byKeyAndAggregation(data, preparationType = 'quantile', aggregationLevel = 'build_id', prepareArgs = {}, postProcessArgs = {}) {
+export function byKeyAndAggregation(d, preparationType = 'quantile', aggregationLevel = 'build_id', prepareArgs = {}, postProcessArgs = {}) {
+  const data = produce(d, (di) => di);
   const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
   const byKey = gatherBy(data, (entry) => entry.key);
 
@@ -186,11 +193,15 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
 
     Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = prepareFcn(byKey[k][aggKey], aggregationLevel, prepareArgs);
+      byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => prepareFcn(di, aggregationLevel, prepareArgs));
 
-      if (aggregationLevel === 'build_id') byKey[k][aggKey] = topKBuildsPerDay(byKey[k][aggKey], 2);
+      if (aggregationLevel === 'build_id') {
+        byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => topKBuildsPerDay(di, 2));
+        // convert label to Date here
+      }
 
       byKey[k][aggKey].sort(sortByKey('label'));
+
       if (postProcessArgs.removeZeroes) {
         // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
         const keys = Object.keys(byKey[k][aggKey][0].counts);
@@ -206,7 +217,6 @@ export function byKeyAndAggregation(data, preparationType = 'quantile', aggregat
       }
     });
   });
-
   return byKey;
 }
 

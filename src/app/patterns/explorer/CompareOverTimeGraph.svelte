@@ -17,7 +17,7 @@ import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarke
 import { buildIDComparisonGraph } from '../utils/constants';
 
 import {
-  firstOfMonth, buildIDToMonth, mondays, getFirstBuildOfDays,
+  firstOfMonth, buildIDToMonth,
 } from '../utils/build-id-utils';
 
 export let data;
@@ -30,6 +30,7 @@ export let transform;
 export let lineColorMap = () => 'gray';
 export let strokeWidthMap = () => 1;
 export let extractMouseoverValues;
+export let xScaleType = 'scalePoint';
 export let xDomain;
 export let yDomain;
 export let yScaleType;
@@ -45,27 +46,26 @@ let tickFormatter = buildIDToMonth;
 let ticks = firstOfMonth;
 
 // FIXME: add version tick formatter;
-$: if (aggregationLevel === 'build_id') {
-  if (timeHorizon === 'ALL_TIME') {
-    tickFormatter = buildIDToMonth;
-    ticks = firstOfMonth;
-  } else if (timeHorizon === 'MONTH') {
-    tickFormatter = buildIDToMonth;
-    ticks = mondays;
-  } else {
-    tickFormatter = buildIDToMonth;
-    ticks = getFirstBuildOfDays;
-  }
-} else {
-  ticks = xDomain;
-  tickFormatter = (v) => v;
-}
+// $: if (aggregationLevel === 'build_id') {
+//   if (timeHorizon === 'ALL_TIME') {
+//     tickFormatter = buildIDToMonth;
+//     ticks = firstOfMonth;
+//   } else if (timeHorizon === 'MONTH') {
+//     tickFormatter = buildIDToMonth;
+//     ticks = mondays;
+//   } else {
+//     tickFormatter = buildIDToMonth;
+//     ticks = getFirstBuildOfDays;
+//   }
+// } else {
+//   ticks = xDomain;
+//   tickFormatter = (v) => v;
+// }
 
 let transformedData = [];
 
-$: transformedData = transform(metricKeys, data.filter((d) => xDomain.includes(d.label)))
+$: transformedData = transform(metricKeys, data)// data.filter((d) => xDomain.includes(d.label)))
   .map((ps, i) => [ps, metricKeys[i]]);
-
 
 let xScale;
 let yScale;
@@ -118,13 +118,53 @@ $: refLabelPlacement = xScale ? xScale(reference.label) : 0;
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: refLabelSpring.set(refLabelPlacement);
 
+// bisection
+/* eslint-disable */
+function c(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+}
+
+function b(a, x, key='label', lo = 0, hi = a.length) {
+  while (lo < hi) {
+    let mid = lo + hi >>> 1;
+    if (c(+a[mid][key], x) < 0) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+function g(d, v, key='label', domain) {
+   if (v < d[0][key]) return { ...d[0], index: 0 };
+  const index = b(d, v);
+  const lb = b(d, domain[0]);
+  const hb = b(d, domain[1]);
+  if (index < lb || index > hb) return undefined;
+  const prior = index - 1;
+  let midpoint = 0;
+  let px;
+  let ix;
+  if (d[prior]) {
+    px = +d[prior][key];
+    ix = +d[index][key];
+    midpoint = (ix - px) / 2;
+  }
+  if (v < (d[index][key] - midpoint)) return { ...d[prior], index: prior };
+  return { ...d[index], index };
+}
+
+/* eslint-enable */
 
 function initiateRollover(rolloverStore) { // eslint-disable-line
   if (!rolloverStore || !hoverActive) return undefined;
   derived(rolloverStore, ({ x, y }) => {
-    // we need the whole data point?
-    // use only x to fetch the data point.
-    const datum = data.find((d) => d.label === x);
+    let datum;
+    if (aggregationLevel === 'build_id') {
+      // build_id requires bisection
+      datum = !x ? undefined : g(data, x, 'label', xDomain);
+    } else {
+      // version is scalePoint
+      datum = data.find((d) => d.label === x);
+    }
     return { x, y, datum };
   }).subscribe((st) => {
     hovered = st;
@@ -163,6 +203,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  xDomain={xDomain}
  yDomain={yDomain}
  yType={yScaleType}
+ xType={xScaleType}
  width={buildIDComparisonGraph.width
   - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
  height={buildIDComparisonGraph.height}
@@ -183,7 +224,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  }}
 >
 
-{#if hovered.x && xScale && topPlot && bodyHeight}
+{#if hovered.datum && xScale && topPlot && bodyHeight}
  {#if aggregationLevel === 'build_id'}
     <BuildIDRollover 
       x={hovered.x}
@@ -191,21 +232,26 @@ $: if (referenceTextElement && referenceBackgroundElement) {
     />
   {/if}
   <!-- this is the hovered value rect -->
-  <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-    fill="var(--cool-gray-100)" />
+  <!-- <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
+    fill="var(--cool-gray-100)" /> -->
 
   {/if}
   <!-- this is the reference rect -->
-  <rect
+  <!-- <rect
     bind:this={referenceBackgroundElement}
     x={$refLabelSpring - xScale.step() / 2} 
     y={topPlot} 
     width={xScale.step()} 
     height={bodyHeight}
-    fill="var(--cool-gray-100)" />
+    fill="var(--cool-gray-100)" /> -->
   
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
- <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
+ 
+ {#if aggregationLevel === 'build_id'}
+  <BottomAxis  />
+{:else}
+  <BottomAxis ticks={xDomain} />
+{/if}
 
  <!-- <TopAxis showLabels=false showBorder=true /> -->
 
@@ -243,7 +289,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/each}
   {#if xScale}
     <!-- FIXME: let's not do all this calculation in the template itself. -->
-    <text
+    <!-- <text
       bind:this={referenceTextElement}
       text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
       font-size=11
@@ -263,7 +309,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
         ? Math.max($refLabelSpring - margins.buffer - xScale.step(), leftPlot + refTextWidth + margins.buffer)
         : $refLabelSpring - xScale.step() / 2 + margins.buffer} 
       y={topPlot + 11 + margins.buffer} 
-      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text> -->
   {/if}
 
   <FirefoxReleaseVersionMarkers />
