@@ -153,10 +153,7 @@ function groupBy(xs, key, transform = (_) => _) {
 }
 
 export function topKBuildsPerDay(dataset, k = 2) {
-  // const byBuildID = groupBy(dataset, 'label', (buildID) => buildID.slice(0, 8));
   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
-  // console.log(dataset.map((d) => [formatBuildIDToOnlyDate(d.label), d.label]).filter((d) => d[0] === '2019-09-01'));
-  // by buildID, return the top 2 of each.
   const topK = Object.entries(byBuildID).map(([_, matches]) => {
     const out = matches.filter((m) => m.audienceSize > 10);
     out.sort(sortByKey('audienceSize'));

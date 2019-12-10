@@ -24,6 +24,10 @@ export let data;
 export let markers;
 export let metricKeys;
 export let reference;
+// use these for build id charts. We will need the prior and
+// next points
+let priorReference;
+let nextReference;
 export let hovered = {};
 export let key;
 export let transform;
@@ -112,12 +116,6 @@ $: if (xScale && yScale) {
 $: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
 $: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
 
-// let's make the current reference label spring.
-let refLabelPlacement = 0;
-$: refLabelPlacement = xScale ? xScale(reference.label) : 0;
-const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
-$: refLabelSpring.set(refLabelPlacement);
-
 // bisection
 /* eslint-disable */
 function c(a, b) {
@@ -154,17 +152,59 @@ function g(d, v, key='label', domain) {
 
 /* eslint-enable */
 
+
+// let's make the current reference label spring.
+let refLabelPlacement = 0;
+
+// FIXME: we should find a nicer set of primitives to make refLabelSpring work.
+// this feels like a lot of work.
+// figure out the reference label spring values.
+let referenceWidth;
+$: if (xScale) {
+  if (aggregationLevel === 'version') {
+    referenceWidth = xScale.step();
+    refLabelPlacement = xScale(reference.label) - referenceWidth / 2;
+  }
+  if (aggregationLevel === 'build_id') {
+    const refPoint = g(data, reference.label, 'label', xDomain);
+    let r;
+    let prior;
+    let next;
+    if (!refPoint) {
+      prior = reference.index;
+      next = prior + 1;
+    } else {
+      r = refPoint.index;
+      prior = data[r].label <= xDomain[0] ? r : r - 1;
+      next = data[r].label >= xDomain[1] ? r : r + 1;
+    }
+
+    referenceWidth = (xScale(data[next].label) - xScale(data[prior].label)) / 2;
+    refLabelPlacement = xScale(data[prior].label) + referenceWidth / 2;
+  }
+}
+const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
+$: refLabelSpring.set(refLabelPlacement);
+
 function initiateRollover(rolloverStore) { // eslint-disable-line
   if (!rolloverStore || !hoverActive) return undefined;
   derived(rolloverStore, ({ x, y }) => {
     let datum;
+    let prior;
+    let next;
     if (aggregationLevel === 'build_id') {
       // build_id requires bisection
       datum = !x ? undefined : g(data, x, 'label', xDomain);
-    } else {
-      // version is scalePoint
-      datum = data.find((d) => d.label === x);
+      if (datum) {
+        prior = data[datum.index - 1];
+        next = datum.index < data.length ? data[datum.index + 1] : datum;
+      }
+      return {
+        x, y, datum, prior, next,
+      };
     }
+    // version is scalePoint
+    datum = data.find((d) => d.label === x);
     return { x, y, datum };
   }).subscribe((st) => {
     hovered = st;
@@ -220,7 +260,13 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  key={key}
  bind:dataGraphicMounted={dataGraphicMounted}
  on:click={() => {
-   if (hovered.datum) reference = hovered.datum;
+   if (hovered.datum) {
+     reference = hovered.datum;
+     if (aggregationLevel === 'build_id') {
+       priorReference = hovered.prior;
+       nextReference = hovered.next;
+     }
+   }
  }}
 >
 
@@ -237,14 +283,23 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 
   {/if}
   <!-- this is the reference rect -->
-  <!-- <rect
-    bind:this={referenceBackgroundElement}
-    x={$refLabelSpring - xScale.step() / 2} 
-    y={topPlot} 
-    width={xScale.step()} 
-    height={bodyHeight}
-    fill="var(--cool-gray-100)" /> -->
-  
+    {#if aggregationLevel === 'build_id'}
+    <rect
+      bind:this={referenceBackgroundElement}
+      x={$refLabelSpring} 
+      y={topPlot} 
+      width={referenceWidth} 
+      height={bodyHeight}
+      fill="var(--cool-gray-100)" />
+    {:else}
+    <rect
+      bind:this={referenceBackgroundElement}
+      x={$refLabelSpring} 
+      y={topPlot} 
+      width={referenceWidth} 
+      height={bodyHeight}
+      fill="var(--cool-gray-100)" />
+    {/if}
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  
  {#if aggregationLevel === 'build_id'}
@@ -289,7 +344,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/each}
   {#if xScale}
     <!-- FIXME: let's not do all this calculation in the template itself. -->
-    <!-- <text
+    <text
       bind:this={referenceTextElement}
       text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
       font-size=11
@@ -306,10 +361,10 @@ $: if (referenceTextElement && referenceBackgroundElement) {
           -3px 3px 0px rgba(255,255,255, 1);'
       x={
         refTextPlacement === 'outside'
-        ? Math.max($refLabelSpring - margins.buffer - xScale.step(), leftPlot + refTextWidth + margins.buffer)
-        : $refLabelSpring - xScale.step() / 2 + margins.buffer} 
+        ? Math.max($refLabelSpring - margins.buffer, leftPlot + refTextWidth + margins.buffer)
+        : $refLabelSpring + margins.buffer} 
       y={topPlot + 11 + margins.buffer} 
-      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text> -->
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
   {/if}
 
   <FirefoxReleaseVersionMarkers />
