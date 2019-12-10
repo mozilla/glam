@@ -6,7 +6,7 @@ dj-database-url==0.5.0
 dockerflow==2019.10.0
 gunicorn==20.0.4
 psycopg2-binary==2.8.4
-whitenoise==4.1.4
+whitenoise==5.0
 
 # For linting and testing.
 flake8==3.7.9
