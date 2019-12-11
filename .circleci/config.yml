@@ -22,11 +22,23 @@ jobs:
       - run:
           command: |
             pytest glam/
-  test-javascript:
+  test_javascript:
     working_directory: ~/mozilla/glam
     docker:
       - image: circleci/node:11.5
     steps:
       - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: install-npm-wee
+          command: npm install
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
       - run: npm install
       - run: npm run build
