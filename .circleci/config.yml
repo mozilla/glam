@@ -3,6 +3,7 @@ jobs:
   build:
     working_directory: ~/mozilla/glam
     docker:
+      - image: circleci/node:11.5
       - image: circleci/python:3.8
         environment:
           DJANGO_CONFIGURATION: Test
@@ -22,12 +23,6 @@ jobs:
       - run:
           command: |
             pytest glam/
-  test_javascript:
-    working_directory: ~/mozilla/glam
-    docker:
-      - image: circleci/node:11.5
-    steps:
-      - checkout
       - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
@@ -41,3 +36,4 @@ jobs:
           paths:
             - ./node_modules
       - run: npm run build
+      
