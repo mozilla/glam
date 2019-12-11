@@ -162,32 +162,7 @@ function getXY(d, v) {
           let:springValue={spr} >
             {#each spr as {x,y}, i}
               <Point fill={cm[i]} x={x} y={y} r={3} />
-              <!-- <text 
-                x={xScale(x)} 
-                text-anchor=end
-                y={yScale(y)}
-                font-size=12
-              >
- 
-              </text>
-              <text 
-                x={xScale(x) + 2} 
-                text-anchor=start
-                y={yScale(y)}
-                font-size=16
-                font-weight=900
-                stroke=white
-                style="font-family: var(--brand-font)"
-
-                >
-                <tspan fill={cm[i]}>{['WI', 'FL', 'TX', 'CA', 'NY'][i]}</tspan>
-                <tspan dx=4 fill='var(--cool-gray-600)'>
-                    {Math.round(y)}
-                </tspan>
-              </text> -->
-
             {/each}
-            <!-- draw a marker line -->
       </Springable>
 
 
