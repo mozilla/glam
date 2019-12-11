@@ -157,41 +157,56 @@ function g(d, v, key='label', domain) {
 
 // let's make the current reference label spring.
 let refLabelPlacement = 0;
+let referenceWidth;
+let hoverLabelPlacement = 0;
+let hoverWidth;
 
 // FIXME: we should find a nicer set of primitives to make refLabelSpring work.
 // this feels like a lot of work.
 // figure out the reference label spring values.
-let referenceWidth;
-$: if (xScale) {
+function determinePlacementOfBackgroundFill(datum) {
+  let refWidth;
+  let refLabel;
   if (aggregationLevel === 'version') {
-    referenceWidth = xScale.step();
-    refLabelPlacement = xScale(reference.label) - referenceWidth / 2;
+    refWidth = xScale.step();
+    refLabel = xScale(datum.label) - refWidth / 2;
   }
   if (aggregationLevel === 'build_id') {
     if (data.length > 1) {
-      const refPoint = g(data, reference.label, 'label', xDomain);
+      const refPoint = g(data, datum.label, 'label', xDomain);
       let r;
       let prior;
       let next;
+      let rightEnd = false;
       if (!refPoint) {
-        prior = reference.index;
-        next = prior + 1;
+        prior = xScale(data[datum.index]);
+        next = xScale(data[prior + 1]);
+        // set referenceWidth here.
       } else {
         r = refPoint.index;
-        prior = data[r].label <= xDomain[0] ? r : r - 1;
-        next = data[r].label >= xDomain[1] ? r : r + 1;
+        prior = data[r].label <= xDomain[0] ? leftPlot : xScale(data[r - 1].label);
+        next = (data[r].label >= xDomain[1] || (r === data.length - 1)) ? rightPlot : xScale(data[r + 1].label);
+        rightEnd = data[r].label >= xDomain[1];
       }
-
-      referenceWidth = (xScale(data[next].label) - xScale(data[prior].label)) / 2;
-      refLabelPlacement = xScale(data[prior].label) + referenceWidth / 2;
+      refWidth = (next - prior) / 2;
+      refLabel = prior + refWidth / (2 * rightEnd ? 1 : 2);
     } else {
-      referenceWidth = rightPlot - leftPlot;
-      refLabelPlacement = leftPlot - (rightPlot - leftPlot) / 2;
+      refWidth = rightPlot - leftPlot;
+      refLabel = leftPlot - (rightPlot - leftPlot) / 2;
     }
   }
+  return [refWidth, refLabel];
 }
+
+
+$: if (xDomain && xScale && rightPlot) {
+  [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
+}
+
+$: if (xDomain && hovered.datum && xScale) [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
+
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
-$: refLabelSpring.set(refLabelPlacement);
+$: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
 function initiateRollover(rolloverStore) { // eslint-disable-line
   if (!rolloverStore || !hoverActive) return undefined;
@@ -288,10 +303,17 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/if}
   <!-- this is the hovered value rect -->
   {#if aggregationLevel === 'build_id'}
-  <rect 
-    x={(xScale(hovered.prior.label)) + (xScale(hovered.next ? hovered.next.label : hovered.x) - xScale(hovered.prior.label)) / 4}
+  <!-- <rect 
+    x={(xScale(hovered.prior.label)) + ((hovered.next ? xScale(hovered.next.label) : rightPlot) - xScale(hovered.prior.label)) / 4}
     y={topPlot} 
-    width={(xScale(hovered.next ? hovered.next.label : hovered.x) - xScale(hovered.prior.label)) / 2}
+    width={((hovered.next ? xScale(hovered.next.label) : rightPlot * 2) - (xScale(hovered.prior.label))) / 2}
+    height={bodyHeight}
+    fill="var(--cool-gray-100)"
+  /> -->
+  <rect 
+    x={hoverLabelPlacement}
+    y={topPlot} 
+    width={hoverWidth}
     height={bodyHeight}
     fill="var(--cool-gray-100)"
   />

@@ -73,6 +73,7 @@ $: if (aggregationLevel === 'build_id') setDomain(timeHorizon);
 
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 export let reference = data[data.length - 1];
+// $: if (timeHorizon) reference = data[data.length - 1];
 
 function getBinValueFromMouseover(datum) {
   let out = {};
