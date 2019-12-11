@@ -1,7 +1,9 @@
 <script>
 import { setContext, getContext, onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
-import { scalePoint, scaleLinear, scaleSymlog } from 'd3-scale';
+import {
+  scalePoint, scaleLinear, scaleSymlog, scaleTime,
+} from 'd3-scale';
 
 export let data = getContext('data');
 export let svg;
@@ -14,7 +16,12 @@ export let key = Math
   .substring(2, 15) + Math.random()
   .toString(36).substring(2, 15);
 
-export let xDomain;
+export let xDomainMin;
+export let xDomainMax;
+export let xDomain = [xDomainMin, xDomainMax];
+
+// let internalXDomain = writable(xDomain);
+
 export let yDomain;
 export let xType = 'scalePoint';
 export let yType = 'scalePoint';
@@ -25,6 +32,38 @@ export let top = 50;
 export let bottom = 20;
 export let laneGap = 30;
 export let buffer = 5;
+
+// borders
+export let borderColor = 'var(--cool-gray-200)';
+export let borderThickness = 1;
+export let borderOpacity = 1;
+export let leftBorder;
+export let rightBorder;
+export let topBorder;
+export let bottomBorder;
+export let leftBorderColor = borderColor;
+export let rightBorderColor = borderColor;
+export let topBorderColor = borderColor;
+export let bottomBorderColor = borderColor;
+export let leftBorderThickness = borderThickness;
+export let rightBorderThickness = borderThickness;
+export let topBorderThickness = borderThickness;
+export let bottomBorderThickness = borderThickness;
+export let leftBorderOpacity = borderOpacity;
+export let rightBorderOpacity = borderOpacity;
+export let topBorderOpacity = borderOpacity;
+export let bottomBorderOpacity = borderOpacity;
+
+export let backgroundColor = 'transparent';
+
+let borders = [];
+$: borders = [
+  [leftBorder, leftBorderColor, leftBorderThickness, leftBorderOpacity, $leftPlot, $leftPlot, $topPlot - topBorderThickness / 2, $bottomPlot + bottomBorderThickness / 2],
+  [rightBorder, rightBorderColor, rightBorderThickness, rightBorderOpacity, $rightPlot, $rightPlot, $topPlot - topBorderThickness / 2, $bottomPlot + bottomBorderThickness / 2],
+  [topBorder, topBorderColor, topBorderThickness, topBorderOpacity, $leftPlot, $rightPlot, $topPlot, $topPlot],
+  [bottomBorder, bottomBorderColor, bottomBorderThickness, bottomBorderOpacity, $leftPlot, $rightPlot, $bottomPlot, $bottomPlot],
+];
+
 
 let xPadding = 0.5;
 export let yPadding = 0;
@@ -92,14 +131,17 @@ setContext('bottomPlot', bottomPlot);
 // const yScaleType = yType === 'scalePoint' ? scalePoint : scaleLinear;
 
 function getScaleFunction(type) {
+  if (type === 'time') return scaleTime;
   if (type === 'scalePoint') return scalePoint;
   if (type === 'numeric' || type === 'linear') return scaleLinear;
   if (type === 'log') return scaleSymlog;
   return scalePoint;
 }
 
+// function positionScale({domain, range, scaleType, padding = .5})
+
 function createXPointScale(values) {
-  const scaleFunction = getScaleFunction(xType);// xType === 'scalePoint' ? scalePoint : scaleLinear;
+  const scaleFunction = getScaleFunction(xType);
   let scale = scaleFunction()
     .domain(values)
     .range([$leftPlot, $rightPlot]);
@@ -131,16 +173,24 @@ export let xScale = createXPointScale(xDomain);
 setContext('xScale', xScale);
 setContext('yScale', yScale);
 
-function createMouseStore(parentSVG) {
-  const { set, subscribe } = writable({
-    x: undefined, y: undefined, px: undefined, py: undefined,
-  });
+const internalRolloverStore = writable({
+  x: undefined, y: undefined, px: undefined, py: undefined,
+});
 
+function createMouseStore(svgElem) {
+  let parentSVG = svgElem;
   return {
-    subscribe,
+    setSVG(mountedSVG) {
+      parentSVG = mountedSVG;
+    },
+    subscribe: internalRolloverStore.subscribe,
     onMouseleave() {
-      set({
-        x: undefined, y: undefined, px: undefined, py: undefined,
+      internalRolloverStore.set({
+        x: undefined,
+        y: undefined,
+        px: undefined,
+        py: undefined,
+        body: false,
       });
     },
     onMousemove(e) {
@@ -155,6 +205,14 @@ function createMouseStore(parentSVG) {
       let actualY = svgP.y;
       let x;
       let y;
+      // set if cursor is in body area.
+      let body = false;
+      if (actualX > $leftPlot
+        && actualX < $rightPlot
+        && actualY > $topPlot
+        && actualY < $bottomPlot) {
+        body = true;
+      }
       if (xScale.type === 'scalePoint') {
         const step = xScale.step();
         const xCandidates = xScale.domain()
@@ -171,30 +229,42 @@ function createMouseStore(parentSVG) {
         // but this shoudl be easy. just reverse the value and return it as y.
         y = yScale.invert(actualY);
       }
-      set({
-        x, y, px: actualX, py: actualY,
+      internalRolloverStore.set({
+        x, y, px: actualX, py: actualY, body,
       });
     },
   };
 }
 
-export let rollover;
+// function initiateRollovers(parentSVG) {
+//   // if (parentSVG === undefined) return;
+//   rollover = createMouseStore(parentSVG);
+// }
+
+// use bind:rollover to get the current x / y (in domain-land) and px / py (range-land)
+export let rollover = createMouseStore(svg);
+
 let onMousemove = (e) => { rollover.onMousemove(e); };
 let onMouseleave = (e) => { rollover.onMouseleave(e); };
 
-function initiateRollovers(parentSVG) {
-  if (parentSVG === undefined) return;
-  rollover = createMouseStore(parentSVG);
-}
-initiateRollovers();
 
 export let dataGraphicMounted = false;
+
+export let hoverValue = {
+  x: undefined, y: undefined, px: undefined, py: undefined,
+};
 
 onMount(() => {
   dataGraphicMounted = true;
 });
 
-$: if (dataGraphicMounted) initiateRollovers(svg);
+$: if (dataGraphicMounted) {
+  // initiateRollovers(svg);
+  rollover.setSVG(svg);
+  rollover.subscribe((v) => {
+    hoverValue = v;
+  });
+}
 
 </script>
 
@@ -210,6 +280,7 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
 
 <div class=data-graphic-container style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
   <svg
+    style="width: {$graphicWidth}px; height: {$graphicHeight}px;"
     bind:this={svg}
     shape-rendering="geometricPrecision"
     viewbox='0 0 {$graphicWidth} {$graphicHeight}'
@@ -217,6 +288,11 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
     on:mouseleave={onMouseleave}
     on:click
   >
+  <rect 
+    x={$leftPlot} y={$topPlot} width={$bodyWidth} height={$bodyHeight}
+    fill={backgroundColor}
+  />
+
   <clipPath id='graphic-body-{key}'>
       <rect
         x={$leftPlot}
@@ -229,5 +305,27 @@ $: if (dataGraphicMounted) initiateRollovers(svg);
       <slot></slot>
     {/if}
     <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
+
+    <!-- pass the rollover value into the scale -->
+    {#if dataGraphicMounted}
+      <slot name='mouseover' 
+        value={hoverValue} 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
+    {/if}
+
+      <!-- data graphic borders -->
+    {#each borders as [showBorder, color, thickness, opacity, x1, x2, y1, y2]}
+      {#if showBorder}
+        <line x1={x1} x2={x2} y1={y1} y2={y2} stroke={color} stroke-width={thickness} opacity={opacity} />
+      {/if}
+    {/each}
   </svg>
 </div>

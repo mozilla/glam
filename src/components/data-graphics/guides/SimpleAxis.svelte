@@ -59,7 +59,7 @@ function symLogTicks(topVal) {
 
 
 function getDefaultTicks() {
-  if (mainScale.type === 'numeric' || mainScale.type === 'linear') {
+  if (mainScale.type === 'numeric' || mainScale.type === 'linear' || mainScale.type === 'time') {
     return mainScale.ticks(tickCount);
   } if (mainScale.type === 'log') {
     return symLogTicks(mainScale.domain()[1]);
@@ -94,7 +94,7 @@ export let fadeValues = defaults.fadeParams;
 export let tickFontSize = defaults.axisTickFontSize;
 
 export let lineStyle = (side === 'left' || side === 'right') ? 'long' : 'short';
-export let tickFormatter = (t) => t;
+export let tickFormatter = mainScale.type === 'time' ? mainScale.tickFormat(tickCount) : (t) => t;
 
 export let showTicks = true;
 export let showBorder = false;

@@ -3,9 +3,6 @@ import { getContext } from 'svelte';
 import Marker from '../../../components/data-graphics/guides/Marker.svelte';
 import { firefoxVersionMarkers } from '../../state/product-versions';
 
-import {
-  dateToBuildID,
-} from '../utils/build-id-utils';
 
 export let labels = true;
 
@@ -19,8 +16,8 @@ firefoxVersionMarkers.subscribe((m) => { markers = m; });
 
 <g class='firefox-release-version-markers'>
   {#if markers && markers.length}
-    {#each markers.map(({ date, label }) => ({ label, date: dateToBuildID(xScale, date) }))
-      .filter((d) => d.date !== undefined) as {label, date}, i (date)}
+    {#each markers
+      .filter((d) => d.date !== undefined && d.date >= xScale.domain()[0] && d.date <= xScale.domain()[1]) as {label, date}, i (date)}
       <Marker location={date}>
         {#if labels}
           {label}

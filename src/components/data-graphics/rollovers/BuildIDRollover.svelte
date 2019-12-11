@@ -1,5 +1,6 @@
 <script>
 import { getContext, onMount } from 'svelte';
+import { formatToBuildID } from '../../../app/patterns/utils/formatters';
 
 export let xScale = getContext('xScale');
 let margins = getContext('margins');
@@ -11,6 +12,9 @@ TOP.subscribe((t) => { topPlot = t; });
 G.subscribe((w) => { graphicWidth = w; });
 export let x;
 export let label;
+
+let parsedLabel = '';
+$: parsedLabel = formatToBuildID(label);
 
 let rollover;
 
@@ -40,9 +44,9 @@ text-anchor='middle'
 font-family="var(--main-mono-font)"
 font-size='12'>
 <tspan fill="var(--cool-gray-500)" font-weight=bold>
-  {label.slice(0, 4)}-{label.slice(4,
-  6)}-{label.slice(6, 8)}{' '}</tspan> 
-<tspan> {label.slice(8, 10)}:</tspan>
-<tspan>{label.slice(10, 12)}:</tspan>
-<tspan>{label.slice(12, 14)}</tspan>
+  {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
+  6)}-{parsedLabel.slice(6, 8)}{' '}</tspan> 
+<tspan> {parsedLabel.slice(8, 10)}:</tspan>
+<tspan>{parsedLabel.slice(10, 12)}:</tspan>
+<tspan>{parsedLabel.slice(12, 14)}</tspan>
 </text>
