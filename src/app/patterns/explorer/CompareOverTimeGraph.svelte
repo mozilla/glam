@@ -44,29 +44,9 @@ export let hoverActive = true;
 // if data.length < 2, then suppress this graph.
 export let insufficientData = false;
 
-// let tickFormatter = buildIDToMonth;
-// let ticks = firstOfMonth;
-
-// FIXME: add version tick formatter;
-// $: if (aggregationLevel === 'build_id') {
-//   if (timeHorizon === 'ALL_TIME') {
-//     tickFormatter = buildIDToMonth;
-//     ticks = firstOfMonth;
-//   } else if (timeHorizon === 'MONTH') {
-//     tickFormatter = buildIDToMonth;
-//     ticks = mondays;
-//   } else {
-//     tickFormatter = buildIDToMonth;
-//     ticks = getFirstBuildOfDays;
-//   }
-// } else {
-//   ticks = xDomain;
-//   tickFormatter = (v) => v;
-// }
-
 let transformedData = [];
 
-$: transformedData = transform(metricKeys, data)// data.filter((d) => xDomain.includes(d.label)))
+$: transformedData = transform(metricKeys, data)
   .map((ps, i) => [ps, metricKeys[i]]);
 
 let xScale;
@@ -115,43 +95,6 @@ $: if (xScale && yScale) {
 }
 $: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
 $: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
-
-// bisection
-/* eslint-disable */
-function c(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-function b(a, x, key='label', lo = 0, hi = a.length) {
-  while (lo < hi) {
-    let mid = lo + hi >>> 1;
-    if (c(+a[mid][key], x) < 0) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-
-function g(d, v, key='label', domain) {
-   if (v < d[0][key]) return { ...d[0], index: 0 };
-  const index = b(d, v);
-  const lb = b(d, domain[0]);
-  const hb = b(d, domain[1]);
-  if (index < lb || index > hb) return undefined;
-  const prior = index - 1;
-  let midpoint = 0;
-  let px;
-  let ix;
-  if (d[prior]) {
-    px = +d[prior][key];
-    ix = +d[index][key];
-    midpoint = (ix - px) / 2;
-  }
-  if (v < (d[index][key] - midpoint)) return { ...d[prior], index: prior };
-  return { ...d[index], index };
-}
-
-/* eslint-enable */
-
 
 // let's make the current reference label spring.
 let refLabelPlacement = 0;
@@ -205,9 +148,10 @@ function initiateRollover(rolloverStore) { // eslint-disable-line
     let prior;
     let next;
     if (aggregationLevel === 'build_id') {
-      const windowSet = !x ? { previous: undefined, current: undefined, next: undefined } : window1D({
-        data, value: x, label: 'label', lowestValue: xDomain[0], highestValue: xDomain[1],
-      });
+      const windowSet = !x ? { previous: undefined, current: undefined, next: undefined }
+        : window1D({
+          data, value: x, label: 'label', lowestValue: xDomain[0], highestValue: xDomain[1],
+        });
       datum = windowSet.current;
       prior = windowSet.previous;
       next = windowSet.next;
@@ -290,13 +234,6 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/if}
   <!-- this is the hovered value rect -->
   {#if aggregationLevel === 'build_id'}
-  <!-- <rect 
-    x={(xScale(hovered.prior.label)) + ((hovered.next ? xScale(hovered.next.label) : rightPlot) - xScale(hovered.prior.label)) / 4}
-    y={topPlot} 
-    width={((hovered.next ? xScale(hovered.next.label) : rightPlot * 2) - (xScale(hovered.prior.label))) / 2}
-    height={bodyHeight}
-    fill="var(--cool-gray-100)"
-  /> -->
   <rect 
     x={hoverLabelPlacement}
     y={topPlot} 
@@ -311,8 +248,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   
 
   {/if}
+
   <!-- this is the reference rect -->
-  
   {#if aggregationLevel === 'build_id'}
     <rect
       bind:this={referenceBackgroundElement}
@@ -330,6 +267,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
       height={bodyHeight}
       fill="var(--cool-gray-100)" />
     {/if}
+  
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  
  {#if aggregationLevel === 'build_id'}
@@ -337,8 +275,6 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 {:else}
   <BottomAxis ticks={xDomain} />
 {/if}
-
- <!-- <TopAxis showLabels=false showBorder=true /> -->
 
  <GraphicBody>
    {#each transformedData as
