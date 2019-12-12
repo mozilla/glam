@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import { firstIndexAbove, previousCurrentNext, get1DWindow } from '../src/components/data-graphics/utils/window-functions';
+import { firstIndexAbove, windowIndices, window1DPlacement } from '../src/components/data-graphics/utils/window-functions';
 
 const data01 = [
   { a: 4 },
@@ -22,20 +22,21 @@ describe('firstIndexAbove', () => {
   });
 });
 
-describe('previousCurrentNext', () => {
+describe('windowIndices', () => {
   it('finds previous current next values', () => {
-    expect(previousCurrentNext({ value: 7.3, data: data01, key: 'a' })).toStrictEqual([2, 3, 4]);
-    expect(previousCurrentNext({ value: 9.2, data: data01, key: 'a' })).toStrictEqual([3, 4, 5]);
-    expect(previousCurrentNext({ value: 9.51, data: data01, key: 'a' })).toStrictEqual([4, 5, 6]);
-    expect(previousCurrentNext({ value: 4.1, data: data01, key: 'a' })).toStrictEqual([0, 0, 1]);
-    expect(previousCurrentNext({ value: 3, data: data01, key: 'a' })).toStrictEqual([0, 0, 1]);
-    expect(previousCurrentNext({ value: 12.51, data: data01, key: 'a' })).toStrictEqual([6, 7, 7]);
+    expect(windowIndices({ value: 7.3, data: data01, key: 'a' })).toStrictEqual({ previous: 2, current: 3, next: 4 });
+    expect(windowIndices({ value: 9.2, data: data01, key: 'a' })).toStrictEqual({ previous: 3, current: 4, next: 5 });
+    expect(windowIndices({ value: 9.51, data: data01, key: 'a' })).toStrictEqual({ previous: 4, current: 5, next: 6 });
+    expect(windowIndices({ value: 4.1, data: data01, key: 'a' })).toStrictEqual({ previous: 0, current: 0, next: 1 });
+    expect(windowIndices({ value: 3, data: data01, key: 'a' })).toStrictEqual({ previous: 0, current: 0, next: 1 });
+    expect(windowIndices({ value: 12.51, data: data01, key: 'a' })).toStrictEqual({ previous: 6, current: 7, next: 7 });
+    expect(windowIndices({ value: 20, data: data01, key: 'a' })).toStrictEqual({ previous: 6, current: 7, next: 7 });
   });
 });
 
-describe('get1DWindow', () => {
+describe('window1DPlacement', () => {
   it('gets a 1d window', () => {
-    expect(get1DWindow({
+    expect(window1DPlacement({
       value: 7.3, data: data01, key: 'a', pad: 0.5,
     })).toStrictEqual({
       start: 6.75,
@@ -46,7 +47,7 @@ describe('get1DWindow', () => {
       rangeWidth: 8.25 - 6.75,
     });
 
-    expect(get1DWindow({
+    expect(window1DPlacement({
       value: 7.3, data: data01, key: 'a', pad: 1,
     })).toStrictEqual({
       start: 6,
@@ -57,7 +58,7 @@ describe('get1DWindow', () => {
       rangeWidth: 3,
     });
     const scale = scaleLinear().domain([0, 15]).range([0, 100]);
-    expect(get1DWindow({
+    expect(window1DPlacement({
       value: 7.3, data: data01, key: 'a', pad: 1, scale,
     })).toStrictEqual({
       start: 6,

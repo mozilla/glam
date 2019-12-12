@@ -10,6 +10,8 @@ import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildID
 import Line from '../../../components/data-graphics/elements/Line.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 
+import { window1DPlacement, window1D } from '../../../components/data-graphics/utils/window-functions';
+
 import { cartesianCoordSpring } from '../utils/animation';
 
 import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
@@ -24,10 +26,6 @@ export let data;
 export let markers;
 export let metricKeys;
 export let reference;
-// use these for build id charts. We will need the prior and
-// next points
-let priorReference;
-let nextReference;
 export let hovered = {};
 export let key;
 export let transform;
@@ -46,8 +44,8 @@ export let hoverActive = true;
 // if data.length < 2, then suppress this graph.
 export let insufficientData = false;
 
-let tickFormatter = buildIDToMonth;
-let ticks = firstOfMonth;
+// let tickFormatter = buildIDToMonth;
+// let ticks = firstOfMonth;
 
 // FIXME: add version tick formatter;
 // $: if (aggregationLevel === 'build_id') {
@@ -161,9 +159,6 @@ let referenceWidth;
 let hoverLabelPlacement = 0;
 let hoverWidth;
 
-// FIXME: we should find a nicer set of primitives to make refLabelSpring work.
-// this feels like a lot of work.
-// figure out the reference label spring values.
 function determinePlacementOfBackgroundFill(datum) {
   let refWidth;
   let refLabel;
@@ -173,23 +168,16 @@ function determinePlacementOfBackgroundFill(datum) {
   }
   if (aggregationLevel === 'build_id') {
     if (data.length > 1) {
-      const refPoint = g(data, datum.label, 'label', xDomain);
-      let r;
-      let prior;
-      let next;
-      let rightEnd = false;
-      if (!refPoint) {
-        prior = xScale(data[datum.index]);
-        next = xScale(data[prior + 1]);
-        // set referenceWidth here.
-      } else {
-        r = refPoint.index;
-        prior = data[r].label <= xDomain[0] ? leftPlot : xScale(data[r - 1].label);
-        next = (data[r].label >= xDomain[1] || (r === data.length - 1)) ? rightPlot : xScale(data[r + 1].label);
-        rightEnd = data[r].label >= xDomain[1];
-      }
-      refWidth = (next - prior) / 2;
-      refLabel = prior + refWidth / (2 * rightEnd ? 1 : 2);
+      const { rangeStart, rangeEnd } = window1DPlacement({
+        data,
+        value: datum.label,
+        lowValue: xDomain[0],
+        highValue: xDomain[1],
+        scale: xScale,
+      });
+
+      refWidth = rangeEnd - rangeStart;
+      refLabel = rangeStart;
     } else {
       refWidth = rightPlot - leftPlot;
       refLabel = leftPlot - (rightPlot - leftPlot) / 2;
@@ -203,7 +191,9 @@ $: if (xDomain && xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-$: if (xDomain && hovered.datum && xScale) [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
+$: if (xDomain && hovered.datum && xScale) {
+  [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
+}
 
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
@@ -215,12 +205,13 @@ function initiateRollover(rolloverStore) { // eslint-disable-line
     let prior;
     let next;
     if (aggregationLevel === 'build_id') {
-      // build_id requires bisection
-      datum = !x ? undefined : g(data, x, 'label', xDomain);
-      if (datum) {
-        prior = data[datum.index - 1];
-        next = datum.index < data.length ? data[datum.index + 1] : datum;
-      }
+      const windowSet = !x ? { previous: undefined, current: undefined, next: undefined } : window1D({
+        data, value: x, label: 'label', lowestValue: xDomain[0], highestValue: xDomain[1],
+      });
+      datum = windowSet.current;
+      prior = windowSet.previous;
+      next = windowSet.next;
+
       return {
         x, y, datum, prior, next,
       };
@@ -286,10 +277,6 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  on:click={() => {
    if (hovered.datum) {
      reference = hovered.datum;
-     if (aggregationLevel === 'build_id') {
-       priorReference = hovered.prior;
-       nextReference = hovered.next;
-     }
    }
  }}
 >

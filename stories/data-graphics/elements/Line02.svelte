@@ -13,6 +13,8 @@ import Marker from '../../../src/components/data-graphics/guides/Marker.svelte';
 import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
 import Tweenable from '../../../src/components/data-graphics/motion/Tweenable.svelte';
 
+import { get1D } from '../../../src/components/data-graphics/utils/window-functions';
+
 function createData(n = 155) {
   let y = 20 + Math.random() * 0.6 * 100;
   let d = new Date('1990-03-01');
@@ -27,55 +29,22 @@ function createData(n = 155) {
   });
 }
 
-// taken from d3 source https://github.com/d3/d3-array/blob/master/src/ascending.js
-/* eslint-disable */
-
-function c(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-
-function b(a, x, lo = 0, hi = a.length) {
-  while (lo < hi) {
-    let mid = lo + hi >>> 1;
-    if (c(+a[mid].x, x) < 0) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-}
-
-/* eslint-enable */
-
 const N = 5;
 
 let data = Array.from({ length: N }).fill(null).map(() => createData());
 
-function g(d, v) {
-  if (v < d[0].x) return { ...d[0], index: 0 };
-  const index = b(d, v);
-  if (index >= d.length) return { ...d[d.length - 1], index: d.length - 1 };
-  const prior = index - 1;
-  let midpoint = 0;
-  let px;
-  let ix;
-  if (d[prior]) {
-    px = +d[prior].x;
-    ix = +d[index].x;
-    midpoint = (ix - px) / 2;
-  }
-  if (v < (d[index].x - midpoint)) return { ...d[prior], index: prior };
-  return { ...d[index], index };
-}
+const xDomain = [data[0][0].x, data[0][data[0].length - 1].x];
 
-function gg(d, v) {
-  return d.map((di) => g(di, v));
-}
+const get = (d, value) => get1D({
+  value, data: d, key: 'x', domain: xDomain,
+});
 
 function getValue(d, v) {
-  return d.map((di) => g(di, v.x).y);
+  return d.map((di) => get(di, v.x).current.y);
 }
 
 function getXY(d, v) {
-  return d.map((di) => ({ x: g(di, v.x).x, y: g(di, v.x).y }));
+  return d.map((di) => get(di, v.x).current);
 }
 
 </script>
@@ -90,7 +59,7 @@ function getXY(d, v) {
   <h1 class=story__title>Multiple lines, custom hover</h1>
   <div class=data-graphic-container>
   <DataGraphic
-    xDomain={[data[0][0].x, data[0][data[0].length - 1].x]}
+    xDomain={xDomain}
     yDomain={[0, 100]}
     xType='time'
     yType='linear'
@@ -140,9 +109,9 @@ function getXY(d, v) {
       {/if}
 
       {#if value.x}
-      <Springable value={g(data[0], value.x)} let:springValue>
+      <Springable value={get(data[0], value.x)} let:springValue>
           <Marker 
-            location={springValue.x} 
+            location={springValue.current.x} 
             lineColor=var(--cool-gray-300)
             lineThickness=2
             dasharray='3,2'
@@ -153,8 +122,8 @@ function getXY(d, v) {
             fill=var(--cool-gray-400)
             font-weight=bold
             text-transform=uppercase
-            x={xScale(springValue.x)} 
-            y={top - 8}>day {Math.round(springValue.index)}</text>
+            x={xScale(springValue.current.x)} 
+            y={top - 8}>day {Math.round(springValue.currentIndex)}</text>
       </Springable>
 
       <Springable

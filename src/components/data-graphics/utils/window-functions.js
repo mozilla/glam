@@ -1,5 +1,5 @@
 // taken from d3-array
-function c(a, b) {
+function compare(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 export function firstIndexAbove({
@@ -7,58 +7,85 @@ export function firstIndexAbove({
 }) {
   while (lo < hi) {
     const mid = lo + hi >>> 1; // eslint-disable-line
-    if (c(+data[mid][key], value) < 0) lo = mid + 1;
+    if (compare(+data[mid][key], value) < 0) lo = mid + 1;
     else hi = mid;
   }
   return lo;
 }
 
-export function previousCurrentNext({
+export function windowIndices({
   value, data, key = 'label', lowestValue = -Infinity, highestValue = Infinity,
 }) {
   const lo = firstIndexAbove({ data, value: lowestValue, key });
   const hi = firstIndexAbove({ data, value: highestValue, key });
-  let index;
+  let current;
   let previous;
+  let next;
   const candidate = firstIndexAbove({ value, data, key });
   if (candidate === 0) {
+    // left edge
     previous = candidate;
-    index = candidate;
+    current = candidate;
+  } else if (candidate === data.length) {
+    // right edge
+    previous = candidate - 2;
+    current = candidate - 1;
+    next = candidate - 1;
+    return { previous, current, next };
   } else {
     const pv = value - data[candidate - 1][key];
     const distance = data[candidate][key] - data[candidate - 1][key];
     if (pv > distance / 2) {
-      index = candidate;
+      current = candidate;
     } else {
-      index = candidate - 1;
+      current = candidate - 1;
     }
-    previous = Math.max(lo, index - 1);
+    previous = Math.max(lo, current - 1);
   }
-  const next = Math.min(hi - 1, index + 1);
-  return [previous, index, next];
+  next = Math.min(hi - 1, current + 1);
+  return { previous, current, next };
 }
 
-export function get1DWindow({
+export function window1D({
+  value, data, key = 'label', lowestValue = -Infinity, highestValue = Infinity,
+}) {
+  const { previous, current, next } = windowIndices({
+    value, data, key, lowestValue, highestValue,
+  });
+  return {
+    previousIndex: previous, currentIndex: current, nextIndex: next, previous: data[previous], current: data[current], next: data[next],
+  };
+}
+
+function isDate(dt) {
+  return Object.prototype.toString.call(dt) === '[object Date]';
+}
+
+export function window1DPlacement({
   value, data, key = 'label', lowestValue = -Infinity, highestValue = Infinity,
   pad = 0.5, scale = (x) => x,
 }) {
-  const [previous, index, next] = previousCurrentNext({
+  const { previous, current, next } = window1D({
     value, data, key, lowestValue, highestValue,
   });
-  const p = data[previous];
-  const i = data[index];
-  const n = data[next];
-  const leftWindow = (i[key] - p[key]) * pad;
-  const start = i[key] - leftWindow;
-  const rightWindow = (n[key] - i[key]) * pad;
-  const end = i[key] + rightWindow;
+  const p = previous[key];
+  const c = current[key];
+  const n = next[key];
+  let t = (_) => _;
+  if (isDate(p) && isDate(c) && isDate(n)) {
+    t = (dt) => new Date(dt);
+  }
+  const leftWindow = (c - p) * pad;
+  const rightWindow = (n - c) * pad;
+  const start = +c - leftWindow;
+  const end = +c + rightWindow;
   const width = end - start;
   return {
     start,
     end,
     width,
-    rangeStart: scale(start),
-    rangeEnd: scale(end),
-    rangeWidth: scale(end) - scale(start),
+    rangeStart: scale(t(start)),
+    rangeEnd: scale(t(end)),
+    rangeWidth: scale(t(end)) - scale(t(start)),
   };
 }
