@@ -22,10 +22,11 @@ export function windowIndices({
   let previous;
   let next;
   const candidate = firstIndexAbove({ value, data, key });
-  if (candidate === 0) {
-    // left edge
-    previous = candidate;
-    current = candidate;
+
+  if (candidate <= lo) {
+    // left edgee
+    previous = lo;
+    current = lo;
   } else if (candidate === data.length) {
     // right edge
     previous = candidate - 2;
