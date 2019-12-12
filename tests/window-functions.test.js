@@ -32,6 +32,14 @@ describe('windowIndices', () => {
     expect(windowIndices({ value: 12.51, data: data01, key: 'a' })).toStrictEqual({ previous: 6, current: 7, next: 7 });
     expect(windowIndices({ value: 20, data: data01, key: 'a' })).toStrictEqual({ previous: 6, current: 7, next: 7 });
   });
+  it('correctly caps the windows at lowestValue and highestValue', () => {
+    expect(windowIndices({
+      value: 7.3, data: data01, key: 'a', lowestValue: 9,
+    })).toStrictEqual({ previous: 4, current: 4, next: 5 });
+    expect(windowIndices({
+      value: 7.3, data: data01, key: 'a', highestValue: 7.6,
+    })).toStrictEqual({ previous: 2, current: 3, next: 3 });
+  });
 });
 
 describe('window1DPlacement', () => {
