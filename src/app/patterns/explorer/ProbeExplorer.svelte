@@ -60,7 +60,7 @@ function setDomain(str) {
   } else {
     const start = data[data.length - 1].label;
     let filtered = data;
-    let daysAgo = str === 'WEEK' ? 7 : 30;
+    let daysAgo = str === 'WEEK' ? 7 : 31;
     if (str !== 'ALL_TIME') {
       start.setDate(start.getDate() - daysAgo);
       filtered = data.filter((d) => d.label >= start);
