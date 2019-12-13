@@ -22,7 +22,7 @@ jobs:
       - run:
           command: |
             pytest glam/
-  frontend-dryrun:
+  frontend-tests:
     working_directory: ~/mozilla/glam
     docker:
       - image: circleci/node:11.5
@@ -47,7 +47,7 @@ workflows:
   version: 2
   test-and-deploy:
     jobs:
-      - frontend-dryrun:
+      - frontend-tests:
           filters:
             tags:
               only: /.*/
