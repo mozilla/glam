@@ -42,7 +42,6 @@ jobs:
             - ./node_modules
       - run: npm run build
       - run: npm run test
-      - run: npm run build-storybook # test storybook build for errors
 
 workflows:
   version: 2
