@@ -14,36 +14,36 @@
     font-style: normal;
     font-named-instance: 'Regular';
     src: url("/static/fonts/inter/Inter-upright.var.woff2") format("woff2");
-  }
-  @font-face {
+}
+@font-face {
     font-family: 'Inter var';
     font-weight: 100 900;
     font-display: swap;
     font-style: italic;
     font-named-instance: 'Italic';
     src: url("/static/fonts/inter/Inter-italic.var.woff2") format("woff2");
-  }
+}
 
-  @font-face {
+@font-face {
     font-family: 'Metropolis';
     src: url('/static/fonts/metropolis/Metropolis-Black.woff2') format('woff2');
     font-weight: 900;
     font-style: normal;
-  }
+}
 
-  @font-face {
+@font-face {
     font-family: 'Metropolis';
     src: url('/static/fonts/metropolis/Metropolis-Bold.woff2') format('woff2');
     font-weight: bold;
     font-style: normal;
-  }
-  
-  @font-face {
+}
+
+@font-face {
     font-family: 'Metropolis';
     src: url('/static/fonts/metropolis/Metropolis-Medium.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
-  }
+}
 
 :root {
     --brand-font: "Metropolis";
@@ -92,7 +92,7 @@
     --space-96x: calc(var(--space-base) * 96);
 
     --increment: var(--space-6x); /* eg. 48dp. */
-    --drawer-width: calc(var(--space-base) * 28);
+    --drawer-width: calc(var(--space-base) * 30);
     --header-height: var(--increment);
 
     /* Shadow system */
@@ -223,6 +223,10 @@
     /* buttons */
     --button-text-size: calc(var(--space-base) * 1.75);
     --button-text-size-compact: calc(var(--space-base) * 1.50);
+
+    --subtle-cool: #f7fafc;
+    --content-border-radius: var(--space-2x);
+    --main-content-width: 1200px;
 }
 
 html, body {
@@ -290,13 +294,9 @@ button:focus {
 	border-color: #666;
 }
 
-
-
-
 /*  START OF USER DASHBOARD STUFF */
 
 .container {
-    /* font-famil */
     /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
     display: grid;
@@ -337,8 +337,6 @@ header h1 {
     grid-auto-flow: column;
 }
 
-
-
 header h1 div span {
     opacity: .8;
     margin:0;
@@ -366,9 +364,9 @@ header h1 div span {
 }
 
 .right-drawer {
-    border-left: 1px solid var(--line-gray-01);
-    background-color: white;
+    background-color: var(--subtle-cool);
     height: 100%;
+    border-radius: 0 var(--content-border-radius) var(--content-border-radius) 0;
 }
 
 .left-drawer__header {
@@ -383,10 +381,11 @@ header h1 div span {
 }
 
 .drawer h2 {
-    padding:0;
+    padding: 0;
     margin: 0;
-    font-weight: 100;
+    font-weight: 200;
     text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .details h4 {
@@ -400,8 +399,7 @@ main {
 }
 
 main .main-content {
-    width: 100%;
-    max-width: 1200px;
+    width: var(--main-content-width);
     margin: auto;
     align-self: stretch;
     justify-self: stretch;
@@ -562,19 +560,13 @@ main .details {
     font-weight: 300;
 }
 
-
-
-
-
-
 .body-control-row {
-    display:grid;
+    display: grid;
     width: 100%;
     grid-template-columns: auto auto;
-    /* justify-content: stretch; */
     justify-items: start;
-    margin-top:var(--space-base);
-    margin-bottom:var(--space-base);
+    margin-top: var(--space-base);
+    margin-bottom: var(--space-base);
     text-align: right;
   }
 
@@ -608,9 +600,7 @@ main .details {
     height: var(--space-base);
     border-radius: var(--space-1q);
     margin-right: var(--space-1h);
-  }
-
-
+}
 
 .data-cell {
     font-size: var(--text-02);
@@ -618,39 +608,39 @@ main .details {
     padding: var(--space-base);
     padding-left: var(--space-2x);
     padding-right: var(--space-2x);
-  }
+}
   
-  tr .data-cell:first-child {
+tr .data-cell:first-child {
     text-align: left;
-  }
-  
-  tr:hover .data-cell {
+}
+
+tr:hover .data-cell {
     background-color: var(--cool-gray-100);
-  }
-  
-  tr .data-cell:hover {
+}
+
+tr .data-cell:hover {
     background-color: var(--cool-gray-200);
-  }
-  
-  td.data-cell--main {
+}
+
+td.data-cell--main {
     min-width: var(--space-16x);
-  }
-  
-  td.data-cell--secondary {
+}
+
+td.data-cell--secondary {
     border-right: 2px solid var(--cool-gray-200);
     min-width: var(--space-16x);
-  }
-  
-  .data-cell--graphic {
-    padding:0;
+}
+
+.data-cell--graphic {
+    padding: 0;
     vertical-align: center;
-  }
-  
-  tr td.data-cell--graphic:hover {
-    padding:0;
+}
+
+tr td.data-cell--graphic:hover {
+    padding: 0;
     vertical-align: center;
     background-color: var(--cool-gray-100);
-  }
+}
 
 .probe-body-overview__numbers {
     display: grid;
@@ -663,16 +653,16 @@ main .details {
 /* bignum is used in the body element in GLAM */
 
 .bignum {
-width: max-content;
+    width: max-content;
 }
 
 .bignum__label {
-font-size: var(--text-015);
-text-transform: uppercase;
-color: var(--cool-gray-500);
+    font-size: var(--text-015);
+    text-transform: uppercase;
+    color: var(--cool-gray-500);
 }
 
 .bignum__value {
-font-size: var(--text-06);
-text-align: right;
+    font-size: var(--text-06);
+    text-align: right;
 }
