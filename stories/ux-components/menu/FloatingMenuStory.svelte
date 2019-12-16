@@ -81,6 +81,15 @@ function isDisabled(v) {
         </td>
     </tr>
     {/each}
+    <tr>
+      <td></td>
+      <td>
+        <label>
+          <input type=radio bind:group={mainAlignment} value=center} />
+          center
+        </label>
+      </td>
+    </tr>
     </tbody>
   </table>
   <div style="margin-bottom: var(--space-2x);">

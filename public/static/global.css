@@ -666,3 +666,13 @@ tr td.data-cell--graphic:hover {
     font-size: var(--text-06);
     text-align: right;
 }
+
+.tooltip {
+    background-color: rgba(0,0,0,.7);
+    color:white;
+    padding: var(--space-1h);
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+    font-size: var(--text-015);
+    border-radius: var(--space-1h);
+}
