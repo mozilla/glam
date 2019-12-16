@@ -15,8 +15,8 @@ export let dark = getContext('appDarkMode') || false;
 <style>
 
 button {
-    --primary-color: var(--digital-blue-500);
-    --primary-color-dark: var(--digital-blue-700);
+    --primary-color: var(--digital-blue-600);
+    --primary-color-dark: var(--digital-blue-800);
     --primary-color-light: var(--digital-blue-400);
     --primary-color-lightest: var(--digital-blue-300);
     cursor: pointer;
@@ -26,7 +26,7 @@ button {
     padding: var(--space-base);
     padding-left: var(--space-2x);
     padding-right: var(--space-2x);
-    font-weight:500;
+    font-weight: 500;
     margin: 0;
     display: flex;
     column-gap: var(--space-base);
@@ -57,14 +57,14 @@ button {
 }
 
 .button--medium:hover,.button--low:hover {
-    background-color: rgba(0,0,0,.1);
+    background-color: rgba(0,0,0,.05);
 }
 
 .button--medium:active,
 .button--medium.toggled, 
 .button--low:active,
 .button--low.toggled {
-    background-color: rgba(0,0,0,.2);
+    background-color: rgba(0,0,0,.1);
 }
 
 .button--low {
@@ -103,7 +103,7 @@ button {
 .dark.button--medium.toggled, 
 .dark.button--low:active,
 .dark.button--low.toggled {
-    background-color: rgba(0,0,0,.2);
+    background-color: rgba(0,0,0,.1);
     color: var(--primary-color-lightest);
 }
 
