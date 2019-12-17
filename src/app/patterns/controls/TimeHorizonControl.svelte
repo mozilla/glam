@@ -6,9 +6,9 @@ export let horizon = 'MONTH';
 
 <BodyControl
   options={[
-      { label: 'last week', value: 'WEEK' },
-      { label: 'last month', value: 'MONTH' },
-      { label: 'all time', value: 'ALL_TIME' },
+      { label: 'last week', value: 'WEEK', tooltip: 'show the last week of build ids' },
+      { label: 'last month', value: 'MONTH', tooltip: 'show the last month of build ids' },
+      { label: 'all time', value: 'ALL_TIME', tooltip: 'show all build ids available for this probe' },
     ]}
     selected={horizon}
     level="medium"

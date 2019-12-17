@@ -76,11 +76,11 @@ export function placeElement({
   } else if (location === 'left' || location === 'right') {
     // align center + location is left or right
     // do something here
-    top = minmax(parentTop - (elementHeight - parentHeight) / 2, 0, windowHeight - distance);
+    top = minmax(parentTop - (elementHeight - parentHeight) / 2, distance, windowHeight - distance);
   } else {
     // align center + location is top or bottom
     // location is top or bottom
-    left = minmax(parentLeft - (elementWidth - parentWidth) / 2, 0, windowWidth - distance);
+    left = minmax(parentLeft - (elementWidth - parentWidth) / 2, distance, windowWidth - distance);
   }
   return [left, top];
 }

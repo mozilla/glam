@@ -1,5 +1,8 @@
 <script>
+  import { tooltip as tooltipAction } from './utils/tooltip';
+
   export let level = 'info';
+  export let tooltip;
 </script>
 
 <style>
@@ -38,6 +41,6 @@
 
 </style>
 
-<div class="status-label {`status-label-${level}`}">
+<div use:tooltipAction={tooltip} class="status-label {`status-label-${level}`}">
   <span><slot></slot></span>
 </div>

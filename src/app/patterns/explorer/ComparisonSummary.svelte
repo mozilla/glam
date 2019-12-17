@@ -21,6 +21,9 @@ export let showCategories = true;
 export let showLeft = true;
 export let showRight = true;
 export let showDiff = true;
+import Help from '../../../components/icons/Help.svelte';
+
+import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -48,13 +51,13 @@ $: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles()
 <style>
 
 .summary {
-  padding-top: 20px;
   padding-bottom: var(--space-2x);
   max-width: 345px;
   width: 100%;
 }
 
 table {
+  padding-top: 8px;
   font-family: var(--main-mono-font);
   font-size: var(--text-015);
   margin: auto;
@@ -129,6 +132,11 @@ td, th {
 </style>
 
 <div class=summary>
+    <h3 class=data-graphic__element-title>Summary
+        <span use:tooltipAction={
+          'compares the numeric values of the reference ⭑ to the hovered values ●',
+          { location: 'top' }
+        } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 
   <table>
     <thead>

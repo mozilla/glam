@@ -40,7 +40,7 @@ const COMPACT = true;
 </style>
 
 <div class='main-filters'>
-  <MenuButton compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
+  <MenuButton  tooltip={'Select a Channel'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
     <div class=main-filter__label slot="label">{getFieldValueLabel('channel', $store.channel)} <div class=pull-right-edge><DownCarat size=14 /></div></div>
     <div slot="menu">
       <MenuList on:selection={(event) => { store.setField('channel', event.detail.key); }}>
@@ -51,7 +51,7 @@ const COMPACT = true;
         </MenuList>
     </div>
     </MenuButton>
-    <MenuButton compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
+    <MenuButton  tooltip={'Select an OS'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">{getFieldValueLabel('os', $store.os)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
         <div slot="menu">
             <MenuList on:selection={(event) => { store.setField('os', event.detail.key); }}>
@@ -62,7 +62,7 @@ const COMPACT = true;
             </MenuList>
         </div>
       </MenuButton>
-      <MenuButton compact={COMPACT}  offset={OFFSET} location='bottom' alignment='left'>
+      <MenuButton  tooltip={'Select an Aggregation Level'} compact={COMPACT}  offset={OFFSET} location='bottom' alignment='left'>
           <div class=main-filter__label slot="label">{getFieldValueLabel('aggregationLevel', $store.aggregationLevel)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
           <div slot="menu">
               <MenuList on:selection={(event) => { store.setField('aggregationLevel', event.detail.key); }}>

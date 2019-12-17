@@ -15,7 +15,7 @@ export function tooltip(node, text = undefined, additionalArguments) {
   el.className = 'tooltip';
   el.textContent = text;
   el.style.position = 'absolute';
-  el.style.transition = `${duration}ms`;
+  el.style.transition = `opacity ${duration}ms`;
 
   function setLocation() {
     const [left, top] = placeElement({
