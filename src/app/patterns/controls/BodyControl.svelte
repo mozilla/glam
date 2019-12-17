@@ -51,8 +51,8 @@ function toggle(v) {
 </style>
 
 <ButtonGroup>
-  {#each options as {label, value, labelColor}, i (label)}
-    <Button level={level} compact={compact} toggled={multi
+  {#each options as {label, value, labelColor, tooltip}, i (label)}
+    <Button tooltip={tooltip} level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }
     }>
       {#if labelColor}

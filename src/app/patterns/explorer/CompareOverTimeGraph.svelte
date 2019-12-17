@@ -9,6 +9,9 @@ import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
 import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
 import Line from '../../../components/data-graphics/elements/Line.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
+import Help from '../../../components/icons/Help.svelte';
+
+import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 import { window1DPlacement, window1D } from '../../../components/data-graphics/utils/window-functions';
 
@@ -195,7 +198,13 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 }
 
 </script>
-
+<div>
+  <h3 style='padding-left: {buildIDComparisonGraph.left}px; padding-right: {buildIDComparisonGraph.right}px' class=data-graphic__element-title>
+    Over Time 
+    <span use:tooltipAction={
+      'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+      { location: 'top' }
+    } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
  <DataGraphic
  data={data}
  xDomain={xDomain}
@@ -206,6 +215,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
  height={buildIDComparisonGraph.height}
  bottom={buildIDComparisonGraph.bottom}
+ top={buildIDComparisonGraph.top}
+ left={buildIDComparisonGraph.left}
  bind:rollover={dgRollover}
  bind:xScale={xScale}
  bind:yScale={yScale}
@@ -334,5 +345,5 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/if}
 
   <FirefoxReleaseVersionMarkers />
-
 </DataGraphic>
+</div>

@@ -1,8 +1,10 @@
 <script>
 
 import { getContext } from 'svelte';
+import { tooltip as tooltipAction } from './utils/tooltip';
 
 export let level = 'high';
+export let tooltip;
 export let compact = false;
 
 export let toggled = false;
@@ -145,6 +147,6 @@ button {
 
 </style>
 
-<button class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>
+<button use:tooltipAction={tooltip} class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>
     <slot></slot>
 </button>

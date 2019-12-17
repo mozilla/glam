@@ -3,10 +3,12 @@ import { onMount } from 'svelte';
 
 import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
-import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
 import RightAxis from '../../../components/data-graphics/guides/RightAxis.svelte';
 import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
 import Line from '../../../components/data-graphics/elements/Line.svelte';
+import Help from '../../../components/icons/Help.svelte';
+
+import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 import { nearestBelow } from '../../../utils/stats';
 
@@ -71,6 +73,12 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 
 </script>
 
+<div>
+  <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Compare
+      <span use:tooltipAction={
+        'compares the reference ⭑ to the hovered value on the "Over Time" chart ●',
+        { location: 'top' }
+      } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 <DataGraphic
   xDomain={xDomain}
   yDomain={yDomain}
@@ -87,15 +95,41 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
   left={explorerComparisonSmallMultiple.left}
   right={explorerComparisonSmallMultiple.right}
   bottom={explorerComparisonSmallMultiple.bottom}
+  top={explorerComparisonSmallMultiple.top}
   key={key}
 >
+<!-- <rect 
+  x={leftPlot}
+  y={topPlot}
+  width={rightPlot - leftPlot}
+  height={bottomPlot - topPlot}
+  fill="var(--cool-gray-200)"
+  opacity=.25
+  use:tooltipAction={'compares the currently hovered point (hov.) to the current reference (ref.)', {
+    location: 'top', alignment: 'center',
+  }}
+/> -->
   <rect 
     x={leftPlot}
     y={topPlot}
-    width={rightPlot - leftPlot}
+    width={(rightPlot - leftPlot) / 2}
     height={bottomPlot - topPlot}
     fill="var(--cool-gray-200)"
     opacity=.25
+    use:tooltipAction={'shows the distribution of the currently-hovered point on the line chart', {
+      location: 'top', alignment: 'center',
+    }}
+  />
+  <rect 
+    x={(leftPlot + rightPlot) / 2}
+    y={topPlot}
+    width={(rightPlot - leftPlot) / 2}
+    height={bottomPlot - topPlot}
+    fill="var(--cool-gray-200)"
+    opacity=.25
+    use:tooltipAction={'shows the distribution of the current reference point on the line chart', {
+      location: 'top', alignment: 'center',
+    }}
   />
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
   <TopAxis ticks={xDomain}  />
@@ -160,3 +194,4 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
   </slot>
 
 </DataGraphic>    
+</div>

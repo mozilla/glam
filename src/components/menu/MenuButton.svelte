@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+import { tooltip as tooltipAction } from '../utils/tooltip';
 import Button from '../Button.svelte';
 import FloatingMenu from './FloatingMenu.svelte';
 
@@ -11,6 +12,7 @@ export let alignment = 'left';
 export let offset = 0;
 export let level = 'high';
 export let compact = false;
+export let tooltip;
 
 let width;
 
@@ -46,7 +48,7 @@ let button;
 <!-- <Button level={level} compact={compact} on:click={toggle}>
   <slot name='label'></slot>
 </Button> -->
-<button class=activating-button on:click={toggle}>
+<button use:tooltipAction={tooltip} class=activating-button on:click={toggle}>
     <slot name='label'></slot>
 </button>
 </div>

@@ -666,3 +666,38 @@ tr td.data-cell--graphic:hover {
     font-size: var(--text-06);
     text-align: right;
 }
+
+.tooltip {
+    background-color: rgba(0,0,0,.7);
+    color:white;
+    padding: var(--space-1h);
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+    font-size: var(--text-015);
+    border-radius: var(--space-1h);
+}
+
+.data-graphic__element-title {
+    margin:0;
+    font-size: var(--text-02);
+    font-weight: 300;
+    /* text-transform: uppercase; */
+    color: var(--cool-gray-500);
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-items: center;
+    grid-column-gap: var(--space-1h);
+    justify-content: start;
+    
+    /* text-transform: uppercase; */
+}
+
+.data-graphic__element-title__icon {
+    color: var(--cool-gray-400);
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    /* align-items: end; */
+}
+

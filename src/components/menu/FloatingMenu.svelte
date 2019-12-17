@@ -4,6 +4,7 @@
   // set the position of this element based off the parent element.
   // include offset.
 import { setContext, onMount, createEventDispatcher } from 'svelte';
+import { placeElement } from '../utils/float-placement';
 
 import Portal from '../Portal.svelte';
 
@@ -13,23 +14,17 @@ export let offset = 0;
 export let width;
 export let location = 'bottom';
 export let alignment = 'left';
-let y;
+let scrollY;
 export let onParentSelect = () => {};
 
 let element;
 
-let elementWidth = 0;
-let elementHeight = 0;
-let parentRight;
-let parentBottom;
-let parentLeft;
-let parentTop;
-let windowWidth;
-let windowHeight;
+let innerWidth;
+let innerHeight;
 
 
-let left;
-let top;
+let leftPlacement;
+let topPlacement;
 
 setContext('onChildSelect', onParentSelect);
 
@@ -42,61 +37,17 @@ function handleKeypress(event) {
     }
 }
 
-function placeMenu() {
-    if (!element || !parent) return;
-    const parentPosition = parent.getBoundingClientRect();
-    const elementPosition = element.getBoundingClientRect();
-  
-    elementWidth = elementPosition.width;
-    elementHeight = elementPosition.height;
-
-    parentRight = parentPosition.right;
-    parentLeft = parentPosition.left;
-    parentTop = parentPosition.top + y;
-    parentBottom = parentPosition.bottom + y;
-
-    width = elementWidth;
-  
-    if (location === 'bottom') {
-      top = parentBottom + offset;
-    } else if (location === 'top') {
-      top = parentTop - elementHeight - offset;
-    } else if (location === 'left') {
-      // FIXME: is this the left / right default?
-      left = parentLeft - elementWidth - offset;
-    } else {
-      left = parentRight + offset;
-    }
-    // FIXME: throw warning when location & alignment don't make sense
-    if (alignment === 'right') {
-      left = parentRight - elementWidth;
-      // set right if off window
-      if (left < 0) {
-        left = parentLeft;
-      }
-    } else if (alignment === 'left') {
-      // make it alignment="right" if it exceeds windowWith - elementWidth.
-      left = parentLeft;
-      if (left > windowWidth - elementWidth) {
-        left = parentRight - elementWidth;
-      }
-    } else if (alignment === 'top') {
-      top = parentTop;
-      // if bottom edge of float is below height
-      if (top + elementHeight > windowHeight) {
-        top = parentBottom - elementHeight;
-      }
-    } else {
-      top = parentBottom - elementHeight;
-      if (top < 0) {
-        top = parentTop;
-      }
-    }
-  }
-
-$: if (parent && element) {
-    placeMenu();
+$: if (element && parent) {
+    [leftPlacement, topPlacement] = placeElement({
+      location,
+      alignment,
+      elementPosition: element.getBoundingClientRect(),
+      parentPosition: parent.getBoundingClientRect(),
+      distance: offset,
+      y: scrollY,
+    });
 }
+
 </script>
 
 <style>
@@ -114,14 +65,13 @@ $: if (parent && element) {
 }
 </style>
 
-<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight} on:keydown={handleKeypress} bind:scrollY={y} />
-
+<svelte:window bind:innerWidth bind:innerHeight on:keydown={handleKeypress} bind:scrollY />
 
 <Portal>
   <div on:click={() => { dispatch('cancel'); }} class=click-area></div>
   <div class=bound-menu bind:this={element} style="
-    left: {left}px;
-    top: {top}px;
+    left: {leftPlacement}px;
+    top: {topPlacement}px;
     ">
     <slot></slot>
   </div>

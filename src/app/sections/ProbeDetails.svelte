@@ -159,7 +159,7 @@ h2 {
         {/if}
         {#if $store.probe.active !== undefined}
             <div class="probe-details-overview-right">
-                <StatusLabel level={$store.probe.active ? 'success' : 'info'}>
+                <StatusLabel tooltip={$store.probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'} level={$store.probe.active ? 'success' : 'info'}>
                     {$store.probe.active ? 'active' : 'inactive'}
                 </StatusLabel>
             </div>

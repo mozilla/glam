@@ -1,8 +1,12 @@
+
+const top = 32;
 export const buildIDComparisonGraph = {
   width: 425,
   height: 350,
   right: 16,
+  left: 60,
   bottom: 24,
+  top,
   insufficientDataAdjustment: 100, // amount of space to remove from graph when hidden
 };
 
@@ -11,6 +15,7 @@ export const explorerComparisonSmallMultiple = {
   height: buildIDComparisonGraph.height,
   left: 8,
   right: 64,
+  top,
   bottom: buildIDComparisonGraph.bottom,
   insufficientDataAdjustment: buildIDComparisonGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
 };
