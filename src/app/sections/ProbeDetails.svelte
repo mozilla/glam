@@ -10,6 +10,7 @@ import { downloadString } from '../../utils/download';
 
 import Button from '../../components/Button.svelte';
 import StatusLabel from '../../components/StatusLabel.svelte';
+import ExternalLink from '../../components/icons/ExternalLink.svelte';
 
 const paneTransition = { x: 10, duration: 300 };
 
@@ -132,6 +133,18 @@ h2 {
     padding: var(--space-2x);
 }
 
+.more-info-link {
+    display: grid;
+    align-items: center;
+    grid-auto-flow: column;
+    grid-column-gap: var(--space-1h);
+    justify-content: end;
+    font-weight: 300;
+    padding-right: var(--space-1h);
+    margin: var(--space-2x) 0;
+    font-size: var(--text-01);
+}
+
 </style>
 
 <RightDrawer>
@@ -179,6 +192,9 @@ h2 {
                 <h2 class="detail__heading--01">description</h2>
                 <div class="probe-description helper-text--01">
                     {@html $store.probe.description}
+                    <a class="more-info-link" href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.apiName}`} target="_blank">
+                        more info <ExternalLink size=12 />
+                    </a>
                 </div>
             {/if}
         </div>

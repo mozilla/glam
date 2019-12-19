@@ -64,7 +64,6 @@ node_modules/
 .env
 
 # public bundles
-
 public/static/bundle.*
 
 # storybook data
@@ -72,3 +71,6 @@ tests/data
 
 # editors
 .vscode/
+
+# for OSX devs
+.DS_Store 
