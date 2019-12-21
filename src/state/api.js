@@ -14,11 +14,12 @@ export async function getRandomProbes() {
   return data;
 }
 
-export async function getProbeData(params) {
+export async function getProbeData(params, token) {
   const data = await fetch(dataURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Token ${token}`,
     },
     body: JSON.stringify({ query: params }),
   }).then((response) => response.json());

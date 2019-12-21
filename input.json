@@ -1,0 +1,8 @@
+{
+    "query": {
+        "channel": "release",
+        "probe": "gc_ms",
+        "versions": ["70"],
+        "aggregationLevel": "version"
+    }
+}
