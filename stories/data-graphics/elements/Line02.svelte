@@ -7,13 +7,12 @@ import Line from '../../../src/components/data-graphics/elements/Line.svelte';
 import Point from '../../../src/components/data-graphics/elements/Point.svelte';
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
-import MarginText from '../../../src/components/data-graphics/guides/MarginText.svelte';
 import Marker from '../../../src/components/data-graphics/guides/Marker.svelte';
 
 import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
 import Tweenable from '../../../src/components/data-graphics/motion/Tweenable.svelte';
 
-import { get1D } from '../../../src/components/data-graphics/utils/window-functions';
+import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
 
 function createData(n = 155) {
   let y = 20 + Math.random() * 0.6 * 100;
@@ -35,7 +34,7 @@ let data = Array.from({ length: N }).fill(null).map(() => createData());
 
 const xDomain = [data[0][0].x, data[0][data[0].length - 1].x];
 
-const get = (d, value) => get1D({
+const get = (d, value) => window1D({
   value, data: d, key: 'x', domain: xDomain,
 });
 
