@@ -125,8 +125,7 @@ function handleBodySelectors(event) {
 .graphic-body__content {
   box-sizing: border-box; 
   grid-area: content-body;
-  overflow-y: auto;
-  height: var(--height);
+  min-height: var(--height);
   background-color: white;
   padding: var(--space-4x);
   padding-top: var(--space-2x);
@@ -136,7 +135,6 @@ function handleBodySelectors(event) {
 
 .graphic-body__details {
   grid-area: right;
-  height: var(--height);
   border-radius: 0 var(--content-border-radius) var(--content-border-radius) 0;
 }
 
