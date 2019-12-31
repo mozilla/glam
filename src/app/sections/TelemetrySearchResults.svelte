@@ -107,7 +107,7 @@ $: if (parentElement && windowWidth) {
 }
 
 .header-container {
-  background-color: var(--cool-gray-300);
+  background-color: var(--cool-gray-250);
   --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
   font-size:.8em;
   color: var(--body-gray-01);

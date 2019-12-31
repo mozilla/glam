@@ -127,24 +127,34 @@
     --blue-slate-900: hsl(240, 25%, 9%);
 
     /* UX GRAYS – use the cool gray variables. */
-    --cool-gray-050: #f5f9fb;
-    --cool-gray-100: hsl(203, 55%, 96%);
-    --cool-gray-200: hsl(203, 40%, 89%);
-    --cool-gray-300: hsl(203, 30%, 82%);
-    --cool-gray-400: hsl(203, 20%, 71%);
-    --cool-gray-500: hsl(203, 15%, 42%);
-    --cool-gray-600: hsl(203, 16%, 30%);
-    --cool-gray-700: hsl(203, 17%, 22%);
-    --cool-gray-800: hsl(203, 18%, 18%);
-    --cool-gray-900: hsl(203, 22%, 13%);
+    --cool-gray-subtle: #f5fafc;
+    --cool-gray-100: #f1f6fa;
+    --cool-gray-150: #e0e9ee;
+    --cool-gray-200: #d1dbe3;
+    --cool-gray-250: #c1ced7;
+    --cool-gray-300: #b2c1cb;
+    --cool-gray-350: #a4b5c0;
+    --cool-gray-400: #96a8b4;
+    --cool-gray-450: #899ca8;
+    --cool-gray-500: #7c909d;
+    --cool-gray-550: #6f8491;
+    --cool-gray-600: #637886;
+    --cool-gray-650: #586c7a;
+    --cool-gray-700: #4d616e;
+    --cool-gray-750: #435663;
+    --cool-gray-800: #394b57;
+    --cool-gray-850: #30404b;
+    --cool-gray-900: #273640;
+
+
 
     /* UX gray shorthands */
     --bg-gray-01: var(--cool-gray-100);
     --bg-gray-02: var(--cool-gray-300);
-    --line-gray-01: var(--cool-gray-200);
+    --line-gray-01: var(--cool-gray-150);
     --line-gray-02: var(--cool-gray-400);
-    --subhead-gray-01: var(--cool-gray-500);
-    --subhead-gray-02: var(--cool-gray-600); /* cooler-colored gray */
+    --subhead-gray-01: var(--cool-gray-550);
+    --subhead-gray-02: var(--cool-gray-650); /* cooler-colored gray */
     --body-gray-01: var(--cool-gray-800);
     --body-gray-02: var(--cool-gray-900);
 
@@ -224,7 +234,6 @@
     --button-text-size: calc(var(--space-base) * 1.75);
     --button-text-size-compact: calc(var(--space-base) * 1.50);
 
-    --subtle-cool: #f7fafc;
     --content-border-radius: var(--space-2x);
     --main-content-width: 1200px;
 }
@@ -364,7 +373,7 @@ header h1 div span {
 }
 
 .right-drawer {
-    background-color: var(--subtle-cool);
+    background-color: var(--cool-gray-subtle);
     height: 100%;
     border-radius: 0 var(--content-border-radius) var(--content-border-radius) 0;
 }
