@@ -92,7 +92,7 @@ class Command(BaseCommand):
         name = self.get_name(probe["key"])
         expiry = latest_history.get("expiry_version")
 
-        key = probe["key"].replace("/", "::").lower()
+        key = probe["key"]
         info = {
             "name": name,
             "apiName": name,
