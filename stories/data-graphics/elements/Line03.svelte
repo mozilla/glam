@@ -7,6 +7,7 @@ import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelt
 import Line from '../../../src/components/data-graphics/elements/Line.svelte';
 import LineBand from '../../../src/components/data-graphics/elements/LineBand.svelte';
 import Point from '../../../src/components/data-graphics/elements/Point.svelte';
+import VerticalErrorBar from '../../../src/components/data-graphics/elements/VerticalErrorBar.svelte';
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
@@ -122,6 +123,15 @@ const endMouseEvent = () => {
 
 const dateDiff = (a, b) => Math.ceil(Math.abs(a - b) / (1000 * 60 * 60 * 24));
 
+// generate random data for the key.
+
+const legendData = Array.from({ length: 20 }).map((_, i) => {
+  let y = 0.5 + (Math.random() - 0.5) * 0.05;
+  return {
+    x: i / 20, y, yMin: y * 0.7, yMax: y * 1.3,
+  };
+});
+
 </script>
 
 <style>
@@ -152,7 +162,7 @@ h2 {
 </style>
 
 <div class=story>
-  <h1 class=story__title>Usage Metrics</h1>
+  <h1 class=story__title>Glean Usage Dashboard</h1>
   <div class=multiples>
     {#each graphs as {name, type, key, yMax, axisFormat, hoverFormat}, i}
       <div>
@@ -243,13 +253,89 @@ h2 {
               <g in:fly={{ duration: 1000, y: 200 }}>
                 <Point x={spr.date} y={spr[key]} r={3} />
               </g>
+              <g in:fade={{ duration: 1000, delay: 300 }}>
+                <VerticalErrorBar 
+                  x={spr.date} minY={spr[`${key}Low`]} maxY={spr[`${key}High`]}
+                />
+              </g>
               {#if hoverValue.x}
                 <text x={36} y={12} font-size={12}>{dtfmt(spr.date)}</text>
                 <text x={500} y={12} font-size={12}>low {spr[`${key}Low`]}</text>
               {/if}
+
           </Springable>
         </DataGraphic>
       </div>
     {/each}
+  </div>
+
+  <div 
+    in:fly={{ duration: 500, delay: 1000, y: -10 }}
+    style="
+    width: 970px;
+    display: grid;
+    grid-template-columns: auto;
+    justify-content: end;
+  ">
+    <DataGraphic
+    width={220}
+    height={150}
+    xDomain={[0, 1]}
+    yDomain={[0, 1]}
+    left={60}
+    top={0}
+    bottom={0}
+    right={120}
+    xType=linear
+    yType=linear
+  >
+      <Line data={legendData} x=x y=y />
+      <LineBand data={legendData} xAccessor=x yMinAccessor=yMin yMaxAccessor=yMax />
+
+      <g slot=annotation let:xScale let:yScale let:left let:right>
+        <line x1={right + 10} x2={right + 10}
+          y1={yScale(legendData[legendData.length - 1].yMin)} 
+          y2={yScale(legendData[legendData.length - 1].yMax)}
+          stroke=var(--cool-gray-500)
+        />
+        <line 
+          x1={right + 10} x2={right + 5}
+          y1={yScale(legendData[legendData.length - 1].yMin)} 
+          y2={yScale(legendData[legendData.length - 1].yMin)}
+          stroke=var(--cool-gray-500)
+        />
+        <line 
+          x1={right + 10} x2={right + 5}
+          y1={yScale(legendData[legendData.length - 1].yMax)} 
+          y2={yScale(legendData[legendData.length - 1].yMax)}
+          stroke=var(--cool-gray-500)
+        />
+        <Point 
+          x={legendData[0].x}
+          y={legendData[0].y}
+        />
+        <g style="
+          text-transform: uppercase;
+          fill: var(--cool-gray-500);
+          font-size: 10px;
+        ">
+          <g style="transform: translate({right + 16}px, {yScale(legendData[legendData.length - 1].y) - 10}px);"
+          >
+            <text 
+              >95% confidence</text>
+              <text y={13}
+              >interval for</text>
+            <text 
+              y={26}>point estimate</text>
+          </g>
+          <g style="
+            transform: translate({left - 8}px, {yScale(legendData[0].y) - 0}px);
+            text-anchor: end;
+          ">
+            <text>point</text>
+            <text y=13>estimate</text>
+        </g>
+      </g>
+    </DataGraphic>
   </div>
 </div>

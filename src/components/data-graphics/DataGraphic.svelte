@@ -323,12 +323,12 @@ $: if (dataGraphicMounted) {
       </g>
     {/if}
 
+    <!-- generalized slot at body level -->
     {#if dataGraphicMounted}
       <slot></slot>
     {/if}
+
     <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
-
-
 
     <!-- pass the rollover value into the scale -->
     {#if dataGraphicMounted}
@@ -351,5 +351,20 @@ $: if (dataGraphicMounted) {
         <line x1={x1} x2={x2} y1={y1} y2={y2} stroke={color} stroke-width={thickness} opacity={opacity} />
       {/if}
     {/each}
+
+
+    <!-- Annotation layer – for additional points, comments, etc. that must sit above everything else -->
+    {#if dataGraphicMounted}
+      <slot name='annotation' 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
+    {/if}
   </svg>
 </div>
