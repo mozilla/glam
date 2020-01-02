@@ -2,9 +2,10 @@
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
 
-import { fly } from 'svelte/transition';
+import { fly, fade } from 'svelte/transition';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Line from '../../../src/components/data-graphics/elements/Line.svelte';
+import LineBand from '../../../src/components/data-graphics/elements/LineBand.svelte';
 import Point from '../../../src/components/data-graphics/elements/Point.svelte';
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
@@ -12,10 +13,12 @@ import Springable from '../../../src/components/data-graphics/motion/Springable.
 
 import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
 
+import FirefoxReleaseVersionMarkers from '../../../src/app/patterns/elements/FirefoxReleaseVersionMarkers.svelte';
+
 let dtfmt = timeFormat('%b %d, %Y');
 
 let dates = (n = 365) => {
-  let dt = new Date('2017-06-01');
+  let dt = new Date('2019-01-01');
   return Array.from({ length: n }).fill(null).map((_, i) => {
     let dt2 = new Date(dt);
     dt.setDate(dt.getDate() + 1);
@@ -31,7 +34,7 @@ let usage = 2.5;
 let r01 = 0.8;
 let r02 = 0.7;
 
-const metricData = dates().map((date) => {
+const metricData = dates().map((date, i) => {
   dau += (Math.random() - 0.45) * 100000 * M;
   wau += (Math.random() - 0.45) * 50000 * M;
   mau += (Math.random() - 0.45) * 50000 * M;
@@ -42,8 +45,14 @@ const metricData = dates().map((date) => {
   return {
     date,
     dau,
+    dauLow: dau * 0.95 * (1 - Math.random() / 8),
+    dauHigh: dau * 1.1,
     wau,
+    wauLow: wau * 0.95,
+    wauHigh: wau * 1.05,
     mau,
+    mauLow: mau * 0.9,
+    mauHigh: mau * 1.1,
     usage: usage + (Math.random() - 0.5) * 0.1,
     retention01: r01 + (Math.random() - 0.5) * 0.05,
     retention02: r02 + (Math.random() - 0.5) * 0.05,
@@ -55,9 +64,9 @@ let xDomain = [
   new Date(Math.min(...metricData.map((d) => d.date))),
   new Date(Math.max(...metricData.map((d) => d.date)))];
 let auMax = Math.max(
-  ...metricData.map((d) => d.dau),
-  ...metricData.map((d) => d.wau),
-  ...metricData.map((d) => d.mau),
+  ...metricData.map((d) => d.dauHigh),
+  ...metricData.map((d) => d.wauHigh),
+  ...metricData.map((d) => d.mauHigh),
 ) * 1.1;
 
 
@@ -72,28 +81,46 @@ const get = (d, value) => {
 
 const graphs = [
   {
-    name: 'DAU', key: 'dau', type: 'count', yMax: auMax, yFormat: (v) => format('~s')(v),
+    name: 'DAU', key: 'dau', type: 'count', yMax: auMax, axisFormat: format('~s'), hoverFormat: format('~s'),
   },
   {
-    name: 'WAU', key: 'wau', type: 'count', yMax: auMax, yFormat: (v) => format('~s')(v),
+    name: 'WAU', key: 'wau', type: 'count', yMax: auMax, axisFormat: format('~s'), hoverFormat: format('~s'),
   },
   {
-    name: 'MAU', key: 'mau', type: 'count', yMax: auMax, yFormat: (v) => format('~s')(v),
+    name: 'MAU', key: 'mau', type: 'count', yMax: auMax, axisFormat: format('~s'), hoverFormat: format('~s'),
   },
   {
-    name: 'Usage', key: 'usage', type: 'rate', yMax: 7, yFormat: format(',d'),
+    name: 'Usage', key: 'usage', type: 'rate', yMax: 7, axisFormat: format(',d'), hoverFormat: format('.2f'),
   },
   {
-    name: 'Retention ', key: 'retention01', type: 'percentage', yMax: 1, yFormat: format('.0%'),
+    name: 'Retention ', key: 'retention01', type: 'percentage', yMax: 1, axisFormat: format('.0%'), hoverFormat: format('.2%'),
   },
   {
-    name: 'Retention (1 wk. new)', key: 'retention02', type: 'percentage', yMax: 1, yFormat: format('.0%'),
+    name: 'Retention (1 wk. new)', key: 'retention02', type: 'percentage', yMax: 1, axisFormat: format('.0%'), hoverFormat: format('.2%'),
   },
 ];
 
 let hoverValue = {};
+let mouseDownValue = {};
+let mouseMoveValue = {};
+let startValue;
+let endValue;
 let hoverPt;
+
 $: hoverPt = get(metricData, hoverValue.x ? hoverValue.x : metricData[metricData.length - 1].date);
+
+const resetMouseClicks = () => {
+  mouseDownValue = {};
+  mouseMoveValue = {};
+};
+
+const endMouseEvent = () => {
+  startValue = mouseDownValue.x;
+  endValue = mouseMoveValue.x;
+  resetMouseClicks();
+};
+
+const dateDiff = (a, b) => Math.ceil(Math.abs(a - b) / (1000 * 60 * 60 * 24));
 
 </script>
 
@@ -120,7 +147,6 @@ h2 {
 
 .dg-header div {
   justify-self: end;
-  
 }
 
 </style>
@@ -128,31 +154,86 @@ h2 {
 <div class=story>
   <h1 class=story__title>Usage Metrics</h1>
   <div class=multiples>
-    {#each graphs as {name, type, key, yMax, yFormat}, i}
+    {#each graphs as {name, type, key, yMax, axisFormat, hoverFormat}, i}
       <div>
         <div class=dg-header>
             <h2>{name}</h2>
             <div>
-              {yFormat(get(metricData, hoverValue.x ? hoverValue.x : metricData[metricData.length - 1].date, key)[key])}
+              {hoverFormat(get(metricData, hoverValue.x ? hoverValue.x : metricData[metricData.length - 1].date, key)[key])}
           </div>
         </div>
         
         <DataGraphic
           width={300}
           height={200}
-          top={20}
+          top={32}
           left={36}
           right={12}
-          xDomain={xDomain}
+          xDomain={xDomain} 
           yDomain={[0, yMax]}
           xType=time
           yType=linear
-          bind:hoverValue={hoverValue}
+          bind:hoverValue
+          on:mousedown={() => {
+            mouseDownValue = { ...hoverValue };
+          }}
+          on:mousemove={() => {
+            if (mouseDownValue) {
+              mouseMoveValue = { ...hoverValue };
+            }
+          }}
+          on:mouseup={endMouseEvent}
+          on:mouseleave={resetMouseClicks}
         >
 
-          <LeftAxis  tickFormatter={yFormat} />
+          <g slot=body-background let:xScale let:yScale let:top let:bottom>
+              {#if mouseDownValue.x && mouseMoveValue.x}
+              <rect
+                transition:fade={{ duration: 75 }}
+                x={Math.min(xScale(mouseDownValue.x), xScale(mouseMoveValue.x))}
+                y={top}
+                width={Math.abs(xScale(mouseDownValue.x) - xScale(mouseMoveValue.x))}
+                height={bottom - top}
+                fill=var(--pantone-red-100)
+              />
+              <line 
+                x1={xScale(mouseDownValue.x)}
+                x2={xScale(mouseDownValue.x)}
+                y1={top}
+                y2={bottom}
+                stroke=var(--pantone-red-200)
+                stroke-width=2
+              />
+              <line 
+                x1={xScale(mouseMoveValue.x)}
+                x2={xScale(mouseMoveValue.x)}
+                y1={top}
+                y2={bottom}
+                stroke=var(--pantone-red-200)
+                stroke-width=2
+              />
+              <text 
+                transition:fade={{ duration: 75 }}
+                x={
+                  Math.min(xScale(mouseDownValue.x), xScale(mouseMoveValue.x)) + 5
+                }
+                y={bottom - 5}
+                font-size=11
+                style="text-transform: uppercase;"
+                fill=var(--cool-gray-500)
+              >{dateDiff(mouseDownValue.x, mouseMoveValue.x)} days</text>
+              {/if}
+              <LineBand data={metricData} xAccessor=date yMinAccessor={`${key}Low`}  yMaxAccessor={`${key}High`} />
+
+              
+          </g>
+          <g style='opacity:.6'>
+            <FirefoxReleaseVersionMarkers />
+          </g>
+          <LeftAxis  tickFormatter={axisFormat} />
           <BottomAxis />
 
+          
           <Line lineDrawAnimation={{ duration: 1200 }} data={metricData} xAccessor=date yAccessor={key} />
 
           <Springable
@@ -164,6 +245,7 @@ h2 {
               </g>
               {#if hoverValue.x}
                 <text x={36} y={12} font-size={12}>{dtfmt(spr.date)}</text>
+                <text x={500} y={12} font-size={12}>low {spr[`${key}Low`]}</text>
               {/if}
           </Springable>
         </DataGraphic>

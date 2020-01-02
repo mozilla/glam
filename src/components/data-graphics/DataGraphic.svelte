@@ -250,9 +250,12 @@ let onMouseleave = (e) => { rollover.onMouseleave(e); };
 
 export let dataGraphicMounted = false;
 
-export let hoverValue = {
+const emptyValue = () => ({
   x: undefined, y: undefined, px: undefined, py: undefined,
-};
+});
+
+export let hoverValue = emptyValue();
+
 
 onMount(() => {
   dataGraphicMounted = true;
@@ -287,6 +290,9 @@ $: if (dataGraphicMounted) {
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
     on:click
+    on:mousedown
+    on:mouseup
+    on:mousemove
   >
   <rect 
     x={$leftPlot} y={$topPlot} width={$bodyWidth} height={$bodyHeight}
@@ -301,10 +307,28 @@ $: if (dataGraphicMounted) {
         height={$bodyHeight}
       />
     </clipPath>
+
+    {#if dataGraphicMounted}
+      <g id='graphic-body-content-{key}' style="clip-path: url(#graphic-body-{key})">
+        <slot name='body-background' 
+          xScale={xScale} 
+          yScale={yScale}
+          left={$leftPlot}
+          right={$rightPlot}
+          top={$topPlot}
+          bottom={$bottomPlot}
+          width={$graphicWidth}
+          height={$graphicHeight}
+        ></slot>
+      </g>
+    {/if}
+
     {#if dataGraphicMounted}
       <slot></slot>
     {/if}
     <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
+
+
 
     <!-- pass the rollover value into the scale -->
     {#if dataGraphicMounted}
