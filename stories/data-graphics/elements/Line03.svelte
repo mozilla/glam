@@ -79,6 +79,14 @@ const get = (d, value) => {
   return 0;
 };
 
+const getWindowVals = (d, value) => {
+  const w = window1D({
+    value, data: d, key: 'date', domain: xDomain,
+  });
+  if (w.current) return w;
+  return { next: {}, current: {}, previous: {} };
+};
+
 
 const graphs = [
   {
@@ -255,7 +263,9 @@ h2 {
               </g>
               <g in:fade={{ duration: 1000, delay: 300 }}>
                 <VerticalErrorBar 
-                  x={spr.date} minY={spr[`${key}Low`]} maxY={spr[`${key}High`]}
+                  x={spr.date} 
+                  minY={spr[`${key}Low`]} 
+                  maxY={spr[`${key}High`]}
                 />
               </g>
               {#if hoverValue.x}
