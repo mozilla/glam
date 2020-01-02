@@ -1,4 +1,5 @@
 <script>
+import { writable } from 'svelte/store';
 import { getContext, onMount } from 'svelte';
 import { fade } from 'svelte/transition';
 import { easeOut } from 'svelte/easing';
@@ -11,8 +12,8 @@ export let xAccessor = 'x';
 export let yAccessor = 'y';
 export let heatAccessor = 'heat';
 export let scaleType = 'log';
-export let xScale = getContext('xScale');
-export let yScale = getContext('yScale');
+export let xScale = getContext('xScale') || writable((v) => v);
+export let yScale = getContext('yScale') || writable((v) => v);
 export let heatRange = [0.1, 0.9];
 export let transition = { duration: 200, easing: easeOut };
 export let hidden = false;
@@ -38,14 +39,14 @@ let canvas;
 
 let byColor = data.map((d) => ({
   [heatAccessor]: d[heatAccessor] === 0.0 ? 'transparent' : interpolateRdPu(scale(d[heatAccessor])),
-  [xAccessor]: xScale(d[xAccessor]),
-  [yAccessor]: yScale(d[yAccessor]) - yScale.step() / 2,
+  [xAccessor]: $xScale(d[xAccessor]),
+  [yAccessor]: $yScale(d[yAccessor]) - $yScale.step() / 2,
 }));
   // try to not change the fillStyle and strokeStyle too much.
   // the canvas state machine can be VERY slow otherwise.
 const colors = new Set(byColor.map((b) => b[heatAccessor]));
-let w = xScale.step();
-let h = yScale.step();
+let w = $xScale.step();
+let h = $yScale.step();
 
 const colorCombos = Array.from(colors).reduce((acc, c) => {
   acc[c] = byColor.filter((bc) => bc[heatAccessor] === c);

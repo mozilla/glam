@@ -21,7 +21,7 @@ export let showTop = true;
 export let showBottom = true;
 export let areaColor = 'var(--digital-blue-600)';
 export let lineColor = 'var(--digital-blue-600)';
-export let densityRange = [0, placementScale.step() * 0.5 * 0.75];
+export let densityRange = [0, $placementScale.step() * 0.5 * 0.75];
 
 const getValues = (data) => data.map((obj) => obj[densityAccessor]);
 
@@ -39,8 +39,8 @@ const smallBarMultipleScale = (obj, range = [0, 20]) => {
   ]).range(range);
 };
 
-let valueScaleType = valueScale.type;
-let valueScaleAdjustment = valueScaleType === 'scalePoint' ? valueScale.step() / 2 : 0;
+let valueScaleType = $valueScale.type;
+let valueScaleAdjustment = valueScaleType === 'scalePoint' ? $valueScale.step() / 2 : 0;
 
 let histogramScale = smallBarMultipleScale(plotDensities, densityRange);
 $: histogramScale = smallBarMultipleScale(plotDensities, densityRange);
@@ -55,12 +55,12 @@ let [histogramArea, inverseHistogramArea] = [1, -1].map((direction) => area()
   [topDensity]((d) => direction * histogramScale(d.value))
   [baseDensity](() => histogramScale(0))
   .curve(curve)
-  [binLocation]((d) => valueScale(d.bin) + valueScaleAdjustment));
+  [binLocation]((d) => $valueScale(d.bin) + valueScaleAdjustment));
 
 let histogramLine = histogramArea[derivedLine]()
-  [binLocation]((d) => valueScale(d.bin) + valueScaleAdjustment);
+  [binLocation]((d) => $valueScale(d.bin) + valueScaleAdjustment);
 let inverseHistogramLine = inverseHistogramArea[derivedLine]()
-  [binLocation]((d) => valueScale(d.bin) + valueScaleAdjustment);
+  [binLocation]((d) => $valueScale(d.bin) + valueScaleAdjustment);
 
 onMount(() => {
   mounted = true;
@@ -69,8 +69,8 @@ onMount(() => {
 let translate;
 let translateX;
 let translateY;
-$: translateX = orientation === 'vertical' ? (placementScale(placement) || rawPlacement) : 0;
-$: translateY = orientation === 'vertical' ? 0 : (placementScale(placement) || rawPlacement);
+$: translateX = orientation === 'vertical' ? ($placementScale(placement) || rawPlacement) : 0;
+$: translateY = orientation === 'vertical' ? 0 : ($placementScale(placement) || rawPlacement);
 $: translate = `translate(${translateX}, ${translateY})`;
 
 

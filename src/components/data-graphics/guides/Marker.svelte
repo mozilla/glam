@@ -44,7 +44,7 @@ let locationCoord;
 let textEndCoord;
 $: lineEndCoord = $endLocation + ($distance / 2) * $scaling;
 $: lineStartCoord = $rootLocation;
-$: locationCoord = scale(location);
+$: locationCoord = $scale(location);
 $: textEndCoord = $endLocation + (-pixelDirection) * margins.buffer + ($distance / 2) * $scaling;
 
 let x1 = 0;

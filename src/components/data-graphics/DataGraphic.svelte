@@ -167,11 +167,16 @@ function createYPointScale(values) {
 
 // /////////////////////////////////////////////////////////////////////////
 
-export let yScale = createYPointScale(yDomain);
-export let xScale = createXPointScale(xDomain);
+export let xScaleStore = writable(createXPointScale(xDomain));
+export let yScaleStore = writable(createYPointScale(yDomain));
 
-setContext('xScale', xScale);
-setContext('yScale', yScale);
+export let xScale = $xScaleStore;
+export let yScale = $yScaleStore;
+$: xScale = $xScaleStore;
+$: yScale = $yScaleStore;
+
+setContext('xScale', xScaleStore);
+setContext('yScale', yScaleStore);
 
 const internalRolloverStore = writable({
   x: undefined, y: undefined, px: undefined, py: undefined,

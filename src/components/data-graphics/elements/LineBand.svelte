@@ -1,10 +1,11 @@
 <script>
 import { getContext } from 'svelte';
+import { writable } from 'svelte/store';
 import { fade } from 'svelte/transition';
 import * as SHAPE from 'd3-shape';
 
-export let xScale = getContext('xScale');
-export let yScale = getContext('yScale');
+export let xScale = getContext('xScale') || writable((v) => v);
+export let yScale = getContext('yScale') || writable((v) => v);
 export let useXScale = true;
 export let useYScale = true;
 export let data;
@@ -19,9 +20,9 @@ const curveFunction = SHAPE[curve];
 
 
 const areaGenerator = SHAPE.area()
-  .x((d) => (useXScale ? xScale(d[xAccessor]) : d[xAccessor]))
-  .y((d) => (useYScale ? yScale(d[yMinAccessor]) : d[yMinAccessor]))
-  .y1((d) => (useYScale ? yScale(d[yMaxAccessor]) : d[yMaxAccessor]))
+  .x((d) => (useXScale ? $xScale(d[xAccessor]) : d[xAccessor]))
+  .y((d) => (useYScale ? $yScale(d[yMinAccessor]) : d[yMinAccessor]))
+  .y1((d) => (useYScale ? $yScale(d[yMaxAccessor]) : d[yMaxAccessor]))
   .curve(curveFunction);
 
 </script>
