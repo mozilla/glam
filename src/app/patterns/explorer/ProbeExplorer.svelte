@@ -167,7 +167,9 @@ h4 {
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
         insufficientData={insufficientData}
-    />
+    >
+      <slot name=additional-plot-elements></slot>
+    </CompareOverTimeGraph>
   </div>
 
   <DistributionComparison 

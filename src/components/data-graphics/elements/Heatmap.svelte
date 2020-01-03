@@ -2,7 +2,7 @@
 import { writable } from 'svelte/store';
 import { getContext, onMount } from 'svelte';
 import { fade } from 'svelte/transition';
-import { easeOut } from 'svelte/easing';
+import { cubicOut as easing } from 'svelte/easing';
 import { interpolateRdPu } from 'd3-scale-chromatic';
 import { scaleLog, scaleLinear } from 'd3-scale';
 
@@ -16,7 +16,7 @@ export let xScale = getContext('xScale') || writable((v) => v);
 export let yScale = getContext('yScale') || writable((v) => v);
 export let heatRange = [0.3, 0.8];
 export let opacity = 1;
-export let transition = { duration: 200, easing: easeOut };
+export let transition = { duration: 200, easing };
 export let hidden = false;
 export let colorMap = interpolateRdPu;
 
