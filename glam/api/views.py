@@ -16,7 +16,7 @@ from glam.api.models import Aggregation, Probe
 
 
 def get_aggregations(**kwargs):
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregation_level"]
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
     labels_cache = caches["probe-labels"]
     if labels_cache.get("__labels__") is None:
@@ -33,9 +33,9 @@ def get_aggregations(**kwargs):
         Q(metric=kwargs["probe"]),
         Q(channel=CHANNEL_IDS[kwargs["channel"]]),
         Q(version__in=map(str, kwargs["versions"])),
-        Q(os=kwargs["os"]),
+        Q(os=kwargs["os"] if "os" in kwargs else None),
     ]
-    aggregation_level = kwargs["aggregation_level"]
+    aggregation_level = kwargs["aggregationLevel"]
 
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
@@ -154,28 +154,17 @@ def aggregations(request):
         }
 
     """
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
-
     body = request.data
 
     if body is None or body.get("query") is None:
         raise ValidationError("Unexpected JSON body")
 
-    q = body["query"]
-
-    if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
-        # Figure out which query parameter is missing.
-        missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
-        raise ValidationError(
-            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
-        )
-
     response = get_aggregations(**body["query"])
 
-    # Strip out the merge keys when returning the response.
     if not response:
         raise NotFound("No documents found for the given parameters")
 
+    # Strip out the merge keys when returning the response.
     return Response(
         {
             "response": [
