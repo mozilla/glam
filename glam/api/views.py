@@ -33,7 +33,7 @@ def get_aggregations(**kwargs):
         Q(metric=kwargs["probe"]),
         Q(channel=CHANNEL_IDS[kwargs["channel"]]),
         Q(version__in=map(str, kwargs["versions"])),
-        Q(os=kwargs["os"] if "os" in kwargs else None),
+        Q(os=kwargs.get("os")),
     ]
     aggregation_level = kwargs["aggregationLevel"]
 
