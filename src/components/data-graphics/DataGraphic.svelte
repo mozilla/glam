@@ -323,7 +323,7 @@ $: if (dataGraphicMounted) {
     </clipPath>
 
     {#if dataGraphicMounted}
-      <g id='graphic-body-content-{key}' style="clip-path: url(#graphic-body-{key})">
+      <g id='graphic-body-background-{key}' style="clip-path: url(#graphic-body-{key})">
         <slot name='body-background' 
           xScale={xScale} 
           yScale={yScale}
@@ -352,9 +352,9 @@ $: if (dataGraphicMounted) {
     </g>
   {/if}
 
-    {#if dataGraphicMounted}
-    <g>
-      <slot name=body 
+  {#if dataGraphicMounted}
+    <g id='graphic-body-{key}' style="clip-path: url(#graphic-body-{key})">
+      <slot name='body' 
         xScale={xScale} 
         yScale={yScale}
         left={$leftPlot}
