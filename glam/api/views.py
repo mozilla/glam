@@ -30,12 +30,12 @@ def get_aggregations(**kwargs):
         )
 
     dimensions = [
-        Q(metric=kwargs['probe']),
-        Q(channel=CHANNEL_IDS[kwargs['channel']]),
-        Q(version__in=map(str, kwargs['versions'])),
-        Q(os=kwargs['os']),
+        Q(metric=kwargs["probe"]),
+        Q(channel=CHANNEL_IDS[kwargs["channel"]]),
+        Q(version__in=map(str, kwargs["versions"])),
+        Q(os=kwargs["os"]),
     ]
-    aggregation_level = kwargs['aggregation_level']
+    aggregation_level = kwargs["aggregation_level"]
 
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
@@ -154,11 +154,7 @@ def aggregations(request):
         }
 
     """
-    labels_cache = caches["probe-labels"]
-    if labels_cache.get("__labels__") is None:
-        Probe.populate_labels_cache()
 
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
     body = request.data
 
     if body is None or body.get("query") is None:
@@ -166,24 +162,18 @@ def aggregations(request):
 
     q = body["query"]
 
-    if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
-        # Figure out which query parameter is missing.
-        missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
-        raise ValidationError(
-            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
-        )
-    
     response = get_aggregations(
-        aggregation_level = q['aggregationLevel'], 
-        probe = q.get("probe"), 
-        channel = q.get("channel"), 
-        versions = q.get("versions"), 
-        os = q.get("os"))
+        aggregation_level=q["aggregationLevel"],
+        probe=q.get("probe"),
+        channel=q.get("channel"),
+        versions=q.get("versions"),
+        os=q.get("os"),
+    )
 
     # Strip out the merge keys when returning the response.
     if not response:
         raise NotFound("No documents found for the given parameters")
-    
+
     return Response(
         {
             "response": [
