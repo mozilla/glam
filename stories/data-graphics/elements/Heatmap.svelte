@@ -1,6 +1,7 @@
 <script>
 import { onMount } from 'svelte';
 import { cubicOut as easing } from 'svelte/easing';
+import { interpolateBlues } from 'd3-scale-chromatic';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Heatmap from '../../../src/components/data-graphics/elements/Heatmap.svelte';
 import Line from '../../../src/components/data-graphics/elements/Line.svelte';
@@ -62,11 +63,15 @@ let active = true;
     {#if mounted}
       <Heatmap 
         data={heat}
-        xAccessor={'label'}
-        yAccessor={'bin'}
-        heatAccessor={'value'}
+        xAccessor=label
+        yAccessor=bin
+        heatAccessor=value
         transition={{ duration: 100, easing }}
         hidden={!active}
+        colorMap={interpolateBlues}
+        scaleType=log
+        heatRange={[0.1, 0.45]}
+        opacity={1}
       />
       {/if}
   </GraphicBody>

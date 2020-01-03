@@ -14,9 +14,11 @@ export let heatAccessor = 'heat';
 export let scaleType = 'log';
 export let xScale = getContext('xScale') || writable((v) => v);
 export let yScale = getContext('yScale') || writable((v) => v);
-export let heatRange = [0.1, 0.9];
+export let heatRange = [0.3, 0.8];
+export let opacity = 1;
 export let transition = { duration: 200, easing: easeOut };
 export let hidden = false;
+export let colorMap = interpolateRdPu;
 
 let graphicWidth;
 let graphicHeight;
@@ -57,7 +59,7 @@ let widths = getLengths(data, $xScale, xAccessor);
 let heights = getLengths(data, $yScale, yAccessor);
 
 let byColor = data.map((d, i) => ({
-  [heatAccessor]: d[heatAccessor] === 0.0 ? 'transparent' : interpolateRdPu(scale(d[heatAccessor])),
+  [heatAccessor]: d[heatAccessor] === 0.0 ? 'transparent' : colorMap(scale(d[heatAccessor])),
   [xAccessor]: $xScale(d[xAccessor]),
   [yAccessor]: $yScale(d[yAccessor]) - $yScale.step() / 2,
   width: widths[d[xAccessor]],
@@ -99,7 +101,7 @@ $: if ((!hidden) && canvas) renderCanvas();
 </script>
 
 {#if !hidden}
-  <g transition:fade={transition}>
+  <g transition:fade={transition} {opacity}>
     <foreignObject width={graphicWidth} height={graphicHeight}>
       <canvas bind:this={canvas} width={graphicWidth} height={graphicHeight}  />
     </foreignObject>
