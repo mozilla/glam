@@ -15,86 +15,32 @@ from glam.api.constants import (
 from glam.api.models import Aggregation, Probe
 
 
-@api_view(["POST"])
-def aggregations(request):
-    """
-    Fetches aggregation data.
+def get_aggregations(**kwargs):
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
-    Expects a JSON object in the body containing the query parameters, e.g.::
-
-        {
-            "query": {
-                "channel": "nightly",
-                "probe": "gc_ms",
-                "versions": ["70"],  # OR ["70", "69", "68"]
-                "aggregationLevel": "version"  # OR "build_id"
-            }
-        }
-
-    Returns a JSON object containing the histogram data and metadata, e.g.::
-
-        {
-            "response": [
-                {
-                    "data": [
-                        {
-                            "client_agg_type": "summed-histogram",
-                            "histogram": {
-                                "0": 0.0,
-                                "1": 1920.963,
-                                ...
-                            },
-                            "percentiles": {
-                                "0": 1.0,
-                                "10": 1.0259,
-                                ...
-                            },
-                            "total_users": 1604
-                        }
-                    ],
-                    "metadata": {
-                        "build_id": null,
-                        "channel": "nightly",
-                        "metric": "gc_ms",
-                        "metric_type": "histogram-exponential",
-                        "os": "Linux",
-                        "version": "70"
-                    }
-                }
-            ]
-        }
-
-    """
     labels_cache = caches["probe-labels"]
     if labels_cache.get("__labels__") is None:
         Probe.populate_labels_cache()
 
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
-    body = request.data
-
-    if body is None or body.get("query") is None:
-        raise ValidationError("Unexpected JSON body")
-
-    q = body["query"]
-
-    if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
-        missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
         raise ValidationError(
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
     dimensions = [
-        Q(metric=q.get("probe")),
-        Q(channel=CHANNEL_IDS[q.get("channel")]),
-        Q(version__in=map(str, q.get("versions"))),
-        Q(os=q.get("os")),
+        Q(metric=kwargs["probe"]),
+        Q(channel=CHANNEL_IDS[kwargs["channel"]]),
+        Q(version__in=map(str, kwargs["versions"])),
+        Q(os=kwargs.get("os")),
     ]
+    aggregation_level = kwargs["aggregationLevel"]
 
     # Whether to pull aggregations by version or build_id.
-    if q["aggregationLevel"] == "version":
+    if aggregation_level == "version":
         dimensions.append(Q(build_id=None))
-    elif q["aggregationLevel"] == "build_id":
+    elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id=None))
 
     result = Aggregation.objects.filter(*dimensions)
@@ -155,6 +101,65 @@ def aggregations(request):
 
         record[sub_key]["data"] = data
         response[key] = record
+    return response
+
+
+@api_view(["POST"])
+def aggregations(request):
+    """
+    Fetches aggregation data.
+
+    Expects a JSON object in the body containing the query parameters, e.g.::
+
+        {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "versions": ["70"],  # OR ["70", "69", "68"]
+                "aggregationLevel": "version"  # OR "build_id"
+            }
+        }
+
+    Returns a JSON object containing the histogram data and metadata, e.g.::
+
+        {
+            "response": [
+                {
+                    "data": [
+                        {
+                            "client_agg_type": "summed-histogram",
+                            "histogram": {
+                                "0": 0.0,
+                                "1": 1920.963,
+                                ...
+                            },
+                            "percentiles": {
+                                "0": 1.0,
+                                "10": 1.0259,
+                                ...
+                            },
+                            "total_users": 1604
+                        }
+                    ],
+                    "metadata": {
+                        "build_id": null,
+                        "channel": "nightly",
+                        "metric": "gc_ms",
+                        "metric_type": "histogram-exponential",
+                        "os": "Linux",
+                        "version": "70"
+                    }
+                }
+            ]
+        }
+
+    """
+    body = request.data
+
+    if body is None or body.get("query") is None:
+        raise ValidationError("Unexpected JSON body")
+
+    response = get_aggregations(**body["query"])
 
     if not response:
         raise NotFound("No documents found for the given parameters")
