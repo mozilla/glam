@@ -15,6 +15,95 @@ from glam.api.constants import (
 from glam.api.models import Aggregation, Probe
 
 
+def get_aggregations(**kwargs):
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregation_level"]
+
+    labels_cache = caches["probe-labels"]
+    if labels_cache.get("__labels__") is None:
+        Probe.populate_labels_cache()
+
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    dimensions = [
+        Q(metric=kwargs['probe']),
+        Q(channel=CHANNEL_IDS[kwargs['channel']]),
+        Q(version__in=map(str, kwargs['versions'])),
+        Q(os=kwargs['os']),
+    ]
+    aggregation_level = kwargs['aggregation_level']
+
+    # Whether to pull aggregations by version or build_id.
+    if aggregation_level == "version":
+        dimensions.append(Q(build_id=None))
+    elif aggregation_level == "build_id":
+        dimensions.append(~Q(build_id=None))
+
+    result = Aggregation.objects.filter(*dimensions)
+
+    response = {}
+
+    for row in result:
+
+        metadata = {
+            "channel": CHANNEL_NAMES[row.channel],
+            "version": row.version,
+            "os": row.os,
+            "build_id": row.build_id,
+            "metric": row.metric,
+            "metric_type": row.metric_type,
+        }
+        aggs = {d["key"]: round(d["value"], 4) for d in row.data}
+
+        # We use these keys to merge data dictionaries.
+        key = "{channel}-{version}-{metric}-{os}-{build_id}".format(**metadata)
+        sub_key = "{key}-{client_agg_type}".format(
+            key=row.metric_key, client_agg_type=row.client_agg_type
+        )
+
+        record = response.get(key, {})
+        if "metadata" not in record:
+            record["metadata"] = metadata
+
+        if sub_key not in record:
+            record[sub_key] = {}
+
+        new_data = {}
+
+        if row.agg_type == AGGREGATION_HISTOGRAM:
+            new_data["total_users"] = row.total_users
+            # Check for labels.
+            labels = labels_cache.get(metadata["metric"])
+            if labels is not None:
+                # Replace the numeric indexes with their labels.
+                aggs_w_labels = {}
+                for k, v in aggs.items():
+                    try:
+                        aggs_w_labels[labels[int(k)]] = v
+                    except IndexError:
+                        pass
+                aggs = aggs_w_labels
+
+        new_data[AGGREGATION_NAMES[row.agg_type]] = aggs
+
+        if row.metric_key:
+            new_data["key"] = row.metric_key
+
+        if row.client_agg_type:
+            new_data["client_agg_type"] = row.client_agg_type
+
+        data = record[sub_key].get("data", {})
+        data.update(new_data)
+
+        record[sub_key]["data"] = data
+        response[key] = record
+    return response
+
+
 @api_view(["POST"])
 def aggregations(request):
     """
@@ -83,83 +172,18 @@ def aggregations(request):
         raise ValidationError(
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
-
-    dimensions = [
-        Q(metric=q.get("probe")),
-        Q(channel=CHANNEL_IDS[q.get("channel")]),
-        Q(version__in=map(str, q.get("versions"))),
-        Q(os=q.get("os")),
-    ]
-
-    # Whether to pull aggregations by version or build_id.
-    if q["aggregationLevel"] == "version":
-        dimensions.append(Q(build_id=None))
-    elif q["aggregationLevel"] == "build_id":
-        dimensions.append(~Q(build_id=None))
-
-    result = Aggregation.objects.filter(*dimensions)
-
-    response = {}
-
-    for row in result:
-
-        metadata = {
-            "channel": CHANNEL_NAMES[row.channel],
-            "version": row.version,
-            "os": row.os,
-            "build_id": row.build_id,
-            "metric": row.metric,
-            "metric_type": row.metric_type,
-        }
-        aggs = {d["key"]: round(d["value"], 4) for d in row.data}
-
-        # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}".format(**metadata)
-        sub_key = "{key}-{client_agg_type}".format(
-            key=row.metric_key, client_agg_type=row.client_agg_type
-        )
-
-        record = response.get(key, {})
-        if "metadata" not in record:
-            record["metadata"] = metadata
-
-        if sub_key not in record:
-            record[sub_key] = {}
-
-        new_data = {}
-
-        if row.agg_type == AGGREGATION_HISTOGRAM:
-            new_data["total_users"] = row.total_users
-            # Check for labels.
-            labels = labels_cache.get(metadata["metric"])
-            if labels is not None:
-                # Replace the numeric indexes with their labels.
-                aggs_w_labels = {}
-                for k, v in aggs.items():
-                    try:
-                        aggs_w_labels[labels[int(k)]] = v
-                    except IndexError:
-                        pass
-                aggs = aggs_w_labels
-
-        new_data[AGGREGATION_NAMES[row.agg_type]] = aggs
-
-        if row.metric_key:
-            new_data["key"] = row.metric_key
-
-        if row.client_agg_type:
-            new_data["client_agg_type"] = row.client_agg_type
-
-        data = record[sub_key].get("data", {})
-        data.update(new_data)
-
-        record[sub_key]["data"] = data
-        response[key] = record
-
-    if not response:
-        raise NotFound("No documents found for the given parameters")
+    
+    response = get_aggregations(
+        aggregation_level = q['aggregationLevel'], 
+        probe = q.get("probe"), 
+        channel = q.get("channel"), 
+        versions = q.get("versions"), 
+        os = q.get("os"))
 
     # Strip out the merge keys when returning the response.
+    if not response:
+        raise NotFound("No documents found for the given parameters")
+    
     return Response(
         {
             "response": [
