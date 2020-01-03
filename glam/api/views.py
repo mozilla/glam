@@ -154,6 +154,7 @@ def aggregations(request):
         }
 
     """
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
 
     body = request.data
 
@@ -162,13 +163,14 @@ def aggregations(request):
 
     q = body["query"]
 
-    response = get_aggregations(
-        aggregation_level=q["aggregationLevel"],
-        probe=q.get("probe"),
-        channel=q.get("channel"),
-        versions=q.get("versions"),
-        os=q.get("os"),
-    )
+    if any([k not in q.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(q.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    response = get_aggregations(**body["query"])
 
     # Strip out the merge keys when returning the response.
     if not response:
