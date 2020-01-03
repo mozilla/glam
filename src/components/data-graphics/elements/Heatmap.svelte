@@ -37,16 +37,35 @@ const scale = scaleFunction()
 
 let canvas;
 
-let byColor = data.map((d) => ({
+// organize by x, then by y?
+
+function getLengths(ds, sc, accessor) {
+  const points = Array.from(new Set(ds.map((d) => d[accessor])));
+  points.sort((a, b) => (a > b ? 1 : -1));
+  // what do I need? for each x value, I need xVal: length.
+  // from there, we should be able to map xVal to relevant width
+  return points.reduce((acc, v, i) => {
+    acc[v] = 0; // eslint-disable-line
+    if (i < points.length - 1) {
+      acc[v] = sc(points[i + 1]) - sc(v); // eslint-disable-line
+    }
+    return acc;
+  }, {});
+}
+
+let widths = getLengths(data, $xScale, xAccessor);
+let heights = getLengths(data, $yScale, yAccessor);
+
+let byColor = data.map((d, i) => ({
   [heatAccessor]: d[heatAccessor] === 0.0 ? 'transparent' : interpolateRdPu(scale(d[heatAccessor])),
   [xAccessor]: $xScale(d[xAccessor]),
   [yAccessor]: $yScale(d[yAccessor]) - $yScale.step() / 2,
+  width: widths[d[xAccessor]],
+  height: heights[d[yAccessor]],
 }));
   // try to not change the fillStyle and strokeStyle too much.
   // the canvas state machine can be VERY slow otherwise.
 const colors = new Set(byColor.map((b) => b[heatAccessor]));
-let w = $xScale.step();
-let h = $yScale.step();
 
 const colorCombos = Array.from(colors).reduce((acc, c) => {
   acc[c] = byColor.filter((bc) => bc[heatAccessor] === c);
@@ -55,13 +74,16 @@ const colorCombos = Array.from(colors).reduce((acc, c) => {
 
 function renderCanvas() {
   const ctx = canvas.getContext('2d');
-
+  // let w = $xScale.step();
+  // let h = $yScale.step();
   colors.forEach((c) => {
     // let theseColors = byColor.filter((bc) => bc[heatAccessor] === c);
     let theseColors = colorCombos[c];
     ctx.fillStyle = c;
     ctx.strokeStyle = c;
     theseColors.forEach((d) => {
+      const w = d.width;
+      const h = d.height;
       ctx.fillRect(d[xAccessor], d[yAccessor], w, h);
       ctx.strokeRect(d[xAccessor], d[yAccessor], w, h);
     });

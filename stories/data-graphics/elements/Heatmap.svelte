@@ -8,10 +8,6 @@ import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svel
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
 
-import {
-  firstOfMonth, buildIDToMonth,
-} from '../../../src/app/patterns/utils/build-id-utils';
-
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
 import {
@@ -19,6 +15,11 @@ import {
 } from '../../../src/app/utils/probe-utils';
 
 let gcms = byKeyAndAggregation(GCMS.response)[undefined]['summed-histogram'];
+
+// get extents.
+
+let dates = gcms.map((d) => d.label);
+let xDomain = [new Date(Math.min(...dates)), new Date(Math.max(...dates))];
 
 function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   return d.map((di) => {
@@ -49,8 +50,9 @@ let active = true;
 <input type=checkbox bind:checked={active} /> Active
 
 <DataGraphic
-  xDomain={gcms.map((d) => d.label)}
+  {xDomain}
   yDomain={gcms[0].histogram.map((d) => d.bin)}
+  xType=time
   left={40}
   right={40}
   bottom={40}
@@ -70,7 +72,7 @@ let active = true;
   </GraphicBody>
 
   <LeftAxis tickCount=6 />
-  <BottomAxis ticks={firstOfMonth} tickFormatter={buildIDToMonth}  />
+  <BottomAxis />
   {#if mounted}
     <Line 
       xAccessor="label"
