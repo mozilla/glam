@@ -2,11 +2,15 @@
 import { setContext, getContext, createEventDispatcher } from 'svelte';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
+import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
+
+import Heatmap from '../../../components/data-graphics/elements/Heatmap.svelte';
+
 import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 import { formatCount, formatValue } from '../utils/formatters';
@@ -49,6 +53,22 @@ const movingAudienceSize = tweened(0, { duration: 500, easing });
 const refMedian = tweened(0, { duration: 500, easing });
 $: if (reference) movingAudienceSize.set(reference.audienceSize);
 $: if (reference) refMedian.set(reference.percentiles[50]);
+
+
+// for heatmap
+function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
+  return d.map((di) => {
+    const label = di[x];
+    // this needs to return an array of values
+    return di.histogram.map((dii) => {
+      let out = {};
+      out[x] = label;
+      out[y] = dii[y];
+      out[heat] = dii[heat];
+      return out;
+    });
+  }).flat();
+}
 
 </script>
 
@@ -132,6 +152,20 @@ $: if (reference) refMedian.set(reference.percentiles[50]);
                 probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
             >
+
+                <!-- <g slot='additional-plot-elements'>
+                  <Heatmap 
+                    data={xyheat(data)}
+                    xAccessor=label
+                    yAccessor=bin
+                    heatAccessor=value
+                    transition={{ duration: 100, easing }}
+                    colorMap={colorMap}
+                    scaleType=log
+                    heatRange={[0.075, 0.50]}
+                    opacity={1}
+                  />
+                </g> -->
 
                 <!-- summary bignums -->
                 <div class='probe-body-overview__numbers' slot='summary'>

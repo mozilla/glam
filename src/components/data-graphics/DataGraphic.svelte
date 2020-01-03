@@ -167,11 +167,24 @@ function createYPointScale(values) {
 
 // /////////////////////////////////////////////////////////////////////////
 
-export let yScale = createYPointScale(yDomain);
-export let xScale = createXPointScale(xDomain);
+export let xScaleStore = writable(createXPointScale(xDomain));
+export let yScaleStore = writable(createYPointScale(yDomain));
 
-setContext('xScale', xScale);
-setContext('yScale', yScale);
+// update the scale stores if the domain changes.
+// FIXME: refactor these functions to take range arguments as well,
+// and xPadding. etc. etc. – this should be completely reactive
+// w/ all relevant scale arguments.
+$: $xScaleStore = createXPointScale(xDomain);
+$: $yScaleStore = createYPointScale(yDomain);
+
+export let xScale = $xScaleStore;
+export let yScale = $yScaleStore;
+
+$: xScale = $xScaleStore;
+$: yScale = $yScaleStore;
+
+setContext('xScale', xScaleStore);
+setContext('yScale', yScaleStore);
 
 const internalRolloverStore = writable({
   x: undefined, y: undefined, px: undefined, py: undefined,
@@ -193,7 +206,7 @@ function createMouseStore(svgElem) {
         body: false,
       });
     },
-    onMousemove(e) {
+    onMousemove(e, xs, ys) {
       if (!parentSVG) return;
       let { clientX, clientY } = e;
       const pt = parentSVG.createSVGPoint();
@@ -213,21 +226,21 @@ function createMouseStore(svgElem) {
         && actualY < $bottomPlot) {
         body = true;
       }
-      if (xScale.type === 'scalePoint') {
-        const step = xScale.step();
-        const xCandidates = xScale.domain()
-          .filter((d) => (xScale(d) - step / 2) < actualX && xScale(d) < $rightPlot);
+      if (xs.type === 'scalePoint') {
+        const step = xs.step();
+        const xCandidates = xs.domain()
+          .filter((d) => (xs(d) - step / 2) < actualX && xs(d) < $rightPlot);
         x = xCandidates[xCandidates.length - 1];
       } else {
-        x = xScale.invert(actualX);
+        x = xs.invert(actualX);
       }
-      if (yScale.type === 'scalePoint') {
-        const yCandidates = yScale.domain().filter((d) => yScale(d) < actualY);
+      if (ys.type === 'scalePoint') {
+        const yCandidates = ys.domain().filter((d) => ys(d) < actualY);
         [y] = yCandidates;
       } else {
         // here, we need to inform a y for scaleLinear.
         // but this shoudl be easy. just reverse the value and return it as y.
-        y = yScale.invert(actualY);
+        y = ys.invert(actualY);
       }
       internalRolloverStore.set({
         x, y, px: actualX, py: actualY, body,
@@ -243,16 +256,20 @@ function createMouseStore(svgElem) {
 
 // use bind:rollover to get the current x / y (in domain-land) and px / py (range-land)
 export let rollover = createMouseStore(svg);
-
-let onMousemove = (e) => { rollover.onMousemove(e); };
-let onMouseleave = (e) => { rollover.onMouseleave(e); };
+let onMousemove;
+let onMouseleave;
+$: onMousemove = (e) => { rollover.onMousemove(e, $xScaleStore, $yScaleStore); };
+$: onMouseleave = (e) => { rollover.onMouseleave(e, $xScaleStore, $yScaleStore); };
 
 
 export let dataGraphicMounted = false;
 
-export let hoverValue = {
+const emptyValue = () => ({
   x: undefined, y: undefined, px: undefined, py: undefined,
-};
+});
+
+export let hoverValue = emptyValue();
+
 
 onMount(() => {
   dataGraphicMounted = true;
@@ -287,6 +304,9 @@ $: if (dataGraphicMounted) {
     on:mousemove={onMousemove}
     on:mouseleave={onMouseleave}
     on:click
+    on:mousedown
+    on:mouseup
+    on:mousemove
   >
   <rect 
     x={$leftPlot} y={$topPlot} width={$bodyWidth} height={$bodyHeight}
@@ -301,9 +321,57 @@ $: if (dataGraphicMounted) {
         height={$bodyHeight}
       />
     </clipPath>
+
+    {#if dataGraphicMounted}
+      <g id='graphic-body-background-{key}' style="clip-path: url(#graphic-body-{key})">
+        <slot name='body-background' 
+          xScale={xScale} 
+          yScale={yScale}
+          left={$leftPlot}
+          right={$rightPlot}
+          top={$topPlot}
+          bottom={$bottomPlot}
+          width={$graphicWidth}
+          height={$graphicHeight}
+        ></slot>
+      </g>
+    {/if}
+
+    {#if dataGraphicMounted}
+    <g>
+      <slot name='background' 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
+    </g>
+  {/if}
+
+  {#if dataGraphicMounted}
+    <g id='graphic-body-{key}' style="clip-path: url(#graphic-body-{key})">
+      <slot name='body' 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
+    </g>
+  {/if}
+
+    <!-- generalized slot at body level -->
     {#if dataGraphicMounted}
       <slot></slot>
     {/if}
+
     <use clip-path="url(#graphic-body-{key})" xlink:href="#graphic-body-content={key}" fill="transparent" />
 
     <!-- pass the rollover value into the scale -->
@@ -327,5 +395,20 @@ $: if (dataGraphicMounted) {
         <line x1={x1} x2={x2} y1={y1} y2={y2} stroke={color} stroke-width={thickness} opacity={opacity} />
       {/if}
     {/each}
+
+
+    <!-- Annotation layers – for additional points, comments, etc. that must sit above everything else -->
+    {#if dataGraphicMounted}
+      <slot name='annotation' 
+        xScale={xScale} 
+        yScale={yScale}
+        left={$leftPlot}
+        right={$rightPlot}
+        top={$topPlot}
+        bottom={$bottomPlot}
+        width={$graphicWidth}
+        height={$graphicHeight}
+      ></slot>
+    {/if}
   </svg>
 </div>

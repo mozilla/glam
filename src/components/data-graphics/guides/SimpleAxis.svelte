@@ -58,13 +58,13 @@ function symLogTicks(topVal) {
 }
 
 
-function getDefaultTicks() {
-  if (mainScale.type === 'numeric' || mainScale.type === 'linear' || mainScale.type === 'time') {
-    return mainScale.ticks(tickCount);
-  } if (mainScale.type === 'log') {
-    return symLogTicks(mainScale.domain()[1]);
+function getDefaultTicks(sc) {
+  if (sc.type === 'numeric' || sc.type === 'linear' || sc.type === 'time') {
+    return sc.ticks(tickCount);
+  } if (sc.type === 'log') {
+    return symLogTicks($mainScale.domain()[1]);
   }
-  return mainScale.domain().reduce((acc, v, i, source) => {
+  return sc.domain().reduce((acc, v, i, source) => {
     // let's filter to get the right number of ticks.
     const every = Math.floor(source.length / tickCount);
     if (i % every === 0) {
@@ -74,18 +74,19 @@ function getDefaultTicks() {
   }, []);
 }
 
-export let ticks = getDefaultTicks();
-
+export let ticks;
 // we will need to internally calculate TICKS depending on the passed value
 // of ticks.
 let TICKS;
-if (Array.isArray(ticks)) {
+$: if (Array.isArray(ticks)) {
   TICKS = ticks;
 } else if (typeof ticks === 'function') {
   // if you pass in a function, the function operates
   // on the xScale accordingly and returns whatever it needs
   // to be an array
-  TICKS = ticks(mainScale);
+  TICKS = ticks($mainScale);
+} else {
+  TICKS = getDefaultTicks($mainScale);
 }
 
 export let tickDirection = side === 'right' || side === 'bottom' ? 1 : -1;
@@ -94,7 +95,7 @@ export let fadeValues = defaults.fadeParams;
 export let tickFontSize = defaults.axisTickFontSize;
 
 export let lineStyle = (side === 'left' || side === 'right') ? 'long' : 'short';
-export let tickFormatter = mainScale.type === 'time' ? mainScale.tickFormat(tickCount) : (t) => t;
+export let tickFormatter = $mainScale.type === 'time' ? $mainScale.tickFormat(tickCount) : (t) => t;
 
 export let showTicks = true;
 export let showBorder = false;
@@ -119,8 +120,8 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
           {...{
             [`${mainDim}1`]: $bodyDimension + tickDirection * margins.buffer,
             [`${mainDim}2`]: tickEnd,
-            [`${secondaryDim}1`]: mainScale(tick),
-            [`${secondaryDim}2`]: mainScale(tick),
+            [`${secondaryDim}1`]: $mainScale(tick),
+            [`${secondaryDim}2`]: $mainScale(tick),
           }}
           stroke='var(--line-gray-01)'
           stroke-width=1
@@ -129,8 +130,8 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
       {#if showBorder}
         <line 
           {...{
-            [`${secondaryDim}1`]: mainScale.range()[0],
-            [`${secondaryDim}2`]: mainScale.range()[1],
+            [`${secondaryDim}1`]: $mainScale.range()[0],
+            [`${secondaryDim}2`]: $mainScale.range()[1],
             [`${mainDim}1`]: $bodyDimension,
             [`${mainDim}2`]: $bodyDimension,
           }}           
@@ -148,7 +149,7 @@ $: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
         <text 
           {...{
             [`${mainDim}`]: $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector,
-            [`${secondaryDim}`]: mainScale(tick),
+            [`${secondaryDim}`]: $mainScale(tick),
             dy: secondaryDim === 'y' ? '.35em' : undefined,
           }}
           text-anchor={textAnchor}

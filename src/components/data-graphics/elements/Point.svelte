@@ -1,5 +1,6 @@
 <script>
 import { getContext } from 'svelte';
+import { writable } from 'svelte/store';
 
 export let x;
 export let y;
@@ -11,13 +12,13 @@ export let strokeWidth = 0;
 export let strokeOpacity = 1;
 export let fill = 'blue';
 
-const xScale = getContext('xScale');
-const yScale = getContext('yScale');
+const xScale = getContext('xScale') || writable((v) => v);
+const yScale = getContext('yScale') || writable((v) => v);
 </script>
 
 <circle 
-  cx={xScale(x)}
-  cy={yScale(y)}
+  cx={$xScale(x)}
+  cy={$yScale(y)}
   r={r}
   fill={fill}
   opacity={opacity}

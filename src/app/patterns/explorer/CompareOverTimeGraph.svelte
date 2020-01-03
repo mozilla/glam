@@ -21,10 +21,6 @@ import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarke
 
 import { buildIDComparisonGraph } from '../utils/constants';
 
-import {
-  firstOfMonth, buildIDToMonth,
-} from '../utils/build-id-utils';
-
 export let data;
 export let markers;
 export let metricKeys;
@@ -133,11 +129,11 @@ function determinePlacementOfBackgroundFill(datum) {
 }
 
 
-$: if (xDomain && xScale && rightPlot) {
+$: if (xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-$: if (xDomain && hovered.datum && xScale) {
+$: if (hovered.datum && xScale) {
   [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
 }
 
@@ -236,6 +232,11 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  }}
 >
 
+<!-- for the additional-plot-elements slot in ProbeExplorer.svelte -->
+<g slot=body-background>
+  <slot></slot>
+</g>
+
 {#if hovered.datum && xScale && topPlot && bodyHeight}
  {#if aggregationLevel === 'build_id'}
     <BuildIDRollover 
@@ -261,23 +262,14 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/if}
 
   <!-- this is the reference rect -->
-  {#if aggregationLevel === 'build_id'}
     <rect
       bind:this={referenceBackgroundElement}
       x={$refLabelSpring} 
       y={topPlot} 
       width={referenceWidth} 
       height={bodyHeight}
-      fill="var(--cool-gray-100)" />
-    {:else}
-    <rect
-      bind:this={referenceBackgroundElement}
-      x={$refLabelSpring} 
-      y={topPlot} 
-      width={referenceWidth} 
-      height={bodyHeight}
-      fill="var(--cool-gray-100)" />
-    {/if}
+      fill="var(--cool-gray-100)"
+    />
   
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  
