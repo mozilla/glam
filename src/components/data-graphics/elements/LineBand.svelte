@@ -18,8 +18,8 @@ export let mixBlendMode = 'multiply';
 
 const curveFunction = SHAPE[curve];
 
-
-const areaGenerator = SHAPE.area()
+let areaGenerator;
+$: areaGenerator = SHAPE.area()
   .x((d) => (useXScale ? $xScale(d[xAccessor]) : d[xAccessor]))
   .y((d) => (useYScale ? $yScale(d[yMinAccessor]) : d[yMinAccessor]))
   .y1((d) => (useYScale ? $yScale(d[yMaxAccessor]) : d[yMaxAccessor]))

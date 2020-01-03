@@ -133,11 +133,11 @@ function determinePlacementOfBackgroundFill(datum) {
 }
 
 
-$: if (xDomain && xScale && rightPlot) {
+$: if (xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-$: if (xDomain && hovered.datum && xScale) {
+$: if (hovered.datum && xScale) {
   [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
 }
 

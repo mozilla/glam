@@ -58,13 +58,13 @@ function symLogTicks(topVal) {
 }
 
 
-function getDefaultTicks() {
-  if ($mainScale.type === 'numeric' || $mainScale.type === 'linear' || $mainScale.type === 'time') {
-    return $mainScale.ticks(tickCount);
-  } if ($mainScale.type === 'log') {
+function getDefaultTicks(sc) {
+  if (sc.type === 'numeric' || sc.type === 'linear' || sc.type === 'time') {
+    return sc.ticks(tickCount);
+  } if (sc.type === 'log') {
     return symLogTicks($mainScale.domain()[1]);
   }
-  return $mainScale.domain().reduce((acc, v, i, source) => {
+  return sc.domain().reduce((acc, v, i, source) => {
     // let's filter to get the right number of ticks.
     const every = Math.floor(source.length / tickCount);
     if (i % every === 0) {
@@ -74,18 +74,19 @@ function getDefaultTicks() {
   }, []);
 }
 
-export let ticks = getDefaultTicks();
-
+export let ticks;
 // we will need to internally calculate TICKS depending on the passed value
 // of ticks.
 let TICKS;
-if (Array.isArray(ticks)) {
+$: if (Array.isArray(ticks)) {
   TICKS = ticks;
 } else if (typeof ticks === 'function') {
   // if you pass in a function, the function operates
   // on the xScale accordingly and returns whatever it needs
   // to be an array
   TICKS = ticks($mainScale);
+} else {
+  TICKS = getDefaultTicks($mainScale);
 }
 
 export let tickDirection = side === 'right' || side === 'bottom' ? 1 : -1;

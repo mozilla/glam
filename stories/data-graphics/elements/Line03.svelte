@@ -2,6 +2,9 @@
 import { format } from 'd3-format';
 import { timeFormat } from 'd3-time-format';
 
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
+
 import { fly, fade } from 'svelte/transition';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Line from '../../../src/components/data-graphics/elements/Line.svelte';
@@ -12,6 +15,8 @@ import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svel
 import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
 
+import Button from '../../../src/components/Button.svelte';
+import Cancel from '../../../src/components/icons/Cancel.svelte';
 import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
 
 import FirefoxReleaseVersionMarkers from '../../../src/app/patterns/elements/FirefoxReleaseVersionMarkers.svelte';
@@ -60,10 +65,11 @@ const metricData = dates().map((date, i) => {
   };
 });
 
-
-let xDomain = [
+const generateDomain = () => [
   new Date(Math.min(...metricData.map((d) => d.date))),
   new Date(Math.max(...metricData.map((d) => d.date)))];
+
+let xDomain = tweened(generateDomain(), { duration: 200, easing });
 let auMax = Math.max(
   ...metricData.map((d) => d.dauHigh),
   ...metricData.map((d) => d.wauHigh),
@@ -71,9 +77,15 @@ let auMax = Math.max(
 ) * 1.1;
 
 
+const resetDomain = () => {
+  $xDomain = generateDomain();
+};
+
+resetDomain();
+
 const get = (d, value) => {
   const w = window1D({
-    value, data: d, key: 'date', domain: xDomain,
+    value, data: d, key: 'date', domain: $xDomain,
   });
   if (w.current) return w.current;
   return 0;
@@ -81,7 +93,7 @@ const get = (d, value) => {
 
 const getWindowVals = (d, value) => {
   const w = window1D({
-    value, data: d, key: 'date', domain: xDomain,
+    value, data: d, key: 'date', domain: $xDomain,
   });
   if (w.current) return w;
   return { next: {}, current: {}, previous: {} };
@@ -115,17 +127,20 @@ let mouseMoveValue = {};
 let startValue;
 let endValue;
 let hoverPt;
-
-$: hoverPt = get(metricData, hoverValue.x ? hoverValue.x : metricData[metricData.length - 1].date);
+$: hoverPt = get(metricData, hoverValue.x ? hoverValue.x
+  : metricData.find((m) => dtfmt(m.date) === dtfmt($xDomain[1])).date);
 
 const resetMouseClicks = () => {
   mouseDownValue = {};
   mouseMoveValue = {};
 };
+let isScrubbed = false;
 
 const endMouseEvent = () => {
-  startValue = mouseDownValue.x;
-  endValue = mouseMoveValue.x;
+  startValue = new Date(Math.min(mouseDownValue.x, mouseMoveValue.x));
+  endValue = new Date(Math.max(mouseDownValue.x, mouseMoveValue.x));
+  $xDomain = [startValue, endValue];
+  isScrubbed = true;
   resetMouseClicks();
 };
 
@@ -170,14 +185,30 @@ h2 {
 </style>
 
 <div class=story>
-  <h1 class=story__title>Glean Usage Dashboard</h1>
+  <div style="
+    display: grid;
+    grid-template-columns: auto max-content;
+    width: 975px;
+    align-items: center;
+    margin-bottom: var(--space-4x);
+  ">
+  <h1 style='margin:0;' class=story__title>Glean Usage Dashboard</h1>
+    {#if isScrubbed}
+    <div style='justify-self: end;' in:fly={{ duration: 500, y: 10 }}>
+      <Button level=medium compact on:click={() => {
+        isScrubbed = false;
+        resetDomain();
+      }}>clear zoom <Cancel size={16} /></Button>
+    </div>
+    {/if}
+  </div>
   <div class=multiples>
     {#each graphs as {name, type, key, yMax, axisFormat, hoverFormat}, i}
       <div>
         <div class=dg-header>
             <h2>{name}</h2>
             <div>
-              {hoverFormat(get(metricData, hoverValue.x ? hoverValue.x : metricData[metricData.length - 1].date, key)[key])}
+              {hoverFormat(hoverPt[key])}
           </div>
         </div>
         
@@ -186,8 +217,8 @@ h2 {
           height={200}
           top={32}
           left={36}
-          right={12}
-          xDomain={xDomain} 
+          right={24}
+          xDomain={$xDomain} 
           yDomain={[0, yMax]}
           xType=time
           yType=linear
@@ -203,7 +234,10 @@ h2 {
           on:mouseup={endMouseEvent}
           on:mouseleave={resetMouseClicks}
         >
-
+          <g slot=background>
+            <LeftAxis  tickFormatter={axisFormat} />
+            <BottomAxis />
+          </g>
           <g slot=body-background let:xScale let:yScale let:top let:bottom>
               {#if mouseDownValue.x && mouseMoveValue.x}
               <rect
@@ -241,21 +275,37 @@ h2 {
                 fill=var(--cool-gray-500)
               >{dateDiff(mouseDownValue.x, mouseMoveValue.x)} days</text>
               {/if}
-              <LineBand data={metricData} xAccessor=date yMinAccessor={`${key}Low`}  yMaxAccessor={`${key}High`} />
 
-              
           </g>
+          <g slot=body>
+            <LineBand data={metricData} xAccessor=date yMinAccessor={`${key}Low`}  yMaxAccessor={`${key}High`} />
+            <Line lineDrawAnimation={{ duration: 1200 }} data={metricData} xAccessor=date yAccessor={key} />
+          </g>
+
           <g style='opacity:.6'>
             <FirefoxReleaseVersionMarkers />
           </g>
-          <LeftAxis  tickFormatter={axisFormat} />
-          <BottomAxis />
+          
+          
 
           
-          <Line lineDrawAnimation={{ duration: 1200 }} data={metricData} xAccessor=date yAccessor={key} />
+          <!-- <g in:fly={{ duration: 1000, y: 200 }}>
+            <Point x={hoverPt.date} y={hoverPt[key]} r={3} />
+          </g>
+          <g in:fade={{ duration: 1000, delay: 300 }}>
+            <VerticalErrorBar 
+              x={hoverPt.date} 
+              minY={hoverPt[`${key}Low`]} 
+              maxY={hoverPt[`${key}High`]}
+            />
+          </g>
+          {#if hoverValue.x}
+            <text x={36} y={12} font-size={12}>{dtfmt(hoverPt.date)}</text>
+            <text x={500} y={12} font-size={12}>low {hoverPt[`${key}Low`]}</text>
+          {/if} -->
 
           <Springable
-            params={{ stiffness: 0.4, damping: 0.9 }}
+            params={{ stiffness: 0.8, damping: 0.9 }}
             value={hoverPt} 
             let:springValue={spr} >
               <g in:fly={{ duration: 1000, y: 200 }}>

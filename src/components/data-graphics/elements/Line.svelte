@@ -19,13 +19,14 @@ export let lineDrawAnimation = { duration: 0 };
 export let curve = 'curveMonotoneX';
 export let area = false;
 const curveFunction = SHAPE[curve];
-
-const lineGenerator = SHAPE.line()
+let lineGenerator;
+let areaGenerator;
+$: lineGenerator = SHAPE.line()
   .x((d) => (useXScale ? $xScale(d[xAccessor]) : d[xAccessor]))
   .y((d) => (useYScale ? $yScale(d[yAccessor]) : d[yAccessor]))
   .curve(curveFunction);
 
-const areaGenerator = SHAPE.area()
+$: areaGenerator = SHAPE.area()
   .x((d) => $xScale(d[xAccessor]))
   .y1((d) => $yScale(d[yAccessor]))
   .y0($yScale.range()[0])
