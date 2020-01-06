@@ -8,8 +8,6 @@ export let tickDirection = getContext('tickDirection');
 export let bodyDimension = getContext('bodyDimension');
 export let side = getContext('side');
 
-let tickEnd = getContext('tickEnd');
-
 export let margins = getContext('margins');
 
 export let placement;

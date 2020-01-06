@@ -8,9 +8,10 @@
 //   the numeric values, placement, etc. for each. This would let the implementer
 //   do whatever they want without having to make the same tedious calculations.
 
+import { tweened } from 'svelte/motion';
+
 import { getContext, setContext } from 'svelte';
 import { fade } from 'svelte/transition';
-import { writable } from 'svelte/store';
 
 import AxisLabel from './AxisLabel.svelte';
 import AxisLine from './AxisLine.svelte';
@@ -27,7 +28,7 @@ if (!mainScaleName) {
 
 export let mainScale = getContext(mainScaleName);
 export let bodyDimension = getContext(`${side}Plot`);
-export let rotate = true;
+export let rotate = 0;
 
 let obverse;
 
@@ -128,9 +129,6 @@ let secondaryDim = (side === 'left' || side === 'right') ? 'y' : 'x';
 
 let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 
-let tickEnd = writable(0);
-$: $tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
-
 // axis system context setting.
 // children like AxisLabel consume these.
 
@@ -142,8 +140,12 @@ setContext('bodyDimension', bodyDimension);
 setContext('tickDirection', tickDirection);
 setContext('fontSizeCorrector', fontSizeCorrector);
 setContext('tickFormatter', tickFormatter);
-setContext('tickEnd', tickEnd);
 setContext('align', align);
+
+let R = tweened(-1, { duration: 500 });
+setInterval(() => {
+  $R = $R < 0 ? 1 : -1;
+}, 1000);
 
 </script>
 
@@ -170,7 +172,7 @@ setContext('align', align);
   <slot name="labels" tickFormatter={tickFormatter} ticks={TICKS}>
       {#each TICKS as tick, i (tick)}
         {#if showLabels}
-          <AxisLabel placement={tick} rotate={rotate} align={align}>
+          <AxisLabel rotate={rotate} placement={tick} align={align}>
             {tickFormatter ? tickFormatter(tick) : tick}
           </AxisLabel>
         {/if}

@@ -1,6 +1,6 @@
 <script>
 
-import { getContext } from 'svelte';
+import { getContext, onMount } from 'svelte';
 
 export let side = getContext('side');
 export let mainDim = getContext('mainDim');
@@ -20,31 +20,59 @@ export let rotate = 0;
 export let fontSize = 10;
 export let fontWeight = 'normal';
 export let color = 'black';
+export let dx = 0;
+export let dy = 0;
 
 function place(v, dim = mainDim) {
   if (mainDim === dim) {
     return $bodyDimension
     + tickDirection * margins.buffer
-    + tickDirection * fontSizeCorrector
+    + ((side === 'top' || side === 'bottom') ? tickDirection * fontSizeCorrector : 0)
     + ((side === 'left' || side === 'top') ? -offset : offset);
   }
   return $mainScale(v);
 }
 
+// let's set alignment dynamically as a dx property
+let container;
+let label;
+let alignmentOffset = 0;
+let yAdjustment = 0;
+let mounted = false;
+onMount(() => {
+  mounted = true;
+});
+
+$: if (mounted && align) {
+  let { width, height } = container.getBoundingClientRect();
+  // let { height } = label.getBoundingClientRect();
+  if (align === 'middle') alignmentOffset = -width / 2;
+  else if (align === 'end') alignmentOffset = -width;
+  else alignmentOffset = 0;
+  yAdjustment = height / 4;
+}
+
+let transform = '';
+$: transform = `${rotate !== 0
+  ? `rotate(${rotate} ${place(placement, 'x') - alignmentOffset} ${place(placement, 'y')}) ` : ' '
+} ${mainDim === 'x' ? `translate(0 ${yAdjustment})` : ''}`;
+
 </script>
 
-<text 
+<g bind:this={container} transform='translate({alignmentOffset} 0)'>
+<text
+  bind:this={label}
   {...{
     [`${mainDim}`]: place(placement, mainDim),
     [`${secondaryDim}`]: place(placement, secondaryDim),
-    dy: secondaryDim === 'y' ? '.35em' : undefined,
+    dy,
+    dx,
   }}
-  text-anchor={align}
   font-size={fontSize}
   font-weight={fontWeight}
   fill={color}
-  transform={rotate
-    ? `rotate(${rotate} ${place(placement, 'x')} ${place(placement, 'y')})` : ''}
+  transform={transform}
 >
   <slot>{tickFormatter(placement)}</slot>
 </text>
+</g>
