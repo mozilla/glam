@@ -1,5 +1,5 @@
 <script>
-import { fly } from 'svelte/transition';
+import { fly, fade } from 'svelte/transition';
 import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
 import Point from '../../../src/components/data-graphics/elements/Point.svelte';
@@ -25,16 +25,16 @@ releases.forEach((r) => {
 
 let graphs = [
   { key: 'browserCrashRate', title: 'Browser Crash Rate' },
-  { key: 'browserCrashIncidence', title: 'Browser Crash Incidence %' },
+  { key: 'browserCrashIncidence', title: 'Browser Crash Incidence Rate' },
   { key: 'contentCrashRate', title: 'Content Crash Rate' },
-  { key: 'contentCrashIncidence', title: 'Browser Crash Incidence %' },
+  { key: 'contentCrashIncidence', title: 'Browser Crash Incidence Rate' },
 ];
 
 // group by major version
 
 const byVersion = groupBy(releases, 'major');
 
-let controlSet = false;
+let controlSet = true;
 
 let rot = 0;
 let alignments = ['start', 'middle', 'end'];
@@ -43,7 +43,7 @@ let botAlign = 'middle';
 </script>
 
 <style>
-h2 { margin: 0; padding-left: 40px; font-size: var(--text-05)}
+h2 { margin: 0; padding-left: 50px; font-size: var(--text-03); font-weight: normal;}
 .control-set {
   padding: var(--space-base);
 }
@@ -60,11 +60,11 @@ h2 { margin: 0; padding-left: 40px; font-size: var(--text-05)}
   grid-auto-flow: column;
   padding: var(--space-2x);
   background-color: white;
+  height:100vh;
 '>
   <div class=control-set>
     <div class=control>
       <input type=range bind:value={rot} min={-90} max={90} />
-      {rot}
     </div>
     <div class=control>
       <Button level=medium compact on:click={() => { rot = 0; }}>reset rotation</Button>
@@ -91,14 +91,15 @@ h2 { margin: 0; padding-left: 40px; font-size: var(--text-05)}
       <h2>{title}</h2>
       <DataGraphic 
         {xDomain} 
-        {yDomain} 
+        {yDomain}
+        top={20}
         width={400}
         height={250}
         bottom={50}
         yType="linear" 
         xType="scalePoint">
         <g slot=background>
-          <LeftAxis lineStyle=short showBorder />
+          <Axis side=left lineStyle=short showTicks={false} ticks={[0.5, 1, 1.5]} />
           <Axis side=bottom ticks={xDomain}>
               
               <g slot=ticks let:ticks>
@@ -134,13 +135,31 @@ h2 { margin: 0; padding-left: 40px; font-size: var(--text-05)}
               </g>
           </Axis>
         </g>
-        <g slot=body>
+        <g slot=body let:xScale let:yScale let:top let:bottom>
+        {#each Object.entries(byVersion) as [major, minors],i}
+          <rect
+            in:fly={{ duration: 500, y: 10 * (i % 2 === 0 ? 1 : -1) }}
+            x={xScale(minors[0].minor) - xScale.step() / 2 + 1} 
+            y={top + 10}
+            width={xScale(minors.slice(-1)[0].minor) - xScale(minors[0].minor) + xScale.step() - 2}
+            height={bottom - top - 20}
+            fill='var(--cool-gray-{150 + i * 50})'
+            />
+        {/each}
+        {#each [0.5, 1, 1.5] as tick}
+          <line 
+            x1={xScale(releases[0].minor) + 1 - xScale.step() / 2}
+            x2={xScale(releases[releases.length - 1].minor) + xScale.step() - 2}
+            y1={yScale(tick)}
+            y2={yScale(tick)}
+            stroke=white
+          />
+        {/each}
         {#each releases as release, i}
           <g in:fly={{
  duration: 500, delay: Math.random() * 300, y: 10, easing,
 }}>
-            <Point x={release.minor} y={release[key]} r={3} />
-
+            <Point fill=var(--cool-gray-700) x={release.minor} y={release[key]} r={3} />
           </g>
         {/each}
         )
