@@ -1,9 +1,8 @@
 <script>
-import SimpleAxis from './SimpleAxis.svelte';
+import Axis from './Axis.svelte';
 </script>
 
-<SimpleAxis 
+<Axis 
   {...$$props}
-  side='right'
-  mainScaleName='yScale'
+  side=right
 />
