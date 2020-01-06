@@ -192,7 +192,7 @@ h2 {
     align-items: center;
     margin-bottom: var(--space-4x);
   ">
-  <h1 style='margin:0;' class=story__title>Glean Usage Dashboard</h1>
+  <h1 style='margin:0;' class=story__title>Usage Dashboard</h1>
     {#if isScrubbed}
     <div style='justify-self: end;' in:fly={{ duration: 500, y: 10 }}>
       <Button level=medium compact on:click={() => {

@@ -1,12 +1,10 @@
 <script>
-import { getContext } from 'svelte';
-import { fade } from 'svelte/transition';
 
-import SimpleAxis from './SimpleAxis.svelte';
+import Axis from './Axis.svelte';
 
 </script>
 
-<SimpleAxis 
+<Axis 
   {...$$props}
   side='bottom'
   mainScaleName='xScale'

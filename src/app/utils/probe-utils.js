@@ -2,6 +2,7 @@ import produce from 'immer';
 import { fullBuildIDToDate } from '../patterns/utils/build-id-utils';
 import { nearestBelow } from '../../utils/stats';
 import { formatBuildIDToOnlyDate } from '../patterns/utils/formatters';
+import { groupBy } from '../../components/utils/transforms';
 
 export function sortByKey(key) {
   return (a, b) => {
@@ -144,13 +145,6 @@ export function zipByAggregationType(payload) {
   return out;
 }
 
-function groupBy(xs, key, transform = (_) => _) {
-  return xs.reduce((rv, x) => {
-    const K = transform(x[key]);
-    (rv[K] = rv[K] || []).push(produce(x, (xi) => xi));
-    return rv;
-  }, {});
-}
 
 export function topKBuildsPerDay(dataset, k = 2) {
   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);

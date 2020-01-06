@@ -8,13 +8,27 @@
 //   the numeric values, placement, etc. for each. This would let the implementer
 //   do whatever they want without having to make the same tedious calculations.
 
-import { getContext } from 'svelte';
+import { tweened } from 'svelte/motion';
+
+import { getContext, setContext } from 'svelte';
 import { fade } from 'svelte/transition';
 
-export let mainScaleName = 'xScale';
+import AxisLabel from './AxisLabel.svelte';
+import AxisLine from './AxisLine.svelte';
+import AxisTick from './AxisTick.svelte';
+
+export let side; // left, right, top, bottom
+export let mainScaleName;
+
+if (!mainScaleName) {
+  if (side === 'left' || side === 'right') mainScaleName = 'yScale';
+  else if (side === 'top' || side === 'bottom') mainScaleName = 'xScale';
+  else mainScaleName = 'xScale';
+}
+
 export let mainScale = getContext(mainScaleName);
-export let side = 'left'; // left, right, top, bottom
 export let bodyDimension = getContext(`${side}Plot`);
+export let rotate = 0;
 
 let obverse;
 
@@ -27,11 +41,19 @@ export let obverseDimension = getContext(`${obverse}Plot`);
 
 // TEXT ANCHOR
 let defaultTextAnchor;
-if (side === 'left') defaultTextAnchor = 'end';
-else if (side === 'right') defaultTextAnchor = 'start';
-else if (side === 'top' || side === 'bottom') defaultTextAnchor = 'middle';
+if (side === 'left') {
+  defaultTextAnchor = 'end';
+  // if (rotate) defaultTextAnchor = 'middle';
+} else if (side === 'right') {
+  defaultTextAnchor = 'start';
+  // if (rotate) defaultTextAnchor = 'middle';
+} else if (side === 'top' || side === 'bottom') {
+  defaultTextAnchor = 'middle';
+  // if (rotate && side === 'top') defaultTextAnchor = 'end';
+  // if (rotate && side === 'bottom') defaultTextAnchor = 'start';
+}
 
-export let textAnchor = defaultTextAnchor;
+export let align = defaultTextAnchor;
 
 const defaults = getContext('defaults');
 const margins = getContext('margins');
@@ -56,7 +78,6 @@ function symLogTicks(topVal) {
   ticks.reverse();
   return ticks;
 }
-
 
 function getDefaultTicks(sc) {
   if (sc.type === 'numeric' || sc.type === 'linear' || sc.type === 'time') {
@@ -89,6 +110,8 @@ $: if (Array.isArray(ticks)) {
   TICKS = getDefaultTicks($mainScale);
 }
 
+// change TICKS to have x, y, x1, x2, y1, y2
+
 export let tickDirection = side === 'right' || side === 'bottom' ? 1 : -1;
 
 export let fadeValues = defaults.fadeParams;
@@ -106,56 +129,54 @@ let secondaryDim = (side === 'left' || side === 'right') ? 'y' : 'x';
 
 let fontSizeCorrector = (side === 'bottom') ? tickFontSize : margins.buffer;
 
-let tickEnd;
-$: tickEnd = lineStyle === 'long' ? $obverseDimension : $bodyDimension;
+// axis system context setting.
+// children like AxisLabel consume these.
+
+setContext('mainDim', mainDim);
+setContext('secondaryDim', secondaryDim);
+setContext('mainScale', mainScale);
+setContext('side', side);
+setContext('bodyDimension', bodyDimension);
+setContext('tickDirection', tickDirection);
+setContext('fontSizeCorrector', fontSizeCorrector);
+setContext('tickFormatter', tickFormatter);
+setContext('align', align);
+
+let R = tweened(-1, { duration: 500 });
+setInterval(() => {
+  $R = $R < 0 ? 1 : -1;
+}, 1000);
 
 </script>
 
 <g in:fade={fadeValues} class="{side}-axis">
-  <slot name="ticks">
+  
+  <slot name="ticks" ticks={TICKS}>
     {#each TICKS as tick, i (tick)}
       {#if showTicks}
-        <line
-          class=tick
-          {...{
-            [`${mainDim}1`]: $bodyDimension + tickDirection * margins.buffer,
-            [`${mainDim}2`]: tickEnd,
-            [`${secondaryDim}1`]: $mainScale(tick),
-            [`${secondaryDim}2`]: $mainScale(tick),
-          }}
-          stroke='var(--line-gray-01)'
-          stroke-width=1
-        />
-      {/if}
-      {#if showBorder}
-        <line 
-          {...{
-            [`${secondaryDim}1`]: $mainScale.range()[0],
-            [`${secondaryDim}2`]: $mainScale.range()[1],
-            [`${mainDim}1`]: $bodyDimension,
-            [`${mainDim}2`]: $bodyDimension,
-          }}           
-          stroke='var(--line-gray-01)'
-          stroke-width=1 />
+        <AxisTick placement={tick} />
+        {#if lineStyle === 'long'}
+          <!-- add long ticks as well -->
+          <AxisTick placement={tick} tickDirection={-1} length={$bodyDimension - $obverseDimension} />
+        {/if}
       {/if}
     {/each}
   </slot>
-  <slot name="labels">
+
+  <slot name='border'>
+    {#if showBorder}
+      <AxisLine  />
+      {/if}
+  </slot>
+
+  <slot name="labels" tickFormatter={tickFormatter} ticks={TICKS}>
       {#each TICKS as tick, i (tick)}
-      {#if showLabels}
-        <!-- FIXME: a TickLabel component might be able to easily consume the relevant stores + params
-        to deal with placement (the hard part), while exposing a slot that allows for the child to 
-        have whatever it needs. -->
-        <text 
-          {...{
-            [`${mainDim}`]: $bodyDimension + tickDirection * margins.buffer + tickDirection * fontSizeCorrector,
-            [`${secondaryDim}`]: $mainScale(tick),
-            dy: secondaryDim === 'y' ? '.35em' : undefined,
-          }}
-          text-anchor={textAnchor}
-          font-size={tickFontSize}
-        >{tickFormatter ? tickFormatter(tick) : tick}</text>
-      {/if}
+        {#if showLabels}
+          <AxisLabel rotate={rotate} placement={tick} align={align}>
+            {tickFormatter ? tickFormatter(tick) : tick}
+          </AxisLabel>
+        {/if}
     {/each}
   </slot>
+
   </g>
