@@ -11,6 +11,7 @@ services:
     - "8000:8000"
     volumes:
     - $PWD:/app
+    - $PWD/.creds:/app/.creds
     depends_on:
     - db
     links:

@@ -48,12 +48,12 @@ class Command(BaseCommand):
         with connection.cursor() as cursor:
             for channel, versions in collections.items():
                 for version in versions:
-                    table = f"aggregation_{channel}_{version}"
+                    table = f"glam_aggregation_{channel}_{version}"
                     if table not in tables:
                         cursor.execute(
                             f"""
                             CREATE TABLE {table}
-                            PARTITION OF aggregation_{channel}
+                            PARTITION OF glam_aggregation_{channel}
                             FOR VALUES IN ('{version}')
                             """
                         )

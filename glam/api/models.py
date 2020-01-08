@@ -12,20 +12,36 @@ class Aggregation(models.Model):
     version = models.CharField(max_length=100)
     # Dimensions.
     agg_type = models.IntegerField(choices=constants.AGGREGATION_CHOICES)
-    os = models.CharField(max_length=100, blank=True, null=True)
-    build_id = models.CharField(max_length=100, blank=True, null=True)
+    os = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
     metric = models.CharField(max_length=200)
-    metric_key = models.CharField(max_length=200, blank=True, null=True)
-    client_agg_type = models.CharField(max_length=100, blank=True, null=True)
+    metric_key = models.CharField(max_length=200, blank=True)
+    client_agg_type = models.CharField(max_length=100, blank=True)
     # Data.
     metric_type = models.CharField(max_length=100)
     total_users = models.IntegerField()
     data = JSONField()
 
     class Meta:
-        db_table = "aggregation"
         # This table is a partitioned table, we manage the creation of it ourselves.
         managed = False
+
+        db_table = "glam_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "channel",
+                    "version",
+                    "agg_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_key",
+                    "client_agg_type",
+                ],
+                name="dimensions",
+            )
+        ]
 
 
 class Probe(models.Model):
@@ -34,7 +50,7 @@ class Probe(models.Model):
     info = JSONField()
 
     class Meta:
-        db_table = "probe"
+        db_table = "glam_probe"
 
     @classmethod
     def populate_labels_cache(cls):
@@ -45,4 +61,5 @@ class Probe(models.Model):
                 cache.set(probe.info["name"], probe.info["labels"])
 
         # Add a key/value to check if we've populated the cache.
+        # Note: This assumes locmem cache and this sentinal going away on restart.
         cache.set("__labels__", True)
