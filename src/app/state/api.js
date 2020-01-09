@@ -9,7 +9,7 @@ export async function getRandomProbes() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n: 8 }),
+    body: JSON.stringify({ n: 9 }),
   }).then((response) => response.json());
   return data;
 }

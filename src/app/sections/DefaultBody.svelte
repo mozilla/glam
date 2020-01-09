@@ -49,8 +49,8 @@ a.probe-sm:hover {
 }
 
 h2 {
-  font-size: var(--text-03);
   margin: 0;
+  padding-left: var(--space-2x);
 }
 
 .probe-overview__type {
@@ -77,10 +77,21 @@ h2 {
   font-size: var(--text-015);
   color: var(--cool-gray-600);
 }
+
+.random-probe-view {
+  margin-top: var(--space-2x);
+}
+
+.probe-small-multiple--proportion {
+  /* background-color: var(--digital-blue-100); */
+}
+
 </style>
 
 <div>
   <MarketingBlock />
+  <div class=random-probe-view>
+    <h2>Selected Probes</h2>
   {#await data}
     loading ...
   {:then randomProbes}
@@ -90,7 +101,10 @@ h2 {
           <a class=probe-sm href='#' on:click={() => {
              store.setProbe(data.metadata.metric);
             }}>
-          <div class=probe-small-multiple>
+          <div 
+            class=probe-small-multiple 
+            class:probe-small-multiple--proportion={whichSmallMultiple(info.type, info.kind) === 'proportion'} 
+            style="min-height:100px;">
             {#if whichSmallMultiple(info.type, info.kind) === 'quantile'}
               <QuantileSmallMultiple 
                 metricType={info.type}
@@ -120,4 +134,5 @@ h2 {
       {/each}
       </div>
   {/await}
+  </div>
 </div>
