@@ -76,10 +76,18 @@ class TestRandomProbesApi:
 
     def test_response(self, client):
         self._make_partitions(versions=["70"])
-        Probe.objects.create(key="fee", info={"kind": "count", "name": "fee", "labels": None})
-        Probe.objects.create(key="fii", info={"kind": "count", "name": "fii", "labels": None})
-        Probe.objects.create(key="foo", info={"kind": "count", "name": "foo", "labels": None})
-        Probe.objects.create(key="fum", info={"kind": "count", "name": "fum", "labels": None})
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+        )
+        Probe.objects.create(
+            key="foo", info={"kind": "count", "name": "foo", "labels": None}
+        )
+        Probe.objects.create(
+            key="fum", info={"kind": "count", "name": "fum", "labels": None}
+        )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
         self._create_aggregation(name="foo")
@@ -89,23 +97,35 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 3
 
         # Test that a non-integer defaults to 3
-        resp = client.post(self.url, data={"n": "abc"}, content_type="application/json").json()
+        resp = client.post(
+            self.url, data={"n": "abc"}, content_type="application/json"
+        ).json()
         assert len(resp["probes"]) == 3
 
     def test_response_with_n(self, client):
         self._make_partitions(versions=["70"])
-        Probe.objects.create(key="fee", info={"kind": "count", "name": "fee", "labels": None})
-        Probe.objects.create(key="fii", info={"kind": "count", "name": "fii", "labels": None})
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+        )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
 
-        resp = client.post(self.url, data= {"n": 1}, content_type="application/json").json()
+        resp = client.post(
+            self.url, data={"n": 1}, content_type="application/json"
+        ).json()
         assert len(resp["probes"]) == 1
 
     def test_n_too_large(self, client):
         self._make_partitions(versions=["70"])
-        Probe.objects.create(key="fee", info={"kind": "count", "name": "fee", "labels": None})
-        Probe.objects.create(key="fii", info={"kind": "count", "name": "fii", "labels": None})
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+        )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
 
