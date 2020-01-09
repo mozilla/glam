@@ -35,7 +35,7 @@ export function authenticate(successCallback) {
       const query = window.location.search;
       if (query.includes('code=') && query.includes('state=')) {
         await auth0.handleRedirectCallback();
-        window.history.replaceState({}, document.title, '/');
+        window.location.reload();
         withToken(successCallback);
       } else {
         await auth0.loginWithRedirect({

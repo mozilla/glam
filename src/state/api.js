@@ -19,7 +19,7 @@ export async function getProbeData(params, token) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${token}`,
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ query: params }),
   }).then((response) => response.json());
