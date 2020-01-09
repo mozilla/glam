@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
                     agg_type integer NOT NULL,
                     os varchar(100) NOT NULL,
                     build_id varchar(100) NOT NULL,
+                    process integer NOT NULL,
                     metric varchar(200) NOT NULL,
                     metric_key varchar(200) NOT NULL,
                     client_agg_type varchar(100) NOT NULL,
@@ -48,17 +49,17 @@ class Migration(migrations.Migration):
                 """
                 ALTER TABLE ONLY glam_aggregation
                 ADD CONSTRAINT glam_aggregation_dimensions_idx UNIQUE (
-                    channel, version, agg_type, os, build_id, metric,
-                    metric_key, client_agg_type);
+                    channel, version, agg_type, os, build_id, process,
+                    metric, metric_key, client_agg_type);
                 """
                 # Create indexes.
                 # HASH indexing for smaller indexes and because we will only ever
                 # do `==` comparisons.
                 "CREATE INDEX ON glam_aggregation USING HASH (os);",
+                "CREATE INDEX ON glam_aggregation USING HASH (process);",
                 "CREATE INDEX ON glam_aggregation USING HASH (metric);",
                 # `build_id` will often use range queries.
                 "CREATE INDEX ON glam_aggregation (build_id);",
-                # Create all the channel partitions.
             ]
             + channel_partitions,
             reverse_sql=["DROP TABLE glam_aggregation"],

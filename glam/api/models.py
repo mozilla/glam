@@ -14,6 +14,7 @@ class Aggregation(models.Model):
     agg_type = models.IntegerField(choices=constants.AGGREGATION_CHOICES)
     os = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
+    process = models.IntegerField(choices=constants.PROCESS_CHOICES)
     metric = models.CharField(max_length=200)
     metric_key = models.CharField(max_length=200, blank=True)
     client_agg_type = models.CharField(max_length=100, blank=True)
@@ -35,6 +36,7 @@ class Aggregation(models.Model):
                     "agg_type",
                     "os",
                     "build_id",
+                    "process",
                     "metric",
                     "metric_key",
                     "client_agg_type",

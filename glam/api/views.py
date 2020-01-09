@@ -11,6 +11,7 @@ from glam.api.constants import (
     AGGREGATION_NAMES,
     CHANNEL_IDS,
     CHANNEL_NAMES,
+    PROCESS_NAMES,
 )
 from glam.api.models import Aggregation, Probe
 
@@ -54,13 +55,14 @@ def get_aggregations(**kwargs):
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
+            "process": PROCESS_NAMES[row.process],
             "metric": row.metric,
             "metric_type": row.metric_type,
         }
         aggs = {d["key"]: round(d["value"], 4) for d in row.data}
 
         # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}".format(**metadata)
+        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(**metadata)
         sub_key = "{key}-{client_agg_type}".format(
             key=row.metric_key, client_agg_type=row.client_agg_type
         )
@@ -152,6 +154,7 @@ def aggregations(request):
                         "metric": "gc_ms",
                         "metric_type": "histogram-exponential",
                         "os": "Linux",
+                        "process": "any",
                         "version": "70"
                     }
                 }

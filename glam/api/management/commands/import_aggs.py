@@ -7,7 +7,7 @@ from django.db import connection
 from google.cloud import bigquery, storage
 
 
-BQ_SOURCE = "moz-fx-data-derived-datasets.telemetry.client_probe_counts"
+BQ_SOURCE = "moz-fx-data-shared-prod.telemetry.client_probe_counts"
 PRODUCT_DETAILS_URL = "https://product-details.mozilla.org/1.0/firefox_versions.json"
 
 
@@ -98,6 +98,8 @@ class Command(BaseCommand):
                 END AS agg_type,
                 COALESCE(os, "*") AS os,
                 COALESCE(app_build_id, "*") AS app_build_id,
+                -- TODO: Update when process type is added.
+                0 AS process,
                 metric,
                 REGEXP_REPLACE(key, r"[^][a-zA-Z0-9-]+", "") AS key,
                 client_agg_type,
@@ -127,7 +129,8 @@ class Command(BaseCommand):
                     channel=channel, n=result.total_rows
                 )
             )
-            filename = f"gs://glam-dev-bespoke-nonprod-dataops-mozgcp-net/{channel}-*.csv"
+            # filename = f"gs://glam-dev-bespoke-nonprod-dataops-mozgcp-net/{channel}-*.csv"
+            filename = f"gs://mdv2-export/{channel}-*.csv"
             extract_config = bigquery.ExtractJobConfig()
             extract_config.destination_format = bigquery.DestinationFormat.CSV
             extract_config.print_header = False
@@ -147,6 +150,7 @@ class Command(BaseCommand):
             "agg_type",
             "os",
             "build_id",
+            "process",
             "metric",
             "metric_key",
             "client_agg_type",
