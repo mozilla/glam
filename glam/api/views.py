@@ -182,10 +182,11 @@ def probes(request):
     )
 
 
-@api_view(["GET"])
+@api_view(["POST"])
 def random_probes(request):
+    n = request.data.get('n', 3)
     try:
-        n = int(request.GET.get("n", 3))
+        n = int(n)
     except ValueError:
         n = 3
 
@@ -194,12 +195,21 @@ def random_probes(request):
     )
     if n > len(probe_ids):
         raise ValidationError("Not enough probes to select `n` items.")
+    
+    probes = []
+    
+    randomized_probes = sample(probe_ids, len(probe_ids))
 
+    while len(probes) < n:
+        probe_id = randomized_probes.pop()
+        probe = Probe.objects.get(id=probe_id)
+        aggregations = get_aggregations(probe=probe.info['name'], channel='nightly', versions=['70'], aggregationLevel='version')
+        if len(aggregations):
+            aggregations = list(aggregations.values())[0]
+            probes.append({"data": aggregations, "info": probe.info})
+    
     return Response(
         {
-            "probes": {
-                probe.key: probe.info
-                for probe in Probe.objects.filter(id__in=sample(probe_ids, n))
-            }
+            "probes": probes
         }
     )
