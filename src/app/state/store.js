@@ -3,14 +3,14 @@ import { derived, get } from 'svelte/store';
 import { createStore } from '../../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
-import telemetrySearch from './telemetry-search'; // eslint-disable-line
+import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line
 
 import { getProbeData } from './api';
 import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
 
 import CONFIG from '../config.json';
 
-import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+import { byKeyAndAggregation } from '../utils/probe-utils';
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -100,6 +100,12 @@ const initialState = {
 };
 
 export const store = createStore(initialState);
+
+store.setProbe = (name) => {
+  // get matching probe heree
+  const probe = get(probeSet).find((d) => d.name === name);
+  store.setField('probe', probe);
+};
 
 export const resetFilters = () => {
   store.setField('channel', getDefaultFieldValue('channel'));

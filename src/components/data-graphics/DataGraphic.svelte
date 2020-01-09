@@ -339,7 +339,8 @@ $: if (dataGraphicMounted) {
 
     {#if dataGraphicMounted}
     <g>
-      <slot name='background' 
+      <slot name='background'
+        hoverValue={hoverValue}
         xScale={xScale} 
         yScale={yScale}
         left={$leftPlot}
@@ -363,6 +364,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
+        hoverValue={hoverValue}
       ></slot>
     </g>
   {/if}
@@ -408,6 +410,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
+        hoverValue={hoverValue}
       ></slot>
     {/if}
   </svg>

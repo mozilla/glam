@@ -20,6 +20,7 @@ import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.
 
 import { firefoxVersionMarkers } from '../state/product-versions';
 
+import DefaultBody from './DefaultBody.svelte';
 import DataError from '../patterns/errors/DataError.svelte';
 
 // const getProbeViewType = (probeType, probeKind) => {
@@ -171,7 +172,7 @@ function handleBodySelectors(event) {
     <div class="graphic-body">
       <div class="graphic-body__content">
           {#if $dataset.key === 'DEFAULT_VIEW'}
-              <div>Telemetry dashboard default view goes here</div>
+              <DefaultBody />
           {:else if $dataset.data}
               {#await output}
                   running query
