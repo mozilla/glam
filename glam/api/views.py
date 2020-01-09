@@ -1,4 +1,4 @@
-from random import sample
+from random import shuffle
 
 from django.core.cache import caches
 from django.db.models import Q
@@ -101,7 +101,12 @@ def get_aggregations(**kwargs):
 
         record[sub_key]["data"] = data
         response[key] = record
-    return response
+
+    # Restructure data and remove keys only used for merging data.
+    return [
+        {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
+        for r in response.values()
+    ]
 
 
 @api_view(["POST"])
@@ -164,15 +169,7 @@ def aggregations(request):
     if not response:
         raise NotFound("No documents found for the given parameters")
 
-    # Strip out the merge keys when returning the response.
-    return Response(
-        {
-            "response": [
-                {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
-                for r in response.values()
-            ]
-        }
-    )
+    return Response({"response": response})
 
 
 @api_view(["GET"])
@@ -184,7 +181,7 @@ def probes(request):
 
 @api_view(["POST"])
 def random_probes(request):
-    n = request.data.get('n', 3)
+    n = request.data.get("n", 3)
     try:
         n = int(n)
     except ValueError:
@@ -195,21 +192,22 @@ def random_probes(request):
     )
     if n > len(probe_ids):
         raise ValidationError("Not enough probes to select `n` items.")
-    
-    probes = []
-    
-    randomized_probes = sample(probe_ids, len(probe_ids))
 
-    while len(probes) < n:
-        probe_id = randomized_probes.pop()
-        probe = Probe.objects.get(id=probe_id)
-        aggregations = get_aggregations(probe=probe.info['name'], channel='nightly', versions=['70'], aggregationLevel='version')
-        if len(aggregations):
-            aggregations = list(aggregations.values())[0]
+    shuffle(probe_ids)
+    probes = []
+
+    for id in probe_ids:
+        probe = Probe.objects.get(id=id)
+        aggregations = get_aggregations(
+            probe=probe.info["name"],
+            channel="nightly",
+            # TODO: Update to get latest version.
+            versions=["70"],
+            aggregationLevel="version",
+        )
+        if aggregations:
             probes.append({"data": aggregations, "info": probe.info})
-    
-    return Response(
-        {
-            "probes": probes
-        }
-    )
+        if n <= len(probes):
+            break
+
+    return Response({"probes": probes})
