@@ -92,7 +92,7 @@ h2 {
       {#each randomProbes.probes as { data, info }, i}
         <div class=probe-overview__probe in:fly={{ duration: 400, y: 5, delay: i * 35 }}>
           <a class=probe-sm href='#' on:click={() => {
-             store.setProbe(data.metadata.metric);
+             store.setProbe(data[0].metadata.metric);
             }}>
           <div 
             class=probe-small-multiple 
