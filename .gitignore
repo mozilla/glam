@@ -66,3 +66,6 @@ node_modules/
 # public bundles
 
 public/static/bundle.*
+
+# storybook data
+tests/data

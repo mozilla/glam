@@ -181,16 +181,24 @@
     --pantone-red-800: hsl(355, 100%, 18%);
     --pantone-red-900: hsl(355, 100%, 14%);
 
-    /* use mantis green for success states */
-    --mantis-green-100: hsl(110, 74%, 92%);
-    --mantis-green-200: hsl(110, 66%, 86%);
-    --mantis-green-300: hsl(110, 60%, 78%);
-    --mantis-green-400: hsl(110, 52%, 68%);
-    --mantis-green-500: hsl(110, 44%, 58%);
-    --mantis-green-600: hsl(110, 48%, 42%);
-    --mantis-green-700: hsl(110, 52%, 33%);
-    --mantis-green-800: hsl(110, 56%, 24%);
-    --mantis-green-900: hsl(110, 64%, 18%);
+    /* use pond green for success states */
+    --pond-green-100: #c7fadc;
+    --pond-green-150: #b5eece;
+    --pond-green-200: #a3e3c1;
+    --pond-green-250: #92d7b4;
+    --pond-green-300: #83cba9;
+    --pond-green-350: #74c09d;
+    --pond-green-400: #66b493;
+    --pond-green-450: #59a889;
+    --pond-green-500: #4d9d7f;
+    --pond-green-550: #429175;
+    --pond-green-600: #37866c;
+    --pond-green-650: #2e7a63;
+    --pond-green-700: #256e5a;
+    --pond-green-750: #1d6352;
+    --pond-green-800: #175749;
+    --pond-green-850: #114b40;
+    --pond-green-900: #0c4037;
 
     /* use bright yellows for warnings */
     --bright-yellow-100: hsl(53, 100%, 95%);

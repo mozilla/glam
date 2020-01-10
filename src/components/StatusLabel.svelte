@@ -21,7 +21,7 @@
 .status-label-success span {
   /* TODO: good candidate for semantic naming like --color-status-on */ 
   color: var(--mantis-green-800);
-  background-color: var(--mantis-green-200);
+  background-color: var(--pond-green-150);
 }
 
 .status-label-info span {
