@@ -252,7 +252,7 @@ export function isCategorical(probeType, probeKind) {
 }
 
 export function fetchDataForGLAM(params) {
-  return getProbeData(params, store.getState('token')).then(
+  return getProbeData(params, store.getState().token).then(
     (payload) => {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed
