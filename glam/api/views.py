@@ -198,16 +198,18 @@ def random_probes(request):
 
     for id in probe_ids:
         probe = Probe.objects.get(id=id)
-        aggregations = get_aggregations(
-            probe=probe.info["name"],
-            channel="nightly",
-            # TODO: Update to get latest version.
-            versions=["70"],
-            aggregationLevel="version",
-        )
-        if aggregations:
-            probes.append({"data": aggregations, "info": probe.info})
-        if n <= len(probes):
-            break
+        # do not proceed if the probe is a boolean scalar
+        if not (probe.info["type"] == 'scalar' and probe.info["kind"] == "boolean"):
+            aggregations = get_aggregations(
+                probe=probe.info["name"],
+                channel="nightly",
+                # TODO: Update to get latest version.
+                versions=["70"],
+                aggregationLevel="version",
+            )
+            if aggregations:
+                probes.append({"data": aggregations, "info": probe.info})
+            if n <= len(probes):
+                break
 
     return Response({"probes": probes})

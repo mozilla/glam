@@ -5,9 +5,7 @@ import { getRandomProbes } from '../state/api';
 import MarketingBlock from '../patterns/defaultview/MarketingBlock.svelte';
 import whichSmallMultiple from '../patterns/defaultview/sm-logic';
 import QuantileSmallMultiple from '../patterns/defaultview/Quantile.svelte';
-
-const data = getRandomProbes().then((d) => d);
-
+import ProportionSmallMultiple from '../patterns/defaultview/Proportion.svelte';
 </script>
 
 <style>
@@ -44,7 +42,6 @@ a.probe-sm:hover .probe-small-multiple {
 
 
 a.probe-sm:hover {
-  /* box-shadow: var(--depth-tiny); */
   text-decoration: none;
 }
 
@@ -82,17 +79,13 @@ h2 {
   margin-top: var(--space-2x);
 }
 
-.probe-small-multiple--proportion {
-  /* background-color: var(--digital-blue-100); */
-}
-
 </style>
 
 <div>
   <MarketingBlock />
   <div class=random-probe-view>
     <h2>Selected Probes</h2>
-  {#await data}
+  {#await getRandomProbes()}
     loading ...
   {:then randomProbes}
     <div class=probes-overview>
@@ -109,9 +102,16 @@ h2 {
               <QuantileSmallMultiple 
                 metricType={info.type}
                 metricKind={info.kind}
-                data={data}
+                probe={data[0]}
                 info={info}
               />
+            {:else if  whichSmallMultiple(info.type, info.kind) === 'proportion'}
+            <ProportionSmallMultiple 
+              metricType={info.type}
+              metricKind={info.kind}
+              probe={data[0]}
+              info={info}
+            />
             {/if}
           </div>
           <div class=probe-overview>
@@ -124,7 +124,7 @@ h2 {
                   {info.kind || ''}
                 </span>
             </div>
-            <div class="probe-overview__title">{data.metadata.metric}</div>
+            <div class="probe-overview__title">{data[0].metadata.metric}</div>
             <div class=probe-overview__etc>
               Nightly {info.versions.nightly[0]}-{info.versions.nightly[1]}
             </div>

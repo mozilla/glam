@@ -9,7 +9,7 @@ import Axis from '../../../components/data-graphics/guides/Axis.svelte';
 
 import { formatCount } from '../utils/formatters';
 
-export let data;
+export let probe;
 export let info;
 export let metricType;
 export let metricKind;
@@ -20,18 +20,18 @@ let container;
 let width;
 let height = 100;
 let dist;
-if (metricType === 'histogram' && '-summed-histogram' in data) {
-    dist = data['-summed-histogram'];
-  } else if (metricType === 'scalar' && '-avg' in data) {
-    dist = data['-avg'];
+if (metricType === 'histogram' && 'summed-histogram' in probe) {
+    dist = probe.data.find((d) => d.client_agg_type === 'summed-histogram');
+  } else if (metricType === 'scalar' && 'avg' in probe) {
+    dist = probe.data.find((d) => d.client_agg_type === 'avg');
   } else {
-    dist = data[Object.keys(data).filter((d) => d.includes('-'))[0]];
+    dist = probe.data[0];
 }
 
 let totalClients = tweened(0, { duration: 1000, easing });
 
-$: $totalClients = dist.data.total_users;
-let hist = dist.data.histogram;
+$: $totalClients = dist.total_users;
+let hist = dist.histogram;
 
 let xDomain = Object.keys(hist);
 let spr = tweened(1, { duration: 2000, delay: 1000, easing });
@@ -89,7 +89,8 @@ onMount(() => {
       <Axis side=bottom showBorder tickFormatter={formatCount} />
       <g style='font-size:11px;' >
         {#if hoverValue.x}
-          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={xScale(hoverValue.x)} text-anchor=middle  y={top - 4}>{formatCount(hoverValue.x)}</text>
+          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>{formatCount(hoverValue.x)}</text>
+          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatCount(hist[hoverValue.x])} clients</text>
         {/if}
         <!-- <text  fill=var(--cool-gray-600) text-anchor=end x={right}  y={top - 4}>{formatCount($totalClients)} clients </text> -->
       </g>
