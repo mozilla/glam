@@ -77,16 +77,16 @@ class TestRandomProbesApi:
     def test_response(self, client):
         self._make_partitions(versions=["70"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         Probe.objects.create(
-            key="foo", info={"kind": "count", "name": "foo", "labels": None}
+            key="foo", info={"kind": "count", "name": "foo", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         Probe.objects.create(
-            key="fum", info={"kind": "count", "name": "fum", "labels": None}
+            key="fum", info={"kind": "count", "name": "fum", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
@@ -105,10 +105,10 @@ class TestRandomProbesApi:
     def test_response_with_n(self, client):
         self._make_partitions(versions=["70"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
@@ -121,10 +121,10 @@ class TestRandomProbesApi:
     def test_n_too_large(self, client):
         self._make_partitions(versions=["70"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None}
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None}
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
