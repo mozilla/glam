@@ -97,8 +97,8 @@
 
     /* Shadow system */
 
-    --shadow: hsla(0,0%,0%, .2);
-    --lighter-shadow: hsla(0, 0%, 0%, .08);
+    --shadow: hsla(0, 0%, 0%, .2);
+    --lighter-shadow: rgba(37, 10, 10, 0.08);
     --depth-tiny: 0px var(--space-1q) var(--space-1h) var(--shadow);
     --depth-small: 0px var(--space-1h) var(--space-base) var(--shadow);
     --depth-medium: 0px var(--space-base) var(--space-2x) var(--shadow);

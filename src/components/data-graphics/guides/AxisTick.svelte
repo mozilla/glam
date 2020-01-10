@@ -18,6 +18,7 @@ export let color = 'var(--cool-gray-200)';
 
 let sideOffset;
 $: sideOffset = side === 'left' || side === 'top' ? -offset : offset;
+export let step = $mainScale.type === 'scaleBand' ? $mainScale.bandwidth() / 2 : 0;
 </script>
 
 <line
@@ -25,8 +26,8 @@ $: sideOffset = side === 'left' || side === 'top' ? -offset : offset;
   {...{
     [`${mainDim}2`]: $bodyDimension + sideOffset + tickDirection * length,
     [`${mainDim}1`]: $bodyDimension + sideOffset,
-    [`${secondaryDim}1`]: $mainScale(placement),
-    [`${secondaryDim}2`]: $mainScale(placement),
+    [`${secondaryDim}1`]: $mainScale(placement) + step,
+    [`${secondaryDim}2`]: $mainScale(placement) + step,
   }}
   stroke={color}
   stroke-width={width}

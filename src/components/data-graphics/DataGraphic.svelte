@@ -2,7 +2,7 @@
 import { setContext, getContext, onMount } from 'svelte';
 import { writable, derived } from 'svelte/store';
 import {
-  scalePoint, scaleLinear, scaleSymlog, scaleTime,
+  scalePoint, scaleLinear, scaleSymlog, scaleTime, scaleBand,
 } from 'd3-scale';
 
 export let data = getContext('data');
@@ -64,9 +64,12 @@ $: borders = [
   [bottomBorder, bottomBorderColor, bottomBorderThickness, bottomBorderOpacity, $leftPlot, $rightPlot, $bottomPlot, $bottomPlot],
 ];
 
-
-let xPadding = 0.5;
+export let xPadding = 0.5;
+export let xInnerPadding = xPadding;
+export let xOuterPadding = xPadding;
 export let yPadding = 0;
+export let yInnerPadding = yPadding;
+export let yOuterPadding = yPadding;
 
 // if x is a function, use that to get xMin / xMax.
 // if xMin / xMax is a function, use that to calculate xMin / xMax.
@@ -133,6 +136,7 @@ setContext('bottomPlot', bottomPlot);
 function getScaleFunction(type) {
   if (type === 'time') return scaleTime;
   if (type === 'scalePoint') return scalePoint;
+  if (type === 'scaleBand') return scaleBand;
   if (type === 'numeric' || type === 'linear') return scaleLinear;
   if (type === 'log') return scaleSymlog;
   return scalePoint;
@@ -149,6 +153,9 @@ function createXPointScale(values) {
   if (xType === 'scalePoint') {
     scale = scale.padding(xPadding);
   }
+  if (xType === 'scaleBand') {
+    scale = scale.paddingInner(xInnerPadding).paddingOuter(xOuterPadding);
+  }
   scale.type = xType;
   return scale;
 }
@@ -160,6 +167,9 @@ function createYPointScale(values) {
   let scale = scaleFunction().domain(values).range([$bottomPlot, $topPlot]);
   if (yType === 'scalePoint') {
     scale = scale.padding(yPadding);
+  }
+  if (yType === 'scaleBand') {
+    scale = scale.paddingInner(yInnerPadding).paddingOuter(yOuterPadding);
   }
   scale.type = yType;
   return scale;
@@ -230,6 +240,10 @@ function createMouseStore(svgElem) {
         const step = xs.step();
         const xCandidates = xs.domain()
           .filter((d) => (xs(d) - step / 2) < actualX && xs(d) < $rightPlot);
+        x = xCandidates[xCandidates.length - 1];
+      } else if (xs.type === 'scaleBand') {
+        const xCandidates = xs.domain()
+          .filter((d) => xs(d) < actualX && xs(d) < $rightPlot);
         x = xCandidates[xCandidates.length - 1];
       } else {
         x = xs.invert(actualX);
@@ -339,7 +353,8 @@ $: if (dataGraphicMounted) {
 
     {#if dataGraphicMounted}
     <g>
-      <slot name='background' 
+      <slot name='background'
+        hoverValue={hoverValue}
         xScale={xScale} 
         yScale={yScale}
         left={$leftPlot}
@@ -363,6 +378,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
+        hoverValue={hoverValue}
       ></slot>
     </g>
   {/if}
@@ -408,6 +424,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
+        hoverValue={hoverValue}
       ></slot>
     {/if}
   </svg>

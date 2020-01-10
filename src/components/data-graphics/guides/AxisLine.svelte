@@ -12,9 +12,11 @@ export let color = 'var(--cool-gray-300)';
 export let width = 1;
 export let offset = 0;
 
+let step = 0;
+// if ($mainScale.type === 'scalePoint') step = $mainScale.step();
+if ($mainScale.type === 'scaleBand') step = $mainScale.bandwidth();
 $: if (!start) start = $mainScale.domain()[0]; //eslint-disable-line
 $: if (!end) end =  $mainScale.domain().slice(-1)[0]; //eslint-disable-line
-
 let sideOffset = (side === 'left' || side === 'top') ? -offset : offset;
 
 </script>
@@ -22,7 +24,7 @@ let sideOffset = (side === 'left' || side === 'top') ? -offset : offset;
 <line 
 {...{
   [`${secondaryDim}1`]: $mainScale(start),
-  [`${secondaryDim}2`]: $mainScale(end),
+  [`${secondaryDim}2`]: $mainScale(end) + step,
   [`${mainDim}1`]: $bodyDimension + sideOffset,
   [`${mainDim}2`]: $bodyDimension + sideOffset,
 }}

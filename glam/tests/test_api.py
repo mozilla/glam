@@ -28,32 +28,109 @@ class TestRandomProbesApi:
     def setup_class(cls):
         cls.url = reverse("v1-random-probes")
 
-    def test_response(self, client):
-        Probe.objects.create(key="fee", info={"kind": "count"})
-        Probe.objects.create(key="fii", info={"kind": "count"})
-        Probe.objects.create(key="foo", info={"kind": "count"})
-        Probe.objects.create(key="fum", info={"kind": "count"})
+    def _make_partitions(self, versions=None):
+        with connection.cursor() as cursor:
+            for version in versions:
+                cursor.execute(
+                    f"""
+                    CREATE TABLE aggregation_nightly_{version}
+                    PARTITION OF aggregation_nightly
+                    FOR VALUES IN ('{version}')
+                    """
+                )
 
-        resp = client.get(self.url).json()
-        assert len(resp["probes"].keys()) == 3
+    def _create_aggregation(self, name="gc_ms", data=None, multiplier=1.0):
+        # Create 1 histogram and 1 percentile record.
+        _data = {
+            "channel": constants.CHANNEL_NIGHTLY,
+            "version": "70",
+            "os": None,
+            "build_id": None,
+            "agg_type": constants.AGGREGATION_HISTOGRAM,
+            "metric": name,
+            "metric_key": None,
+            "client_agg_type": "summed-histogram",
+            "metric_type": "histogram-exponential",
+            "total_users": 111 * multiplier,
+            "data": [
+                {"key": "0", "value": 10.00001111 * multiplier},
+                {"key": "1", "value": 20.00002222 * multiplier},
+                {"key": "2", "value": 30.00003333 * multiplier},
+                {"key": "3", "value": 40.00004444 * multiplier},
+            ],
+        }
+        if data:
+            _data.update(data)
+        Aggregation.objects.create(**_data)
+        _data.update(
+            {
+                "agg_type": constants.AGGREGATION_PERCENTILE,
+                "data": [
+                    {"key": "5", "value": 5 * multiplier},
+                    {"key": "50", "value": 50 * multiplier},
+                    {"key": "95", "value": 95 * multiplier},
+                ],
+            }
+        )
+        Aggregation.objects.create(**_data)
+
+    def test_response(self, client):
+        self._make_partitions(versions=["70"])
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        Probe.objects.create(
+            key="foo", info={"kind": "count", "name": "foo", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        Probe.objects.create(
+            key="fum", info={"kind": "count", "name": "fum", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        self._create_aggregation(name="fee")
+        self._create_aggregation(name="fii")
+        self._create_aggregation(name="foo")
+        self._create_aggregation(name="fum")
+
+        resp = client.post(self.url).json()
+        assert len(resp["probes"]) == 3
 
         # Test that a non-integer defaults to 3
-        resp = client.get(self.url, {"n": "abc"}).json()
-        assert len(resp["probes"].keys()) == 3
+        resp = client.post(
+            self.url, data={"n": "abc"}, content_type="application/json"
+        ).json()
+        assert len(resp["probes"]) == 3
 
     def test_response_with_n(self, client):
-        Probe.objects.create(key="fee", info={"kind": "count"})
-        Probe.objects.create(key="fii", info={"kind": "count"})
+        self._make_partitions(versions=["70"])
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        self._create_aggregation(name="fee")
+        self._create_aggregation(name="fii")
 
-        resp = client.get(self.url, {"n": 1}).json()
-        assert len(resp["probes"].keys()) == 1
+        resp = client.post(
+            self.url, data={"n": 1}, content_type="application/json"
+        ).json()
+        assert len(resp["probes"]) == 1
 
     def test_n_too_large(self, client):
-        Probe.objects.create(key="fee", info={"kind": "count"})
-        Probe.objects.create(key="fii", info={"kind": "string"})
+        self._make_partitions(versions=["70"])
+        Probe.objects.create(
+            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        Probe.objects.create(
+            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+        )
+        self._create_aggregation(name="fee")
+        self._create_aggregation(name="fii")
 
         # We want 2, but only 1 is left after query exclusions.
-        resp = client.get(self.url, {"n": 2})
+        resp = client.post(self.url, data={"n": 3}, content_type="application/json")
         assert resp.status_code == 400
 
 

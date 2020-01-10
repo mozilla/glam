@@ -30,7 +30,8 @@ function place(v, dim = mainDim) {
     + ((side === 'top' || side === 'bottom') ? tickDirection * fontSizeCorrector : 0)
     + ((side === 'left' || side === 'top') ? -offset : offset);
   }
-  return $mainScale(v);
+  let step = $mainScale.type === 'scaleBand' ? $mainScale.bandwidth() / 2 : 0;
+  return $mainScale(v) + step;
 }
 
 // let's set alignment dynamically as a dx property
