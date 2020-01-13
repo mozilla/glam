@@ -93,6 +93,17 @@ function handleBodySelectors(event) {
 
 <style>
 
+h2 {
+  margin: 0;
+  margin-bottom: var(--space-4x);
+  color: var(--cool-gray-600);
+}
+
+h2 span {
+  font-weight: normal;
+  color: var(--cool-gray-750)
+}
+
 .graphic-body-container {
   display: grid;
   grid-template-columns: auto min-content;
@@ -110,9 +121,10 @@ function handleBodySelectors(event) {
   grid-column-gap: var(--space-4x);
   align-items: start;
   background-color: var(--cool-gray-100);
+  min-height: var(--header-height);
 }
 
-.graphic-body__graphic-header h2 {
+/* .graphic-body__graphic-header h2 {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -121,7 +133,7 @@ function handleBodySelectors(event) {
   display: grid;
   align-items: center;
   padding-left: var(--space-4x);
-}
+} */
 
 .graphic-body__content {
   box-sizing: border-box; 
@@ -160,13 +172,13 @@ function handleBodySelectors(event) {
 <div bind:this={container} class="graphic-body-container">
 
     <div class="graphic-body__graphic-header">
-    {#if $store.probe.name}
+    <!-- {#if $store.probe.name}
         <h2 class="heading--03">
           {$store.probe.name}
         </h2>
     {:else}
         <h2 class="heading--04">Telemetry Prototype</h2>
-    {/if}
+    {/if} -->
     </div>
 
     <div class="graphic-body">
@@ -191,7 +203,9 @@ function handleBodySelectors(event) {
                               bucketSortOrder={data.bucketSortOrder}
                               on:selection={handleBodySelectors}
                               aggregationLevel={$store.aggregationLevel}
-                          />
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </ProportionExplorerView>
                       {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
                           <QuantileExplorerView markers={$firefoxVersionMarkers}
                               data={data.data}
@@ -200,7 +214,9 @@ function handleBodySelectors(event) {
                               percentiles={$store.visiblePercentiles}
                               on:selection={handleBodySelectors}
                               aggregationLevel={$store.aggregationLevel}
-                          />
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </QuantileExplorerView>
                       {:else}
                         <div style="width: 100%">
                           <pre>
