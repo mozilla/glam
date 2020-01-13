@@ -88,7 +88,7 @@ h2 {
 <div>
   <MarketingBlock />
   <div class=random-probe-view>
-    <h2>Selected Probes</h2>
+    <h2>Explore</h2>
   {#await getRandomProbes()}
     <div class=probes-overview>
       {#each Array.from({ length: 9 }).fill(null) as _, i}
