@@ -14,6 +14,10 @@ export let total;
 export let referenceCount;
 export let isReference;
 export let hovered = false;
+export let parent;
+
+export let scrollLeft;
+export let scrollTop;
 
 const countFormat = format(',.0f');
 
@@ -26,8 +30,15 @@ $: referenceSpring.set(referenceCount);
 
 let audienceXScale;
 let mounted = false;
-onMount(() => { mounted = true; });
+
+let container;
+
+onMount(() => {
+  mounted = true;
+});
+
 let Y = 4;
+
 </script>
 
 <style>
@@ -39,9 +50,16 @@ let Y = 4;
   padding-right: var(--space-1h);
 }
 
+.data-cell--fixed {
+  background-color: white;
+}
+
 </style>
 
-<td class="data-cell data-cell--secondary">
+<td 
+  class="data-cell data-cell--secondary data-cell--fixed" bind:this={container}
+  style="transform: translateX({scrollLeft}px);"
+>
     <div>
         <div class='audience-size'>
             {countFormat($audienceSize)}

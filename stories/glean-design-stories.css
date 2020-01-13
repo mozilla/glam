@@ -6,7 +6,7 @@ body  {
   width: calc(100vw - var(--increment) * 3);
   margin: auto;
   /* margin-top: var(--space-4x); */
-  min-height: 100vh;
+  min-height: 80vh;
   background-color: white;
   padding: var(--space-6x);
   border: 1px solid  var(--line-gray-01);

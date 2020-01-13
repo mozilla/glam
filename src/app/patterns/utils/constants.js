@@ -23,13 +23,13 @@ export const explorerComparisonSmallMultiple = {
 // for the table views.
 
 export const comparisonSmallMultiple = {
-  width: 250,
+  width: 200,
   height: 50,
   left: 20,
   right: 20,
 };
 
 export const proportionSmallMultiple = {
-  width: 130,
+  width: 80,
   height: 16,
 };

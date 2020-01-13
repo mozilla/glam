@@ -47,7 +47,7 @@ let probes = [
   },
 ];
 
-let which = 0;
+let which = 3;
 let currentPage = 0;
 
 function updatePage(event) {

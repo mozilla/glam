@@ -622,6 +622,13 @@ main .details {
     margin-right: var(--space-1h);
 }
 
+
+.data-table {
+    /* width: 100%; */
+    border-spacing: 0px;
+    /* position: relative; */
+    }
+
 .data-cell {
     font-size: var(--text-02);
     text-align: right;
@@ -629,7 +636,7 @@ main .details {
     padding-left: var(--space-2x);
     padding-right: var(--space-2x);
 }
-  
+
 tr .data-cell:first-child {
     text-align: left;
 }
@@ -642,13 +649,73 @@ tr .data-cell:hover {
     background-color: var(--cool-gray-200);
 }
 
-td.data-cell--main {
-    min-width: var(--space-16x);
+.data-table__header-cell {
+    border-bottom: 2px solid var(--cool-gray-200);
+    background-color: white;
+    text-align: right;
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    vertical-align: end;
+    font-size: var(--text-015);
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--cool-gray-500);
+    padding-top: var(--space-base);
+    /* z-index: 100; */
+    /* padding-top: var(--space-2x); */
+    }
+    
+.data-table__header-cell--text {
+    padding-bottom: var(--space-base);
+}
+
+.data-table__header-cell--percentile {
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+}
+
+.data-cell--size-min {
+    min-width: 0px;
+}
+
+.data-cell--size-tiny {
+    min-width: var(--space-4x);
+}
+
+.data-cell--size-small {
+    min-width: var(--space-6x);
+}
+.data-cell--size-medium {
+    min-width: var(--space-12x);
+}
+.data-cell--size-large {
+    min-width: var(--space-24x);
+}
+
+.data-cell--right-border {
+    border-right: 2px solid var(--cool-gray-200);
+}
+
+.data-cell--left-border {
+    border-left: 2px solid var(--cool-gray-200);
+}
+
+.data-cell--top-border {
+    border-top: 2px solid var(--cool-gray-200);
+}
+
+.data-cell--bottom-border {
+    border-bottom: 2px solid var(--cool-gray-200);
+}
+
+.data-cell--frozen {
+    background-color: white;
+    z-index: 100;
 }
 
 td.data-cell--secondary {
     border-right: 2px solid var(--cool-gray-200);
-    min-width: var(--space-16x);
+    min-width: var(--space-12x);
 }
 
 .data-cell--graphic {
