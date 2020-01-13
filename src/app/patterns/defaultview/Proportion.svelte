@@ -96,7 +96,7 @@ onMount(() => {
       {#if metricKind !== 'categorical'}
         <Axis side=bottom showBorder tickCount={tickCount}  />
       {:else}
-        <Axis side=bottom showBorder  />
+        <Axis side=bottom showBorder showLabels={false} showTicks={false}  />
       {/if}
       <g style='font-size:11px;' >
         {#if hoverValue.x}
@@ -107,7 +107,6 @@ onMount(() => {
             {formatPercent(perc(hoverValue.x))}
           </text>
         {/if}
-        <!-- <text  fill=var(--cool-gray-600) text-anchor=end x={right}  y={top - 4}>{formatCount($totalClients)} clients </text> -->
       </g>
     </g>
   </DataGraphic>
