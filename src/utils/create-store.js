@@ -41,11 +41,16 @@ export function createStore(initialStore) {
     return (...args) => dispatch(func(...args));
   }
 
+  function reset() {
+    INTERNAL_STORE.set(initialStore);
+  }
+
   return {
     dispatch,
     connect,
     subscribe: INTERNAL_STORE.subscribe,
     getState,
     setField,
+    reset,
   };
 }
