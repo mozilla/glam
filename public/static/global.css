@@ -701,7 +701,6 @@ tr td.data-cell--graphic:hover {
     margin:0;
     font-size: var(--text-02);
     font-weight: 300;
-    /* text-transform: uppercase; */
     color: var(--cool-gray-500);
     display: grid;
     grid-auto-flow: column;
@@ -709,8 +708,6 @@ tr td.data-cell--graphic:hover {
     justify-items: center;
     grid-column-gap: var(--space-1h);
     justify-content: start;
-    
-    /* text-transform: uppercase; */
 }
 
 .data-graphic__element-title__icon {
@@ -718,6 +715,5 @@ tr td.data-cell--graphic:hover {
     display: grid;
     align-items: center;
     justify-items: center;
-    /* align-items: end; */
 }
 
