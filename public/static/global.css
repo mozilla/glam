@@ -632,9 +632,6 @@ main .details {
 .data-cell {
     font-size: var(--text-02);
     text-align: right;
-    padding: var(--space-base);
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
 }
 
 tr .data-cell:first-child {
@@ -653,17 +650,22 @@ tr .data-cell:hover {
     border-bottom: 2px solid var(--cool-gray-200);
     background-color: white;
     text-align: right;
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
+
     vertical-align: end;
     font-size: var(--text-015);
     text-transform: uppercase;
     font-weight: 600;
     color: var(--cool-gray-500);
-    padding-top: var(--space-base);
+    
     /* z-index: 100; */
     /* padding-top: var(--space-2x); */
-    }
+}
+
+.data-table__header-cell--has-padding {
+    padding-top: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+}
     
 .data-table__header-cell--text {
     padding-bottom: var(--space-base);
@@ -672,6 +674,12 @@ tr .data-cell:hover {
 .data-table__header-cell--percentile {
     padding-left: var(--space-base);
     padding-right: var(--space-base);
+}
+
+.data-cell--has-padding {
+    padding: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
 }
 
 .data-cell--size-min {
