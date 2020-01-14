@@ -4,6 +4,7 @@ import { onMount, onDestroy } from 'svelte';
 let ref;
 let portal;
 let mounted = false;
+
 onMount(() => {
   portal = document.createElement('div');
   portal.className = 'portal';
@@ -19,9 +20,8 @@ onDestroy(() => {
 </script>
 
 <style>
-    .portal-container { display: none; }
-
-  </style>
+  .portal-container { display: none; }
+</style>
 
 <div class="portal-container">
   <div bind:this={ref}>

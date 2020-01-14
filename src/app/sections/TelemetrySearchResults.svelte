@@ -95,14 +95,15 @@ $: if (parentElement && windowWidth) {
   --list-border-color: gainsboro;
   --list-border: 1px solid var(--list-border-color);
   max-height: calc(100vh - var(--header-height) * 3);
-  border:1px solid var(--line-gray-02);
+  border: 1px solid var(--line-gray-02);
   background-color: white;
   max-width: calc(var(--increment) * 16);
   box-shadow: var(--depth-5l);
   border-bottom-right-radius: var(--border-radius-base);
   border-bottom-left-radius: var(--border-radius-base);
-  position: absolute;
-  left:0;top:0;
+  position: fixed;
+  left: 0;
+  top: var(--increment);
   overflow: hidden;
 }
 
@@ -205,11 +206,10 @@ li {
 {#if $store.searchIsActive && $store.searchQuery.length}
   <div 
   id="telemetry-search-results"
-  style="left: calc({x}px + var(--space-base)); top: {y}px; width:
-  calc({width}px - var(--space-base));"
+  style="left: calc({x}px + var(--space-base)); width: calc({width}px - var(--space-base));"
     transition:fly={{ duration: 20, y: -10 }}
-    class=telemetry-results>
-      <div class=header-container>
+    class="telemetry-results">
+      <div class="header-container">
           {#if $searchResults.total}
           <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
               <div>found {$searchResults.results.length} of
@@ -217,7 +217,7 @@ li {
               </div>
           </div>
           {:else}
-          <div class=header out:fly={{ x: 5, duration: 200 }}>
+          <div class="header" out:fly={{ x: 5, duration: 200 }}>
               <LineSegSpinner color={'var(--subhead-gray-02)'} />
               <div>
                   getting the probes – one second!
