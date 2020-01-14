@@ -33,8 +33,8 @@ class TestRandomProbesApi:
             for version in versions:
                 cursor.execute(
                     f"""
-                    CREATE TABLE aggregation_nightly_{version}
-                    PARTITION OF aggregation_nightly
+                    CREATE TABLE glam_aggregation_nightly_{version}
+                    PARTITION OF glam_aggregation_nightly
                     FOR VALUES IN ('{version}')
                     """
                 )
@@ -61,6 +61,7 @@ class TestRandomProbesApi:
         }
         if data:
             _data.update(data)
+        print(_data)
         Aggregation.objects.create(**_data)
         _data.update(
             {
@@ -155,11 +156,12 @@ class TestAggregationsApi:
         _data = {
             "channel": constants.CHANNEL_NIGHTLY,
             "version": "70",
-            "os": None,
-            "build_id": None,
+            "os": "*",
+            "build_id": "*",
+            "process": 0,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
             "metric": "gc_ms",
-            "metric_key": None,
+            "metric_key": "",
             "client_agg_type": "summed-histogram",
             "metric_type": "histogram-exponential",
             "total_users": 111 * multiplier,
