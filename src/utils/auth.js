@@ -16,6 +16,7 @@ async function configureClient() {
     domain: config.domain,
     client_id: config.clientID,
     audience: config.audience,
+    scope: config.scope,
   });
 }
 

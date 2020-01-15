@@ -34,9 +34,11 @@ class OIDCTokenAuthentication(authentication.BaseAuthentication):
         if token:
             payload = self.verify_token(token)
             if payload:
-                return (TokenUser, {"scope": "read:foo"})
+                scopes = payload.get("scope", "").split(" ")
+                if "read:aggregates" in scopes:
+                    return (TokenUser(), "auth0")
 
-        return (AnonymousUser(), {"scope": None})
+        return (AnonymousUser(), None)
 
     def authenticate_header(self, request):
         return 'Bearer realm="{}"'.format(self.www_authenticate_realm)

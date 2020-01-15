@@ -5,7 +5,6 @@ from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
-from configurations import values
 
 from glam.api import constants
 from glam.api.models import Aggregation, Probe
@@ -26,7 +25,7 @@ def get_aggregations(request, **kwargs):
         )
 
     # If release channel, make sure the user is authenticated.
-    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
+    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_BETA]:
         if not request.user.is_authenticated:
             raise PermissionDenied()
 
@@ -181,20 +180,6 @@ def aggregations(request):
 def probes(request):
     return Response(
         {"probes": {probe.key: probe.info for probe in Probe.objects.all()}}
-    )
-
-
-@api_view(["GET"])
-def front_end_auth_config(request):
-    return Response(
-        {
-            "domain": values.Value(
-                environ_name="FRONT_END_AUTH_DOMAIN", environ_prefix=None
-            ),
-            "clientID": values.Value(
-                environ_name="FRONT_END_AUTH_CLIENT_ID", environ_prefix=None
-            ),
-        }
     )
 
 
