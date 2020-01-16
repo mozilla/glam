@@ -33,16 +33,16 @@ def get_aggregations(**kwargs):
     dimensions = [
         Q(metric=kwargs["probe"]),
         Q(channel=CHANNEL_IDS[kwargs["channel"]]),
-        Q(version__in=map(str, kwargs["versions"])),
-        Q(os=kwargs.get("os")),
+        Q(version__in=list(map(str, kwargs["versions"]))),
+        Q(os=kwargs.get("os") or "*"),
     ]
-    aggregation_level = kwargs["aggregationLevel"]
 
+    aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        dimensions.append(Q(build_id=None))
+        dimensions.append(Q(build_id="*"))
     elif aggregation_level == "build_id":
-        dimensions.append(~Q(build_id=None))
+        dimensions.append(~Q(build_id="*"))
 
     result = Aggregation.objects.filter(*dimensions)
 
@@ -207,7 +207,7 @@ def random_probes(request):
                 probe=probe.info["name"],
                 channel="nightly",
                 # TODO: Update to get latest version.
-                versions=["70"],
+                versions=["72"],
                 aggregationLevel="version",
             )
             if aggregations:

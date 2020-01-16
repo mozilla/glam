@@ -10,8 +10,7 @@ from google.cloud import bigquery, storage
 BQ_SOURCE = "moz-fx-data-shared-prod.telemetry.client_probe_counts"
 PRODUCT_DETAILS_URL = "https://product-details.mozilla.org/1.0/firefox_versions.json"
 NUM_VERSIONS = 3
-# TODO: Change this to the bucket that's part of the project.
-GCS_BUCKET = "mdv2-export"
+GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 
 
 class Command(BaseCommand):
@@ -86,7 +85,6 @@ class Command(BaseCommand):
 
     def extract_tables(self, channel, versions):
         print(f"[{channel}] Executing query.")
-        # TODO: Remove LIMIT after we have destination table space.
         # TODO: Remove de-duping after fixed upstream.
         # TODO: Update process in SELECT when process is added upstream.
         query = """
@@ -135,14 +133,15 @@ class Command(BaseCommand):
             SELECT * EXCEPT(rank)
             FROM duped
             WHERE rank = 1
-            LIMIT 100000
         """.format(
             table=BQ_SOURCE,
             channel=channel,
             versions="{}".format(", ".join(["{!r}".format(v) for v in versions])),
         )
         query_config = bigquery.QueryJobConfig()
-        # query_config.allow_large_results = True
+        query_config.allow_large_results = True
+        query_config.destination = f"moz-fx-data-shared-prod.analysis.glam_{channel}"
+        query_config.write_disposition = bigquery.job.WriteDisposition.WRITE_TRUNCATE
         job1 = self.bq_client.query(query, job_config=query_config)
 
         result = job1.result()
@@ -153,7 +152,6 @@ class Command(BaseCommand):
                     channel=channel, n=result.total_rows
                 )
             )
-            # filename = f"gs://glam-dev-bespoke-nonprod-dataops-mozgcp-net/{channel}-*.csv"
             filename = f"gs://{GCS_BUCKET}/{channel}-*.csv"
             extract_config = bigquery.ExtractJobConfig()
             extract_config.destination_format = bigquery.DestinationFormat.CSV
