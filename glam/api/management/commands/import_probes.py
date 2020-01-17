@@ -95,7 +95,7 @@ class Command(BaseCommand):
         key = probe["key"]
         info = {
             "name": name,
-            "apiName": name,
+            "apiName": key,
             "description": latest_history["description"],
             "type": probe["type"],
             "kind": latest_history["details"].get("kind"),
