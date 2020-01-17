@@ -42,7 +42,7 @@ $: $t = 1;
 
 
 .marketing-block {
-  padding: var(--space-4x);
+  padding: var(--space-2x);
     background: linear-gradient(to top, white, transparent), url('bg.jpg');
     background-position: top right -100px;
   background-repeat: no-repeat;
