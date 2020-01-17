@@ -10,7 +10,8 @@ import { createCatColorMap } from '../../components/data-graphics/utils/color-ma
 
 import CONFIG from '../config.json';
 
-import { byKeyAndAggregation } from '../utils/probe-utils';
+import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -188,7 +189,6 @@ function paramsAreValid(params) {
     && probeSelected(params.probe);
 }
 
-const cache = {};
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
@@ -273,43 +273,68 @@ export function fetchDataForGLAM(params) {
   );
 }
 
-export const dataset = derived(store, ($store) => {
+function intersection(a, b) {
+  const aSet = new Set(a);
+  const bSet = new Set(b);
+  return new Set(
+    [...a].filter((x) => bSet.has(x)),
+  );
+}
+
+export function updateStoreAfterDataIsReceived({ data }) {
+  const st = store.getState();
+  const viewType = getProbeViewType(st.probe.type, st.probe.kind);
+  const isCategoricalTypeProbe = viewType === 'categorical';
+  let etc = {};
+  if (isCategoricalTypeProbe) {
+    etc = extractBucketMetadata(data);
+  } else {
+    // always reset quantile buckets if a new data fetch occurs.
+    etc.initialBuckets = [5, 25, 50, 75, 95];
+  }
+
+  // if the proposed initial buckets have no overlap, reset activeBuckets.
+  // if (st.activeBuckets.length === 0 || intersection(st.activeBuckets, etc.initialBuckets).size !== st.activeBuckets.length) {
+  store.setField('activeBuckets', etc.initialBuckets);
+  // }
+  // store.setField('applicationStatus', 'ACTIVE');
+  return { data, viewType, ...etc };
+}
+
+const cache = {};
+let previousQuery;
+
+export const dataset = derived(store, ($store, set) => {
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
-  // invalid parameters, probe selected.
+  // // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    store.setField('dashboardMode', message);
+    // store.setField('dashboardMode', message);
     return message;
   }
-  // FIXME probe update: we should not have to check for probe description
-  // but for now, we will, since the data API does not return the correct
-  // probe information and we will need to wait for the probe API
-  // to give us
 
-  // no probe selected.
+  // // no probe selected.
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-    if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-      store.setField('dashboardMode', message);
-    }
+    // if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
+    //   store.setField('dashboardMode', message);
+    // }
     return message;
   }
-  // store.setField('dashboardMode', datasetResponse('INFO', 'LOADING'));
-
 
   if (!(qs in cache)) {
     cache[qs] = fetchDataForGLAM(params, $store);
   }
 
-  return {
-    level: 'SUCCESS',
-    key: 'EXPLORER',
-    data: cache[qs],
-    queryKey: qs,
-    robeType: `${$store.probe.type}-${$store.probe.kind}`,
-  };
+  // compare the previousQuery to the current one.
+  // if the actual query params have changed, let's update the
+  // data set.
+  if (previousQuery !== qs) {
+    previousQuery = qs;
+    set(cache[qs].then(updateStoreAfterDataIsReceived));
+  }
 });
 
 export const currentQuery = derived(store, ($store) => {

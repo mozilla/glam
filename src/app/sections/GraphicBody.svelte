@@ -8,7 +8,7 @@ import { fade, fly } from 'svelte/transition';
 import { derived } from 'svelte/store';
 
 import {
-  store, dataset, extractBucketMetadata,
+  store, dataset,
 } from '../state/store';
 
 import { getProbeViewType } from '../utils/probe-utils';
@@ -50,29 +50,27 @@ const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.prob
 
 let key;
 
-$: if (
-  $store.probe.name !== probeName
-  && $dataset.queryKey !== key
-  && $temporaryViewTypeStore) {
-  key = $dataset.queryKey;
-  output = $dataset.data.then(
-    // ({ data, probeType, probeKind }) => {
-    ({ data }) => {
-      const viewType = $temporaryViewTypeStore; // getProbeViewType(probeType, probeKind); // FIXME!!!
-      const isCategorical = viewType === 'categorical';
-      // const isCategoricalData = isCategorical(probeType, probeKind);
-      let etc = {};
-      if (isCategorical) {
-        etc = extractBucketMetadata(data);
-        if ($store.applicationStatus !== 'INITIALIZING') {
-          store.setField('activeBuckets', etc.initialBuckets);
-        }
-      }
-      store.setField('applicationStatus', 'ACTIVE');
-      return { data, viewType, ...etc };
-    },
-  );
-}
+// $: if (
+//   $store.probe.name !== probeName
+//   && $dataset.queryKey !== key
+//   && $temporaryViewTypeStore) {
+//   key = $dataset.queryKey;
+//   output = $dataset.data.then(
+//     ({ data }) => {
+//       const viewType = $temporaryViewTypeStore;
+//       const isCategorical = viewType === 'categorical';
+//       let etc = {};
+//       if (isCategorical) {
+//         etc = extractBucketMetadata(data);
+//         if ($store.applicationStatus !== 'INITIALIZING') {
+//           store.setField('activeBuckets', etc.initialBuckets);
+//         }
+//       }
+//       store.setField('applicationStatus', 'ACTIVE');
+//       return { data, viewType, ...etc };
+//     },
+//   );
+// }
 
 // FIXME: remove this once the dataset + API are fixed.
 
@@ -177,7 +175,7 @@ h2 span {
           {#if $store.appView === 'DEFAULT'}
               <DefaultBody />
           {:else if $store.appView === 'PROBE'}
-              {#await output}
+              {#await $dataset}
                   running query
               {:then data}
                   <div in:fade>
@@ -210,9 +208,9 @@ h2 span {
                         </QuantileExplorerView>
                       {:else}
                         <div style="width: 100%">
-                          <pre>
+                          <!-- <pre>
                               {JSON.stringify(data, null, 2)}
-                          </pre>
+                          </pre> -->
                         </div>
                       {/if}
                   </div>
@@ -222,7 +220,7 @@ h2 span {
                 </div>
               {/await}
           {:else}
-              <div>{$dataset.key}</div>
+              <div>spinning</div>
           {/if}
           
       </div>
