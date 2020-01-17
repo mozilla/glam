@@ -76,7 +76,6 @@ $: if (
 
 // FIXME: remove this once the dataset + API are fixed.
 
-let container;
 let width;
 
 function handleBodySelectors(event) {
@@ -169,23 +168,15 @@ h2 span {
 
 <svelte:window bind:innerWidth={width} />
 
-<div bind:this={container} class="graphic-body-container">
+<div class="graphic-body-container">
 
-    <div class="graphic-body__graphic-header">
-    <!-- {#if $store.probe.name}
-        <h2 class="heading--03">
-          {$store.probe.name}
-        </h2>
-    {:else}
-        <h2 class="heading--04">Telemetry Prototype</h2>
-    {/if} -->
-    </div>
+    <div class="graphic-body__graphic-header"></div>
 
     <div class="graphic-body">
       <div class="graphic-body__content">
-          {#if $dataset.key === 'DEFAULT_VIEW'}
+          {#if $store.appView === 'DEFAULT'}
               <DefaultBody />
-          {:else if $dataset.data}
+          {:else if $store.appView === 'PROBE'}
               {#await output}
                   running query
               {:then data}
@@ -236,7 +227,7 @@ h2 span {
           
       </div>
 
-      {#if $dataset.data}
+      {#if $store.appView === 'PROBE'}
         <div class="graphic-body__details">
           <ProbeDetails />
         </div>

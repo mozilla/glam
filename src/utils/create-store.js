@@ -41,7 +41,7 @@ export function createStore(initialStore) {
     return (...args) => dispatch(func(...args));
   }
 
-  function reset() {
+  function reinitialize() {
     INTERNAL_STORE.set(initialStore);
   }
 
@@ -51,6 +51,6 @@ export function createStore(initialStore) {
     subscribe: INTERNAL_STORE.subscribe,
     getState,
     setField,
-    reset,
+    reinitialize,
   };
 }

@@ -97,6 +97,7 @@ const initialState = {
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
+  appView: getFromQueryString('probe') === null ? 'DEFAULT' : 'PROBE',
 };
 
 export const store = createStore(initialState);
@@ -105,6 +106,12 @@ store.setProbe = (name) => {
   // get matching probe heree
   const probe = get(probeSet).find((d) => d.name === name);
   store.setField('probe', probe);
+  store.setField('appView', 'PROBE');
+};
+
+store.reset = () => {
+  store.reinitialize();
+  store.setField('appView', 'DEFAULT');
 };
 
 export const resetFilters = () => {
@@ -270,29 +277,35 @@ export const dataset = derived(store, ($store) => {
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
+  // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
     store.setField('dashboardMode', message);
-    return datasetResponse(message);
+    return message;
   }
   // FIXME probe update: we should not have to check for probe description
   // but for now, we will, since the data API does not return the correct
   // probe information and we will need to wait for the probe API
   // to give us
-  if (!probeSelected($store.probe.name) || (probeSelected($store.probe.name) && !$store.probe.description)) {
+
+  // no probe selected.
+  if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
       store.setField('dashboardMode', message);
     }
     return message;
   }
+  // store.setField('dashboardMode', datasetResponse('INFO', 'LOADING'));
+
+
   if (!(qs in cache)) {
     cache[qs] = fetchDataForGLAM(params, $store);
   }
 
   return {
     level: 'SUCCESS',
-    key: 'EXPLORER_VIEW',
+    key: 'EXPLORER',
     data: cache[qs],
     queryKey: qs,
     robeType: `${$store.probe.type}-${$store.probe.kind}`,
