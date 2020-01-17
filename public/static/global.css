@@ -433,7 +433,7 @@ main .main-action {
     grid-auto-flow: column;
     grid-column-gap: var(--space-2x);
     top: 0;
-    z-index: 10;
+    z-index: 100;
 }
 
 main .details {
@@ -661,6 +661,10 @@ tr .data-cell:hover {
     /* padding-top: var(--space-2x); */
 }
 
+tr .data-table__header-cell:first-child {
+    text-align: left;
+}
+
 .data-table__header-cell--has-padding {
     padding-top: var(--space-base);
     padding-left: var(--space-2x);
@@ -718,7 +722,7 @@ tr .data-cell:hover {
 
 .data-cell--frozen {
     background-color: white;
-    z-index: 100;
+    z-index: 9;
 }
 
 td.data-cell--secondary {
