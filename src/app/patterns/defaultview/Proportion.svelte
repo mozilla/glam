@@ -6,6 +6,9 @@ import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import Axis from '../../../components/data-graphics/guides/Axis.svelte';
 
+import { createCatColorMap } from '../../../components/data-graphics/utils/color-maps';
+
+
 import { formatPercent } from '../utils/formatters';
 
 export let probe;
@@ -27,6 +30,20 @@ if (metricType === 'histogram' && 'summed-histogram' in probe) {
     dist = probe.data[0];
 }
 
+function sortEntriesByValue(a, b) {
+  // sorts
+    if (a[1] > b[1]) return -1;
+    if (a[1] < b[1]) return 1;
+    return 0;
+}
+
+function kLargestBins(binObject, k = 10) {
+    const bins = Object.entries(binObject);
+    bins.sort(sortEntriesByValue);
+    return bins.slice(0, k).map(([k]) => k);
+}
+
+
 let totalClients = tweened(0, { duration: 1000, easing });
 
 $: $totalClients = dist.total_users;
@@ -37,6 +54,7 @@ let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
 $: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
 
+const colorMap = createCatColorMap(kLargestBins(hist));
 let tickCount = Math.min(xDomain.length, 6);
 
 function perc(k) {
@@ -75,9 +93,9 @@ onMount(() => {
           y={yScale(value)}
           width={xScale.bandwidth()}
           height={yScale(0) - yScale(value)}
-          fill=var(--digital-blue-500)
-          stroke=var(--digital-blue-700)
-          opacity=.5
+          fill={colorMap(key)}
+          stroke={colorMap(key)}
+          fill-opacity=.8
         />
       {/each}
       {#if hoverValue.x}

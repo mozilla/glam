@@ -98,7 +98,7 @@ const initialState = {
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
-  appView: getFromQueryString('probe') === null ? 'DEFAULT' : 'PROBE',
+  appView: getFromQueryString('probe') === null || getFromQueryString('probe') === 'null' ? 'DEFAULT' : 'PROBE',
 };
 
 export const store = createStore(initialState);
@@ -198,10 +198,10 @@ export function responseToData(data, probeClass = 'quantile', probeType, aggrega
   return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 }
 
-const makeSortOrder = (latest) => (a, b) => {
+const makeSortOrder = (latest, which = 'counts') => (a, b) => {
   // get latest data point and see
-  if (latest.counts[a] < latest.counts[b]) return 1;
-  if (latest.counts[a] >= latest.counts[b]) return -1;
+  if (latest[which][a] < latest[which][b]) return 1;
+  if (latest[which][a] >= latest[which][b]) return -1;
   return 0;
 };
 
@@ -211,7 +211,7 @@ function latestDatapoint(tr) {
   return series[series.length - 1];
 }
 
-function getBucketKeys(tr) {
+export function getBucketKeys(tr) {
   return Object.keys(latestDatapoint(tr).counts);
 }
 
