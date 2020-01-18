@@ -17,6 +17,7 @@ import ProbeDetails from './ProbeDetails.svelte';
 
 import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.svelte';
+import Spinner from '../../components/LineSegSpinner.svelte';
 
 import { firefoxVersionMarkers } from '../state/product-versions';
 
@@ -176,7 +177,7 @@ h2 span {
               <DefaultBody />
           {:else if $store.appView === 'PROBE'}
               {#await $dataset}
-                  running query
+                  <Spinner size={48} color={'var(--cool-gray-400)'} />
               {:then data}
                   <div in:fade>
                       {#if $temporaryViewTypeStore === 'categorical'}
@@ -208,9 +209,7 @@ h2 span {
                         </QuantileExplorerView>
                       {:else}
                         <div style="width: 100%">
-                          <!-- <pre>
-                              {JSON.stringify(data, null, 2)}
-                          </pre> -->
+                          <Spinner size={48} color={'var(--cool-gray-400)'} />
                         </div>
                       {/if}
                   </div>

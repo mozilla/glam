@@ -113,6 +113,7 @@ store.setProbe = (name) => {
 store.reset = () => {
   store.reinitialize();
   store.setField('appView', 'DEFAULT');
+  store.setField('probe', { name: null });
 };
 
 export const resetFilters = () => {
@@ -290,12 +291,12 @@ export function updateStoreAfterDataIsReceived({ data }) {
     etc = extractBucketMetadata(data);
   } else {
     // always reset quantile buckets if a new data fetch occurs.
-    etc.initialBuckets = [5, 25, 50, 75, 95];
+    // etc.initialBuckets = [5, 25, 50, 75, 95];
   }
 
   // if the proposed initial buckets have no overlap, reset activeBuckets.
   // if (st.activeBuckets.length === 0 || intersection(st.activeBuckets, etc.initialBuckets).size !== st.activeBuckets.length) {
-  store.setField('activeBuckets', etc.initialBuckets);
+  if (isCategoricalTypeProbe) store.setField('activeBuckets', etc.initialBuckets);
   // }
   // store.setField('applicationStatus', 'ACTIVE');
   return { data, viewType, ...etc };
