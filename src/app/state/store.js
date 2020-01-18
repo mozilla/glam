@@ -10,7 +10,8 @@ import { createCatColorMap } from '../../components/data-graphics/utils/color-ma
 
 import CONFIG from '../config.json';
 
-import { byKeyAndAggregation } from '../utils/probe-utils';
+import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -97,6 +98,7 @@ const initialState = {
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
+  appView: getFromQueryString('probe') === null || getFromQueryString('probe') === 'null' ? 'DEFAULT' : 'PROBE',
 };
 
 export const store = createStore(initialState);
@@ -105,6 +107,13 @@ store.setProbe = (name) => {
   // get matching probe heree
   const probe = get(probeSet).find((d) => d.name === name);
   store.setField('probe', probe);
+  store.setField('appView', 'PROBE');
+};
+
+store.reset = () => {
+  store.reinitialize();
+  store.setField('appView', 'DEFAULT');
+  store.setField('probe', { name: null });
 };
 
 export const resetFilters = () => {
@@ -181,7 +190,6 @@ function paramsAreValid(params) {
     && probeSelected(params.probe);
 }
 
-const cache = {};
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
@@ -191,10 +199,10 @@ export function responseToData(data, probeClass = 'quantile', probeType, aggrega
   return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
 }
 
-const makeSortOrder = (latest) => (a, b) => {
+const makeSortOrder = (latest, which = 'counts') => (a, b) => {
   // get latest data point and see
-  if (latest.counts[a] < latest.counts[b]) return 1;
-  if (latest.counts[a] >= latest.counts[b]) return -1;
+  if (latest[which][a] < latest[which][b]) return 1;
+  if (latest[which][a] >= latest[which][b]) return -1;
   return 0;
 };
 
@@ -204,7 +212,7 @@ function latestDatapoint(tr) {
   return series[series.length - 1];
 }
 
-function getBucketKeys(tr) {
+export function getBucketKeys(tr) {
   return Object.keys(latestDatapoint(tr).counts);
 }
 
@@ -266,37 +274,68 @@ export function fetchDataForGLAM(params) {
   );
 }
 
-export const dataset = derived(store, ($store) => {
+function intersection(a, b) {
+  const aSet = new Set(a);
+  const bSet = new Set(b);
+  return new Set(
+    [...a].filter((x) => bSet.has(x)),
+  );
+}
+
+export function updateStoreAfterDataIsReceived({ data }) {
+  const st = store.getState();
+  const viewType = getProbeViewType(st.probe.type, st.probe.kind);
+  const isCategoricalTypeProbe = viewType === 'categorical';
+  let etc = {};
+  if (isCategoricalTypeProbe) {
+    etc = extractBucketMetadata(data);
+  } else {
+    // always reset quantile buckets if a new data fetch occurs.
+    // etc.initialBuckets = [5, 25, 50, 75, 95];
+  }
+
+  // if the proposed initial buckets have no overlap, reset activeBuckets.
+  // if (st.activeBuckets.length === 0 || intersection(st.activeBuckets, etc.initialBuckets).size !== st.activeBuckets.length) {
+  if (isCategoricalTypeProbe) store.setField('activeBuckets', etc.initialBuckets);
+  // }
+  // store.setField('applicationStatus', 'ACTIVE');
+  return { data, viewType, ...etc };
+}
+
+const cache = {};
+let previousQuery;
+
+export const dataset = derived(store, ($store, set) => {
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
+  // // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    store.setField('dashboardMode', message);
-    return datasetResponse(message);
-  }
-  // FIXME probe update: we should not have to check for probe description
-  // but for now, we will, since the data API does not return the correct
-  // probe information and we will need to wait for the probe API
-  // to give us
-  if (!probeSelected($store.probe.name) || (probeSelected($store.probe.name) && !$store.probe.description)) {
-    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-    if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-      store.setField('dashboardMode', message);
-    }
+    // store.setField('dashboardMode', message);
     return message;
   }
+
+  // // no probe selected.
+  if (!probeSelected($store.probe.name)) {
+    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+    // if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
+    //   store.setField('dashboardMode', message);
+    // }
+    return message;
+  }
+
   if (!(qs in cache)) {
     cache[qs] = fetchDataForGLAM(params, $store);
   }
 
-  return {
-    level: 'SUCCESS',
-    key: 'EXPLORER_VIEW',
-    data: cache[qs],
-    queryKey: qs,
-    robeType: `${$store.probe.type}-${$store.probe.kind}`,
-  };
+  // compare the previousQuery to the current one.
+  // if the actual query params have changed, let's update the
+  // data set.
+  if (previousQuery !== qs) {
+    previousQuery = qs;
+    set(cache[qs].then(updateStoreAfterDataIsReceived));
+  }
 });
 
 export const currentQuery = derived(store, ($store) => {

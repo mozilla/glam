@@ -1,11 +1,12 @@
 <script>
-import { fly } from 'svelte/transition';
+import { fade } from 'svelte/transition';
 import { store } from '../state/store';
 import { getRandomProbes } from '../state/api';
 import MarketingBlock from '../patterns/defaultview/MarketingBlock.svelte';
 import whichSmallMultiple from '../patterns/defaultview/sm-logic';
 import QuantileSmallMultiple from '../patterns/defaultview/Quantile.svelte';
 import ProportionSmallMultiple from '../patterns/defaultview/Proportion.svelte';
+import RandomProbePlaceholder from '../patterns/defaultview/RandomProbePlaceholder.svelte';
 </script>
 
 <style>
@@ -17,11 +18,14 @@ import ProportionSmallMultiple from '../patterns/defaultview/Proportion.svelte';
   grid-row-gap: var(--space-2x);
 }
 
+div.placeholder {
+  padding: var(--space-2x);
+}
+
 a.probe-sm {
   display: block;
   color: black;
   padding: var(--space-2x);
-
   transition: box-shadow 50ms;
 }
 
@@ -84,13 +88,19 @@ h2 {
 <div>
   <MarketingBlock />
   <div class=random-probe-view>
-    <h2>Selected Probes</h2>
+    <h2>Explore</h2>
   {#await getRandomProbes()}
-    loading ...
+    <div class=probes-overview>
+      {#each Array.from({ length: 9 }).fill(null) as _, i}
+        <div class="probe-overview__probe placeholder">
+          <RandomProbePlaceholder />
+        </div>
+      {/each}
+    </div>
   {:then randomProbes}
     <div class=probes-overview>
       {#each randomProbes.probes as { data, info }, i}
-        <div class=probe-overview__probe in:fly={{ duration: 400, y: 5, delay: i * 35 }}>
+        <div class=probe-overview__probe in:fade={{ duration: 400 }}>
           <a class=probe-sm href='#' on:click={() => {
              store.setProbe(data[0].metadata.metric);
             }}>

@@ -1,5 +1,10 @@
 <script>
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 import Button from '../../../components/Button.svelte';
+
+const t = tweened(0, { duration: 500, easing });
+$: $t = 1;
 </script>
 
 <style>
@@ -37,9 +42,10 @@ import Button from '../../../components/Button.svelte';
 
 
 .marketing-block {
-  /* background: linear-gradient(to bottom right, var(--blue-slate-700), var(--blue-slate-800)); */
-  /* color: white; */
-  padding: var(--space-4x);
+  padding: var(--space-2x);
+    background: linear-gradient(to top, white, transparent), url('bg.jpg');
+    background-position: top right -100px;
+  background-repeat: no-repeat;
 }
 
 .marketing-block__inner-container {
@@ -73,10 +79,11 @@ import Button from '../../../components/Button.svelte';
   <div class='marketing-block__inner-container'>
     <h2 class='marketing-block__title'>Uncover trends and insights about your product's telemetry probes.</h2>
     <div class='marketing-block__description'>
-      Find your probe using the search box above.
+      Currently serving: Firefox. Coming soon: Fenix.
     </div>
+    <!-- <img src='bg.jpg' alt='yes' /> -->
     <div class='marketing-block__call-to-action'>
-      <Button>Documentation</Button>
+      <Button tooltip="coming soon!">Documentation</Button>
     </div>
 
     <div class='marketing-block__ask-us'>

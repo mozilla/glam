@@ -36,6 +36,11 @@ $: if (reference) movingAudienceSize.set(reference.audienceSize);
 </script>
 
 <style>
+
+h2 {
+  margin: 0;
+}
+
 .body-content {
   margin-top: var(--space-2x);
 }
@@ -52,6 +57,8 @@ $: if (reference) movingAudienceSize.set(reference.audienceSize);
 
 <div class=body-content>
   
+  <slot></slot>
+
   <div class=body-control-row>
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}

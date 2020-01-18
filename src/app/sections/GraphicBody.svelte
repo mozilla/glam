@@ -8,7 +8,7 @@ import { fade, fly } from 'svelte/transition';
 import { derived } from 'svelte/store';
 
 import {
-  store, dataset, extractBucketMetadata,
+  store, dataset,
 } from '../state/store';
 
 import { getProbeViewType } from '../utils/probe-utils';
@@ -17,6 +17,7 @@ import ProbeDetails from './ProbeDetails.svelte';
 
 import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.svelte';
+import Spinner from '../../components/LineSegSpinner.svelte';
 
 import { firefoxVersionMarkers } from '../state/product-versions';
 
@@ -50,33 +51,30 @@ const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.prob
 
 let key;
 
-$: if (
-  $store.probe.name !== probeName
-  && $dataset.queryKey !== key
-  && $temporaryViewTypeStore) {
-  key = $dataset.queryKey;
-  output = $dataset.data.then(
-    // ({ data, probeType, probeKind }) => {
-    ({ data }) => {
-      const viewType = $temporaryViewTypeStore; // getProbeViewType(probeType, probeKind); // FIXME!!!
-      const isCategorical = viewType === 'categorical';
-      // const isCategoricalData = isCategorical(probeType, probeKind);
-      let etc = {};
-      if (isCategorical) {
-        etc = extractBucketMetadata(data);
-        if ($store.applicationStatus !== 'INITIALIZING') {
-          store.setField('activeBuckets', etc.initialBuckets);
-        }
-      }
-      store.setField('applicationStatus', 'ACTIVE');
-      return { data, viewType, ...etc };
-    },
-  );
-}
+// $: if (
+//   $store.probe.name !== probeName
+//   && $dataset.queryKey !== key
+//   && $temporaryViewTypeStore) {
+//   key = $dataset.queryKey;
+//   output = $dataset.data.then(
+//     ({ data }) => {
+//       const viewType = $temporaryViewTypeStore;
+//       const isCategorical = viewType === 'categorical';
+//       let etc = {};
+//       if (isCategorical) {
+//         etc = extractBucketMetadata(data);
+//         if ($store.applicationStatus !== 'INITIALIZING') {
+//           store.setField('activeBuckets', etc.initialBuckets);
+//         }
+//       }
+//       store.setField('applicationStatus', 'ACTIVE');
+//       return { data, viewType, ...etc };
+//     },
+//   );
+// }
 
 // FIXME: remove this once the dataset + API are fixed.
 
-let container;
 let width;
 
 function handleBodySelectors(event) {
@@ -92,6 +90,17 @@ function handleBodySelectors(event) {
 </script>
 
 <style>
+
+h2 {
+  margin: 0;
+  margin-bottom: var(--space-4x);
+  color: var(--cool-gray-600);
+}
+
+h2 span {
+  font-weight: normal;
+  color: var(--cool-gray-750)
+}
 
 .graphic-body-container {
   display: grid;
@@ -110,9 +119,10 @@ function handleBodySelectors(event) {
   grid-column-gap: var(--space-4x);
   align-items: start;
   background-color: var(--cool-gray-100);
+  min-height: var(--header-height);
 }
 
-.graphic-body__graphic-header h2 {
+/* .graphic-body__graphic-header h2 {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -121,7 +131,7 @@ function handleBodySelectors(event) {
   display: grid;
   align-items: center;
   padding-left: var(--space-4x);
-}
+} */
 
 .graphic-body__content {
   box-sizing: border-box; 
@@ -157,25 +167,17 @@ function handleBodySelectors(event) {
 
 <svelte:window bind:innerWidth={width} />
 
-<div bind:this={container} class="graphic-body-container">
+<div class="graphic-body-container">
 
-    <div class="graphic-body__graphic-header">
-    {#if $store.probe.name}
-        <h2 class="heading--03">
-          {$store.probe.name}
-        </h2>
-    {:else}
-        <h2 class="heading--04">Telemetry Prototype</h2>
-    {/if}
-    </div>
+    <div class="graphic-body__graphic-header"></div>
 
     <div class="graphic-body">
       <div class="graphic-body__content">
-          {#if $dataset.key === 'DEFAULT_VIEW'}
+          {#if $store.appView === 'DEFAULT'}
               <DefaultBody />
-          {:else if $dataset.data}
-              {#await output}
-                  running query
+          {:else if $store.appView === 'PROBE'}
+              {#await $dataset}
+                  <Spinner size={48} color={'var(--cool-gray-400)'} />
               {:then data}
                   <div in:fade>
                       {#if $temporaryViewTypeStore === 'categorical'}
@@ -191,7 +193,9 @@ function handleBodySelectors(event) {
                               bucketSortOrder={data.bucketSortOrder}
                               on:selection={handleBodySelectors}
                               aggregationLevel={$store.aggregationLevel}
-                          />
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </ProportionExplorerView>
                       {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
                           <QuantileExplorerView markers={$firefoxVersionMarkers}
                               data={data.data}
@@ -200,12 +204,12 @@ function handleBodySelectors(event) {
                               percentiles={$store.visiblePercentiles}
                               on:selection={handleBodySelectors}
                               aggregationLevel={$store.aggregationLevel}
-                          />
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </QuantileExplorerView>
                       {:else}
                         <div style="width: 100%">
-                          <pre>
-                              {JSON.stringify(data, null, 2)}
-                          </pre>
+                          <Spinner size={48} color={'var(--cool-gray-400)'} />
                         </div>
                       {/if}
                   </div>
@@ -215,12 +219,12 @@ function handleBodySelectors(event) {
                 </div>
               {/await}
           {:else}
-              <div>{$dataset.key}</div>
+              <div>spinning</div>
           {/if}
           
       </div>
 
-      {#if $dataset.data}
+      {#if $store.appView === 'PROBE'}
         <div class="graphic-body__details">
           <ProbeDetails />
         </div>
