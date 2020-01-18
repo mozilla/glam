@@ -93,8 +93,8 @@ onMount(() => {
           y={yScale(value)}
           width={xScale.bandwidth()}
           height={yScale(0) - yScale(value)}
-          fill={colorMap(key)}
-          stroke={colorMap(key)}
+          fill={colorMap(key) || 'var(--cool-gray-200)'}
+          stroke={colorMap(key) || 'var(--cool-gray-200)'}
           fill-opacity=.8
         />
       {/each}
