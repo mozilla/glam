@@ -8,6 +8,7 @@ import App from '../components/sections/App.svelte';
 import Main from '../components/sections/Main.svelte';
 import MainActionBar from '../components/sections/MainActionBar.svelte';
 import Content from '../components/sections/Content.svelte';
+import Footer from '../components/sections/Footer.svelte';
 
 import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
 import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
@@ -49,4 +50,5 @@ onMount(() => { visible = true; });
           <GraphicBody />
         </Content>
     </Main>
+    <Footer />
 </App>
