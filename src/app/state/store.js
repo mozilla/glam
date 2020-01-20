@@ -218,7 +218,9 @@ export function getBucketKeys(tr) {
 
 export function extractBucketMetadata(transformedData) {
   const etc = {};
+
   const options = getBucketKeys(transformedData);
+
   const cmpBuckets = getBucketKeys(transformedData);
   const sorter = makeSortOrder(latestDatapoint(transformedData));
   cmpBuckets.sort(sorter);
@@ -250,7 +252,10 @@ export function fetchDataForGLAM(params) {
     (payload) => {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed
-      // the response shluld consume from payload.response[0].metric_type;
+      // the response shluld consume from payload.response[0].metric_type.
+      // until then, however, we'll have to use the store values
+      // for the probeType and probeKind, since they're more accurate than
+      // what is in payload.response[0].metric_type.
       const st = get(store);
       const { probe } = st;
       const { aggregationLevel } = st;
@@ -284,14 +289,12 @@ function intersection(a, b) {
 
 export function updateStoreAfterDataIsReceived({ data }) {
   const st = store.getState();
+  // THIS WILL BE FALSE BECAUSE WE HAVE NOT RECEIVED THE PROBE DATA YET.
   const viewType = getProbeViewType(st.probe.type, st.probe.kind);
   const isCategoricalTypeProbe = viewType === 'categorical';
   let etc = {};
   if (isCategoricalTypeProbe) {
     etc = extractBucketMetadata(data);
-  } else {
-    // always reset quantile buckets if a new data fetch occurs.
-    // etc.initialBuckets = [5, 25, 50, 75, 95];
   }
 
   // if the proposed initial buckets have no overlap, reset activeBuckets.
@@ -305,7 +308,15 @@ export function updateStoreAfterDataIsReceived({ data }) {
 const cache = {};
 let previousQuery;
 
-export const dataset = derived(store, ($store, set) => {
+export const dataset = derived([store, probeSet], ([$store, $probeSet], set) => {
+  // FIXME: we have to check for whether probeSet is loaded before
+  // moving on. This is because the data fetch does _not_ return
+  // the proper information about probe types & kinds (specifically,
+  // enumerated histograms are coded as linear in the demo data set).
+  // This should be checked again once we have verified that the bug
+  // in the demo data is fixed.
+  if (!$probeSet) return;
+
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
