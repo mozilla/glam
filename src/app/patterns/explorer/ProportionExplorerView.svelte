@@ -18,6 +18,7 @@ export let bucketColorMap;
 export let bucketOptions;
 export let timeHorizon = 'MONTH';
 export let metricType = 'proportions';
+
 export let bucketSortOrder = (a, b) => ((a < b) ? 1 : -1);
 
 const dispatch = createEventDispatcher();
