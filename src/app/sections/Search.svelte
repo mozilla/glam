@@ -19,12 +19,6 @@ function turnOnSearch() {
     store.setField('searchIsActive', true);
 }
 
-function turnOffSearch() {
-    setTimeout(() => {
-      store.setField('searchIsActive', false);
-    }, 100);
-}
-
 function unfocus() {
     inputElement.blur();
 }
@@ -116,6 +110,14 @@ async function onKeypress(event) {
 </style>
 
 <svelte:window on:keydown={onKeypress} />
+<svelte:body on:click={(evt) => {
+  if ($store.searchIsActive) {
+    if(evt.target !== inputElement) {
+      inputElement.blur();
+      store.setField('searchIsActive', false);
+    }
+  }
+}}></svelte:body>
 
 <div class=search-container>
   <div class=inner-container bind:this={searchContainer}
@@ -135,12 +137,12 @@ async function onKeypress(event) {
       {/if}
     </div>
     <input 
+      type="search"
       aria-autocomplete="list"
       aria-controls="telemetry-search-results" 
       on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
-      on:blur={turnOffSearch}
       value={$store.searchQuery} on:input={(evt) => {
           store.setField('searchQuery', evt.target.value);
           store.setField('searchIsActive', true);
