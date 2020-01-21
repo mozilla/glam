@@ -704,6 +704,10 @@ tr .data-table__header-cell:first-child {
     min-width: var(--space-24x);
 }
 
+.data-cell--size-max {
+    min-width: 100%;
+}
+
 .data-cell--right-border {
     border-right: 2px solid var(--cool-gray-200);
 }

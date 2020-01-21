@@ -13,10 +13,13 @@ import {
 
 import { getProbeViewType } from '../utils/probe-utils';
 
+import ProbeViewControl from '../patterns/controls/ProbeViewControl.svelte';
 import ProbeDetails from './ProbeDetails.svelte';
 
 import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.svelte';
+import ProbeTableView from '../patterns/table-view/ProbeTableView.svelte';
+
 import Spinner from '../../components/LineSegSpinner.svelte';
 
 import { firefoxVersionMarkers } from '../state/product-versions';
@@ -31,9 +34,6 @@ import DataError from '../patterns/errors/DataError.svelte';
 //   if (probeType === 'scalar' && probeKind === 'uint') return 'scalar';
 //   return undefined;
 // };
-
-let probeName;
-let output = Promise.resolve({});
 
 // FIXME: for now, once we have retreived the data set, there are
 // a few additional operations that need to be performed.
@@ -113,6 +113,7 @@ h2 span {
 }
 
 .graphic-body__graphic-header {
+  align-content: center;
   grid-area: header;
   display: grid;
   grid-template-columns: auto max-content;
@@ -120,6 +121,7 @@ h2 span {
   align-items: start;
   background-color: var(--cool-gray-100);
   min-height: var(--header-height);
+  margin-left: var(--space-4x);
 }
 
 /* .graphic-body__graphic-header h2 {
@@ -169,7 +171,13 @@ h2 span {
 
 <div class="graphic-body-container">
 
-    <div class="graphic-body__graphic-header"></div>
+    <div class="graphic-body__graphic-header">
+      {#if $store.appView === 'PROBE'}
+        <div transition:fly={{ x: -5, duration: 200 }}>
+          <ProbeViewControl />
+        </div>
+      {/if}
+    </div>
 
     <div class="graphic-body">
       <div class="graphic-body__content">
@@ -179,40 +187,57 @@ h2 span {
               {#await $dataset}
                   <Spinner size={48} color={'var(--cool-gray-400)'} />
               {:then data}
+                  {#if $store.probeView === 'explore'}
+                    <div in:fade>
+                        {#if $temporaryViewTypeStore === 'categorical'}
+                            <ProportionExplorerView 
+                                markers={$firefoxVersionMarkers} 
+                                data={data.data}
+                                probeType={`${$store.probe.type}-${$store.probe.kind}`}
+                                metricType={$store.proportionMetricType}
+                                activeBuckets={[...$store.activeBuckets]}
+                                timeHorizon={$store.timeHorizon}
+                                bucketOptions={data.bucketOptions}
+                                bucketColorMap={data.bucketColorMap}
+                                bucketSortOrder={data.bucketSortOrder}
+                                on:selection={handleBodySelectors}
+                                aggregationLevel={$store.aggregationLevel}
+                            >
+                            <h2>explore / <span>{$store.probe.name}</span></h2>
+                          </ProportionExplorerView>
+                        {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
+                            <QuantileExplorerView markers={$firefoxVersionMarkers}
+                                data={data.data}
+                                probeType={$temporaryViewTypeStore}
+                                timeHorizon={$store.timeHorizon}
+                                percentiles={$store.visiblePercentiles}
+                                on:selection={handleBodySelectors}
+                                aggregationLevel={$store.aggregationLevel}
+                            >
+                            <h2>explore / <span>{$store.probe.name}</span></h2>
+                          </QuantileExplorerView>
+                        {:else}
+                          <div style="width: 100%">
+                            <Spinner size={48} color={'var(--cool-gray-400)'} />
+                          </div>
+                        {/if}
+                    </div>
+                  {:else if $store.probeView === 'table'} 
                   <div in:fade>
-                      {#if $temporaryViewTypeStore === 'categorical'}
-                          <ProportionExplorerView 
-                              markers={$firefoxVersionMarkers} 
-                              data={data.data}
-                              probeType={`${$store.probe.type}-${$store.probe.kind}`}
-                              metricType={$store.proportionMetricType}
-                              activeBuckets={[...$store.activeBuckets]}
-                              timeHorizon={$store.timeHorizon}
-                              bucketOptions={data.bucketOptions}
-                              bucketColorMap={data.bucketColorMap}
-                              bucketSortOrder={data.bucketSortOrder}
-                              on:selection={handleBodySelectors}
-                              aggregationLevel={$store.aggregationLevel}
-                          >
-                          <h2>explore / <span>{$store.probe.name}</span></h2>
-                        </ProportionExplorerView>
-                      {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
-                          <QuantileExplorerView markers={$firefoxVersionMarkers}
-                              data={data.data}
-                              probeType={$temporaryViewTypeStore}
-                              timeHorizon={$store.timeHorizon}
-                              percentiles={$store.visiblePercentiles}
-                              on:selection={handleBodySelectors}
-                              aggregationLevel={$store.aggregationLevel}
-                          >
-                          <h2>explore / <span>{$store.probe.name}</span></h2>
-                        </QuantileExplorerView>
-                      {:else}
-                        <div style="width: 100%">
-                          <Spinner size={48} color={'var(--cool-gray-400)'} />
-                        </div>
-                      {/if}
+                    <!-- this conditional is a stopgap until we fix https://github.com/mozilla/glam/issues/206 -->
+                    {#if $store.probe.type}
+                      <ProbeTableView 
+                        data={data.data}
+                        probeType={$temporaryViewTypeStore}
+                        colorMap={data.bucketColorMap}
+                        visibleBuckets={[...$store.activeBuckets]}
+                        aggregationLevel={$store.aggregationLevel}
+                      >
+                        <h2>table / <span>{$store.probe.name}</span></h2>
+                      </ProbeTableView>
+                    {/if}
                   </div>
+                  {/if}
               {:catch err}
                 <div in:fly={{ duration: 400, y: 10 }}>
                   <DataError reason={err.message} moreInformation={err.moreInformation} />

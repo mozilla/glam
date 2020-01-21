@@ -1,6 +1,7 @@
 <script>
 import TableView from '../../src/app/patterns/table-view/TableView.svelte';
 import ProbeKeySelector from '../../src/app/patterns/controls/ProbeKeySelector.svelte';
+import AggregationTypeSelector from '../../src/app/patterns/controls/AggregationTypeSelector.svelte';
 import { percentileLineColorMap } from '../../src/components/data-graphics/utils/color-maps';
 import { formatCount, formatPercentDecimal } from '../../src/app/patterns/utils/formatters';
 
@@ -98,8 +99,8 @@ function setProbeInfo(i) {
   probe = probes[which];
   probeKeys = gatherProbeKeys(probe.data);
   aggregationTypes = gatherAggregationTypes(probe.data);
-  currentKey = probeKeys[0];
-  currentAggregation = aggregationTypes[0];
+  currentKey = probeKeys[0]; // eslint-disable-line
+  currentAggregation = aggregationTypes[0]; // eslint-disable-line
 }
 
 setProbeInfo(3);
@@ -120,22 +121,34 @@ let aggKey;
     <input type=radio checked={which === i} value={i} on:input={() => { setProbeInfo(i); }} />
   </label>
   {/each}
+  <div style="
+    display:grid; 
+    grid-auto-flow: column; 
+    justify-content: start; 
+    grid-column-gap: var(--space-4x);
+    margin-top: var(--space-2x);
+    margin-bottom: var(--space-2x);
+  ">
+    {#if aggregationTypes && aggregationTypes.length > 1}
+    <div class=body-control-set>
+      <label class=body-control-set--label>Metric Type</label>
+      <AggregationTypeSelector 
+        aggregationTypes={aggregationTypes}
+        bind:currentAggregation={currentAggregation}
+      />
+    </div>
+    {/if}
 
-  {#if aggregationTypes && aggregationTypes.length > 1}
-    {#each aggregationTypes as a, i (a)}
-    <label>
-      {a}
-      <input type=radio bind:group={currentAggregation} value={a} />
-    </label>
-    {/each}
-  {/if}
-
-  {#if probeKeys && probeKeys.length > 1}
-    <ProbeKeySelector 
-      options={probeKeys}
-      bind:currentKey={currentKey}
-    />
-  {/if}
+    {#if probeKeys && probeKeys.length > 1}
+    <div class=body-control-set>
+      <label class=body-control-set--label>Key</label>
+      <ProbeKeySelector 
+        options={probeKeys}
+        bind:currentKey={currentKey}
+      />
+    </div>
+    {/if}
+  </div>
 
   {#if probe}
     <TableView 

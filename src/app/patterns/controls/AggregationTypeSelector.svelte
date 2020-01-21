@@ -39,12 +39,13 @@ export let aggregationInfo = {
   font-size: var(--text-02);
   margin:0;
   text-align: left;
-  min-width: var(--space-16x);
+  /* min-width: var(--space-16x); */
   background-color: white;
   display:grid;
-  grid-template-columns: auto max-content;
+  grid-auto-flow: column;
+  width: max-content;
+  grid-column-gap: var(--space-base);
   color: var(--subhead-gray-02);
-
   border-radius: var(--space-1h);
 }
 .menu-list-item__title {

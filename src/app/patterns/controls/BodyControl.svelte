@@ -51,12 +51,15 @@ function toggle(v) {
 </style>
 
 <ButtonGroup>
-  {#each options as {label, value, labelColor, tooltip}, i (label)}
+  {#each options as {label, value, labelColor, tooltip, component}, i (label)}
     <Button tooltip={tooltip} level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }
     }>
       {#if labelColor}
         <div class='label-color' style="background-color: {labelColor};" />
+      {/if}
+      {#if component}
+        <svelte:component this={component} size={14} />
       {/if}
       {label}
   </Button>

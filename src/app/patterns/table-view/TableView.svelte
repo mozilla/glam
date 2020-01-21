@@ -14,12 +14,13 @@ import {
 import { backwards } from '../utils/iterables';
 
 export let data; // nested as key, aggregation_type
+export let aggregationLevel = 'build_id';
 export let key = 'proportions';
 export let keyFormatter = (v) => v;
 export let valueFormatter = formatPercentDecimal;
 export let visibleBuckets;
 export let colorMap; // bucketColorMap
-export let pageSize = 15;
+export let pageSize = 10;
 export let currentAggregation;
 export let currentKey;
 
@@ -36,7 +37,7 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
 </script>
 
 <div>
-  <div>
+  <div style="margin-top: var(--space-2x); margin-bottom: var(--space-2x);">
     <Pagination on:page={(evt) => {
         currentPage = evt.detail.page;
       }} {totalPages} currentPage={currentPage} />
@@ -44,11 +45,17 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
   <DataTable overflowX={true}>
     <thead>
       <Row header>
-        <Cell freezeX>Build ID</Cell>
+        <Cell freezeX size=max>
+          {#if aggregationLevel === 'build_id'}
+            Build ID
+          {:else}
+            Version
+          {/if}
+        </Cell>
         <Cell freezeX rightBorder>Clients</Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
-          <Cell size=min text>
+          <Cell size=small text>
             <span class=percentile-label-block style="background-color: {colorMap(bucket)}"></span>
             {keyFormatter(bucket)}
           </Cell>
@@ -60,8 +67,12 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
         <Row>
           <Cell freezeX>
             <div class=build-version>
-              <div style="font-weight: bold; color: var(--cool-gray-550);">{ymd(row.label)}</div>
-              <div>{timecode(row.label)}</div>
+              {#if aggregationLevel === 'build_id'}
+                <div style="font-weight: bold; color: var(--cool-gray-550);">{ymd(row.label)}</div>
+                <div>{timecode(row.label)}</div>
+              {:else}
+                <div>{row.version}</div>
+              {/if}
             </div>
           </Cell>
           <Cell  rightBorder freezeX>

@@ -32,12 +32,13 @@
     font-size: var(--text-02);
     margin:0;
     text-align: left;
-    min-width: var(--space-16x);
+    /* min-width: var(--space-16x); */
     background-color: white;
     display:grid;
-    grid-template-columns: auto max-content;
+    grid-auto-flow: column;
+    width: max-content;
+    grid-column-gap: var(--space-base);
     color: var(--subhead-gray-02);
-  
     border-radius: var(--space-1h);
   }
   .menu-list-item__title {
@@ -53,7 +54,16 @@
   
   <div class=menu-button bind:this={button}>
     <button class=activating-button on:click={toggle} class:active>
-        <div>{currentKey}</div> <DownCarat size=16 />
+
+        <div>
+          {#each options as opt, i}
+          <div style="
+            visibility: {opt === currentKey ? 'visible' : 'hidden'};
+            height: {opt === currentKey ? 'inherit' : 0};
+          ">{opt}</div>
+          {/each}
+        </div> 
+        <DownCarat size=16 />
     </button>
   </div>
   
