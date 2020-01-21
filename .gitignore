@@ -69,3 +69,6 @@ public/static/bundle.*
 
 # storybook data
 tests/data
+
+# editors
+.vscode/
