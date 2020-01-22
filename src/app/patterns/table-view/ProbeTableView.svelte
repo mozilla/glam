@@ -80,6 +80,8 @@ let currentKey = probeKeys[0] || undefined;
     key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
     currentKey={currentKey}
     currentAggregation={currentAggregation}
+    tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
+    bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'}
   />
 
 </div>

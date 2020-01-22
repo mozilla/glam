@@ -95,7 +95,7 @@ $: if (parentElement && windowWidth) {
   --list-border-color: gainsboro;
   --list-border: 1px solid var(--list-border-color);
   max-height: calc(100vh - var(--header-height) * 3);
-  border: 1px solid var(--line-gray-02);
+  border: 1px solid var(--cool-gray-250);
   background-color: white;
   max-width: calc(var(--increment) * 16);
   box-shadow: var(--depth-5l);
@@ -105,6 +105,7 @@ $: if (parentElement && windowWidth) {
   left: 0;
   top: var(--increment);
   overflow: hidden;
+  z-index: 2000;
 }
 
 .header-container {

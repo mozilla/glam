@@ -18,11 +18,13 @@ export let aggregationLevel = 'build_id';
 export let key = 'proportions';
 export let keyFormatter = (v) => v;
 export let valueFormatter = formatPercentDecimal;
+export let tooltipFormatter = (v) => undefined;
 export let visibleBuckets;
 export let colorMap; // bucketColorMap
 export let pageSize = 10;
 export let currentAggregation;
 export let currentKey;
+export let bucketTypeLabel = 'Categories';
 
 let totalPages = 0;
 let currentPage = 0;
@@ -36,7 +38,19 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
 
 </script>
 
-<div>
+<style>
+span.h {
+  font-weight: bold; 
+  color: var(--cool-gray-700); 
+  font-size: var(--text-01);
+}
+
+span.bucket {
+  font-weight: normal;
+}
+</style>
+
+<div style="border-bottom: 1px solid var(--cool-gray-200);">
   <div style="margin-top: var(--space-2x); margin-bottom: var(--space-2x);">
     <Pagination on:page={(evt) => {
         currentPage = evt.detail.page;
@@ -44,23 +58,45 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
   </div>
   <DataTable overflowX={true}>
     <thead>
+      
       <Row header>
-        <Cell freezeX size=max>
+        <Cell colspan={2} freezeX bottomBorder={false}></Cell>
+        <Cell colspan={2} align=left freezeX bottomBorder={false}>
+          <span class='h'>
+            {bucketTypeLabel}
+          </span>
+        </Cell>
+      </Row>
+
+      <Row header>
+        <Cell bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
+          <span class=h>
+
           {#if aggregationLevel === 'build_id'}
             Build ID
           {:else}
             Version
           {/if}
+          </span>
         </Cell>
-        <Cell freezeX rightBorder>Clients</Cell>
+        <Cell 
+          bottomBorderThickness=2px
+          freezeX 
+          align=left 
+          tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version' }">
+          <span class=h>
+            Clients
+          </span>
+        </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
-          <Cell size=small text>
+          <Cell tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
             <span class=percentile-label-block style="background-color: {colorMap(bucket)}"></span>
-            {keyFormatter(bucket)}
+            <span class=bucket>{keyFormatter(bucket)}</span>
           </Cell>
         {/each}
       </Row>
+
     </thead>
     <tbody>
       {#each [...backwards(selectedData)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (ymd(row.label) + timecode(row.label))}

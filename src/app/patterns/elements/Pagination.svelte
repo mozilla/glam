@@ -41,6 +41,6 @@ div:hover {
 
 <div>
     page {currentPage < 9 ? '0' : ''}{currentPage + 1} of {totalPages < 9 ? '0' : ''}{totalPages}
-  <Button on:click={() => changePage(currentPage - 1)} level=low compact><LeftCarat size={10} /></Button>
-  <Button on:click={() => changePage(currentPage + 1)} level=low compact><RightCarat size={10} /></Button>
+  <Button tooltip="move back a page" on:click={() => changePage(currentPage - 1)} level=low compact><LeftCarat size={10} /></Button>
+  <Button tooltip="move forward a page" on:click={() => changePage(currentPage + 1)} level=low compact><RightCarat size={10} /></Button>
 </div>
