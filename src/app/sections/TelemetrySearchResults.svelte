@@ -48,7 +48,7 @@ const handleKeypress = (event) => {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
-      store.setField('probe', $searchResults.results[focusedItem]);
+      store.setProbe($searchResults.results[focusedItem].name);
       store.setField('searchIsActive', false);
       // reset focused element
       focusedItem = 0;
@@ -235,7 +235,7 @@ li {
                   role="option"
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {
-                    store.setField('probe', $searchResults.results[focusedItem]);
+                    store.setProbe($searchResults.results[focusedItem].name);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>
