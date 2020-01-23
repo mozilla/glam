@@ -3,6 +3,7 @@ import FloatingMenu from '../../../components/menu/FloatingMenu.svelte';
 import MenuList from '../../../components/menu/MenuList.svelte';
 import MenuListItem from '../../../components/menu/MenuListItem.svelte';
 import DownCarat from '../../../components/icons/DownCarat.svelte';
+import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 export let aggregationTypes;
 export let currentAggregation;
@@ -65,7 +66,7 @@ export let aggregationInfo = {
 
 </style>
 
-<div class=menu-button bind:this={button}>
+<div class=menu-button bind:this={button} use:tooltipAction={'this probe has multiple aggregation methods – select one from this menu'}>
   <button class=activating-button on:click={toggle} class:active>
       <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
   </button>

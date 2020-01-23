@@ -10,6 +10,7 @@ export let multi = false;
 export let sort = true;
 export let reverse = false;
 export let selected = multi ? [] : undefined;
+export let justify = 'flex-start';
 
 const dispatch = createEventDispatcher();
 
@@ -50,7 +51,7 @@ function toggle(v) {
 }
 </style>
 
-<ButtonGroup>
+<ButtonGroup {justify}>
   {#each options as {label, value, labelColor, tooltip, component}, i (label)}
     <Button tooltip={tooltip} level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }

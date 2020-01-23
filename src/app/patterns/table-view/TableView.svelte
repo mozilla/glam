@@ -113,7 +113,7 @@ span.bucket {
     <tbody>
       {#each [...backwards(selectedData)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (ymd(row.label) + timecode(row.label))}
         <Row>
-          <Cell freezeX>
+          <Cell freezeX backgroundColor=white>
             <div class=build-version>
               {#if aggregationLevel === 'build_id'}
                 <div style="font-weight: bold; color: var(--cool-gray-550);">{ymd(row.label)}</div>

@@ -597,6 +597,7 @@ main .details {
 
   .body-control-row--stretch {
       justify-content: stretch;
+      grid-column-gap: var(--space-8x);
   }
 
 .body-control-set {
