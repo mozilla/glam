@@ -13,6 +13,12 @@ import StatusLabel from '../../components/StatusLabel.svelte';
 import ExternalLink from '../../components/icons/ExternalLink.svelte';
 
 const paneTransition = { x: 10, duration: 300 };
+const PROBE_TYPE_DOCS = {
+    histogram: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
+    scalar: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/scalars.html',
+    event: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
+    default: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
+};
 
 let visible = false;
 onMount(() => { visible = true; });
@@ -43,7 +49,6 @@ function probeIsSelected(probe) {
 .probe-details {
     height: 100%;
 }
-
 
 h2 {
     padding-bottom: var(--space-base);
@@ -145,6 +150,10 @@ h2 {
     font-size: var(--text-01);
 }
 
+.probe-type-link {
+    color: var(--subhead-gray-01);
+}
+
 </style>
 
 <RightDrawer>
@@ -164,7 +173,11 @@ h2 {
         <div class="probe-details-overview">
         {#if $store.probe.type}
             <dl class="drawer-section probe-details-overview-left">
-                <dt>{$store.probe.type}</dt>
+                <dt>
+                    <a class="probe-type-link" href={PROBE_TYPE_DOCS[$store.probe.type] || PROBE_TYPE_DOCS.default}>
+                        {$store.probe.type}
+                    </a>
+                </dt>
                 {#if $store.probe.kind}
                     <dd>{$store.probe.kind}</dd>
                 {/if}
