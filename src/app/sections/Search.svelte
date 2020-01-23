@@ -21,6 +21,7 @@ function turnOnSearch() {
 
 function unfocus() {
     inputElement.blur();
+    store.setField('searchIsActive', false);
 }
 
 async function onKeypress(event) {
