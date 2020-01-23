@@ -8,6 +8,7 @@ import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
+import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
 import Heatmap from '../../../components/data-graphics/elements/Heatmap.svelte';
 
@@ -27,11 +28,23 @@ export let aggregationLevel = 'build_id';
 
 let totalAggs = Object.keys(Object.values(data)[0]).length;
 
-// FIXME: these should be derived explicitly from the data prop.
-let aggregationTypes = ['avg', 'max', 'min', 'sum'];
 
 export let timeHorizon = 'MONTH';
 export let percentiles = [95, 75, 50, 25, 5];
+
+
+function gatherProbeKeys(nestedData) {
+  return Object.keys(nestedData);
+}
+
+function gatherAggregationTypes(nestedData) {
+  return Object.keys(Object.values(nestedData)[0]);
+}
+
+
+let aggregationTypes = gatherAggregationTypes(data);
+let probeKeys = gatherProbeKeys(data);
+let currentKey = probeKeys[0];
 let currentAggregation = aggregationTypes[0];
 
 let aggregationInfo;
@@ -54,6 +67,10 @@ const refMedian = tweened(0, { duration: 500, easing });
 $: if (reference) movingAudienceSize.set(reference.audienceSize);
 $: if (reference) refMedian.set(reference.percentiles[50]);
 
+$: if (currentKey && reference) {
+  const ref = data[currentKey][currentAggregation].find((d) => d.label.toString() === reference.label.toString());
+  reference = ref;
+}
 
 // for heatmap
 function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
@@ -90,7 +107,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   
   <slot></slot>
 
-  <div class=body-control-row>
+  <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
         <label class=body-control-set--label>Time Horizon</label>
@@ -110,8 +127,8 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
     </div>
   </div>
 
-  {#if totalAggs > 1}
   <div class=body-control-row>
+    {#if totalAggs > 1}
     <div class=body-control-set>
       <label class=body-control-set--label>aggregation</label>
       <AggregationTypeSelector 
@@ -119,16 +136,25 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
         bind:currentAggregation={currentAggregation} 
         aggregationTypes={aggregationTypes}
         />
-    </div>    
+    </div>
+    {/if}
+    {#if probeKeys && probeKeys.length > 1}
+    <div class=body-control-set>
+      <label class=body-control-set--label>Key</label>
+        <ProbeKeySelector 
+          options={probeKeys}
+          bind:currentKey={currentKey}
+        />
+      </div>
+    {/if}
   </div>
-  {/if}
 
 
 
   <div class=data-graphics>
     {#each Object.entries(data) as [key, aggs], i (key)}  
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon)}
-        {#if Object.entries(aggs).length === 1 || aggType === currentAggregation}
+      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + key)}
+        {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
               bind:reference={reference}

@@ -137,11 +137,11 @@ h4 {
 
 <div class='probe-body-overview'>
   <div>
-    <h4>
+    <!-- <h4>
       <slot name='title'>
         {title}
       </slot>
-    </h4>
+    </h4> -->
   </div>
     <slot name='summary' reference={reference} hovered={hovered}></slot>
 </div>

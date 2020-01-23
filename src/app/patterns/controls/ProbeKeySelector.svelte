@@ -29,7 +29,7 @@
     padding: var(--space-1h);
     padding-left: var(--space-base);
     padding-right: var(--space-base);
-    font-size: var(--text-02);
+    font-size: var(--text-01);
     margin:0;
     text-align: left;
     /* min-width: var(--space-16x); */
@@ -42,7 +42,7 @@
     border-radius: var(--space-1h);
   }
   .menu-list-item__title {
-    font-size: var(--text-02);
+    font-size: var(--text-01);
   }
   
   .active {

@@ -583,11 +583,20 @@ main .details {
 .body-control-row {
     display: grid;
     width: 100%;
-    grid-template-columns: auto auto;
+    /* grid-template-columns: auto auto; */
+    grid-auto-flow: column;
+    grid-column-gap: var(--space-4x);
+    justify-content: start;
+
     justify-items: start;
     margin-top: var(--space-base);
     margin-bottom: var(--space-base);
     text-align: right;
+    align-items: start;
+  }
+
+  .body-control-row--stretch {
+      justify-content: stretch;
   }
 
 .body-control-set {
