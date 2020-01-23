@@ -3,6 +3,7 @@ import FloatingMenu from '../../../components/menu/FloatingMenu.svelte';
 import MenuList from '../../../components/menu/MenuList.svelte';
 import MenuListItem from '../../../components/menu/MenuListItem.svelte';
 import DownCarat from '../../../components/icons/DownCarat.svelte';
+import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 export let aggregationTypes;
 export let currentAggregation;
@@ -36,19 +37,20 @@ export let aggregationInfo = {
   padding: var(--space-1h);
   padding-left: var(--space-base);
   padding-right: var(--space-base);
-  font-size: var(--text-02);
+  font-size: var(--text-01);
   margin:0;
   text-align: left;
-  min-width: var(--space-16x);
+  /* min-width: var(--space-16x); */
   background-color: white;
   display:grid;
-  grid-template-columns: auto max-content;
+  grid-auto-flow: column;
+  width: max-content;
+  grid-column-gap: var(--space-base);
   color: var(--subhead-gray-02);
-
   border-radius: var(--space-1h);
 }
 .menu-list-item__title {
-  font-size: var(--text-02);
+  font-size: var(--text-015);
 }
 
 .menu-list-item__description {
@@ -64,7 +66,7 @@ export let aggregationInfo = {
 
 </style>
 
-<div class=menu-button bind:this={button}>
+<div class=menu-button bind:this={button} use:tooltipAction={'this probe has multiple aggregation methods – select one from this menu'}>
   <button class=activating-button on:click={toggle} class:active>
       <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
   </button>

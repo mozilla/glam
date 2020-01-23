@@ -7,6 +7,7 @@ import ProbeExplorer from './ProbeExplorer.svelte';
 import KeySelectionControl from '../controls/KeySelectionControl.svelte';
 import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
+import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
 import { formatPercent, formatCount } from '../utils/formatters';
 
@@ -29,10 +30,29 @@ function makeSelection(type) {
   };
 }
 
+
+function gatherProbeKeys(nestedData) {
+  return Object.keys(nestedData);
+}
+
+function gatherAggregationTypes(nestedData) {
+  return Object.keys(Object.values(nestedData)[0]);
+}
+
+let aggregationTypes = gatherAggregationTypes(data);
+let probeKeys = gatherProbeKeys(data);
+let currentKey = probeKeys[0];
+let currentAggregation = aggregationTypes[0];
+
 // set the audience size when the reference updates.
 let reference;
 const movingAudienceSize = tweened(0, { duration: 500, easing });
 $: if (reference) movingAudienceSize.set(reference.audienceSize);
+
+$: if (currentKey && reference) {
+  const ref = data[currentKey][currentAggregation].find((d) => d.label.toString() === reference.label.toString());
+  reference = ref;
+}
 
 </script>
 
@@ -60,7 +80,7 @@ h2 {
   
   <slot></slot>
 
-  <div class=body-control-row>
+  <div class="body-control-row body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
       <label class=body-control-set--label>Time Horizon  </label>
@@ -82,7 +102,7 @@ h2 {
     </div>
   </div>
 
-  <div class=body-control-row>
+  <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       <label class=body-control-set--label>Metric Type</label>
       <ProportionMetricTypeControl 
@@ -90,11 +110,21 @@ h2 {
         on:selection={makeSelection('metricType')}
       />
     </div>
+    {#if probeKeys && probeKeys.length > 1}
+    <div class=body-control-set>
+      <label class=body-control-set--label>Key</label>
+        <ProbeKeySelector 
+          options={probeKeys}
+          bind:currentKey={currentKey}
+        />
+      </div>
+    {/if}
   </div>
 
   <div class=data-graphics>
     {#each Object.entries(data) as [key, aggs], i (key)}  
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
+        {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
               bind:reference={reference}
@@ -123,6 +153,7 @@ h2 {
 
             </ProbeExplorer>
           </div>
+        {/if}
       {/each}
     {/each}
   </div>

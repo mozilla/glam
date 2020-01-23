@@ -433,7 +433,7 @@ main .main-action {
     grid-auto-flow: column;
     grid-column-gap: var(--space-2x);
     top: 0;
-    z-index: 10;
+    z-index: 100;
 }
 
 main .details {
@@ -583,11 +583,21 @@ main .details {
 .body-control-row {
     display: grid;
     width: 100%;
-    grid-template-columns: auto auto;
+    /* grid-template-columns: auto auto; */
+    grid-auto-flow: column;
+    grid-column-gap: var(--space-4x);
+    justify-content: start;
+
     justify-items: start;
     margin-top: var(--space-base);
     margin-bottom: var(--space-base);
     text-align: right;
+    align-items: start;
+  }
+
+  .body-control-row--stretch {
+      justify-content: stretch;
+      grid-column-gap: var(--space-8x);
   }
 
 .body-control-set {
@@ -622,33 +632,147 @@ main .details {
     margin-right: var(--space-1h);
 }
 
+
+.data-table {
+    /* width: 100%; */
+    border-spacing: 0px;
+    /* position: relative; */
+    }
+
 .data-cell {
-    font-size: var(--text-02);
+    font-size: var(--text-015);
     text-align: right;
-    padding: var(--space-base);
-    padding-left: var(--space-2x);
-    padding-right: var(--space-2x);
+    --border-thickness: 1px;
+    --left-border-thickness: var(--border-thickness);
+    --top-border-thickness:  var(--border-thickness);
+    --right-border-thickness:  var(--border-thickness);
+    --bottom-border-thickness:  var(--border-thickness);
+
+    --border-color: var(--cool-gray-200);
+    --left-border-color: var(--border-color);
+    --right-border-color: var(--border-color);
+    --top-border-color: var(--border-color);
+    --bottom-border-color: var(--border-color);
+
+    --default-background-color: transparent;
 }
-  
+
 tr .data-cell:first-child {
     text-align: left;
+}
+
+.data-cell--header {
+    --default-background-color: white;
+    /* background-color: white; */
+    text-align: right;
+
+    vertical-align: end;
+    font-size: var(--text-015);
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--cool-gray-600);
+    
+    /* z-index: 100; */
+    /* padding-top: var(--space-2x); */
+}
+
+tr:hover .data-cell--header {
+    background-color: white;
 }
 
 tr:hover .data-cell {
     background-color: var(--cool-gray-100);
 }
 
-tr .data-cell:hover {
-    background-color: var(--cool-gray-200);
+tr .data-cell--header:first-child {
+    text-align: left;
 }
 
-td.data-cell--main {
-    min-width: var(--space-16x);
+.data-cell--header--has-padding {
+    padding-top: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+}
+    
+.data-cell--header-cell--text {
+    padding-bottom: var(--space-base);
+}
+
+.data-cell--header-cell--percentile {
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+}
+
+.data-cell--has-padding {
+    padding: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+}
+
+.data-cell--align-left {
+    text-align: left;
+}
+
+.data-cell--align-right {
+    text-align: right;
+}
+
+.data-cell--align-center {
+    text-align: center;
+}
+
+/* default */
+.data-cell--align-undefined {}
+
+
+.data-cell--size-min {
+    min-width: 0px;
+}
+
+.data-cell--size-tiny {
+    min-width: var(--space-4x);
+}
+
+.data-cell--size-small {
+    min-width: var(--space-6x);
+}
+.data-cell--size-medium {
+    min-width: var(--space-12x);
+}
+.data-cell--size-large {
+    min-width: var(--space-24x);
+}
+
+.data-cell--size-max {
+    min-width: 100%;
+}
+
+.data-cell--right-border {
+    border-right: var(--right-border-thickness) solid var(--right-border-color);
+}
+
+.data-cell--left-border {
+    border-left: var(--left-border-thickness) solid var(--left-border-color);
+}
+
+.data-cell--top-border {
+    border-top: var(--top-border-thickness) solid var(--top-border-color);
+
+}
+
+.data-cell--bottom-border {
+    border-bottom: var(--bottom-border-thickness) solid var(--bottom-border-color);
+
+}
+
+.data-cell--frozen {
+    background-color: white;
+    z-index: 9;
 }
 
 td.data-cell--secondary {
     border-right: 2px solid var(--cool-gray-200);
-    min-width: var(--space-16x);
+    min-width: var(--space-12x);
 }
 
 .data-cell--graphic {
@@ -695,6 +819,7 @@ tr td.data-cell--graphic:hover {
     padding-right: var(--space-base);
     font-size: var(--text-015);
     border-radius: var(--space-1h);
+    z-index:2001;
 }
 
 .data-graphic__element-title {

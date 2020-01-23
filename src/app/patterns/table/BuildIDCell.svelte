@@ -1,5 +1,11 @@
 <script>
+import { timeFormat } from 'd3-time-format';
+
+const formatDate = timeFormat('%Y-%m-%d');
+const formatTime = timeFormat('%H:%M:%S');
 export let label;
+export let scrollLeft = 0;
+
 </script>
 
 <style>
@@ -14,13 +20,13 @@ export let label;
 
 </style>
 
-<td class="data-cell data-cell--main">
+<td class="data-cell data-cell--main" style="transform: translateX({scrollLeft}px);">
     <div class=data-cell__build-id>
       <div class=data-cell__build-id__date>
-        <span>{label.slice(0, 4)}</span>-<span>{label.slice(4, 6)}</span>-<span>{label.slice(6, 8)}</span>
+        {formatDate(label)}
       </div>
       <div>
-      {label.slice(8, 10)}:{label.slice(10, 12)}:{label.slice(12, 14)}
+        {formatTime(label)}
     </div>
   </div>
 </td>

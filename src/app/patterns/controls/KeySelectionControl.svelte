@@ -16,6 +16,7 @@ export let transformed = options.map((opt) => ({
   options={transformed}
   selected={selections}
   multi={true}
+  justify={'flex-end'}
   level="low"
   on:selection
 />

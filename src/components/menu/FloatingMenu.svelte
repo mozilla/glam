@@ -54,6 +54,7 @@ $: if (element && parent) {
 .bound-menu {
   position: absolute;
   width: max-content;
+  z-index: 10;
 }
 
 .click-area {

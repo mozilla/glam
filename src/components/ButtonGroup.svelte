@@ -1,14 +1,15 @@
 <script>
-
+export let justify = 'flex-start';
 
 </script>
 
 <style>
+
 div {
-  display:grid;
-  grid-template-columns: repeat(10, max-content);
+  display: flex;
+  flex-wrap: wrap;
+  /* grid-template-columns: repeat(10, max-content); */
   grid-row-gap: var(--space-base);
-  width: max-content;
 }
 
 div :global(button:not(:first-child):not(:last-child)) {
@@ -27,6 +28,6 @@ div :global(button:last-child) {
 
 </style>
 
-<div class=button-group style="">
+<div class=button-group style="justify-content: {justify};">
   <slot></slot>
 </div>

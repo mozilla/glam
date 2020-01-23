@@ -22,6 +22,8 @@ export let isReference;
 export let distributionScaleType = 'scalePoint';
 export let activeBuckets;
 export let metricType;
+export let scrollLeft;
+export let scrollTop;
 export let bucketColorMap = () => 'black';
 
 const numberFormat = metricType === 'proportions' ? formatPercent : formatCount;
@@ -29,7 +31,6 @@ const numberFormat = metricType === 'proportions' ? formatPercent : formatCount;
 export let xDomain;
 
 let hovered = false;
-
 </script>
 
 <style>
@@ -42,19 +43,19 @@ let hovered = false;
 
 <tr class:reference={isReference} on:mouseout={() => { hovered = false; }} on:mouseover={() => { hovered = true; }} on:click={() => { onClick(datum); }}>
   
-    <BuildIDCell label={datum.label} />
+    <BuildIDCell 
+      label={datum.label} 
+      {scrollLeft}
+      {scrollTop}
+    />
 
     <CountProportionCell 
       count={datum.audienceSize} 
       total={biggestAudience}
       referenceCount={reference.audienceSize}
       {hovered}
+      {scrollLeft}
     />
-    {#each activeBuckets as b, i}
-      <SingleNumberCell>
-        {numberFormat(datum[metricType][b])}
-      </SingleNumberCell>
-    {/each}
 
     <ProportionComparisonCell
       distributionScaleType={distributionScaleType}
@@ -65,6 +66,14 @@ let hovered = false;
       referencePointValues={reference[metricType]}
       isReference={isReference}
       activeBuckets={activeBuckets}
+      {scrollLeft}
+      {scrollTop}
     />
+  
+    {#each activeBuckets as b, i}
+      <SingleNumberCell>
+        {numberFormat(datum[metricType][b])}
+      </SingleNumberCell>
+    {/each}
 
   </tr>

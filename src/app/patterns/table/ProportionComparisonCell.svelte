@@ -14,6 +14,9 @@ export let hovered = false;
 export let isReference = false;
 export let activeBuckets = [];
 
+export let scrollLeft = 0;
+export let scrollTop = 0;
+
 export let hoverPointValues;
 export let referencePointValues;
 
@@ -46,7 +49,7 @@ $: referenceSpring.set(removeInactiveBuckets(referencePointValues));
 
 </script>
 
-<td class=data-cell--graphic>
+<td class="data-cell--graphic data-cell--secondary" style="transform: translateX({scrollLeft}px); background-color: white;">
   <DataGraphic
     width={comparisonSmallMultiple.width}
     height={comparisonSmallMultiple.height}

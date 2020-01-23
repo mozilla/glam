@@ -99,6 +99,7 @@ const initialState = {
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
   appView: getFromQueryString('probe') === null || getFromQueryString('probe') === 'null' ? 'DEFAULT' : 'PROBE',
+  probeView: getFromQueryString('probeView') || 'explore', // explore / table
 };
 
 export const store = createStore(initialState);
@@ -114,6 +115,7 @@ store.reset = () => {
   store.reinitialize();
   store.setField('appView', 'DEFAULT');
   store.setField('probe', { name: null });
+  store.setField('probeView', 'explore');
 };
 
 export const resetFilters = () => {
@@ -150,6 +152,7 @@ function getParamsForQueryString(obj) {
     proportionMetricType: obj.proportionMetricType,
     activeBuckets: obj.activeBuckets,
     visiblePercentiles: obj.visiblePercentiles,
+    probeView: obj.probeView,
   };
 }
 
@@ -161,6 +164,7 @@ function getParamsForDataAPI(obj) {
   delete params.proportionMetricType;
   delete params.activeBuckets;
   delete params.visiblePercentiles;
+  delete params.probeView;
   params.os = osValue;
   params.channel = channelValue;
   return params;
