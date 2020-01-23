@@ -643,22 +643,17 @@ main .details {
     --right-border-color: var(--border-color);
     --top-border-color: var(--border-color);
     --bottom-border-color: var(--border-color);
+
+    --default-background-color: transparent;
 }
 
 tr .data-cell:first-child {
     text-align: left;
 }
 
-tr:hover .data-cell {
-    background-color: var(--cool-gray-100);
-}
-
-tr .data-cell:hover {
-    background-color: var(--cool-gray-150);
-}
-
 .data-cell--header {
-    background-color: white;
+    --default-background-color: white;
+    /* background-color: white; */
     text-align: right;
 
     vertical-align: end;
@@ -669,6 +664,14 @@ tr .data-cell:hover {
     
     /* z-index: 100; */
     /* padding-top: var(--space-2x); */
+}
+
+tr:hover .data-cell--header {
+    background-color: white;
+}
+
+tr:hover .data-cell {
+    background-color: var(--cool-gray-100);
 }
 
 tr .data-cell--header:first-child {

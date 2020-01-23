@@ -41,35 +41,38 @@ let currentKey = probeKeys[0] || undefined;
 
 <slot></slot>
 
-<div style="
-    display:grid; 
-    grid-auto-flow: column; 
-    justify-content: start; 
-    grid-column-gap: var(--space-4x);
-    margin-top: var(--space-4x);
-    margin-bottom: var(--space-4x);
-  ">
-    {#if aggregationTypes && aggregationTypes.length > 1}
-    <div class=body-control-set>
-      <label class=body-control-set--label>Metric Type</label>
-      <AggregationTypeSelector 
-        aggregationTypes={aggregationTypes}
-        bind:currentAggregation={currentAggregation}
-      />
-    </div>
-    {/if}
+  {#if (aggregationTypes && aggregationTypes.length > 1) || (probeKeys && probeKeys.length > 1)}
+  <div style="
+      display:grid; 
+      grid-auto-flow: column; 
+      justify-content: start; 
+      grid-column-gap: var(--space-4x);
+      margin-top: var(--space-4x);
+      margin-bottom: var(--space-4x);
+      padding-left: var(--space-4x);
+      padding-right: var(--space-4x);
+    ">
+      {#if aggregationTypes && aggregationTypes.length > 1}
+      <div class=body-control-set>
+        <label class=body-control-set--label>Metric Type</label>
+        <AggregationTypeSelector 
+          aggregationTypes={aggregationTypes}
+          bind:currentAggregation={currentAggregation}
+        />
+      </div>
+      {/if}
 
-    {#if probeKeys && probeKeys.length > 1}
-    <div class=body-control-set>
-      <label class=body-control-set--label>Key</label>
-      <ProbeKeySelector 
-        options={probeKeys}
-        bind:currentKey={currentKey}
-      />
-    </div>
-    {/if}
+      {#if probeKeys && probeKeys.length > 1}
+      <div class=body-control-set>
+        <label class=body-control-set--label>Key</label>
+        <ProbeKeySelector 
+          options={probeKeys}
+          bind:currentKey={currentKey}
+        />
+      </div>
+      {/if}
   </div>
-
+  {/if}
   <TableView 
     data={data}
     aggregationLevel={aggregationLevel}
@@ -83,5 +86,6 @@ let currentKey = probeKeys[0] || undefined;
     tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
     bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'}
   />
+
 
 </div>

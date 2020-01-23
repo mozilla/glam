@@ -21,6 +21,13 @@ export let bottomBorderColor = borderColor;
 export let bottomBorderThickness = borderThickness;
 export let topBorderColor = borderColor;
 export let topBorderThickness = borderThickness;
+export let leftBorderColor = borderColor;
+export let leftBorderThickness = borderThickness;
+export let rightBorderColor = borderColor;
+export let rightBorderThickness = borderThickness;
+
+export let backgroundColor = 'transparent';
+
 
 export let size = 'medium'; // min, small, medium, large;
 const scrollLeft = getContext('scrollLeft');
@@ -52,6 +59,11 @@ const scrollTop = getContext('scrollTop');
       --bottom-border-thickness: {bottomBorderThickness || "var(--border-thickness)"};
       --top-border-color: {topBorderColor  || "var(--border-color)"};
       --top-border-thickness: {topBorderThickness || "var(--border-thickness)"};
+      --left-border-color: {leftBorderColor  || "var(--border-color)"};
+      --left-border-thickness: {leftBorderThickness || "var(--border-thickness)"};
+      --right-border-color: {rightBorderColor  || "var(--border-color)"};
+      --right-border-thickness: {rightBorderThickness || "var(--border-thickness)"};
+      background-color: {backgroundColor || "var(--default-background-color)"};
     ">
     <slot></slot>
   </th>
@@ -71,6 +83,15 @@ const scrollTop = getContext('scrollTop');
     class:data-cell--has-padding={padding}
     style="
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY ? $scrollTop : 0}px);
+      --bottom-border-color: {bottomBorderColor  || "var(--border-color)"};
+      --bottom-border-thickness: {bottomBorderThickness || "var(--border-thickness)"};
+      --top-border-color: {topBorderColor  || "var(--border-color)"};
+      --top-border-thickness: {topBorderThickness || "var(--border-thickness)"};
+      --left-border-color: {leftBorderColor  || "var(--border-color)"};
+      --left-border-thickness: {leftBorderThickness || "var(--border-thickness)"};
+      --right-border-color: {rightBorderColor  || "var(--border-color)"};
+      --right-border-thickness: {rightBorderThickness || "var(--border-thickness)"};
+      background-color: {backgroundColor || "var(--default-background-color)"};
     "
     use:tooltipAction={tooltip}
     >

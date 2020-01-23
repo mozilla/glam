@@ -50,8 +50,13 @@ span.bucket {
 }
 </style>
 
-<div style="border-bottom: 1px solid var(--cool-gray-200);">
-  <div style="margin-top: var(--space-2x); margin-bottom: var(--space-2x);">
+<div style="border-bottom: var(--space-base) solid var(--cool-gray-100);">
+  <div style="
+    margin-top: var(--space-2x); 
+    margin-bottom: var(--space-2x);
+    padding-left: var(--space-4x);
+    padding-right: var(--space-4x);
+  ">
     <Pagination on:page={(evt) => {
         currentPage = evt.detail.page;
       }} {totalPages} currentPage={currentPage} />
@@ -69,7 +74,10 @@ span.bucket {
       </Row>
 
       <Row header>
-        <Cell bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
+        <Cell 
+          backgroundColor=var(--cool-gray-subtle)
+          topBorder={true}
+          bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
           <span class=h>
 
           {#if aggregationLevel === 'build_id'}
@@ -79,7 +87,10 @@ span.bucket {
           {/if}
           </span>
         </Cell>
-        <Cell 
+        <Cell
+          topBorder
+          rightBorder
+          backgroundColor=var(--cool-gray-subtle)
           bottomBorderThickness=2px
           freezeX 
           align=left 
@@ -87,10 +98,11 @@ span.bucket {
           <span class=h>
             Clients
           </span>
-        </Cell>
+        </Cell
+        >
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
-          <Cell tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
+          <Cell backgroundColor=var(--cool-gray-subtle) tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
             <span class=percentile-label-block style="background-color: {colorMap(bucket)}"></span>
             <span class=bucket>{keyFormatter(bucket)}</span>
           </Cell>

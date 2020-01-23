@@ -102,6 +102,11 @@ h2 span {
   color: var(--cool-gray-750)
 }
 
+.graphic-body__title--padding {
+  padding-left: var(--space-4x);
+  padding-right: var(--space-4x);
+}
+
 .graphic-body-container {
   display: grid;
   grid-template-columns: auto min-content;
@@ -140,10 +145,17 @@ h2 span {
   grid-area: content-body;
   min-height: var(--height);
   background-color: white;
+
   padding: var(--space-4x);
   padding-top: var(--space-2x);
+
   border-right: 2px solid var(--cool-gray-100);
   border-radius: var(--content-border-radius) 0 0 var(--content-border-radius);
+}
+
+.graphic-body__content--no-padding {
+  padding-left:0;
+  padding-right:0;
 }
 
 .graphic-body__details {
@@ -180,15 +192,18 @@ h2 span {
     </div>
 
     <div class="graphic-body">
-      <div class="graphic-body__content">
           {#if $store.appView === 'DEFAULT'}
+          <div class="graphic-body__content">
               <DefaultBody />
+          </div>
           {:else if $store.appView === 'PROBE'}
               {#await $dataset}
+              <div class="graphic-body__content">
                   <Spinner size={48} color={'var(--cool-gray-400)'} />
+              </div>
               {:then data}
                   {#if $store.probeView === 'explore'}
-                    <div in:fade>
+                    <div in:fade class="graphic-body__content">
                         {#if $temporaryViewTypeStore === 'categorical'}
                             <ProportionExplorerView 
                                 markers={$firefoxVersionMarkers} 
@@ -217,13 +232,16 @@ h2 span {
                             <h2>explore / <span>{$store.probe.name}</span></h2>
                           </QuantileExplorerView>
                         {:else}
+                        <div  class="graphic-body__content">
                           <div style="width: 100%">
                             <Spinner size={48} color={'var(--cool-gray-400)'} />
                           </div>
+                        </div>
                         {/if}
                     </div>
                   {:else if $store.probeView === 'table'} 
-                  <div in:fade>
+                  <div  class="graphic-body__content graphic-body__content--no-padding">
+                    <div in:fade>
                     <!-- this conditional is a stopgap until we fix https://github.com/mozilla/glam/issues/206 -->
                     {#if $store.probe.type}
                       <ProbeTableView 
@@ -233,22 +251,23 @@ h2 span {
                         visibleBuckets={[...$store.activeBuckets]}
                         aggregationLevel={$store.aggregationLevel}
                       >
-                        <h2>table / <span>{$store.probe.name}</span></h2>
+                        <h2 class=graphic-body__title--padding>table / <span>{$store.probe.name}</span></h2>
                       </ProbeTableView>
                     {/if}
+                    </div>
                   </div>
                   {/if}
               {:catch err}
+              <div  class="graphic-body__content">
                 <div in:fly={{ duration: 400, y: 10 }}>
                   <DataError reason={err.message} moreInformation={err.moreInformation} />
                 </div>
+              </div>
               {/await}
           {:else}
               <div>spinning</div>
           {/if}
           
-      </div>
-
       {#if $store.appView === 'PROBE'}
         <div class="graphic-body__details">
           <ProbeDetails />
