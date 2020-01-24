@@ -44,7 +44,7 @@ class TestRandomProbesApi:
         _data = {
             "channel": constants.CHANNEL_NIGHTLY,
             "version": "72",
-            "os": "*",
+            "os": "Windows",
             "build_id": "*",
             "process": 0,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
