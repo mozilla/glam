@@ -206,6 +206,7 @@ def random_probes(request):
             aggregations = get_aggregations(
                 probe=probe.info["name"],
                 channel="nightly",
+                os="Windows",
                 # TODO: Update to get latest version.
                 versions=["72"],
                 aggregationLevel="version",
