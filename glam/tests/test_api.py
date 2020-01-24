@@ -33,8 +33,8 @@ class TestRandomProbesApi:
             for version in versions:
                 cursor.execute(
                     f"""
-                    CREATE TABLE aggregation_nightly_{version}
-                    PARTITION OF aggregation_nightly
+                    CREATE TABLE glam_aggregation_nightly_{version}
+                    PARTITION OF glam_aggregation_nightly
                     FOR VALUES IN ('{version}')
                     """
                 )
@@ -43,12 +43,13 @@ class TestRandomProbesApi:
         # Create 1 histogram and 1 percentile record.
         _data = {
             "channel": constants.CHANNEL_NIGHTLY,
-            "version": "70",
-            "os": None,
-            "build_id": None,
+            "version": "72",
+            "os": "Windows",
+            "build_id": "*",
+            "process": 0,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
             "metric": name,
-            "metric_key": None,
+            "metric_key": "",
             "client_agg_type": "summed-histogram",
             "metric_type": "histogram-exponential",
             "total_users": 111 * multiplier,
@@ -75,18 +76,46 @@ class TestRandomProbesApi:
         Aggregation.objects.create(**_data)
 
     def test_response(self, client):
-        self._make_partitions(versions=["70"])
+        self._make_partitions(versions=["72"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fee",
+            info={
+                "kind": "count",
+                "name": "fee",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fii",
+            info={
+                "kind": "count",
+                "name": "fii",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         Probe.objects.create(
-            key="foo", info={"kind": "count", "name": "foo", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="foo",
+            info={
+                "kind": "count",
+                "name": "foo",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         Probe.objects.create(
-            key="fum", info={"kind": "count", "name": "fum", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fum",
+            info={
+                "kind": "count",
+                "name": "fum",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
@@ -103,12 +132,26 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 3
 
     def test_response_with_n(self, client):
-        self._make_partitions(versions=["70"])
+        self._make_partitions(versions=["72"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fee",
+            info={
+                "kind": "count",
+                "name": "fee",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fii",
+            info={
+                "kind": "count",
+                "name": "fii",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
@@ -119,12 +162,26 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 1
 
     def test_n_too_large(self, client):
-        self._make_partitions(versions=["70"])
+        self._make_partitions(versions=["72"])
         Probe.objects.create(
-            key="fee", info={"kind": "count", "name": "fee", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fee",
+            info={
+                "kind": "count",
+                "name": "fee",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         Probe.objects.create(
-            key="fii", info={"kind": "count", "name": "fii", "labels": None, "type": 'histogram', "kind": "enumerated"}
+            key="fii",
+            info={
+                "kind": "count",
+                "name": "fii",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
@@ -144,8 +201,8 @@ class TestAggregationsApi:
             for version in versions:
                 cursor.execute(
                     f"""
-                    CREATE TABLE aggregation_nightly_{version}
-                    PARTITION OF aggregation_nightly
+                    CREATE TABLE glam_aggregation_nightly_{version}
+                    PARTITION OF glam_aggregation_nightly
                     FOR VALUES IN ('{version}')
                     """
                 )
@@ -154,12 +211,13 @@ class TestAggregationsApi:
         # Create 1 histogram and 1 percentile record.
         _data = {
             "channel": constants.CHANNEL_NIGHTLY,
-            "version": "70",
-            "os": None,
-            "build_id": None,
+            "version": "72",
+            "os": "*",
+            "build_id": "*",
+            "process": 0,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
             "metric": "gc_ms",
-            "metric_key": None,
+            "metric_key": "",
             "client_agg_type": "summed-histogram",
             "metric_type": "histogram-exponential",
             "total_users": 111 * multiplier,
@@ -213,7 +271,7 @@ class TestAggregationsApi:
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
 
     def test_histogram(self, client):
-        self._make_partitions(versions=["70"])
+        self._make_partitions(versions=["72"])
 
         # This test adds 2 histograms, one of which will be in the result.
         self._create_aggregation(multiplier=10)
@@ -223,7 +281,7 @@ class TestAggregationsApi:
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
-                "versions": ["70"],
+                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }

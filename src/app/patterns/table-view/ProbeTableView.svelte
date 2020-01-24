@@ -23,7 +23,8 @@ export let probeKeys = gatherProbeKeys(data);
 export let colorMap;
 export let visibleBuckets;
 
-let currentAggregation = aggregationTypes[0] || undefined;
+// FIXME: summed-histogram must go.
+let currentAggregation = (aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0]) || undefined;
 let currentKey = probeKeys[0] || undefined;
 // aggregation
 
@@ -41,7 +42,7 @@ let currentKey = probeKeys[0] || undefined;
 
 <slot></slot>
 
-  {#if (aggregationTypes && aggregationTypes.length > 1) || (probeKeys && probeKeys.length > 1)}
+  {#if (aggregationTypes && aggregationTypes.length > 2) || (probeKeys && probeKeys.length > 1)}
   <div style="
       display:grid; 
       grid-auto-flow: column; 

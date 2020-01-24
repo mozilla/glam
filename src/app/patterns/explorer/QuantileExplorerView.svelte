@@ -45,7 +45,7 @@ function gatherAggregationTypes(nestedData) {
 let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);
 let currentKey = probeKeys[0];
-let currentAggregation = aggregationTypes[0];
+let currentAggregation = aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0];
 
 let aggregationInfo;
 
@@ -128,7 +128,8 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   </div>
 
   <div class=body-control-row>
-    {#if totalAggs > 1}
+    <!-- FIXME: this is a workaround because there is a summed_histogram and a summed-histogram -->
+    {#if totalAggs > 1 && currentAggregation !== 'summed_histogram' && currentAggregation !== 'summed-histogram'}
     <div class=body-control-set>
       <label class=body-control-set--label>aggregation</label>
       <AggregationTypeSelector 

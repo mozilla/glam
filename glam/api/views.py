@@ -11,6 +11,7 @@ from glam.api.constants import (
     AGGREGATION_NAMES,
     CHANNEL_IDS,
     CHANNEL_NAMES,
+    PROCESS_NAMES,
 )
 from glam.api.models import Aggregation, Probe
 
@@ -32,16 +33,16 @@ def get_aggregations(**kwargs):
     dimensions = [
         Q(metric=kwargs["probe"]),
         Q(channel=CHANNEL_IDS[kwargs["channel"]]),
-        Q(version__in=map(str, kwargs["versions"])),
-        Q(os=kwargs.get("os")),
+        Q(version__in=list(map(str, kwargs["versions"]))),
+        Q(os=kwargs.get("os") or "*"),
     ]
-    aggregation_level = kwargs["aggregationLevel"]
 
+    aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        dimensions.append(Q(build_id=None))
+        dimensions.append(Q(build_id="*"))
     elif aggregation_level == "build_id":
-        dimensions.append(~Q(build_id=None))
+        dimensions.append(~Q(build_id="*"))
 
     result = Aggregation.objects.filter(*dimensions)
 
@@ -54,13 +55,14 @@ def get_aggregations(**kwargs):
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
+            "process": PROCESS_NAMES[row.process],
             "metric": row.metric,
             "metric_type": row.metric_type,
         }
         aggs = {d["key"]: round(d["value"], 4) for d in row.data}
 
         # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}".format(**metadata)
+        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(**metadata)
         sub_key = "{key}-{client_agg_type}".format(
             key=row.metric_key, client_agg_type=row.client_agg_type
         )
@@ -152,6 +154,7 @@ def aggregations(request):
                         "metric": "gc_ms",
                         "metric_type": "histogram-exponential",
                         "os": "Linux",
+                        "process": "any",
                         "version": "70"
                     }
                 }
@@ -203,8 +206,9 @@ def random_probes(request):
             aggregations = get_aggregations(
                 probe=probe.info["name"],
                 channel="nightly",
+                os="Windows",
                 # TODO: Update to get latest version.
-                versions=["70"],
+                versions=["72"],
                 aggregationLevel="version",
             )
             if aggregations:
