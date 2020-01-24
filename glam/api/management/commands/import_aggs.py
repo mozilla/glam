@@ -25,11 +25,12 @@ class Command(BaseCommand):
         # Get the latest version for each channel
         versions = self.get_latest_versions()
 
-        # Delete blobs to make way for fresh ones.
-        all_blobs = self.gcs_client.list_blobs(GCS_BUCKET)
-        self.gcs_client.get_bucket(GCS_BUCKET).delete_blobs(all_blobs)
-
         for channel, versions in versions.items():
+            # Delete blobs to make way for fresh ones.
+            all_blobs = self.gcs_client.list_blobs(GCS_BUCKET)
+            blobs = list(filter(lambda b: b.name.startswith(f"{channel}-"), all_blobs))
+            self.gcs_client.get_bucket(GCS_BUCKET).delete_blobs(blobs)
+
             # Export tables as CSVs for each channel and last NUM_VERSIONS
             # versions to GCS.
             self.extract_tables(channel, versions)
@@ -86,7 +87,6 @@ class Command(BaseCommand):
     def extract_tables(self, channel, versions):
         print(f"[{channel}] Executing query.")
         # TODO: Remove de-duping after fixed upstream.
-        # TODO: Update process in SELECT when process is added upstream.
         query = """
             WITH duped AS (
                 SELECT
@@ -102,8 +102,12 @@ class Command(BaseCommand):
                     END AS agg_type,
                     COALESCE(os, "*") AS os,
                     COALESCE(app_build_id, "*") AS app_build_id,
-                    -- TODO: Update when process type is added.
-                    0 AS process,
+                    CASE
+                        WHEN process IS NULL THEN 0
+                        WHEN process="parent" THEN 1
+                        WHEN process="content" THEN 2
+                        WHEN process="gpu" THEN 3
+                    END AS process,
                     metric,
                     -- BigQuery has some null unicode characters which
                     -- Postgresql doesn't like, so we remove those here.
