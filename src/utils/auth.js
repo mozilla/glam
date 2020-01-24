@@ -40,7 +40,7 @@ export function authenticate(successCallback) {
         withToken(successCallback);
       } else {
         await auth0.loginWithRedirect({
-          redirect_uri: window.location.origin,
+          redirect_uri: window.location.href,
         });
       }
     }
