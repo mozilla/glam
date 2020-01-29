@@ -1,6 +1,7 @@
 <script>
 import { getContext } from 'svelte';
 import Marker from '../../../components/data-graphics/guides/Marker.svelte';
+import { store } from '../../state/store';
 import { firefoxVersionMarkers } from '../../state/product-versions';
 
 
@@ -20,7 +21,13 @@ firefoxVersionMarkers.subscribe((m) => { markers = m; });
       .filter((d) => d.date !== undefined && d.date >= $xScale.domain()[0] && d.date <= $xScale.domain()[1]) as {label, date}, i (date)}
       <Marker location={date}>
         {#if labels}
-          {label}
+          {#if $store.channel === 'nightly'}
+            {label + 2}
+          {:else if $store.channel === 'beta'}
+            {label + 1}`
+          {:else}
+            {label}
+          {/if}
         {/if}
       </Marker>
     {/each}
