@@ -25,7 +25,7 @@ def get_aggregations(request, **kwargs):
         )
 
     # If release channel, make sure the user is authenticated.
-    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_BETA]:
+    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
         if not request.user.is_authenticated:
             raise PermissionDenied()
 

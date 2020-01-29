@@ -123,7 +123,7 @@ class TestRandomProbesApi:
         self._create_aggregation(name="foo")
         self._create_aggregation(name="fum")
 
-        resp = client.post(self.url).json()
+        resp = client.post(self.url, content_type="application/json").json()
         assert len(resp["probes"]) == 3
 
         # Test that a non-integer defaults to 3
@@ -184,8 +184,6 @@ class TestRandomProbesApi:
                 "kind": "enumerated",
             },
         )
-        self._create_aggregation(name="fee")
-        self._create_aggregation(name="fii")
 
         # We want 2, but only 1 is left after query exclusions.
         resp = client.post(self.url, data={"n": 3}, content_type="application/json")
@@ -316,7 +314,7 @@ class TestAggregationsApi:
             "query": {
                 "channel": "release",
                 "probe": "gc_ms",
-                "versions": ["70"],
+                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }
@@ -330,13 +328,13 @@ class TestAggregationsApi:
             lambda self, request: (TokenUser(), {"scope": "read:foo"}),
         )
 
-        self._make_partitions(versions=["70"])
+        self._make_partitions(versions=["72"])
         self._create_aggregation({"channel": constants.CHANNEL_RELEASE})
         query = {
             "query": {
                 "channel": "release",
                 "probe": "gc_ms",
-                "versions": ["70"],
+                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }
