@@ -8,8 +8,7 @@ export const productDetails = readable(undefined, async (set) => {
   return () => undefined;
 });
 
-export const firefoxReleases = derived([store, productDetails], ([$store, $pd]) => {
-  const { channel } = $store;
+export const firefoxReleases = derived(productDetails, $pd => {
   if ($pd === undefined) return undefined;
 
   const releases = Object.entries($pd)
@@ -24,8 +23,6 @@ export const firefoxReleases = derived([store, productDetails], ([$store, $pd]) 
       info.date = new Date(info.date);
       let version = parseInt(info.version, 10);
       if (version >= 4) version = ~~version; // eslint-disable-line
-      if (channel === 'nightly') version += 2;
-      if (channel === 'beta') version += 1;
       info.label = version;
       return info;
     })
