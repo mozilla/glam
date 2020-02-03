@@ -54,6 +54,13 @@ let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
 $: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
 
+let tickFormatter;
+if (info.kind === "boolean") {
+  tickFormatter = (t) => ["No", "Yes"][Number(t)];
+} else {
+  tickFormatter = (t) => t;
+}
+
 const colorMap = createCatColorMap(kLargestBins(hist));
 let tickCount = Math.min(xDomain.length, 6);
 
@@ -112,14 +119,14 @@ onMount(() => {
     </g>
     <g slot=annotation let:hoverValue let:xScale let:top let:bottom let:left let:right>
       {#if metricKind !== 'categorical'}
-        <Axis side=bottom showBorder tickCount={tickCount}  />
+        <Axis side=bottom showBorder tickCount={tickCount} tickFormatter={tickFormatter} />
       {:else}
-        <Axis side=bottom showBorder showLabels={false} showTicks={false}  />
+        <Axis side=bottom showBorder showLabels={false} showTicks={false} tickFormatter={tickFormatter} />
       {/if}
       <g style='font-size:11px;' >
         {#if hoverValue.x}
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>
-            {hoverValue.x}
+            {tickFormatter(hoverValue.x)}
           </text>
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>
             {formatPercent(perc(hoverValue.x))}
