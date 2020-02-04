@@ -10,7 +10,7 @@ import { createCatColorMap } from '../components/data-graphics/utils/color-maps'
 
 import CONFIG from '../app/config.json';
 
-import { byKeyAndAggregation, getProbeViewType } from '../app/utils/probe-utils';
+import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 
 
 export function getField(fieldKey) {

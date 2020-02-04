@@ -13,7 +13,7 @@ import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
 import {
   byKeyAndAggregation,
-} from '../../../src/app/utils/probe-utils';
+} from '../../../src/utils/probe-utils';
 
 let gcms = byKeyAndAggregation(GCMS.response)[undefined]['summed-histogram'];
 
