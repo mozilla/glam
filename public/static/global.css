@@ -342,9 +342,10 @@ button:focus {
 }
 
 .toolbar--horizontal {
+    box-sizing: border-box;
     align-content: start;
-    padding-top: var(--space-4x);
-    padding-bottom: var(--space-4x);
+    padding-top: var(--space-2x);
+    padding-bottom: var(--space-2x);
     align-items: start;
     justify-items: end;
     grid-auto-flow: row;
