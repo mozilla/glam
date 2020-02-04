@@ -8,7 +8,7 @@ import CONFIG from '../config.json';
 import {
   store,
   getFieldValueLabel,
-} from '../state/store';
+} from '../../state/store';
 
 const OFFSET = 10;
 const COMPACT = true;

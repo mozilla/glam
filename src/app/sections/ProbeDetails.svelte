@@ -2,8 +2,8 @@
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
-import telemetrySearch from '../state/telemetry-search';
-import { store, dataset } from '../state/store';
+import telemetrySearch from '../../state/telemetry-search';
+import { store, dataset } from '../../state/store';
 
 import { downloadString } from '../../utils/download';
 

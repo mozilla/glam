@@ -16,7 +16,7 @@ import ContentBody from '../components/layout/ContentBody.svelte';
 import ContentFooter from '../components/layout/ContentFooter.svelte';
 import ProbeViewControl from './patterns/controls/ProbeViewControl.svelte';
 
-import { currentQuery } from './state/store';
+import { currentQuery } from '../state/store';
 
 let visible = false;
 

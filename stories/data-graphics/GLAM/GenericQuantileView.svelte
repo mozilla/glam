@@ -8,9 +8,9 @@ import NAV_URL_VERSION from '../../../tests/data/browser_engagement_navigation_u
 import ACTIVE_TICKS_VERSION from '../../../tests/data/browser_engagement_active_ticks_version.json';
 import GCMS_VERSION from '../../../tests/data/gc_ms_version.json';
 
-import { responseToData } from '../../../src/app/state/store';
+import { responseToData } from '../../../src/state/store';
 
-import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
+import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 
 let which = 1;
 let aggregationLevel = 'build_id';

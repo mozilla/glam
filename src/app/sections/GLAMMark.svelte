@@ -1,7 +1,7 @@
 <script>
 import { tooltip } from '../../components/utils/tooltip';
 import Logo from '../../components/icons/GLAM.svelte';
-import { store } from '../state/store';
+import { store } from '../../state/store';
 </script>
 
 <style>

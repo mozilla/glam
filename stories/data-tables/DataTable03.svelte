@@ -16,7 +16,7 @@ import NAV_URL from '../../tests/data/browser_engagement_navigation_urlbar_build
 import ACTIVE_TICKS from '../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../tests/data/gc_ms_build_id.json';
 
-import { responseToData, extractBucketMetadata } from '../../src/app/state/store';
+import { responseToData, extractBucketMetadata } from '../../src/state/store';
 
 const sslResumedSession = responseToData(SSL_RESUMED_SESSION.response, 'proportion', 'histogram-boolean');
 const sslHandshakeVersion = responseToData(SSL_HANDSHAKE_VERSION.response, 'proportion', 'histogram-enumerated');

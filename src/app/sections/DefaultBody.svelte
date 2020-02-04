@@ -1,7 +1,7 @@
 <script>
 import { fade } from 'svelte/transition';
-import { store } from '../state/store';
-import { getRandomProbes } from '../state/api';
+import { store } from '../../state/store';
+import { getRandomProbes } from '../../state/api';
 import MarketingBlock from '../patterns/defaultview/MarketingBlock.svelte';
 import whichSmallMultiple from '../patterns/defaultview/sm-logic';
 import QuantileSmallMultiple from '../patterns/defaultview/Quantile.svelte';

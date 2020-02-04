@@ -15,7 +15,7 @@ import {
   hasDefaultControlFields,
   resetFilters as resetFiltersAction,
 
-} from '../state/store';
+} from '../../state/store';
 
 import CONFIG from '../config.json';
 

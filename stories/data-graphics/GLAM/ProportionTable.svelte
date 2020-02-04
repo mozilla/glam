@@ -5,7 +5,7 @@ import SSL_HANDSHAKE_VERSION from '../../../tests/data/ssl_handshake_version_bui
 import CRYPTO from '../../../tests/data/cryptominers_blocked_count_build_id.json';
 import GCREASON2 from '../../../tests/data/gc_reason_2_build_id.json';
 
-import { responseToData, extractBucketMetadata } from '../../../src/app/state/store';
+import { responseToData, extractBucketMetadata } from '../../../src/state/store';
 
 const sslResumedSession = responseToData(SSL_RESUMED_SESSION.response, 'proportion', 'histogram-boolean');
 const sslHandshakeVersion = responseToData(SSL_HANDSHAKE_VERSION.response, 'proportion', 'histogram-enumerated');

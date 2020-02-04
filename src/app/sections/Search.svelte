@@ -3,10 +3,10 @@
 import { fly } from 'svelte/transition';
 import {
     store,
-} from '../state/store';
+} from '../../state/store';
 
 
-import telemetrySearch from '../state/telemetry-search';
+import telemetrySearch from '../../state/telemetry-search';
 
 import TelemetrySearchResults from './TelemetrySearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
@@ -113,7 +113,7 @@ async function onKeypress(event) {
 <svelte:window on:keydown={onKeypress} />
 <svelte:body on:click={(evt) => {
   if ($store.searchIsActive) {
-    if(evt.target !== inputElement) {
+    if (evt.target !== inputElement) {
       inputElement.blur();
       store.setField('searchIsActive', false);
     }

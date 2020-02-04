@@ -9,7 +9,7 @@ import { derived } from 'svelte/store';
 
 import {
   store, dataset,
-} from '../state/store';
+} from '../../state/store';
 
 import { getProbeViewType } from '../utils/probe-utils';
 
@@ -22,7 +22,7 @@ import ProbeTableView from '../patterns/table-view/ProbeTableView.svelte';
 
 import Spinner from '../../components/LineSegSpinner.svelte';
 
-import { firefoxVersionMarkers } from '../state/product-versions';
+import { firefoxVersionMarkers } from '../../state/product-versions';
 
 import DefaultBody from './DefaultBody.svelte';
 import DataError from '../patterns/errors/DataError.svelte';

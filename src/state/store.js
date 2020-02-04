@@ -1,16 +1,16 @@
 import { derived, get } from 'svelte/store';
 
-import { createStore } from '../../utils/create-store';
+import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
 import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line
 
 import { getProbeData } from './api';
-import { createCatColorMap } from '../../components/data-graphics/utils/color-maps';
+import { createCatColorMap } from '../components/data-graphics/utils/color-maps';
 
-import CONFIG from '../config.json';
+import CONFIG from '../app/config.json';
 
-import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+import { byKeyAndAggregation, getProbeViewType } from '../app/utils/probe-utils';
 
 
 export function getField(fieldKey) {

@@ -1,6 +1,6 @@
 <script>
 import { fly } from 'svelte/transition';
-import { store } from '../../state/store';
+import { store } from '../../../state/store';
 
 
 import BodyControl from './BodyControl.svelte';

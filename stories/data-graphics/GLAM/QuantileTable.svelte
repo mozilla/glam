@@ -4,7 +4,7 @@ import NAV_URL from '../../../tests/data/browser_engagement_navigation_urlbar_bu
 import ACTIVE_TICKS from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../../tests/data/gc_ms_build_id.json';
 
-import { responseToData } from '../../../src/app/state/store';
+import { responseToData } from '../../../src/state/store';
 
 let which = 0;
 // only get the first key

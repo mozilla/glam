@@ -4,7 +4,7 @@ import { fly } from 'svelte/transition';
 import { afterUpdate } from 'svelte';
 import {
   searchResults, store,
-} from '../state/store';
+} from '../../state/store';
 
 import Portal from '../../components/Portal.svelte';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';

@@ -1,8 +1,8 @@
 <script>
 import { getContext } from 'svelte';
 import Marker from '../../../components/data-graphics/guides/Marker.svelte';
-import { store } from '../../state/store';
-import { firefoxVersionMarkers } from '../../state/product-versions';
+import { store } from '../../../state/store';
+import { firefoxVersionMarkers } from '../../../state/product-versions';
 
 
 export let labels = true;
