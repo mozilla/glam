@@ -5,7 +5,7 @@ import GraphicBody from './sections/GraphicBody.svelte';
 
 import GLAMFooterContent from './sections/GLAMFooterContent.svelte';
 
-import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
+import GLAMMark from './sections/GLAMMark.svelte';
 import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
 
 import App from '../components/layout/App.svelte';
@@ -36,7 +36,7 @@ onMount(() => { visible = true; });
 
 <App centered>
   <Toolbar sticky>
-    <TelemetryAppBar />
+    <GLAMMark />
     <Search />
     <TelemetryMainFilters />
   </Toolbar>
