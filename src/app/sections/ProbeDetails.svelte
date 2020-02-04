@@ -1,7 +1,6 @@
 <script>
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
-import RightDrawer from '../../components/sections/RightDrawer.svelte';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 import telemetrySearch from '../state/telemetry-search';
 import { store, dataset } from '../state/store';
@@ -14,10 +13,10 @@ import ExternalLink from '../../components/icons/ExternalLink.svelte';
 
 const paneTransition = { x: 10, duration: 300 };
 const PROBE_TYPE_DOCS = {
-    histogram: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
-    scalar: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/scalars.html',
-    event: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
-    default: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
+  histogram: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
+  scalar: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/scalars.html',
+  event: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
+  default: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
 };
 
 let visible = false;
@@ -156,7 +155,7 @@ h2 {
 
 </style>
 
-<RightDrawer>
+<div class="drawer right-drawer">
 {#if !$telemetrySearch.loaded}
     {#if visible}
     <div in:fly={paneTransition} class="drawer-section">
@@ -253,4 +252,4 @@ h2 {
         </div>
     </div>
 {/if}
-</RightDrawer>
+</div>

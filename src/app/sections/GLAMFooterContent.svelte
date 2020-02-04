@@ -1,9 +1,9 @@
 <script>
-import MozillaLogo from '../icons/MozillaLogo.svelte';
+import MozillaLogo from '../../components/icons/MozillaLogo.svelte';
 </script>
 
 <style>
-.main-footer {
+.glam-footer {
   grid-column: main;
   display: flex;
   justify-content: space-between;
@@ -35,11 +35,11 @@ import MozillaLogo from '../icons/MozillaLogo.svelte';
 }
 </style>
 
-<footer class="main-footer">
+<div class="glam-footer">
   <a class="mozilla-logo" href="https://www.mozilla.org/"><MozillaLogo /></a>
   <ul class="project-links">
     <li><a href="https://www.mozilla.org/privacy/websites/#cookies">Cookies</a></li>
     <li><a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">Slack</a></li>
     <li><a href="https://github.com/mozilla/glam/">GitHub</a></li>
   </ul>
-</footer>
+</div>

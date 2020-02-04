@@ -1,18 +1,19 @@
 <script>
 import { onMount } from 'svelte';
 import Search from './sections/Search.svelte';
-// import Details from '../components/Details.svelte';
 import GraphicBody from './sections/GraphicBody.svelte';
 
-import App from '../components/sections/App.svelte';
-import Main from '../components/sections/Main.svelte';
-import MainActionBar from '../components/sections/MainActionBar.svelte';
-import Content from '../components/sections/Content.svelte';
-import Footer from '../components/sections/Footer.svelte';
+import GLAMFooterContent from './sections/GLAMFooterContent.svelte';
 
-import TelemetryAppBar from './sections/TelemetryAppBar.svelte';
+import GLAMMark from './sections/GLAMMark.svelte';
 import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
-import ProbeDetails from './sections/ProbeDetails.svelte';
+
+import App from '../components/layout/App.svelte';
+import Toolbar from '../components/layout/Toolbar.svelte';
+import ContentHeader from '../components/layout/ContentHeader.svelte';
+import ContentBody from '../components/layout/ContentBody.svelte';
+import ContentFooter from '../components/layout/ContentFooter.svelte';
+import ProbeViewControl from './patterns/controls/ProbeViewControl.svelte';
 
 import { currentQuery } from './state/store';
 
@@ -33,22 +34,19 @@ onMount(() => { visible = true; });
 
 </script>
 
-<style>
-
-</style>
-<App>
-    <!-- <TelemetryAppBar /> -->
-    <!-- <TelemetryControls /> -->
-
-    <Main>
-        <MainActionBar>
-                <TelemetryAppBar />
-                <Search />
-                <TelemetryMainFilters />
-        </MainActionBar>
-        <Content>
-          <GraphicBody />
-        </Content>
-    </Main>
-    <Footer />
+<App centered>
+  <Toolbar sticky>
+    <GLAMMark />
+    <Search />
+    <TelemetryMainFilters />
+  </Toolbar>
+  <ContentHeader>
+    <ProbeViewControl />
+  </ContentHeader>
+  <ContentBody>
+    <GraphicBody />
+  </ContentBody>
+  <ContentFooter>
+    <GLAMFooterContent />
+  </ContentFooter>
 </App>

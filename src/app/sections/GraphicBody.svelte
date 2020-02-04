@@ -164,6 +164,7 @@ h2 span {
 }
 
 .graphic-body {
+  height: 100%;
   display: grid;
   grid-template-areas: "content-body right";
   grid-template-columns: calc(var(--space-base) * 120) auto;
@@ -181,15 +182,15 @@ h2 span {
 
 <svelte:window bind:innerWidth={width} />
 
-<div class="graphic-body-container">
+<!-- <div class="graphic-body-container"> -->
 
-    <div class="graphic-body__graphic-header">
+    <!-- <div class="graphic-body__graphic-header">
       {#if $store.appView === 'PROBE'}
         <div transition:fly={{ x: -5, duration: 200 }}>
           <ProbeViewControl />
         </div>
       {/if}
-    </div>
+    </div> -->
 
     <div class="graphic-body">
           {#if $store.appView === 'DEFAULT'}
@@ -276,4 +277,4 @@ h2 span {
 
     </div>
 
-</div>
+<!-- </div> -->
