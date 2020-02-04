@@ -1,13 +1,19 @@
 <script>
-export let centered = false;
-export let contentHeader = true;
-export let contentFooter = true;
+import { setContext } from 'svelte';
+import { writable } from 'svelte/store';
+
+export let layoutType = 'vertical';
+
+const layout = writable({});
+$layout.orientation = layoutType;
+setContext('_layout', layout);
+
 </script>
 
-<div class=app-layout 
-  class:app-layout--centered-body={centered}
-  class:app-layout--no-content-header={!contentHeader}  
-  class:app-layout--no-content-footer={!contentFooter}  
+<div 
+  class=app-layout
+  class:app-layout--vertical={layoutType === 'vertical'}
+  class:app-layout--horizontal={layoutType === 'horizontal'}
 >
   <slot></slot>
 </div>

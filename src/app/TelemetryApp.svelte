@@ -10,6 +10,7 @@ import TelemetryMainFilters from './sections/TelemetryMainFilters.svelte';
 
 import App from '../components/layout/App.svelte';
 import Toolbar from '../components/layout/Toolbar.svelte';
+import Content from '../components/layout/Content.svelte';
 import ContentHeader from '../components/layout/ContentHeader.svelte';
 import ContentBody from '../components/layout/ContentBody.svelte';
 import ContentFooter from '../components/layout/ContentFooter.svelte';
@@ -34,19 +35,21 @@ onMount(() => { visible = true; });
 
 </script>
 
-<App centered>
+<App>
   <Toolbar sticky>
     <GLAMMark />
     <Search />
     <TelemetryMainFilters />
   </Toolbar>
-  <ContentHeader>
-    <ProbeViewControl />
-  </ContentHeader>
-  <ContentBody>
-    <GraphicBody />
-  </ContentBody>
-  <ContentFooter>
-    <GLAMFooterContent />
-  </ContentFooter>
+  <Content centered>
+    <ContentHeader>
+      <ProbeViewControl />
+    </ContentHeader>
+    <ContentBody>
+      <GraphicBody />
+    </ContentBody>
+    <ContentFooter>
+      <GLAMFooterContent />
+    </ContentFooter>
+  </Content>
 </App>
