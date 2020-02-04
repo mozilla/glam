@@ -311,7 +311,89 @@ button:focus {
 	border-color: #666;
 }
 
+/* APP LAYOUT STYLES */
+
+.app-layout {
+    --header-size: minmax(var(--increment), max-content);
+    --footer-size: minmax(var(--increment), max-content);
+    display: grid;
+    grid-template-columns: 
+        [left] minmax(0px, max-content)
+        [body-content] auto 
+        [right] minmax(0px, max-content);
+    grid-template-rows: 
+        [toolbar] max-content 
+        [body-header] var(--header-size)
+        [body-content] auto 
+        [body-footer] var(--footer-size);
+    min-height: 100vh;
+    --body-width: 1200px;
+}
+
+.app-layout--no-content-header { --header-size: 0px; }
+.app-layout--no-content-footer { --header-size: 0px; }
+
+.app-layout--centered-body {
+    grid-template-columns: 
+        [left] auto 
+        [left-gutter] minmax(0px, 80px) 
+        [body-content] var(--body-width) 
+        [right-gutter] minmax(0px, 80px) 
+        [right] auto;
+}
+
+.toolbar {
+    grid-column: 1 / -1;
+}
+
+.toolbar--sticky {
+    position: sticky;
+    top:0;
+}
+
+.content-header {
+    grid-column: body-content;
+    grid-row: body-header;
+    display: grid;
+    align-items: center;
+}
+.content-content {
+    grid-column: body-content;
+    grid-row: body-content;
+    align-self: stretch;
+}
+.content-footer {
+    grid-column: body-content;
+    grid-row: body-footer;
+    display: grid;
+    align-items: center;
+}
+
+/* surfaces are the main thing */
+/* needs depth and roundedness as the main concerns */
+
+.surface { background-color: white; }
+.surface--depth--none { box-shadow: none; }
+.surface--depth--tiny { box-shadow: var(--depth-tiny); }
+.surface--depth--small { box-shadow: var(--depth-small); }
+.surface--depth--medium { box-shadow: var(--depth-medium); }
+.surface--depth--large { box-shadow: var(--depth-large); }
+.surface--depth--jumbo { box-shadow: var(--depth-jumbo); }
+
+.surface--border-radius--1q { border-radius: var(--space-1q); }
+.surface--border-radius--1h { border-radius: var(--space-1h); }
+.surface--border-radius--1 { border-radius: var(--space-base); }
+
+.content-block { padding: var(--space-2x) };
+.content-block--padding--1q { padding: var(--space-1q); };
+.content-block--padding--1h { padding: var(--space-1h); };
+.content-block--padding--1  { padding: var(--space-1 ); };
+.content-block--padding--2  { padding: var(--space-2x); };
+.content-block--padding--4  { padding: var(--space-4x); };
+.content-block--padding--8  { padding: var(--space-8x); };
+
 /*  START OF USER DASHBOARD STUFF */
+
 
 .container {
     /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
@@ -841,4 +923,6 @@ tr td.data-cell--graphic:hover {
     align-items: center;
     justify-items: center;
 }
+
+
 
