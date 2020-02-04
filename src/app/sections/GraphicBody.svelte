@@ -11,9 +11,8 @@ import {
   store, dataset,
 } from '../../state/store';
 
-import { getProbeViewType } from '../utils/probe-utils';
+import { getProbeViewType } from '../../utils/probe-utils';
 
-import ProbeViewControl from '../patterns/controls/ProbeViewControl.svelte';
 import ProbeDetails from './ProbeDetails.svelte';
 
 import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';

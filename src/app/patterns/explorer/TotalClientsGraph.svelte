@@ -18,7 +18,7 @@ import {
 
 import {
   clientCounts,
-} from '../../utils/probe-utils';
+} from '../../../utils/probe-utils';
 
 
 export let data;
