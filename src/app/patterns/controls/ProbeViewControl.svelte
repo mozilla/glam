@@ -24,7 +24,7 @@ export let transformed = options.map((opt) => ({
 </script>
 
 {#if $store.appView === 'PROBE'}
-<div transition:fly={{ x: -5, duration: 200 }}>
+<div transition:fly={{ x: -5, duration: 200 }} style="padding-left: var(--space-4x); padding-right: var(--space-4x);">
   <BodyControl
     options={options}
     selected={$store.probeView}
