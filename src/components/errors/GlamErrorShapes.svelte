@@ -14,17 +14,9 @@ setTimeout(() => {
 
 <style>
 svg {
-    /* --dark: rgb(85,15,118);
-    --med: rgb(116,0,172);
-    --light: rgb(152,0,226); */
     --dark: var(--cool-gray-400);
     --med: var(--cool-gray-300);
     --light: var(--cool-gray-200);
-
-    /* --op-fill: rgb(197,3,255);
-    --op-stroke: rgb(172,0,255); */
-    /* --op-fill: var(--pantone-red-200);
-    --op-stroke: var(--pantone-red-600); */
     --op-fill: var(--cool-gray-500);
     --op-stroke: var(--cool-gray-050);
     --op: .6;

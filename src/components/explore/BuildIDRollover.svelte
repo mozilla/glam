@@ -1,6 +1,6 @@
 <script>
 import { getContext, onMount } from 'svelte';
-import { formatToBuildID } from '../../../utils/formatters';
+import { formatToBuildID } from '../../utils/formatters';
 
 export let xScale = getContext('xScale');
 let margins = getContext('margins');

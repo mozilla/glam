@@ -8,13 +8,13 @@ import Line from 'udgl/data-graphics/elements/Line.svelte';
 import Help from 'udgl/icons/Help.svelte';
 
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
-import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
+import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
-import { nearestBelow } from '../../../utils/stats';
+import { nearestBelow } from '../../utils/stats';
 
-import { twoPointSpring } from '../../../utils/animation';
+import { twoPointSpring } from '../../utils/animation';
 
-import { explorerComparisonSmallMultiple } from '../../../utils/constants';
+import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
 export let leftDistribution;
 export let rightDistribution;

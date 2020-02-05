@@ -36,7 +36,7 @@
     "d3-time-format": "2.1.3",
     "firebase": "6.6.0",
     "flexsearch": "0.6.30",
-    "udgl": "file:src/components/"
+    "udgl": "file:src/udgl/"
   },
   "jest": {
     "moduleFileExtensions": [

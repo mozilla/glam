@@ -1,4 +1,8 @@
 <script>
+
+// NOTE: something like this should probably be the sapper layout.
+// you will need to add additional routes for explore & table.
+
 import { onMount } from 'svelte';
 
 import App from 'udgl/layout/App.svelte';
@@ -8,11 +12,11 @@ import ContentHeader from 'udgl/layout/ContentHeader.svelte';
 import ContentBody from 'udgl/layout/ContentBody.svelte';
 import ContentFooter from 'udgl/layout/ContentFooter.svelte';
 
-import TelemetryMainFilters from './_components/TelemetryMainFilters.svelte';
-import GLAMMark from './_components/GLAMMark.svelte';
-import GLAMFooterContent from './_components/GLAMFooterContent.svelte';
-import Search from './_components/Search.svelte';
-import ProbeViewControl from './_components/ProbeViewControl.svelte';
+import MainSelectors from '../components/regions/MainSelectors.svelte';
+import GLAMMark from '../components/regions/GLAMMark.svelte';
+import Footer from '../components/regions/Footer.svelte';
+import Search from '../components/search/Search.svelte';
+import ProbeViewControl from '../components/controls/ProbeViewControl.svelte';
 
 import { currentQuery } from '../state/store';
 
@@ -37,7 +41,7 @@ onMount(() => { visible = true; });
   <Toolbar sticky>
     <GLAMMark />
     <Search />
-    <TelemetryMainFilters />
+    <MainSelectors />
   </Toolbar>
   <Content centered>
     <ContentHeader>
@@ -49,7 +53,7 @@ onMount(() => { visible = true; });
       
     </ContentBody>
     <ContentFooter>
-      <GLAMFooterContent />
+      <Footer />
     </ContentFooter>
   </Content>
 </App>

@@ -16,15 +16,15 @@ import { getProbeViewType } from '../../utils/probe-utils';
 
 import ProbeDetails from './ProbeDetails.svelte';
 
-import QuantileExplorerView from '../explore/_view/QuantileExplorerView.svelte';
-import ProportionExplorerView from '../explore/_view/ProportionExplorerView.svelte';
-import ProbeTableView from '../table/_view/ProbeTableView.svelte';
+import QuantileExplorerView from '../explore/QuantileExplorerView.svelte';
+import ProportionExplorerView from '../explore/ProportionExplorerView.svelte';
+import ProbeTableView from '../table/ProbeTableView.svelte';
 
 
 import { firefoxVersionMarkers } from '../../state/product-versions';
 
-import DefaultBody from './DefaultBody.svelte';
-import DataError from './errors/DataError.svelte';
+import DefaultBody from '../default/DefaultBody.svelte';
+import DataError from '../errors/DataError.svelte';
 
 // const getProbeViewType = (probeType, probeKind) => {
 //   if (probeType === 'histogram' && probeKind === 'enumerated') return 'categorical';

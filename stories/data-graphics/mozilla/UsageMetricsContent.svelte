@@ -20,7 +20,7 @@ import Button from 'udgl/Button.svelte';
 import Cancel from 'udgl/icons/Cancel.svelte';
 import { window1D } from 'udgl/data-graphics/utils/window-functions';
 
-import FirefoxReleaseVersionMarkers from '../../../src/routes/_components/FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../../../src/components/FirefoxReleaseVersionMarkers.svelte';
 
 let dtfmt = timeFormat('%b %d, %Y');
 

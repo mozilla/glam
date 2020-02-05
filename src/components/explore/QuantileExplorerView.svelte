@@ -6,13 +6,13 @@ import { cubicOut as easing } from 'svelte/easing';
 
 import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
-import PercentileSelectionControl from '../../_components/PercentileSelectionControl.svelte';
-import TimeHorizonControl from '../../_components/TimeHorizonControl.svelte';
-import AggregationTypeSelector from '../../_components/AggregationTypeSelector.svelte';
-import ProbeKeySelector from '../../_components/ProbeKeySelector.svelte';
+import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
+import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
+import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
 
-import { formatCount, formatValue } from '../../../utils/formatters';
+import { formatCount, formatValue } from '../../utils/formatters';
 
 const dispatch = createEventDispatcher();
 

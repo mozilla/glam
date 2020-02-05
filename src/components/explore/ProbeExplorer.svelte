@@ -8,13 +8,13 @@ import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
 
-import { explorerComparisonSmallMultiple } from '../../../utils/constants';
+import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
-import { formatBuildIDToDateString } from '../../../utils/formatters';
+import { formatBuildIDToDateString } from '../../utils/formatters';
 
-import { histogramSpring } from '../../../utils/animation';
+import { histogramSpring } from '../../utils/animation';
 
-import { extractBinValues } from '../../../utils/probe-utils';
+import { extractBinValues } from '../../utils/probe-utils';
 
 export let data;
 export let title;

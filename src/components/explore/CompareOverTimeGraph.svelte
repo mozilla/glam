@@ -12,14 +12,14 @@ import Help from 'udgl/icons/Help.svelte';
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 
 import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
-import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
+import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
 
-import { cartesianCoordSpring } from '../../../utils/animation';
+import { cartesianCoordSpring } from '../../utils/animation';
 
-import FirefoxReleaseVersionMarkers from '../../_components/FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
-import { buildIDComparisonGraph } from '../../../utils/constants';
+import { buildIDComparisonGraph } from '../../utils/constants';
 
 export let data;
 export let markers;

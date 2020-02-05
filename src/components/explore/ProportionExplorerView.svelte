@@ -4,12 +4,12 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
-import KeySelectionControl from '../../_components/KeySelectionControl.svelte';
-import TimeHorizonControl from '../../_components/TimeHorizonControl.svelte';
-import ProportionMetricTypeControl from '../../_components/ProportionMetricTypeControl.svelte';
-import ProbeKeySelector from '../../_components/ProbeKeySelector.svelte';
+import KeySelectionControl from '../controls/KeySelectionControl.svelte';
+import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
+import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
+import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
-import { formatPercent, formatCount } from '../../../utils/formatters';
+import { formatPercent, formatCount } from '../../utils/formatters';
 
 export let aggregationLevel = 'build_id';
 export let data;

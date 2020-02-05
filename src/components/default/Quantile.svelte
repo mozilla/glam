@@ -7,7 +7,7 @@ import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 
-import { formatCount } from '../../../utils/formatters';
+import { formatCount } from '../../utils/formatters';
 
 export let probe;
 export let info;

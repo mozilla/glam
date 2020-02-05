@@ -2,11 +2,11 @@
 import { fade } from 'svelte/transition';
 import { store } from '../../state/store';
 import { getRandomProbes } from '../../state/api';
-import MarketingBlock from './defaultview/MarketingBlock.svelte';
-import whichSmallMultiple from './defaultview/sm-logic';
-import QuantileSmallMultiple from './defaultview/Quantile.svelte';
-import ProportionSmallMultiple from './defaultview/Proportion.svelte';
-import RandomProbePlaceholder from './defaultview/RandomProbePlaceholder.svelte';
+import MarketingBlock from './MarketingBlock.svelte';
+import whichSmallMultiple from './sm-logic';
+import QuantileSmallMultiple from './Quantile.svelte';
+import ProportionSmallMultiple from './Proportion.svelte';
+import RandomProbePlaceholder from './RandomProbePlaceholder.svelte';
 </script>
 
 <style>

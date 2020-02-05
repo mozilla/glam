@@ -9,7 +9,7 @@ import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
 
 
-import { formatPercent } from '../../../utils/formatters';
+import { formatPercent } from '../../utils/formatters';
 
 export let probe;
 export let info;
