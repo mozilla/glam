@@ -316,26 +316,76 @@ button:focus {
 /* APP LAYOUT STYLES */
 
 .app-layout {
+    display:grid;
+    min-height: 100vh;
+    /* align-items: stretch; */
+    /* grid-template-rows: max-content max-content; */
+}
+
+.app-layout--vertical {
+    grid-template-rows: max-content auto;
+}
+
+.app-layout--horizontal {
+    grid-template-columns: var(--drawer-width) auto;
+}
+
+.toolbar {
+    align-self: start;
+    width: 100%;
+    height: 100%;
+    min-height: var(--header-height);
+    display: grid;
+    z-index: 100;
+    background-color: var(--toolbar-background-color);
+    color: var(--toolbar-text-color);
+}
+
+.toolbar--horizontal {
+    box-sizing: border-box;
+    align-content: start;
+    padding-top: var(--space-2x);
+    padding-bottom: var(--space-2x);
+    align-items: start;
+    justify-items: end;
+    grid-auto-flow: row;
+    grid-row-gap: var(--space-2x);
+}
+
+.toolbar--vertical {
+    grid-auto-flow: column;
+    grid-column-gap: var(--space-2x);
+}
+
+.toolbar--sticky {
+    position: sticky;
+    top:0;
+}
+
+.content {
+    align-self: stretch;
     --header-size: minmax(var(--increment), max-content);
     --footer-size: minmax(var(--increment), max-content);
+    --body-width: 1200px;
+
     display: grid;
+    align-items: start;
+    height: 100%;
     grid-template-columns: 
         [left] minmax(0px, max-content)
         [body-content] auto 
         [right] minmax(0px, max-content);
     grid-template-rows: 
-        [toolbar] max-content 
         [body-header] var(--header-size)
         [body-content] auto 
         [body-footer] var(--footer-size);
-    min-height: 100vh;
-    --body-width: 1200px;
 }
 
-.app-layout--no-content-header { --header-size: 0px; }
-.app-layout--no-content-footer { --header-size: 0px; }
 
-.app-layout--centered-body {
+.content--no-header { --header-size: 0px; }
+.content--no-footer { --header-size: 0px; }
+
+.content--centered-body {
     grid-template-columns: 
         [left] auto 
         [left-gutter] minmax(0px, 80px) 
@@ -344,26 +394,12 @@ button:focus {
         [right] auto;
 }
 
-.toolbar {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-auto-flow: column;
-    grid-column-gap: var(--space-2x);
-    z-index: 100;
-    background-color: var(--toolbar-background-color);
-    color: var(--toolbar-text-color);
-}
-
-.toolbar--sticky {
-    position: sticky;
-    top:0;
-}
-
 .content-header {
     grid-column: body-content;
     grid-row: body-header;
     display: grid;
     align-items: center;
+    height: 100%;
 }
 .content-content {
     grid-column: body-content;
@@ -375,6 +411,7 @@ button:focus {
     grid-row: body-footer;
     display: grid;
     align-items: center;
+    height: 100%;
 }
 
 /* surfaces are the main thing */

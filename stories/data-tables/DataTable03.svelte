@@ -1,9 +1,10 @@
 <script>
-import TableView from '../../src/app/patterns/table-view/TableView.svelte';
-import ProbeKeySelector from '../../src/app/patterns/controls/ProbeKeySelector.svelte';
-import AggregationTypeSelector from '../../src/app/patterns/controls/AggregationTypeSelector.svelte';
-import { percentileLineColorMap } from '../../src/components/data-graphics/utils/color-maps';
-import { formatCount, formatPercentDecimal } from '../../src/app/patterns/utils/formatters';
+import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
+
+import TableView from '../../src/components/table/TableView.svelte';
+import ProbeKeySelector from '../../src/components/controls/ProbeKeySelector.svelte';
+import AggregationTypeSelector from '../../src/components/controls/AggregationTypeSelector.svelte';
+import { formatCount, formatPercentDecimal } from '../../src/utils/formatters';
 
 // Proportions
 import SSL_RESUMED_SESSION from '../../tests/data/ssl_resumed_session_build_id.json';
@@ -16,7 +17,7 @@ import NAV_URL from '../../tests/data/browser_engagement_navigation_urlbar_build
 import ACTIVE_TICKS from '../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../tests/data/gc_ms_build_id.json';
 
-import { responseToData, extractBucketMetadata } from '../../src/app/state/store';
+import { responseToData, extractBucketMetadata } from '../../src/state/store';
 
 const sslResumedSession = responseToData(SSL_RESUMED_SESSION.response, 'proportion', 'histogram-boolean');
 const sslHandshakeVersion = responseToData(SSL_HANDSHAKE_VERSION.response, 'proportion', 'histogram-enumerated');

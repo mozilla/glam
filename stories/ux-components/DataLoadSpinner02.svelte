@@ -1,7 +1,7 @@
 <script>
 import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
-import RadialArcSpinner from '../../src/components/spinners/RadialArcSpinner.svelte';
+import RadialArcSpinner from 'udgl/spinners/RadialArcSpinner.svelte';
 
 let mounted = false;
 onMount(() => { mounted = true; });

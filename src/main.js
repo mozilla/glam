@@ -1,7 +1,7 @@
-import TelemetryApp from './app/TelemetryApp.svelte';
+import GLAM from './routes/index.svelte';
 
-const telemetryApp = new TelemetryApp({
+const glam = new GLAM({
   target: document.body,
 });
 
-export default telemetryApp;
+export default glam;

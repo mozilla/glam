@@ -1,5 +1,5 @@
 <script>
-import QuantileExplorerView from '../../../src/app/patterns/explorer/QuantileExplorerView.svelte';
+import QuantileExplorerView from '../../../src/components/explore/QuantileExplorerView.svelte';
 import NAV_URL_BUILD_ID from '../../../tests/data/browser_engagement_navigation_urlbar_build_id.json';
 import ACTIVE_TICKS_BUILD_ID from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS_BUILD_ID from '../../../tests/data/gc_ms_build_id.json';
@@ -8,9 +8,9 @@ import NAV_URL_VERSION from '../../../tests/data/browser_engagement_navigation_u
 import ACTIVE_TICKS_VERSION from '../../../tests/data/browser_engagement_active_ticks_version.json';
 import GCMS_VERSION from '../../../tests/data/gc_ms_version.json';
 
-import { responseToData } from '../../../src/app/state/store';
+import { responseToData } from '../../../src/state/store';
 
-import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
+import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 
 let which = 1;
 let aggregationLevel = 'build_id';

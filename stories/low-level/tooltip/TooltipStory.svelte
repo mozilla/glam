@@ -1,6 +1,6 @@
 <script>
-import Button from '../../../src/components/Button.svelte';
-import { tooltip } from '../../../src/components/utils/tooltip';
+import Button from 'udgl/Button.svelte';
+import { tooltip } from 'udgl/utils/tooltip';
 </script>
 
 <style>

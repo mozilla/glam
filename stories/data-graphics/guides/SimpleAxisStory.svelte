@@ -1,19 +1,18 @@
 <script>
-import { responseToData } from '../../../src/app/state/store';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import RightAxis from 'udgl/data-graphics/guides/RightAxis.svelte';
+import TopAxis from 'udgl/data-graphics/guides/TopAxis.svelte';
 import ACTIVE_TICKS_BUILD from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
+import { responseToData } from '../../../src/state/store';
+import { firstOfMonth, buildIDToMonth } from '../../../src/utils/build-id-utils';
 
 const activeTicksBuild = ACTIVE_TICKS_BUILD.response;
 
 const data = responseToData(activeTicksBuild);
 
 const dataset = data['undefined']['avg']; // eslint-disable-line
-
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import RightAxis from '../../../src/components/data-graphics/guides/RightAxis.svelte';
-import TopAxis from '../../../src/components/data-graphics/guides/TopAxis.svelte';
-import { firstOfMonth, buildIDToMonth } from '../../../src/app/patterns/utils/build-id-utils';
 
 let sides = {
   left: {

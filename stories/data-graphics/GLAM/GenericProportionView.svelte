@@ -1,5 +1,5 @@
 <script>
-import ProportionExplorerView from '../../../src/app/patterns/explorer/ProportionExplorerView.svelte';
+import ProportionExplorerView from '../../../src/components/explore/ProportionExplorerView.svelte';
 import SSL_RESUMED_SESSION_BUILD_ID from '../../../tests/data/ssl_resumed_session_build_id.json';
 import SSL_RESUMED_SESSION_VERSION from '../../../tests/data/ssl_resumed_session_version.json';
 import SSL_HANDSHAKE_VERSION_BUILD_ID from '../../../tests/data/ssl_handshake_version_build_id.json';
@@ -11,9 +11,9 @@ import CRYPTO_VERSION from '../../../tests/data/cryptominers_blocked_count_versi
 import GCREASON2_BUILD_ID from '../../../tests/data/gc_reason_2_build_id.json';
 import GCREASON2_VERSION from '../../../tests/data/gc_reason_2_version.json';
 
-import { firefoxVersionMarkers } from '../../../src/app/state/product-versions';
+import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 
-import { responseToData, extractBucketMetadata } from '../../../src/app/state/store';
+import { responseToData, extractBucketMetadata } from '../../../src/state/store';
 
 // build_id -level data.
 const sslResumedSessionBuildID = responseToData(SSL_RESUMED_SESSION_BUILD_ID.response, 'proportion', 'histogram-boolean');

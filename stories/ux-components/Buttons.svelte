@@ -1,6 +1,6 @@
 <script>
 
-import Button from '../../src/components/Button.svelte';
+import Button from 'udgl/Button.svelte';
 
 </script>
 <style>

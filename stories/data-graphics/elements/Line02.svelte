@@ -2,17 +2,18 @@
 import { cubicOut as easing } from 'svelte/easing';
 
 import { schemeTableau10 as cm } from 'd3-scale-chromatic';
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Line from '../../../src/components/data-graphics/elements/Line.svelte';
-import Point from '../../../src/components/data-graphics/elements/Point.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
-import Marker from '../../../src/components/data-graphics/guides/Marker.svelte';
 
-import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
-import Tweenable from '../../../src/components/data-graphics/motion/Tweenable.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Line from 'udgl/data-graphics/elements/Line.svelte';
+import Point from 'udgl/data-graphics/elements/Point.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+import Marker from 'udgl/data-graphics/guides/Marker.svelte';
 
-import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
+import Springable from 'udgl/data-graphics/motion/Springable.svelte';
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
+
+import { window1D } from 'udgl/data-graphics/utils/window-functions';
 
 function createData(n = 155) {
   let y = 20 + Math.random() * 0.6 * 100;

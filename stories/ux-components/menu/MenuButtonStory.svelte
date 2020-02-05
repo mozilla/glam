@@ -1,8 +1,8 @@
 <script>
-import MenuButton from '../../../src/components/menu/MenuButton.svelte';
-import MenuList from '../../../src/components/menu/MenuList.svelte';
-import MenuListItem from '../../../src/components/menu/MenuListItem.svelte';
-import DownCarat from '../../../src/components/icons/DownCarat.svelte';
+import MenuButton from 'udgl/menu/MenuButton.svelte';
+import MenuList from 'udgl/menu/MenuList.svelte';
+import MenuListItem from 'udgl/menu/MenuListItem.svelte';
+import DownCarat from 'udgl/icons/DownCarat.svelte';
 
 let key = 'first';
 

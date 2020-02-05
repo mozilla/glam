@@ -1,7 +1,7 @@
 <script>
-import FloatingMenu from '../../../src/components/menu/FloatingMenu.svelte';
-import MenuList from '../../../src/components/menu/MenuList.svelte';
-import MenuListItem from '../../../src/components/menu/MenuListItem.svelte';
+import FloatingMenu from 'udgl/menu/FloatingMenu.svelte';
+import MenuList from 'udgl/menu/MenuList.svelte';
+import MenuListItem from 'udgl/menu/MenuListItem.svelte';
 
 let v = 'select something from the menu';
 let k = 'nothing';

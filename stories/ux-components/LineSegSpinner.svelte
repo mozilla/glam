@@ -1,5 +1,5 @@
 <script>
-import LineSegSpinner from '../../src/components/LineSegSpinner.svelte';
+import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 </script>
 
 <style>

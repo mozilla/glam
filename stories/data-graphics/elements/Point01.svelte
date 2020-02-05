@@ -1,16 +1,16 @@
 <script>
 import { fly, fade } from 'svelte/transition';
 
-import Button from '../../../src/components/Button.svelte';
-import ButtonGroup from '../../../src/components/ButtonGroup.svelte';
+import Button from 'udgl/Button.svelte';
+import ButtonGroup from 'udgl/ButtonGroup.svelte';
 
 
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import GraphicBody from '../../../src/components/data-graphics/GraphicBody.svelte';
-import Point from '../../../src/components/data-graphics/elements/Point.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
+import Point from 'udgl/data-graphics/elements/Point.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
 import marvel from '../data/marvel-strength-weight.json';
 // import genericPointData from '../data/four-class.json';
 

@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/svelte';
 
 import DataLoadSpinner01 from './DataLoadSpinner.svelte';
 import DataLoadSpinner02 from './DataLoadSpinner02.svelte';
-import DataError from '../../src/app/patterns/errors/DataError.svelte';
+import DataError from '../../src/routes/_components/errors/DataError.svelte';
 import LineSegSpinner from './LineSegSpinner.svelte';
 
 import Buttons from './Buttons.svelte';

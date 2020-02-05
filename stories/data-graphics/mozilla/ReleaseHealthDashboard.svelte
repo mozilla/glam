@@ -1,20 +1,20 @@
 <script>
 import { fly, fade } from 'svelte/transition';
 import { cubicOut as easing } from 'svelte/easing';
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Point from '../../../src/components/data-graphics/elements/Point.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import Axis from '../../../src/components/data-graphics/guides/Axis.svelte';
-import AxisLabel from '../../../src/components/data-graphics/guides/AxisLabel.svelte';
-import AxisLine from '../../../src/components/data-graphics/guides/AxisLine.svelte';
-import AxisTick from '../../../src/components/data-graphics/guides/AxisTick.svelte';
 
-import Button from '../../../src/components/Button.svelte';
-import ButtonGroup from '../../../src/components/ButtonGroup.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Point from 'udgl/data-graphics/elements/Point.svelte';
+import Axis from 'udgl/data-graphics/guides/Axis.svelte';
+import AxisLabel from 'udgl/data-graphics/guides/AxisLabel.svelte';
+import AxisLine from 'udgl/data-graphics/guides/AxisLine.svelte';
+import AxisTick from 'udgl/data-graphics/guides/AxisTick.svelte';
+import Button from 'udgl/Button.svelte';
+import ButtonGroup from 'udgl/ButtonGroup.svelte';
+
+import { groupBy } from 'udgl/utils/transforms';
 
 import { releases } from './data';
 
-import { groupBy } from '../../../src/components/utils/transforms';
 
 let xDomain = Array.from(new Set(releases.map((r) => r.minor)));
 let yDomain = [0, 2];
