@@ -4,7 +4,7 @@ import { onMount } from 'svelte';
 import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
 import RightAxis from '../../../components/data-graphics/guides/RightAxis.svelte';
-import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
+import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
 import Line from '../../../components/data-graphics/elements/Line.svelte';
 import Help from '../../../components/icons/Help.svelte';
 
@@ -12,9 +12,9 @@ import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 import { nearestBelow } from '../../../utils/stats';
 
-import { twoPointSpring } from '../utils/animation';
+import { twoPointSpring } from '../../../utils/animation';
 
-import { explorerComparisonSmallMultiple } from '../utils/constants';
+import { explorerComparisonSmallMultiple } from '../../../utils/constants';
 
 export let leftDistribution;
 export let rightDistribution;

@@ -1,5 +1,5 @@
 <script>
-  import { tick, setContext } from 'svelte';
+  import { tick } from 'svelte';
 import { fly } from 'svelte/transition';
 import {
     store,
@@ -8,7 +8,7 @@ import {
 
 import telemetrySearch from '../../state/telemetry-search';
 
-import TelemetrySearchResults from './TelemetrySearchResults.svelte';
+import TelemetrySearchResults from './SearchResults.svelte';
 import SearchIcon from '../../components/icons/Search.svelte';
 import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 

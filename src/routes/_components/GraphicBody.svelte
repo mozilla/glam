@@ -15,16 +15,16 @@ import { getProbeViewType } from '../../utils/probe-utils';
 
 import ProbeDetails from './ProbeDetails.svelte';
 
-import QuantileExplorerView from '../patterns/explorer/QuantileExplorerView.svelte';
-import ProportionExplorerView from '../patterns/explorer/ProportionExplorerView.svelte';
-import ProbeTableView from '../patterns/table-view/ProbeTableView.svelte';
+import QuantileExplorerView from '../explore/_view/QuantileExplorerView.svelte';
+import ProportionExplorerView from '../explore/_view/ProportionExplorerView.svelte';
+import ProbeTableView from '../../app/patterns/table-view/ProbeTableView.svelte';
 
 import Spinner from '../../components/LineSegSpinner.svelte';
 
 import { firefoxVersionMarkers } from '../../state/product-versions';
 
 import DefaultBody from './DefaultBody.svelte';
-import DataError from '../patterns/errors/DataError.svelte';
+import DataError from './errors/DataError.svelte';
 
 // const getProbeViewType = (probeType, probeKind) => {
 //   if (probeType === 'histogram' && probeKind === 'enumerated') return 'categorical';
@@ -49,30 +49,6 @@ import DataError from '../patterns/errors/DataError.svelte';
 const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType($st.probe.type, $st.probe.kind));
 
 let key;
-
-// $: if (
-//   $store.probe.name !== probeName
-//   && $dataset.queryKey !== key
-//   && $temporaryViewTypeStore) {
-//   key = $dataset.queryKey;
-//   output = $dataset.data.then(
-//     ({ data }) => {
-//       const viewType = $temporaryViewTypeStore;
-//       const isCategorical = viewType === 'categorical';
-//       let etc = {};
-//       if (isCategorical) {
-//         etc = extractBucketMetadata(data);
-//         if ($store.applicationStatus !== 'INITIALIZING') {
-//           store.setField('activeBuckets', etc.initialBuckets);
-//         }
-//       }
-//       store.setField('applicationStatus', 'ACTIVE');
-//       return { data, viewType, ...etc };
-//     },
-//   );
-// }
-
-// FIXME: remove this once the dataset + API are fixed.
 
 let width;
 

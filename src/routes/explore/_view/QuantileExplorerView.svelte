@@ -2,19 +2,18 @@
 import { setContext, getContext, createEventDispatcher } from 'svelte';
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
-import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
+// import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
 
 import ProbeExplorer from './ProbeExplorer.svelte';
-import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
-import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
-import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
-import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
+import PercentileSelectionControl from '../../_components/PercentileSelectionControl.svelte';
+import TimeHorizonControl from '../../_components/TimeHorizonControl.svelte';
+import AggregationTypeSelector from '../../_components/AggregationTypeSelector.svelte';
+import ProbeKeySelector from '../../_components/ProbeKeySelector.svelte';
 
-import Heatmap from '../../../components/data-graphics/elements/Heatmap.svelte';
 
 import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
-import { formatCount, formatValue } from '../utils/formatters';
+import { formatCount, formatValue } from '../../../utils/formatters';
 
 const dispatch = createEventDispatcher();
 

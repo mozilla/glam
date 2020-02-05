@@ -3,7 +3,7 @@ import MenuButton from '../../components/menu/MenuButton.svelte';
 import MenuList from '../../components/menu/MenuList.svelte';
 import MenuListItem from '../../components/menu/MenuListItem.svelte';
 import DownCarat from '../../components/icons/DownCarat.svelte';
-import CONFIG from '../config.json';
+import CONFIG from '../../config.json';
 
 import {
   store,

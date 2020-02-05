@@ -1,7 +1,7 @@
 import produce from 'immer';
-import { fullBuildIDToDate } from '../app/patterns/utils/build-id-utils';
+import { fullBuildIDToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
-import { formatBuildIDToOnlyDate } from '../app/patterns/utils/formatters';
+import { formatBuildIDToOnlyDate } from './formatters';
 import { groupBy } from '../components/utils/transforms';
 
 export function sortByKey(key) {

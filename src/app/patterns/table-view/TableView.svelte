@@ -9,9 +9,9 @@ import Pagination from '../elements/Pagination.svelte';
 
 import {
   formatCount, formatPercentDecimal, ymd, timecode,
-} from '../utils/formatters';
+} from '../../../utils/formatters';
 
-import { backwards } from '../utils/iterables';
+import { backwards } from '../../../utils/iterables';
 
 export let data; // nested as key, aggregation_type
 export let aggregationLevel = 'build_id';

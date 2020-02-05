@@ -9,7 +9,7 @@ import Axis from '../../../components/data-graphics/guides/Axis.svelte';
 import { createCatColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 
-import { formatPercent } from '../utils/formatters';
+import { formatPercent } from '../../../utils/formatters';
 
 export let probe;
 export let info;
@@ -55,10 +55,10 @@ let distSpring = [];
 $: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
 
 let tickFormatter;
-if (info.kind === "boolean") {
-  tickFormatter = (t) => ["No", "Yes"][Number(t)];
+if (info.kind === 'boolean') {
+    tickFormatter = (t) => ['No', 'Yes'][Number(t)];
 } else {
-  tickFormatter = (t) => t;
+    tickFormatter = (t) => t;
 }
 
 const colorMap = createCatColorMap(kLargestBins(hist));

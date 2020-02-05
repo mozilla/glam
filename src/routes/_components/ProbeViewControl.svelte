@@ -1,11 +1,11 @@
 <script>
 import { fly } from 'svelte/transition';
-import { store } from '../../../state/store';
+import { store } from '../../state/store';
 
 
 import BodyControl from './BodyControl.svelte';
-import Chart from '../../../components/icons/Chart.svelte';
-import Table from '../../../components/icons/Table.svelte';
+import Chart from '../../components/icons/Chart.svelte';
+import Table from '../../components/icons/Table.svelte';
 
 export let selections;
 let options = [

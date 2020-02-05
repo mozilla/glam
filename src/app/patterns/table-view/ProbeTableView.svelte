@@ -1,9 +1,9 @@
 <script>
 import TableView from './TableView.svelte';
-import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
-import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
+import AggregationTypeSelector from '../../../routes/_components/AggregationTypeSelector.svelte';
+import ProbeKeySelector from '../../../routes/_components/ProbeKeySelector.svelte';
 import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
-import { formatCount, formatPercentDecimal } from '../utils/formatters';
+import { formatCount, formatPercentDecimal } from '../../../utils/formatters';
 
 export let data;
 export let probeType = 'categorical';

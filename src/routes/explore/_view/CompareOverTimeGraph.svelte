@@ -6,20 +6,20 @@ import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import LeftAxis from '../../../components/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
 import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
-import BuildIDRollover from '../../../components/data-graphics/rollovers/BuildIDRollover.svelte';
+import BuildIDRollover from './BuildIDRollover.svelte';
 import Line from '../../../components/data-graphics/elements/Line.svelte';
-import ReferenceSymbol from '../elements/ReferenceSymbol.svelte';
+import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
 import Help from '../../../components/icons/Help.svelte';
 
 import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
 
 import { window1DPlacement, window1D } from '../../../components/data-graphics/utils/window-functions';
 
-import { cartesianCoordSpring } from '../utils/animation';
+import { cartesianCoordSpring } from '../../../utils/animation';
 
-import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../../_components/FirefoxReleaseVersionMarkers.svelte';
 
-import { buildIDComparisonGraph } from '../utils/constants';
+import { buildIDComparisonGraph } from '../../../utils/constants';
 
 export let data;
 export let markers;

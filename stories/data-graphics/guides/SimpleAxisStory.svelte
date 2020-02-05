@@ -13,7 +13,7 @@ import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.
 import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
 import RightAxis from '../../../src/components/data-graphics/guides/RightAxis.svelte';
 import TopAxis from '../../../src/components/data-graphics/guides/TopAxis.svelte';
-import { firstOfMonth, buildIDToMonth } from '../../../src/app/patterns/utils/build-id-utils';
+import { firstOfMonth, buildIDToMonth } from '../../../src/utils/build-id-utils';
 
 let sides = {
   left: {

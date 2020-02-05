@@ -1,8 +1,8 @@
 <script>
-import FloatingMenu from '../../../components/menu/FloatingMenu.svelte';
-import MenuList from '../../../components/menu/MenuList.svelte';
-import MenuListItem from '../../../components/menu/MenuListItem.svelte';
-import DownCarat from '../../../components/icons/DownCarat.svelte';
+import FloatingMenu from '../../components/menu/FloatingMenu.svelte';
+import MenuList from '../../components/menu/MenuList.svelte';
+import MenuListItem from '../../components/menu/MenuListItem.svelte';
+import DownCarat from '../../components/icons/DownCarat.svelte';
 
 // export let aggregationTypes;
 export let currentView;

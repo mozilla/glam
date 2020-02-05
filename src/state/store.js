@@ -8,7 +8,7 @@ import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disabl
 import { getProbeData } from './api';
 import { createCatColorMap } from '../components/data-graphics/utils/color-maps';
 
-import CONFIG from '../app/config.json';
+import CONFIG from '../config.json';
 
 import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 

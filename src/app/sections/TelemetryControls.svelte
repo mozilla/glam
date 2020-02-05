@@ -17,7 +17,7 @@ import {
 
 } from '../../state/store';
 
-import CONFIG from '../config.json';
+import CONFIG from '../../config.json';
 
 let visible = true;
 let channel;

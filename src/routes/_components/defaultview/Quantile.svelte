@@ -7,7 +7,7 @@ import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
 import Violin from '../../../components/data-graphics/elements/Violin.svelte';
 import Axis from '../../../components/data-graphics/guides/Axis.svelte';
 
-import { formatCount } from '../utils/formatters';
+import { formatCount } from '../../../utils/formatters';
 
 export let probe;
 export let info;
