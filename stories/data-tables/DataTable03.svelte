@@ -1,9 +1,9 @@
 <script>
-import TableView from '../../src/app/patterns/table-view/TableView.svelte';
-import ProbeKeySelector from '../../src/app/patterns/controls/ProbeKeySelector.svelte';
-import AggregationTypeSelector from '../../src/app/patterns/controls/AggregationTypeSelector.svelte';
+import TableView from '../../src/routes/table/_view/TableView.svelte';
+import ProbeKeySelector from '../../src/routes/_components/ProbeKeySelector.svelte';
+import AggregationTypeSelector from '../../src/routes/_components/AggregationTypeSelector.svelte';
 import { percentileLineColorMap } from '../../src/components/data-graphics/utils/color-maps';
-import { formatCount, formatPercentDecimal } from '../../src/app/patterns/utils/formatters';
+import { formatCount, formatPercentDecimal } from '../../src/utils/formatters';
 
 // Proportions
 import SSL_RESUMED_SESSION from '../../tests/data/ssl_resumed_session_build_id.json';

@@ -17,7 +17,7 @@ import ProbeDetails from './ProbeDetails.svelte';
 
 import QuantileExplorerView from '../explore/_view/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../explore/_view/ProportionExplorerView.svelte';
-import ProbeTableView from '../../app/patterns/table-view/ProbeTableView.svelte';
+import ProbeTableView from '../table/_view/ProbeTableView.svelte';
 
 import Spinner from '../../components/LineSegSpinner.svelte';
 

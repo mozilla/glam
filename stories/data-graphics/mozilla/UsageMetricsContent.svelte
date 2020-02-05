@@ -19,7 +19,7 @@ import Button from '../../../src/components/Button.svelte';
 import Cancel from '../../../src/components/icons/Cancel.svelte';
 import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
 
-import FirefoxReleaseVersionMarkers from '../../../src/app/patterns/elements/FirefoxReleaseVersionMarkers.svelte';
+import FirefoxReleaseVersionMarkers from '../../../src/routes/_components/FirefoxReleaseVersionMarkers.svelte';
 
 let dtfmt = timeFormat('%b %d, %Y');
 

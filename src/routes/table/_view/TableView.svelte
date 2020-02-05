@@ -5,7 +5,7 @@ import Cell from '../../../components/data-tables/Cell.svelte';
 
 import ProportionSM from './ProportionSM.svelte';
 
-import Pagination from '../elements/Pagination.svelte';
+import Pagination from '../../_components/Pagination.svelte';
 
 import {
   formatCount, formatPercentDecimal, ymd, timecode,

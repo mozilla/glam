@@ -1,5 +1,5 @@
 <script>
-import QuantileExplorerView from '../../../src/app/patterns/explorer/QuantileExplorerView.svelte';
+import QuantileExplorerView from '../../../src/routes/explore/_view/QuantileExplorerView.svelte';
 import NAV_URL_BUILD_ID from '../../../tests/data/browser_engagement_navigation_urlbar_build_id.json';
 import ACTIVE_TICKS_BUILD_ID from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS_BUILD_ID from '../../../tests/data/gc_ms_build_id.json';

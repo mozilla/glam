@@ -1,5 +1,5 @@
 <script>
-import ProportionExplorerView from '../../../src/app/patterns/explorer/ProportionExplorerView.svelte';
+import ProportionExplorerView from '../../../src/routes/explore/_view/ProportionExplorerView.svelte';
 import SSL_RESUMED_SESSION_BUILD_ID from '../../../tests/data/ssl_resumed_session_build_id.json';
 import SSL_RESUMED_SESSION_VERSION from '../../../tests/data/ssl_resumed_session_version.json';
 import SSL_HANDSHAKE_VERSION_BUILD_ID from '../../../tests/data/ssl_handshake_version_build_id.json';
