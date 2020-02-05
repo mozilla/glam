@@ -4,14 +4,13 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 // import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
 
+import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../../_components/PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../../_components/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../../_components/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../../_components/ProbeKeySelector.svelte';
 
-
-import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 
 import { formatCount, formatValue } from '../../../utils/formatters';
 

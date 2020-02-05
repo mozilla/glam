@@ -1,6 +1,6 @@
 <script>
-import { tooltip } from '../../components/utils/tooltip';
-import Logo from '../../components/icons/GLAM.svelte';
+import { tooltip } from 'udgl/utils/tooltip';
+import Logo from 'udgl/icons/GLAM.svelte';
 import { store } from '../../state/store';
 </script>
 

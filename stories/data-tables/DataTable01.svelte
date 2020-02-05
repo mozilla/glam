@@ -1,9 +1,9 @@
 <script>
-import DataTable from '../../src/components/data-tables/DataTable.svelte';
-import Row from '../../src/components/data-tables/Row.svelte';
-import Cell from '../../src/components/data-tables/Cell.svelte';
+import DataTable from 'udgl/data-tables/DataTable.svelte';
+import Row from 'udgl/data-tables/Row.svelte';
+import Cell from 'udgl/data-tables/Cell.svelte';
 
-import DataGraphic from '../../src/components/data-graphics/DataGraphic.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 
 // data from 538: https://raw.githubusercontent.com/fivethirtyeight/data/master/drug-use-by-age/drug-use-by-age.csv
 import drugUse from './drug-use-by-age.json';

@@ -1,7 +1,7 @@
 <script>
 import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
-import Button from '../../../components/Button.svelte';
+import Button from 'udgl/Button.svelte';
 
 const t = tweened(0, { duration: 500, easing });
 $: $t = 1;

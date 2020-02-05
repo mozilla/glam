@@ -1,6 +1,9 @@
 <script>
   import { tick } from 'svelte';
 import { fly } from 'svelte/transition';
+import SearchIcon from 'udgl/icons/Search.svelte';
+import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
+
 import {
     store,
 } from '../../state/store';
@@ -9,8 +12,7 @@ import {
 import telemetrySearch from '../../state/telemetry-search';
 
 import TelemetrySearchResults from './SearchResults.svelte';
-import SearchIcon from '../../components/icons/Search.svelte';
-import LineSegSpinner from '../../components/LineSegSpinner.svelte';
+
 
 let inputElement;
 let searchContainer;

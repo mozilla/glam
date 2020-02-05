@@ -1,11 +1,11 @@
 <script>
 import { fly } from 'svelte/transition';
+import Chart from 'udgl/icons/Chart.svelte';
+import Table from 'udgl/icons/Table.svelte';
 import { store } from '../../state/store';
 
 
 import BodyControl from './BodyControl.svelte';
-import Chart from '../../components/icons/Chart.svelte';
-import Table from '../../components/icons/Table.svelte';
 
 export let selections;
 let options = [

@@ -1,6 +1,6 @@
 <script>
+import { percentileLineColorMap as cmp } from 'udgl/data-graphics/utils/color-maps';
 import BodyControl from './BodyControl.svelte';
-import { percentileLineColorMap as cmp } from '../../components/data-graphics/utils/color-maps';
 
 export let percentiles = [50];
 

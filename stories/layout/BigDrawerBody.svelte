@@ -1,11 +1,11 @@
 <script>
-import App from '../../src/components/layout/App.svelte';
-import Toolbar from '../../src/components/layout/Toolbar.svelte';
-import Content from '../../src/components/layout/Content.svelte';
-import ContentBody from '../../src/components/layout/ContentBody.svelte';
-import ContentHeader from '../../src/components/layout/ContentHeader.svelte';
-import ButtonGroup from '../../src/components/ButtonGroup.svelte';
-import Button from '../../src/components/Button.svelte';
+import App from 'udgl/layout/App.svelte';
+import Toolbar from 'udgl/layout/Toolbar.svelte';
+import Content from 'udgl/layout/Content.svelte';
+import ContentBody from 'udgl/layout/ContentBody.svelte';
+import ContentHeader from 'udgl/layout/ContentHeader.svelte';
+import ButtonGroup from 'udgl/ButtonGroup.svelte';
+import Button from 'udgl/Button.svelte';
 
 import UsageMetricsContent from '../data-graphics/mozilla/UsageMetricsContent.svelte';
 </script>

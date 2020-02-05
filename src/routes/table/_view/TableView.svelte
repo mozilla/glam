@@ -1,7 +1,7 @@
 <script>
-import DataTable from '../../../components/data-tables/DataTable.svelte';
-import Row from '../../../components/data-tables/Row.svelte';
-import Cell from '../../../components/data-tables/Cell.svelte';
+import DataTable from 'udgl/data-tables/DataTable.svelte';
+import Row from 'udgl/data-tables/Row.svelte';
+import Cell from 'udgl/data-tables/Cell.svelte';
 
 import ProportionSM from './ProportionSM.svelte';
 

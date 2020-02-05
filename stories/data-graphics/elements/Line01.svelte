@@ -4,15 +4,16 @@ import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Line from '../../../src/components/data-graphics/elements/Line.svelte';
-import Point from '../../../src/components/data-graphics/elements/Point.svelte';
 
-import MarginText from '../../../src/components/data-graphics/guides/MarginText.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Line from 'udgl/data-graphics/elements/Line.svelte';
+import Point from 'udgl/data-graphics/elements/Point.svelte';
 
-import Button from '../../../src/components/Button.svelte';
+import MarginText from 'udgl/data-graphics/guides/MarginText.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+
+import Button from 'udgl/Button.svelte';
 
 const fmt = (v) => (v ? format(',.2f')(v) : '');
 const perc = format('.2p');

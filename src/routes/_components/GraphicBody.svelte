@@ -7,6 +7,7 @@ import { fade, fly } from 'svelte/transition';
 // accurate probe information.
 import { derived } from 'svelte/store';
 
+import Spinner from 'udgl/LineSegSpinner.svelte';
 import {
   store, dataset,
 } from '../../state/store';
@@ -19,7 +20,6 @@ import QuantileExplorerView from '../explore/_view/QuantileExplorerView.svelte';
 import ProportionExplorerView from '../explore/_view/ProportionExplorerView.svelte';
 import ProbeTableView from '../table/_view/ProbeTableView.svelte';
 
-import Spinner from '../../components/LineSegSpinner.svelte';
 
 import { firefoxVersionMarkers } from '../../state/product-versions';
 

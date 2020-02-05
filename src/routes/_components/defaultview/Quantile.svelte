@@ -3,9 +3,9 @@
 import { tweened } from 'svelte/motion';
 import { fade } from 'svelte/transition';
 import { cubicOut as easing } from 'svelte/easing';
-import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
-import Violin from '../../../components/data-graphics/elements/Violin.svelte';
-import Axis from '../../../components/data-graphics/guides/Axis.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Violin from 'udgl/data-graphics/elements/Violin.svelte';
+import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 
 import { formatCount } from '../../../utils/formatters';
 

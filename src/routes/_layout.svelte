@@ -1,18 +1,17 @@
 <script>
 import { onMount } from 'svelte';
-import Search from './_components/Search.svelte';
 
-import GLAMFooterContent from './_components/GLAMFooterContent.svelte';
+import App from 'udgl/layout/App.svelte';
+import Toolbar from 'udgl/layout/Toolbar.svelte';
+import Content from 'udgl/layout/Content.svelte';
+import ContentHeader from 'udgl/layout/ContentHeader.svelte';
+import ContentBody from 'udgl/layout/ContentBody.svelte';
+import ContentFooter from 'udgl/layout/ContentFooter.svelte';
 
-import GLAMMark from './_components/GLAMMark.svelte';
 import TelemetryMainFilters from './_components/TelemetryMainFilters.svelte';
-
-import App from '../components/layout/App.svelte';
-import Toolbar from '../components/layout/Toolbar.svelte';
-import Content from '../components/layout/Content.svelte';
-import ContentHeader from '../components/layout/ContentHeader.svelte';
-import ContentBody from '../components/layout/ContentBody.svelte';
-import ContentFooter from '../components/layout/ContentFooter.svelte';
+import GLAMMark from './_components/GLAMMark.svelte';
+import GLAMFooterContent from './_components/GLAMFooterContent.svelte';
+import Search from './_components/Search.svelte';
 import ProbeViewControl from './_components/ProbeViewControl.svelte';
 
 import { currentQuery } from '../state/store';

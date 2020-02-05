@@ -1,8 +1,8 @@
 <script>
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Marker from '../../../src/components/data-graphics/guides/Marker.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Marker from 'udgl/data-graphics/guides/Marker.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 
 const xDomain = Array.from({ length: 100 }).map((_, i) => i);
 const yDomain = Array.from({ length: 100 }).map((_, i) => i);

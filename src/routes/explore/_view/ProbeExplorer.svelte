@@ -2,11 +2,11 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
+import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 // import TotalClientsGraph from './TotalClientsGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
-import Violin from '../../../components/data-graphics/elements/Violin.svelte';
 
 import { explorerComparisonSmallMultiple } from '../../../utils/constants';
 

@@ -1,8 +1,8 @@
 import produce from 'immer';
+import { groupBy } from 'udgl/utils/transforms';
 import { fullBuildIDToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
 import { formatBuildIDToOnlyDate } from './formatters';
-import { groupBy } from '../components/utils/transforms';
 
 export function sortByKey(key) {
   return (a, b) => {

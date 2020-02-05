@@ -1,15 +1,15 @@
 <script>
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
-import LineSegSpinner from '../../components/LineSegSpinner.svelte';
+import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
+import Button from 'udgl/Button.svelte';
+import StatusLabel from 'udgl/StatusLabel.svelte';
+import ExternalLink from 'udgl/icons/ExternalLink.svelte';
 import telemetrySearch from '../../state/telemetry-search';
 import { store, dataset } from '../../state/store';
 
 import { downloadString } from '../../utils/download';
 
-import Button from '../../components/Button.svelte';
-import StatusLabel from '../../components/StatusLabel.svelte';
-import ExternalLink from '../../components/icons/ExternalLink.svelte';
 
 const paneTransition = { x: 10, duration: 300 };
 const PROBE_TYPE_DOCS = {

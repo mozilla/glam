@@ -2,18 +2,18 @@
 import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 
-import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
-import LeftAxis from '../../../components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../components/data-graphics/guides/BottomAxis.svelte';
-import GraphicBody from '../../../components/data-graphics/GraphicBody.svelte';
-import BuildIDRollover from './BuildIDRollover.svelte';
-import Line from '../../../components/data-graphics/elements/Line.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
+import Line from 'udgl/data-graphics/elements/Line.svelte';
+import Help from 'udgl/icons/Help.svelte';
+
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+
+import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
 import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
-import Help from '../../../components/icons/Help.svelte';
-
-import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
-
-import { window1DPlacement, window1D } from '../../../components/data-graphics/utils/window-functions';
+import BuildIDRollover from './BuildIDRollover.svelte';
 
 import { cartesianCoordSpring } from '../../../utils/animation';
 

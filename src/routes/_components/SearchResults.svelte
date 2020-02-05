@@ -2,12 +2,14 @@
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
 import { afterUpdate } from 'svelte';
+
+import Portal from 'udgl/Portal.svelte';
+import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
+
 import {
   searchResults, store,
 } from '../../state/store';
 
-import Portal from '../../components/Portal.svelte';
-import LineSegSpinner from '../../components/LineSegSpinner.svelte';
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.

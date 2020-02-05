@@ -1,7 +1,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import Button from '../../components/Button.svelte';
-import ButtonGroup from '../../components/ButtonGroup.svelte';
+import Button from 'udgl/Button.svelte';
+import ButtonGroup from 'udgl/ButtonGroup.svelte';
 
 export let level = 'medium';
 export let compact = true;

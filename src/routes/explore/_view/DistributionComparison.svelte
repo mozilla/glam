@@ -1,14 +1,14 @@
 <script>
 import { onMount } from 'svelte';
 
-import DataGraphic from '../../../components/data-graphics/DataGraphic.svelte';
-import TopAxis from '../../../components/data-graphics/guides/TopAxis.svelte';
-import RightAxis from '../../../components/data-graphics/guides/RightAxis.svelte';
-import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
-import Line from '../../../components/data-graphics/elements/Line.svelte';
-import Help from '../../../components/icons/Help.svelte';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import TopAxis from 'udgl/data-graphics/guides/TopAxis.svelte';
+import RightAxis from 'udgl/data-graphics/guides/RightAxis.svelte';
+import Line from 'udgl/data-graphics/elements/Line.svelte';
+import Help from 'udgl/icons/Help.svelte';
 
-import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+import ReferenceSymbol from '../../_components/ReferenceSymbol.svelte';
 
 import { nearestBelow } from '../../../utils/stats';
 

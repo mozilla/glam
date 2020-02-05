@@ -1,6 +1,6 @@
 <script>
 import { format } from 'd3-format';
-import Tweenable from '../../../components/data-graphics/motion/Tweenable.svelte';
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 
 let fmt = format(',.4r');
 let pFmt = format('.0%');
@@ -21,9 +21,9 @@ export let showCategories = true;
 export let showLeft = true;
 export let showRight = true;
 export let showDiff = true;
-import Help from '../../../components/icons/Help.svelte';
+import Help from 'udgl/icons/Help.svelte';
 
-import { tooltip as tooltipAction } from '../../../components/utils/tooltip';
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 
 function percentChange(l, r) {
   return (r - l) / l;

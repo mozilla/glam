@@ -1,8 +1,8 @@
 <script>
+import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import TableView from './TableView.svelte';
 import AggregationTypeSelector from '../../_components/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../../_components/ProbeKeySelector.svelte';
-import { percentileLineColorMap } from '../../../components/data-graphics/utils/color-maps';
 import { formatCount, formatPercentDecimal } from '../../../utils/formatters';
 
 export let data;

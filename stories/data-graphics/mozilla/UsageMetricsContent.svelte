@@ -6,18 +6,19 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 
 import { fly, fade } from 'svelte/transition';
-import DataGraphic from '../../../src/components/data-graphics/DataGraphic.svelte';
-import Line from '../../../src/components/data-graphics/elements/Line.svelte';
-import LineBand from '../../../src/components/data-graphics/elements/LineBand.svelte';
-import Point from '../../../src/components/data-graphics/elements/Point.svelte';
-import VerticalErrorBar from '../../../src/components/data-graphics/elements/VerticalErrorBar.svelte';
-import LeftAxis from '../../../src/components/data-graphics/guides/LeftAxis.svelte';
-import BottomAxis from '../../../src/components/data-graphics/guides/BottomAxis.svelte';
-import Springable from '../../../src/components/data-graphics/motion/Springable.svelte';
 
-import Button from '../../../src/components/Button.svelte';
-import Cancel from '../../../src/components/icons/Cancel.svelte';
-import { window1D } from '../../../src/components/data-graphics/utils/window-functions';
+import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import Line from 'udgl/data-graphics/elements/Line.svelte';
+import LineBand from 'udgl/data-graphics/elements/LineBand.svelte';
+import Point from 'udgl/data-graphics/elements/Point.svelte';
+import VerticalErrorBar from 'udgl/data-graphics/elements/VerticalErrorBar.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
+import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
+import Springable from 'udgl/data-graphics/motion/Springable.svelte';
+
+import Button from 'udgl/Button.svelte';
+import Cancel from 'udgl/icons/Cancel.svelte';
+import { window1D } from 'udgl/data-graphics/utils/window-functions';
 
 import FirefoxReleaseVersionMarkers from '../../../src/routes/_components/FirefoxReleaseVersionMarkers.svelte';
 
