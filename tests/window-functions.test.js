@@ -1,5 +1,5 @@
 import { scaleLinear } from 'd3-scale';
-import { firstIndexAbove, windowIndices, window1DPlacement } from 'udgl/data-graphics/utils/window-functions';
+import { firstIndexAbove, windowIndices, window1DPlacement } from '../src/udgl/data-graphics/utils/window-functions';
 
 const data01 = [
   { a: 4 },
