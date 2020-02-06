@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from glam.api import constants
 from glam.api.models import Aggregation, Probe
+from glam.auth.drf import OIDCTokenAuthentication, TokenUser
 
 
 class TestProbesApi:
@@ -122,7 +123,7 @@ class TestRandomProbesApi:
         self._create_aggregation(name="foo")
         self._create_aggregation(name="fum")
 
-        resp = client.post(self.url).json()
+        resp = client.post(self.url, content_type="application/json").json()
         assert len(resp["probes"]) == 3
 
         # Test that a non-integer defaults to 3
@@ -183,8 +184,6 @@ class TestRandomProbesApi:
                 "kind": "enumerated",
             },
         )
-        self._create_aggregation(name="fee")
-        self._create_aggregation(name="fii")
 
         # We want 2, but only 1 is left after query exclusions.
         resp = client.post(self.url, data={"n": 3}, content_type="application/json")
@@ -199,6 +198,13 @@ class TestAggregationsApi:
     def _make_partitions(self, versions=None):
         with connection.cursor() as cursor:
             for version in versions:
+                cursor.execute(
+                    f"""
+                    CREATE TABLE glam_aggregation_release_{version}
+                    PARTITION OF glam_aggregation_release
+                    FOR VALUES IN ('{version}')
+                    """
+                )
                 cursor.execute(
                     f"""
                     CREATE TABLE glam_aggregation_nightly_{version}
@@ -302,3 +308,40 @@ class TestAggregationsApi:
                 "total_users": 1110,
             }
         ]
+
+    def test_release_denied(self, client):
+        query = {
+            "query": {
+                "channel": "release",
+                "probe": "gc_ms",
+                "versions": ["72"],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 403
+
+    def test_release_allowed(self, client, monkeypatch):
+        monkeypatch.setattr(
+            OIDCTokenAuthentication,
+            "authenticate",
+            lambda self, request: (TokenUser(), {"scope": "read:foo"}),
+        )
+
+        self._make_partitions(versions=["72"])
+        self._create_aggregation({"channel": constants.CHANNEL_RELEASE})
+        query = {
+            "query": {
+                "channel": "release",
+                "probe": "gc_ms",
+                "versions": ["72"],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(
+            self.url,
+            data=query,
+            content_type="application/json",
+            HTTP_AUTHORIZATION="Bearer token",
+        )
+        assert resp.status_code == 200

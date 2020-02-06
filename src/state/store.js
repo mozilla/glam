@@ -112,7 +112,10 @@ store.setProbe = (name) => {
 };
 
 store.reset = () => {
+  const { token } = get(store);
+
   store.reinitialize();
+  store.setField('token', token);
   store.setField('appView', 'DEFAULT');
   store.setField('probe', { name: null });
   store.setField('probeView', 'explore');
@@ -252,7 +255,7 @@ export function isCategorical(probeType, probeKind) {
 }
 
 export function fetchDataForGLAM(params) {
-  return getProbeData(params).then(
+  return getProbeData(params, store.getState().token).then(
     (payload) => {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed
