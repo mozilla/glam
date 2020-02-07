@@ -315,7 +315,7 @@ h2 {
     grid-template-columns: auto;
     justify-content: end;
   ">
-    <DataGraphic
+  <DataGraphic
     width={220}
     height={150}
     xDomain={[0, 1]}

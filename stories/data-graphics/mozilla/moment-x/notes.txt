@@ -1,0 +1,20 @@
+
+
+Order of operations:
+
+– demoware – show the proof of concept of the dashboard components.
+– feedback & generalize – incorporate feedback as it comes aggressively, generalize parts so that it is easy to make tweaks
+  - graph annotations
+  – section annotations
+  – 
+
+
+
+
+needed components
+
+BigNum
+
+LineChart
+
+ChurnChart

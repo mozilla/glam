@@ -132,7 +132,7 @@ h3 {
               <Point 
                 r={1 + strength / 2} x={height} y={weight} 
                 fillOpacity={0.3} 
-                fill={alignmentColors[alignment]}
+                color={alignmentColors[alignment]}
                 opacity={0.6}
                 stroke={alignmentColors[alignment]} strokeWidth=1 strokeOpacity={0.6} />
               </g>

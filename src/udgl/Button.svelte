@@ -56,6 +56,7 @@ button {
 .button--medium {
     background-color: transparent;
     color: var(--primary-color);
+    border: 1px solid var(--cool-gray-300);
 }
 
 .button--medium:hover,.button--low:hover {

@@ -1,0 +1,27 @@
+
+
+h2 {
+
+}
+
+/* use h3 for subsection headers */
+h3 {
+  font-size: var(--text-06);
+  margin-bottom: var(--space-4x);
+}
+
+.subsection {
+  padding-top: var(--space-4x);
+  padding-bottom: var(--space-8x);
+}
+
+.subsection + .subsection {
+  border-top: 4px solid var(--cool-gray-150);
+}
+
+.at-a-glance {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: var(---space-2x);
+  grid-row-gap: var(--space-4x);
+}

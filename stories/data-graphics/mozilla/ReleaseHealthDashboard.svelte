@@ -159,7 +159,7 @@ h2 { margin: 0; padding-left: 50px; font-size: var(--text-03); font-weight: norm
           <g in:fly={{
  duration: 500, delay: Math.random() * 300, y: 10, easing,
 }}>
-            <Point fill=var(--cool-gray-700) x={release.minor} y={release[key]} r={3} />
+            <Point color=var(--cool-gray-700) x={release.minor} y={release[key]} r={3} />
           </g>
         {/each}
         )

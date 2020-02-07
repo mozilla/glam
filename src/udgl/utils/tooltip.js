@@ -3,7 +3,7 @@ import { listen } from 'svelte/internal';
 import { placeElement } from './float-placement';
 
 const defaults = {
-  duration: 50, location: 'bottom', alignment: 'center', distance: 4,
+  duration: 75, location: 'bottom', alignment: 'center', distance: 4,
 };
 
 export function tooltip(node, text = undefined, additionalArguments) {
@@ -15,7 +15,7 @@ export function tooltip(node, text = undefined, additionalArguments) {
   el.className = 'tooltip';
   el.textContent = text;
   el.style.position = 'absolute';
-  el.style.transition = `opacity ${duration}ms`;
+  el.style.transition = `opacity ${duration}ms, transform ${duration}ms`;
 
   function setLocation() {
     const [left, top] = placeElement({
@@ -34,7 +34,12 @@ export function tooltip(node, text = undefined, additionalArguments) {
     if (el.textContent.length && text) {
       document.body.appendChild(el);
       el.style.opacity = '0';
-      setTimeout(() => { el.style.opacity = '1'; });
+      el.style.transform = 'scale(.7)';
+
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+      });
       setLocation();
     }
   }

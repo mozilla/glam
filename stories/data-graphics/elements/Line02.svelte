@@ -130,7 +130,7 @@ function getXY(d, v) {
           value={getXY(data, value)} 
           let:springValue={spr} >
             {#each spr as {x,y}, i}
-              <Point fill={cm[i]} x={x} y={y} r={3} />
+              <Point color={cm[i]} x={x} y={y} r={3} />
             {/each}
       </Springable>
 
