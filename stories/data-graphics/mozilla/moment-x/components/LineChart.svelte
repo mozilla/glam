@@ -1,6 +1,5 @@
 <script>
 
-import { timeFormat } from 'd3-time-format';
 import { writable } from 'svelte/store';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
@@ -15,10 +14,7 @@ import MarginText from 'udgl/data-graphics/guides/MarginText.svelte';
 import { window1D } from 'udgl/data-graphics/utils/window-functions';
 
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
-import { formats } from '../utils/formatters';
-
-
-let dtfmt = timeFormat('%b %d, %Y');
+import { formats, dmy } from '../utils/formatters';
 
 export let width = 800;
 export let height = 300;
@@ -54,8 +50,7 @@ const get = (d, value) => {
 
 export let hoverValue = {};
 export let hoverPoint = {};
-$: if (hoverValue.x) hoverPoint = get(data, hoverPoint.x);
-
+$: if (hoverValue.x) hoverPoint = get(data, hoverValue.x);
 </script>
 
 <style>
@@ -134,7 +129,7 @@ span:hover {
           opacity={0.2}
           /> -->
         {/each}
-        <MarginText yOffset={-6} fontSize=14 justify=left temporaryLabel={dtfmt(value.x) || ''} />
+        <MarginText yOffset={-6} fontSize=14 justify=left temporaryLabel={dmy(value.x) || ''} />
         <!-- <MarginText fontSize=11.5 justify=right temporaryLabel={value.y ? perc(getY(line, Math.floor(hoverValue.x)) / line[0].y - 1) : ''} /> -->
       {/if}
     </g>

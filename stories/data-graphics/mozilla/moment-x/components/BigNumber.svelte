@@ -52,6 +52,7 @@ export let duration = 750;
     {/if}
   </div>
   <div class=big-number--number>
-    <slot name=big-number></slot>
+    <slot name=big-number>{value}</slot>
   </div>
+  <div class=big-number--compare></div>
 </div>

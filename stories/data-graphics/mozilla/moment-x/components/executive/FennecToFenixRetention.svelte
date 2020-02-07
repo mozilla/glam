@@ -4,7 +4,7 @@ import Subsection from '../Subsection.svelte';
 import Row from '../Row.svelte';
 import LineChart from '../LineChart.svelte';
 import BigNumber from '../BigNumber.svelte';
-import { formats } from '../../utils/formatters';
+import { formats, dmy } from '../../utils/formatters';
 
 let dates = (n = 40) => {
   let dt = new Date('2020-02-07');
@@ -55,12 +55,15 @@ const metricData = dates().map((date) => {
 // capture hoverPoint.
 let hoverPoint = {};
 let focusValue = metricData[metricData.length - 1];
+let defaultHover = true;
 $: if (hoverPoint) {
   focusValue = hoverPoint;
+  defaultHover = false;
 } else {
   focusValue = metricData[metricData.length - 1];
+  defaultHover = true;
 }
-console.log(focusValue);
+
 </script>
 
   <Subsection>
@@ -68,25 +71,20 @@ console.log(focusValue);
     <Row>
       <div class=at-a-glance>
         <BigNumber>
-          <span slot='sublabel'>latest</span>
+          <span slot='sublabel'>{defaultHover ? 'latest' : dmy(focusValue.date)}</span>
           <span slot='label'>Fennec Est. Retention %.</span>
-          <span slot='big-number'>
-            {#if focusValue}
-              {focusValue.fennecEstablishedRetention}
-            {/if}
-            <!-- <TweenToValue to={focusValue.fennecEstablishedRetention} let:value>
-                {formats.percent(value)}
-            </TweenToValue> -->
+          <span slot="big-number">
+            {formats.percent2d(focusValue.fennecEstablishedRetention)}
           </span>
         </BigNumber>
 
         <BigNumber>
-          <span slot='sublabel'>latest</span>
+          <span slot='sublabel'>{defaultHover ? 'latest' : dmy(focusValue.date)}</span>
           <span slot='label'>Fennec to Fenix Retention %.</span>
           <span slot='big-number'>
-            <!-- <TweenToValue to={focusValue.fennecEstablishedRetention} let:value>
-                {formats.percent(value)}
-            </TweenToValue> -->
+            <span slot="big-number">
+              {formats.percent2d(focusValue.fennecToFenixRetention)}
+            </span>
           </span>
         </BigNumber>
         <!-- <BigNumber
