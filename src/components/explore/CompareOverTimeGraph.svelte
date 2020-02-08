@@ -1,6 +1,5 @@
 <script>
 import { spring } from 'svelte/motion';
-import { fade } from 'svelte/transition';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
