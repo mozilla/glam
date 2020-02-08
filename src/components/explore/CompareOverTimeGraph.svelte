@@ -8,13 +8,13 @@ import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import Help from 'udgl/icons/Help.svelte';
 
+import Springable from 'udgl/data-graphics/motion/Springable.svelte';
+
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 
 import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
-
-import { cartesianCoordSpring } from '../../utils/animation';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -22,14 +22,14 @@ import { buildIDComparisonGraph } from '../../utils/constants';
 
 export let data;
 export let markers;
-export let metricKeys;
+export let metricKeys; // the active keys (eg which percentiles / categories are active)
 export let reference;
 export let hovered = {};
 export let key;
 export let transform;
 export let lineColorMap = () => 'gray';
 export let strokeWidthMap = () => 1;
-export let extractMouseoverValues;
+export let yAccessor;
 export let xScaleType = 'scalePoint';
 export let xDomain;
 export let yDomain;
@@ -47,50 +47,21 @@ let transformedData = [];
 $: transformedData = transform(metricKeys, data)
   .map((ps, i) => [ps, metricKeys[i]]);
 
+function plotValues(xValue, bins, actives, x, y) {
+  // transforms to range space, so we can encapsulate
+  // in a spring within the template itself.
+  // what we need to do is just go by acti
+  return actives.map((b) => ({ x: x(xValue), y: y(bins[b]), bin: b }));
+}
+
 let xScale;
 let yScale;
-let H;
-let T;
-let B;
 let L;
 let R;
 let leftPlot;
 let rightPlot;
-let bottomPlot;
 let dgRollover;
 let margins;
-
-// FIXME: this is kind of a confusing pattern
-function placeShapeY(value) {
-  if (!yScale) return bottomPlot || buildIDComparisonGraph.height;
-  return yScale(value);
-}
-
-function placeShapeX(value) {
-  if (!yScale) return buildIDComparisonGraph.width;
-  return xScale(value);
-}
-
-const referencePoints = cartesianCoordSpring(
-  extractMouseoverValues(reference),
-  placeShapeX,
-  placeShapeY,
-  { stiffness: 0.4, damping: 0.8 },
-);
-
-const hoverPoints = cartesianCoordSpring(
-  extractMouseoverValues(reference),
-  placeShapeX,
-  placeShapeY,
-  { stiffness: 0.9, damping: 0.9 },
-);
-
-$: if (xScale && yScale) {
-  referencePoints.setValue(extractMouseoverValues(reference));
-  hoverPoints.setValue(extractMouseoverValues(hovered.datum ? hovered.datum : reference));
-}
-$: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
-// $: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
 
 // let's make the current reference label spring.
 let refLabelPlacement = 0;
@@ -130,10 +101,6 @@ $: if (xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-// $: if (hovered.datum && xScale) {
-//   [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
-// }
-
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
@@ -156,9 +123,6 @@ $: if (hoverValue.x) {
 let dataGraphicMounted;
 
 $: if (dataGraphicMounted) {
-  // initiateRollover(dgRollover);
-  B.subscribe((b) => { bottomPlot = b; });
-  // H.subscribe((h) => { bodyHeight = h; });
   L.subscribe((l) => { leftPlot = l; });
   R.subscribe((r) => { rightPlot = r; });
 }
@@ -187,34 +151,32 @@ $: if (referenceTextElement && referenceBackgroundElement) {
       { location: 'top' }
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
  <DataGraphic
- data={data}
- xDomain={xDomain}
- yDomain={yDomain}
- yType={yScaleType}
- xType={xScaleType}
- width={buildIDComparisonGraph.width
-  - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
- height={buildIDComparisonGraph.height}
- bottom={buildIDComparisonGraph.bottom}
- top={buildIDComparisonGraph.top}
- left={buildIDComparisonGraph.left}
- bind:rollover={dgRollover}
- bind:hoverValue
- bind:xScale={xScale}
- bind:yScale={yScale}
- bind:bodyHeight={H}
- bind:leftPlot={L}
- bind:rightPlot={R}
- bind:bottomPlot={B}
- bind:margins={margins}
- right={buildIDComparisonGraph.right}
- key={key}
- bind:dataGraphicMounted={dataGraphicMounted}
- on:click={() => {
-   if (hovered.datum) {
-     reference = hovered.datum;
-   }
- }}
+  data={data}
+  xDomain={xDomain}
+  yDomain={yDomain}
+  yType={yScaleType}
+  xType={xScaleType}
+  width={buildIDComparisonGraph.width
+    - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
+  height={buildIDComparisonGraph.height}
+  bottom={buildIDComparisonGraph.bottom}
+  top={buildIDComparisonGraph.top}
+  left={buildIDComparisonGraph.left}
+  bind:rollover={dgRollover}
+  bind:hoverValue
+  bind:xScale={xScale}
+  bind:yScale={yScale}
+  bind:leftPlot={L}
+  bind:rightPlot={R}
+  bind:margins={margins}
+  right={buildIDComparisonGraph.right}
+  key={key}
+  bind:dataGraphicMounted={dataGraphicMounted}
+  on:click={() => {
+    if (hovered.datum) {
+      reference = hovered.datum;
+    }
+  }}
 >
 
 <!-- for the additional-plot-elements slot in ProbeExplorer.svelte -->
@@ -245,6 +207,10 @@ $: if (referenceTextElement && referenceBackgroundElement) {
       {/if}
     {/if}
     <!-- this is the reference rect -->
+
+    <rect 
+      x={reference}
+    />
     <rect
       bind:this={referenceBackgroundElement}
       x={$refLabelSpring} 
@@ -278,27 +244,29 @@ $: if (referenceTextElement && referenceBackgroundElement) {
      {/each}
  </GraphicBody>
 
- {#if hovered.datum && extractMouseoverValues}
- {#each metricKeys as bin, i (bin)}
-    <circle 
-      cx={$hoverPoints[bin].x}
-      cy={$hoverPoints[bin].y}
-      r=2
-      stroke="none"
-      fill={lineColorMap(bin)}
-    />
+ <g slot=annotation let:top let:left let:xScale let:yScale>
+  {#if hovered.datum}
+  {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
+      <Springable value={[x, y]} let:springValue>
+        <circle 
+          cx={x}
+          cy={y}
+          r=2
+          stroke="none"
+          fill={lineColorMap(bin)}
+        />
+      </Springable>
+  {/each}
+  {/if}
+  {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
+      <Springable value={[x, y]} let:springValue>
+        <ReferenceSymbol
+          size={20}
+          xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
+      </Springable>
   {/each}
 
- {/if}
- <g slot=annotations let:top let:left let:xScale>
- {#each metricKeys as bin, i (bin)}
-    <ReferenceSymbol
-    size={20}
-    xLocation={$referencePoints[bin].x} yLocation={$referencePoints[bin].y} color={lineColorMap(bin)} 
-  />
-  {/each}
   {#if xScale}
-    <!-- FIXME: let's not do all this calculation in the template itself. -->
     <text
       bind:this={referenceTextElement}
       text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}

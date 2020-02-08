@@ -77,15 +77,6 @@ export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 export let reference = data[data.length - 1];
 // $: if (timeHorizon) reference = data[data.length - 1];
 
-function getBinValueFromMouseover(datum) {
-  let out = {};
-  out = { ...datum[overTimePointMetricType] };
-  Object.keys(out).forEach((k) => {
-    out[k] = { y: out[k], x: datum.label };
-  });
-  return out;
-}
-
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.
 // This is pretty inelegant.
@@ -155,6 +146,7 @@ h4 {
         timeHorizon={timeHorizon}
         lineColorMap={binColorMap}
         key={key}
+        yAccessor={overTimePointMetricType}
         xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
         yScaleType={yScaleType}
         transform={(p, d) => extractBinValues(p, d, overTimePointMetricType)}
@@ -162,7 +154,6 @@ h4 {
         metricKeys={activeBins}
         bind:reference={reference}
         bind:hovered={hovered}
-        extractMouseoverValues={getBinValueFromMouseover}
         markers={markers}
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
