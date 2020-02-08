@@ -1,6 +1,5 @@
 <script>
 import { spring } from 'svelte/motion';
-import { derived } from 'svelte/store';
 
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
@@ -55,8 +54,6 @@ let T;
 let B;
 let L;
 let R;
-let bodyHeight;
-let topPlot;
 let leftPlot;
 let rightPlot;
 let bottomPlot;
@@ -93,7 +90,7 @@ $: if (xScale && yScale) {
   hoverPoints.setValue(extractMouseoverValues(hovered.datum ? hovered.datum : reference));
 }
 $: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
-$: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
+// $: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
 
 // let's make the current reference label spring.
 let refLabelPlacement = 0;
@@ -133,47 +130,35 @@ $: if (xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-$: if (hovered.datum && xScale) {
-  [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
-}
+// $: if (hovered.datum && xScale) {
+//   [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
+// }
 
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
-function initiateRollover(rolloverStore) { // eslint-disable-line
-  if (!rolloverStore || !hoverActive) return undefined;
-  derived(rolloverStore, ({ x, y }) => {
-    let datum;
-    let prior;
-    let next;
-    if (aggregationLevel === 'build_id') {
-      const windowSet = !x ? { previous: undefined, current: undefined, next: undefined }
-        : window1D({
-          data, value: x, label: 'label', lowestValue: xDomain[0], highestValue: xDomain[1],
-        });
-      datum = windowSet.current;
-      prior = windowSet.previous;
-      next = windowSet.next;
 
-      return {
-        x, y, datum, prior, next,
-      };
-    }
-    // version is scalePoint
-    datum = data.find((d) => d.label === x);
-    return { x, y, datum };
-  }).subscribe((st) => {
-    hovered = st;
+let hoverValue = {};
+$: if (hoverValue.x) {
+  const i = window1D({
+    data, value: hoverValue.x, lowestValue: xDomain[0], highestValue: xDomain[1],
   });
+  hovered = {
+    ...hoverValue,
+    datum: data[i.currentIndex],
+    previous: data[i.previousIndex],
+    next: data[i.nextIndex],
+  };
+} else {
+  hovered = {};
 }
 
 let dataGraphicMounted;
 
 $: if (dataGraphicMounted) {
-  initiateRollover(dgRollover);
-  T.subscribe((t) => { topPlot = t; });
+  // initiateRollover(dgRollover);
   B.subscribe((b) => { bottomPlot = b; });
-  H.subscribe((h) => { bodyHeight = h; });
+  // H.subscribe((h) => { bodyHeight = h; });
   L.subscribe((l) => { leftPlot = l; });
   R.subscribe((r) => { rightPlot = r; });
 }
@@ -214,10 +199,10 @@ $: if (referenceTextElement && referenceBackgroundElement) {
  top={buildIDComparisonGraph.top}
  left={buildIDComparisonGraph.left}
  bind:rollover={dgRollover}
+ bind:hoverValue
  bind:xScale={xScale}
  bind:yScale={yScale}
  bind:bodyHeight={H}
- bind:topPlot={T}
  bind:leftPlot={L}
  bind:rightPlot={R}
  bind:bottomPlot={B}
@@ -237,40 +222,39 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <slot></slot>
 </g>
 
-{#if hovered.datum && xScale && topPlot && bodyHeight}
- {#if aggregationLevel === 'build_id'}
-    <BuildIDRollover 
-      x={hovered.x}
-      label={hovered.datum.label}
-    />
-  {/if}
-  <!-- this is the hovered value rect -->
-  {#if aggregationLevel === 'build_id'}
-  <rect 
-    x={hoverLabelPlacement}
-    y={topPlot} 
-    width={hoverWidth}
-    height={bodyHeight}
-    fill="var(--cool-gray-100)"
-  />
-  {:else}
-  <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-    fill="var(--cool-gray-100)" />
-  {/if}
-  
-
-  {/if}
-
-  <!-- this is the reference rect -->
+<g slot=background let:top let:height let:xScale>
+{#if hovered.datum}
+    {#if aggregationLevel === 'build_id'}
+        <BuildIDRollover 
+          x={hovered.x}
+          label={hovered.datum.label}
+        />
+      {/if}
+      <!-- this is the hovered value rect -->
+      {#if aggregationLevel === 'build_id'}
+      <rect 
+        x={hoverLabelPlacement}
+        y={top} 
+        width={hoverWidth}
+        height={height}
+        fill="var(--cool-gray-100)"
+      />
+      {:else}
+      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={height}
+        fill="var(--cool-gray-100)" />
+      {/if}
+    {/if}
+    <!-- this is the reference rect -->
     <rect
       bind:this={referenceBackgroundElement}
       x={$refLabelSpring} 
-      y={topPlot} 
+      y={top} 
       width={referenceWidth} 
-      height={bodyHeight}
+      height={height}
       fill="var(--cool-gray-100)"
     />
-  
+  </g>
+
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  
  {#if aggregationLevel === 'build_id'}
@@ -283,28 +267,30 @@ $: if (referenceTextElement && referenceBackgroundElement) {
    {#each transformedData as
      [lineData, key], i (key)}
        <Line
-       curve="curveStep"
-       lineDrawAnimation={{ duration: 300 }} 
-       xAccessor="label"
-       yAccessor={'value'}
-       strokeWidth={strokeWidthMap(key)}
-       color={lineColorMap(key)}
-       data={lineData} />
+        curve="curveStep"
+        lineDrawAnimation={{ duration: 300 }} 
+        xAccessor="label"
+        yAccessor={'value'}
+        strokeWidth={strokeWidthMap(key)}
+        color={lineColorMap(key)}
+        data={lineData} 
+      />
      {/each}
  </GraphicBody>
 
  {#if hovered.datum && extractMouseoverValues}
  {#each metricKeys as bin, i (bin)}
     <circle 
-    cx={$hoverPoints[bin].x}
-    cy={$hoverPoints[bin].y}
-    r=2
-    stroke="none"
-    fill={lineColorMap(bin)}
+      cx={$hoverPoints[bin].x}
+      cy={$hoverPoints[bin].y}
+      r=2
+      stroke="none"
+      fill={lineColorMap(bin)}
     />
   {/each}
 
  {/if}
+ <g slot=annotations let:top let:left let:xScale>
  {#each metricKeys as bin, i (bin)}
     <ReferenceSymbol
     size={20}
@@ -330,12 +316,15 @@ $: if (referenceTextElement && referenceBackgroundElement) {
           -3px 3px 0px rgba(255,255,255, 1);'
       x={
         refTextPlacement === 'outside'
-        ? Math.max($refLabelSpring - margins.buffer, leftPlot + refTextWidth + margins.buffer)
+        ? Math.max($refLabelSpring - margins.buffer, left + refTextWidth + margins.buffer)
         : $refLabelSpring + margins.buffer} 
-      y={topPlot + 11 + margins.buffer} 
+      y={top + 11 + margins.buffer} 
       fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
   {/if}
 
+  </g>
+  
   <FirefoxReleaseVersionMarkers />
+
 </DataGraphic>
 </div>
