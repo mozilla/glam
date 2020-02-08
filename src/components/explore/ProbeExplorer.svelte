@@ -72,6 +72,7 @@ $: if (aggregationLevel === 'build_id') {
 }
 
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
+
 export let reference = data[data.length - 1];
 // $: if (timeHorizon) reference = data[data.length - 1];
 
@@ -85,7 +86,6 @@ $: if (densityMetricType) {
 $: if (densityMetricType && reference[densityMetricType]) {
   animatedReferenceDistribution.setValue(reference[densityMetricType]);
 }
-
 </script>
 
 <style>
@@ -174,16 +174,16 @@ h4 {
   >
     <!-- add violin plots on the quantiles -->
     
-    <g slot='body' let:leftPlot={lp} let:rightPlot={rp}>
+    <g slot='body' let:left={lp} let:right={rp}>
       {#if showViolins}
-        {#if hovered.datum}
+        {#if hovered.datum || insufficientData}
           <Violin
             orientation="vertical"
             showLeft={false}
             rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
             key={hovered.x}
             opacity=.9
-            density={hovered.datum[densityMetricType]} 
+            density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]} 
             densityAccessor='value'
             valueAccessor='bin'
             densityRange={[0,
