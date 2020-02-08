@@ -14,8 +14,6 @@ import { formatBuildIDToDateString } from '../../utils/formatters';
 
 import { histogramSpring } from '../../utils/animation';
 
-import { extractBinValues } from '../../utils/probe-utils';
-
 export let data;
 export let title;
 export let markers;
@@ -149,7 +147,6 @@ h4 {
         yAccessor={overTimePointMetricType}
         xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
         yScaleType={yScaleType}
-        transform={(p, d) => extractBinValues(p, d, overTimePointMetricType)}
         yTickFormatter={yTickFormatter}
         metricKeys={activeBins}
         bind:reference={reference}

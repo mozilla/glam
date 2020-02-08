@@ -1,6 +1,6 @@
 <script>
 import { spring } from 'svelte/motion';
-
+import { fade } from 'svelte/transition';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
@@ -26,7 +26,6 @@ export let metricKeys; // the active keys (eg which percentiles / categories are
 export let reference;
 export let hovered = {};
 export let key;
-export let transform;
 export let lineColorMap = () => 'gray';
 export let strokeWidthMap = () => 1;
 export let yAccessor;
@@ -42,16 +41,24 @@ export let hoverActive = true;
 // if data.length < 2, then suppress this graph.
 export let insufficientData = false;
 
-let transformedData = [];
-
-$: transformedData = transform(metricKeys, data)
-  .map((ps, i) => [ps, metricKeys[i]]);
-
 function plotValues(xValue, bins, actives, x, y) {
   // transforms to range space, so we can encapsulate
   // in a spring within the template itself.
   // what we need to do is just go by acti
   return actives.map((b) => ({ x: x(xValue), y: y(bins[b]), bin: b }));
+}
+
+function createTimeSeries(d, actives, accessor) {
+  return actives.map((a) => ({
+    bin: a,
+    series: d.map((di) => {
+      const value = di[accessor][a];
+      return {
+        y: value,
+        x: di.label,
+      };
+    }),
+  }));
 }
 
 let xScale;
@@ -235,21 +242,20 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 {/if}
 
  <GraphicBody>
-   {#each transformedData as
-     [lineData, key], i (key)}
-       <Line
-        curve="curveStep"
-        lineDrawAnimation={{ duration: 300 }} 
-        xAccessor="label"
-        yAccessor={'value'}
-        strokeWidth={strokeWidthMap(key)}
-        color={lineColorMap(key)}
-        data={lineData} 
-      />
-     {/each}
+   {#each createTimeSeries(data, metricKeys, yAccessor) as {bin, series}, i (bin)}
+    <Line 
+      lineDrawAnimation={{ duration: 300 }} 
+      xAccessor=x
+      yAccessor=y
+      strokeWidth={strokeWidthMap(bin)}
+      color={lineColorMap(bin)}
+      data={series} 
+      curve=curveStep
+    />
+   {/each}
  </GraphicBody>
 
- <g slot=annotation let:top let:left let:xScale let:yScale>
+ <g slot=annotation let:top let:left let:xScale let:yScale let:bottom>
   {#if hovered.datum}
   {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
       <Springable value={[x, y]} let:springValue>
@@ -264,10 +270,13 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {/each}
   {/if}
   {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
-      <Springable value={[x, y]} let:springValue>
-        <ReferenceSymbol
-          size={20}
-          xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
+      <Springable 
+        value={[x, y]} 
+        from={[xScale(reference.label), bottom]} 
+        let:springValue>
+          <ReferenceSymbol
+            size={20}
+            xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
       </Springable>
   {/each}
 
