@@ -17,7 +17,7 @@ import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import { formats, dmy } from '../utils/formatters';
 
 export let width = 800;
-export let height = 300;
+export let height = 250;
 export let left = 50;
 export let right = 50;
 export let top = 35;
@@ -31,7 +31,8 @@ export let yAccessor;
 export let yFormat = 'count';
 export let markers = [];
 export let colors = ['blue'];
-
+export let names = [];
+export let mouseOverFontSize = 13;
 
 const xDomain = writable([data[0][xAccessor], new Date('2020-06-22')]);
 $: $xDomain = [data[0][xAccessor], new Date('2020-06-22')];
@@ -50,13 +51,19 @@ const get = (d, value) => {
 
 export let hoverValue = {};
 export let hoverPoint = {};
-$: if (hoverValue.x) hoverPoint = get(data, hoverValue.x);
+$: if (hoverValue.x) {
+  hoverPoint = get(data, hoverValue.x);
+} else {
+  hoverPoint = data[data.length - 1];
+}
+
 </script>
 
 <style>
 .chart-title {
   display: grid;
   grid-template-columns: auto max-content;
+  margin-bottom: var(--space-2x);
 }
 
 span {
@@ -75,7 +82,7 @@ span:hover {
       padding-left: {left}px;
       padding-right: {right}px;
     ">
-    <h4>{title} <span use:tooltipAction={description}><Help size=15 /></span></h4>
+    <h4>{title} <span use:tooltipAction={description, { location: 'top' }}><Help size=15 /></span></h4>
     <div></div>
   </div>
   <DataGraphic
@@ -115,23 +122,23 @@ span:hover {
       <slot name='annotations'></slot>
     </g>
 
-    <g slot='mouseover' let:value>
-      {#if value.body && value.x < data[data.length - 1][xAccessor]}
-      {#each yAccessor as y, i}
-      <Point
-          color={colors[i] || 'blue'}
-          x={value.x} y={get(data, Math.floor(value.x))[y]} r={3} />
-        />
-        <!-- <Point 
-          x={value.x} 
-          y={get(data, Math.floor(value.x))[y]} 
-          r={1 + 10 * (get(data, Math.floor(value.x)) / 100)} 
-          opacity={0.2}
-          /> -->
-        {/each}
-        <MarginText yOffset={-6} fontSize=14 justify=left temporaryLabel={dmy(value.x) || ''} />
+    <g slot='mouseover' let:value let:top let:right>
+        {#each yAccessor as y, i}
+          <Point
+            color={colors[i] || 'blue'}
+            x={hoverPoint[xAccessor]} y={hoverPoint[y]} r={3} />
+          />
+          <text x={right} y={top + mouseOverFontSize * (i + 1)} font-size={mouseOverFontSize} text-anchor='end'>
+            <tspan fill=var(--cool-gray-700)>
+              {formats[yFormat](hoverPoint[y])}
+            </tspan>
+            <tspan fill={colors[i] || 'black'} font-size=16>
+              • 
+            </tspan>
+          </text>
+          {/each}
+        <MarginText yOffset={-6} fontSize=14 justify=left temporaryLabel={dmy(hoverPoint[xAccessor]) || ''} />
         <!-- <MarginText fontSize=11.5 justify=right temporaryLabel={value.y ? perc(getY(line, Math.floor(hoverValue.x)) / line[0].y - 1) : ''} /> -->
-      {/if}
     </g>
 
   </DataGraphic>

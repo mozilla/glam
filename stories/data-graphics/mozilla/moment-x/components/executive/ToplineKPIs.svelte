@@ -19,13 +19,14 @@ const KPIs = [
   },
   {
     sublabel: 'Fennec to Fenix Transition',
-    label: 'Growth Metric',
+    label: 'Change Ratio',
+    description: 'blah blah blah',
     value: -0.05,
     format: 'ratio',
   },
   {
     sublabel: 'Fennec to Fenix Transition',
-    label: 'Success Metric',
+    label: 'F2F Client Retention %',
     value: Math.random(),
     format: 'percent',
   },
@@ -37,8 +38,8 @@ const KPIs = [
     <h3 slot='title'>At a glance</h3>
     <div class="at-a-glance">
 
-    {#each KPIs as {sublabel, label, value, format}, i}
-      <BigNumber>
+    {#each KPIs as {sublabel, label, value, format, description}, i}
+      <BigNumber description={description}>
         <span slot=sublabel>{sublabel}</span>
         <span slot=label>{label}</span>
         <span slot=big-number>

@@ -26,11 +26,13 @@ export let duration = 750;
 }
 .big-number--label {
   font-weight: 600;
+  color: var(--cool-gray-750);
 }
 .big-number--number {
   text-align: right;
   font-size: var(--text-08);
   font-weight: 300;
+  color: var(--cool-gray-600);
 }
 
 </style>

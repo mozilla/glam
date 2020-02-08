@@ -9,12 +9,4 @@ Order of operations:
   – 
 
 
-
-
-needed components
-
-BigNum
-
-LineChart
-
-ChurnChart
+- getting data would be nice. Is there a part of the pipeline anywhere available?

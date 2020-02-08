@@ -1,13 +1,15 @@
 
-
-h2 {
-
-}
-
 /* use h3 for subsection headers */
 h3 {
   font-size: var(--text-06);
   margin-bottom: var(--space-4x);
+}
+
+/* use h4 for chart titles */
+h4 {
+  font-size: var(--text-05);
+  font-weight: 500;
+  color: var(--cool-gray-700);
 }
 
 .subsection {

@@ -9,6 +9,7 @@ import ContentFooter from 'udgl/layout/ContentFooter.svelte';
 
 import Button from 'udgl/Button.svelte';
 import Doc from 'udgl/icons/Doc.svelte';
+import MozillaLogo from 'udgl/icons/MozillaLogo.svelte';
 
 import Header from './components/Header.svelte';
 
@@ -43,7 +44,9 @@ let segment = 'EXECUTIVE';
       </div>
     </ContentBody>
     <ContentFooter>
-      Mozilla
+      <div style="padding-left: var(--space-2x); height: 100%; display: grid; align-items: center; height: calc(var(--incrememt)*4);">
+        <MozillaLogo />
+      </div>
     </ContentFooter>
   </Content>
 </App>
