@@ -57,21 +57,3 @@ export function twoPointSpring(initialHoverValue, initialReferenceValue, scale, 
     },
   };
 }
-
-export function cartesianCoordSpring(initialValue, xScale, yScale, params = { damping: 0.65, stiffness: 0.3 }) {
-  function ptToSpringValue(pt) {
-    if (pt === undefined) return undefined;
-    const out = { ...pt };
-    Object.keys(out).forEach((k) => {
-      out[k] = { x: xScale(out[k].x), y: yScale(out[k].y) };
-    });
-    return out;
-  }
-  const { subscribe, set } = spring(ptToSpringValue(initialValue), params);
-  return {
-    subscribe,
-    setValue: (p) => {
-      set(ptToSpringValue(p));
-    },
-  };
-}

@@ -55,7 +55,6 @@ function plotValues(xValue, bins, actives, x, y) {
 }
 
 let xScale;
-let yScale;
 let L;
 let R;
 let leftPlot;
@@ -68,6 +67,10 @@ let refLabelPlacement = 0;
 let referenceWidth;
 let hoverLabelPlacement = 0;
 let hoverWidth;
+
+// FIXME: I don't like how this is calculated. It should be
+// substantially easier, or should be some kind of helper function
+// taken out of this component for reuse.
 
 function determinePlacementOfBackgroundFill(datum) {
   let refWidth;
@@ -104,12 +107,15 @@ $: if (xScale && rightPlot) {
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
+function get(d, x) {
+  return window1D({
+    data: d, value: x, lowestValue: xDomain[0], highestValue: xDomain[1],
+  });
+}
 
 let hoverValue = {};
 $: if (hoverValue.x) {
-  const i = window1D({
-    data, value: hoverValue.x, lowestValue: xDomain[0], highestValue: xDomain[1],
-  });
+  const i = get(data, hoverValue.x);
   hovered = {
     ...hoverValue,
     datum: data[i.currentIndex],
@@ -165,7 +171,6 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   bind:rollover={dgRollover}
   bind:hoverValue
   bind:xScale={xScale}
-  bind:yScale={yScale}
   bind:leftPlot={L}
   bind:rightPlot={R}
   bind:margins={margins}
