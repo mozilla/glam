@@ -132,7 +132,7 @@ h4 {
       </slot>
     </h4> -->
   </div>
-    <slot name='summary' reference={reference} hovered={hovered}></slot>
+  <slot name='summary'></slot>
 </div>
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
@@ -228,8 +228,7 @@ h4 {
     dataVolume={data.length}
     showLeft={data.length > 1}
     showDiff={data.length > 1}
-  >
-  </ComparisonSummary>
+  />
 
   <!-- <TotalClientsGraph 
     data={data}
