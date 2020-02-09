@@ -14,7 +14,6 @@ import Point from 'udgl/data-graphics/elements/Point.svelte';
 import VerticalErrorBar from 'udgl/data-graphics/elements/VerticalErrorBar.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
-import Springable from 'udgl/data-graphics/motion/Springable.svelte';
 
 import Button from 'udgl/Button.svelte';
 import Cancel from 'udgl/icons/Cancel.svelte';
@@ -194,14 +193,16 @@ h2 {
     align-items: center;
     margin-bottom: var(--space-4x);
   ">
-    {#if isScrubbed}
-    <div style='justify-self: end;' in:fly={{ duration: 500, y: 10 }}>
-      <Button level=medium compact on:click={() => {
-        isScrubbed = false;
-        resetDomain();
-      }}>clear zoom <Cancel size={16} /></Button>
+    <div style='min-height: 60px;'>
+      {#if isScrubbed}
+      <div style='justify-self: end;' in:fly={{ duration: 500, y: 10 }}>
+        <Button level=medium compact on:click={() => {
+          isScrubbed = false;
+          resetDomain();
+        }}>clear zoom <Cancel size={16} /></Button>
+      </div>
+      {/if}
     </div>
-    {/if}
   </div>
   <div class=multiples>
     {#each graphs as {name, type, key, yMax, axisFormat, hoverFormat}, i}
@@ -279,7 +280,7 @@ h2 {
 
           </g>
           <g slot=body>
-            <LineBand data={metricData} xAccessor=date yMinAccessor={`${key}Low`}  yMaxAccessor={`${key}High`} />
+            <!-- <LineBand data={metricData} xAccessor=date yMinAccessor={`${key}Low`}  yMaxAccessor={`${key}High`} /> -->
             <Line lineDrawAnimation={{ duration: 1200 }} data={metricData} xAccessor=date yAccessor={key} />
           </g>
 
@@ -287,10 +288,7 @@ h2 {
             <FirefoxReleaseVersionMarkers />
           </g>
           
-          
-
-          
-          <!-- <g in:fly={{ duration: 1000, y: 200 }}>
+          <g in:fly={{ duration: 1000, y: 200 }}>
             <Point x={hoverPt.date} y={hoverPt[key]} r={3} />
           </g>
           <g in:fade={{ duration: 1000, delay: 300 }}>
@@ -303,28 +301,7 @@ h2 {
           {#if hoverValue.x}
             <text x={36} y={12} font-size={12}>{dtfmt(hoverPt.date)}</text>
             <text x={500} y={12} font-size={12}>low {hoverPt[`${key}Low`]}</text>
-          {/if} -->
-
-          <Springable
-            params={{ stiffness: 0.8, damping: 0.9 }}
-            value={hoverPt} 
-            let:springValue={spr} >
-              <g in:fly={{ duration: 1000, y: 200 }}>
-                <Point x={spr.date} y={spr[key]} r={3} />
-              </g>
-              <g in:fade={{ duration: 1000, delay: 300 }}>
-                <VerticalErrorBar 
-                  x={spr.date} 
-                  minY={spr[`${key}Low`]} 
-                  maxY={spr[`${key}High`]}
-                />
-              </g>
-              {#if hoverValue.x}
-                <text x={36} y={12} font-size={12}>{dtfmt(spr.date)}</text>
-                <text x={500} y={12} font-size={12}>low {spr[`${key}Low`]}</text>
-              {/if}
-
-          </Springable>
+          {/if}
         </DataGraphic>
       </div>
     {/each}

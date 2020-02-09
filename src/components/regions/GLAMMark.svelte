@@ -10,4 +10,4 @@ h1 {
 }
 </style>
 
-<h1 on:click={store.reset}><Logo /> <div use:tooltip={'The Glean Aggregated Metrics Dashboard', { distance: 16 }}>GLAM</div></h1>
+<h1 on:click={store.reset}><Logo /> <div use:tooltip={{ text: 'The Glean Aggregated Metrics Dashboard', distance: 16 }}>GLAM</div></h1>

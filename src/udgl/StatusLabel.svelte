@@ -41,6 +41,6 @@
 
 </style>
 
-<div use:tooltipAction={tooltip} class="status-label {`status-label-${level}`}">
+<div use:tooltipAction={{ text: tooltip }} class="status-label {`status-label-${level}`}">
   <span><slot></slot></span>
 </div>

@@ -6,14 +6,14 @@ const defaults = {
   duration: 50, location: 'bottom', alignment: 'center', distance: 4,
 };
 
-export function tooltip(node, text = undefined, additionalArguments) {
-  const options = { ...defaults, ...additionalArguments };
+export function tooltip(node, args) {
+  const options = { ...defaults, ...args };
   const {
     duration, location, alignment, distance,
   } = options;
   const el = document.createElement('div');
   el.className = 'tooltip';
-  el.textContent = text;
+  el.textContent = options.text;
   el.style.position = 'absolute';
   el.style.transition = `opacity ${duration}ms`;
 
@@ -31,7 +31,7 @@ export function tooltip(node, text = undefined, additionalArguments) {
   }
 
   function append() {
-    if (el.textContent.length && text) {
+    if (el.textContent.length && options.text) {
       document.body.appendChild(el);
       el.style.opacity = '0';
       setTimeout(() => { el.style.opacity = '1'; });

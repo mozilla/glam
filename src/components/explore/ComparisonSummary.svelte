@@ -134,8 +134,10 @@ td, th {
 <div class=summary>
     <h3 class=data-graphic__element-title>Summary
         <span use:tooltipAction={
-          'compares the numeric values of the reference ⭑ to the hovered values ●',
-          { location: 'top' }
+          {
+text: 'compares the numeric values of the reference ⭑ to the hovered values ●',
+           location: 'top',
+}
         } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 
   <table>
@@ -145,27 +147,29 @@ td, th {
 
         <th style="min-width: 54px; width: max-content">Perc.</th>
 
-            {#if showLeft}
-            <!-- keep the comparison if more than one data point -->
-            <!-- FIXME: let's move to slots here -->
+            <!-- {#if showLeft}
             <th class:hidden={!hovered} class="summary-label ref">
                 <slot name='left-label'>
                   <div>
-                    <slot name='left-label-text'>
                       {leftLabel || ''}
                     </slot>
                     {#if hovered}<span class='small-shape'>●</span>{/if}
                   </div>
-                  <!-- {#if dataVolume > 2}
-                    Hovered
-                  {/if} -->
               </slot>
+            </th>
+            {/if} -->
+            {#if showLeft}
+            <th class:hidden={!hovered} class="summary-label ref">
+                  <div>
+                      {leftLabel || ''}
+                    {#if hovered}<span class='small-shape'>●</span>{/if}
+                  </div>
             </th>
             {/if}
 
 
         <!-- FIXME: let's move to slots here -->
-        {#if showRight}
+        <!-- {#if showRight}
         <th class="summary-label hov">
           <slot name='right-label'>
             <div>
@@ -173,8 +177,14 @@ td, th {
                 {rightLabel || ''}
               </slot>
             <span class='small-shape'>⭑</span></div>
-            <!-- {#if dataVolume > 2}Ref.{/if} -->
           </slot>
+        </th>
+        {/if} -->
+        {#if showRight}
+        <th class="summary-label hov">
+            <div>
+                {rightLabel || ''}
+            <span class='small-shape'>⭑</span></div>
         </th>
         {/if}
         

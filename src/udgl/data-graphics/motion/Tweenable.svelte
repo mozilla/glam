@@ -1,14 +1,15 @@
 <script>
-
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing } from 'svelte/easing';
+import { onMount } from 'svelte'; //eslint-disable-line
+import { tweened } from 'svelte/motion'; //eslint-disable-line
+import { cubicOut as easing } from 'svelte/easing'; //eslint-disable-line
 
 export let params = { duration: 500, easing };
 export let value = 0;
+export let from = value;
 
-const tweenValue = tweened(value, params);
-$: tweenValue.set(value);
+let t = tweened(from, params);
+$: t.set(value);
 
 </script>
 
-<slot tweenValue={$tweenValue}></slot>
+<slot tweenValue={$t}></slot>

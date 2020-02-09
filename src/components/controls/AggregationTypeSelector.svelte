@@ -66,7 +66,7 @@ export let aggregationInfo = {
 
 </style>
 
-<div class=menu-button bind:this={button} use:tooltipAction={'this probe has multiple aggregation methods – select one from this menu'}>
+<div class=menu-button bind:this={button} use:tooltipAction={{ text: 'this probe has multiple aggregation methods – select one from this menu' }}>
   <button class=activating-button on:click={toggle} class:active>
       <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
   </button>

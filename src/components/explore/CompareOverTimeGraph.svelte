@@ -1,7 +1,7 @@
 <script>
 import { spring } from 'svelte/motion';
-import { derived } from 'svelte/store';
-
+import { fly } from 'svelte/transition';
+import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
@@ -9,13 +9,13 @@ import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import Help from 'udgl/icons/Help.svelte';
 
+import Springable from 'udgl/data-graphics/motion/Springable.svelte';
+
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 
 import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
-
-import { cartesianCoordSpring } from '../../utils/animation';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -23,14 +23,13 @@ import { buildIDComparisonGraph } from '../../utils/constants';
 
 export let data;
 export let markers;
-export let metricKeys;
+export let metricKeys; // the active keys (eg which percentiles / categories are active)
 export let reference;
 export let hovered = {};
 export let key;
-export let transform;
 export let lineColorMap = () => 'gray';
 export let strokeWidthMap = () => 1;
-export let extractMouseoverValues;
+export let yAccessor;
 export let xScaleType = 'scalePoint';
 export let xDomain;
 export let yDomain;
@@ -43,63 +42,43 @@ export let hoverActive = true;
 // if data.length < 2, then suppress this graph.
 export let insufficientData = false;
 
-let transformedData = [];
+function plotValues(xValue, bins, actives, x, y) {
+  // transforms to range space, so we can encapsulate
+  // in a spring within the template itself.
+  // what we need to do is just go by acti
+  return actives.map((b) => ({ x: x(xValue), y: y(bins[b]), bin: b }));
+}
 
-$: transformedData = transform(metricKeys, data)
-  .map((ps, i) => [ps, metricKeys[i]]);
+function createTimeSeries(d, actives, accessor) {
+  return actives.map((a) => ({
+    bin: a,
+    series: d.map((di) => {
+      const value = di[accessor][a];
+      return {
+        y: value,
+        x: di.label,
+      };
+    }),
+  }));
+}
 
 let xScale;
-let yScale;
-let H;
-let T;
-let B;
 let L;
 let R;
-let bodyHeight;
-let topPlot;
 let leftPlot;
 let rightPlot;
-let bottomPlot;
 let dgRollover;
 let margins;
-
-// FIXME: this is kind of a confusing pattern
-function placeShapeY(value) {
-  if (!yScale) return bottomPlot || buildIDComparisonGraph.height;
-  return yScale(value);
-}
-
-function placeShapeX(value) {
-  if (!yScale) return buildIDComparisonGraph.width;
-  return xScale(value);
-}
-
-const referencePoints = cartesianCoordSpring(
-  extractMouseoverValues(reference),
-  placeShapeX,
-  placeShapeY,
-  { stiffness: 0.4, damping: 0.8 },
-);
-
-const hoverPoints = cartesianCoordSpring(
-  extractMouseoverValues(reference),
-  placeShapeX,
-  placeShapeY,
-  { stiffness: 0.9, damping: 0.9 },
-);
-
-$: if (xScale && yScale) {
-  referencePoints.setValue(extractMouseoverValues(reference));
-  hoverPoints.setValue(extractMouseoverValues(hovered.datum ? hovered.datum : reference));
-}
-$: if (reference) referencePoints.setValue(extractMouseoverValues(reference));
-$: if (hovered.datum) hoverPoints.setValue(extractMouseoverValues(hovered.datum));
 
 // let's make the current reference label spring.
 let refLabelPlacement = 0;
 let referenceWidth;
 let hoverLabelPlacement = 0;
 let hoverWidth;
+
+// FIXME: I don't like how this is calculated. It should be
+// substantially easier, or should be some kind of helper function
+// taken out of this component for reuse.
 
 function determinePlacementOfBackgroundFill(datum) {
   let refWidth;
@@ -133,47 +112,31 @@ $: if (xScale && rightPlot) {
   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
 }
 
-$: if (hovered.datum && xScale) {
-  [hoverWidth, hoverLabelPlacement] = determinePlacementOfBackgroundFill(hovered.datum);
-}
-
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
-function initiateRollover(rolloverStore) { // eslint-disable-line
-  if (!rolloverStore || !hoverActive) return undefined;
-  derived(rolloverStore, ({ x, y }) => {
-    let datum;
-    let prior;
-    let next;
-    if (aggregationLevel === 'build_id') {
-      const windowSet = !x ? { previous: undefined, current: undefined, next: undefined }
-        : window1D({
-          data, value: x, label: 'label', lowestValue: xDomain[0], highestValue: xDomain[1],
-        });
-      datum = windowSet.current;
-      prior = windowSet.previous;
-      next = windowSet.next;
-
-      return {
-        x, y, datum, prior, next,
-      };
-    }
-    // version is scalePoint
-    datum = data.find((d) => d.label === x);
-    return { x, y, datum };
-  }).subscribe((st) => {
-    hovered = st;
+function get(d, x) {
+  return window1D({
+    data: d, value: x, lowestValue: xDomain[0], highestValue: xDomain[1],
   });
+}
+
+let hoverValue = {};
+$: if (hoverValue.x) {
+  const i = get(data, hoverValue.x);
+  hovered = {
+    ...hoverValue,
+    datum: data[i.currentIndex],
+    previous: data[i.previousIndex],
+    next: data[i.nextIndex],
+  };
+} else {
+  hovered = {};
 }
 
 let dataGraphicMounted;
 
 $: if (dataGraphicMounted) {
-  initiateRollover(dgRollover);
-  T.subscribe((t) => { topPlot = t; });
-  B.subscribe((b) => { bottomPlot = b; });
-  H.subscribe((h) => { bodyHeight = h; });
   L.subscribe((l) => { leftPlot = l; });
   R.subscribe((r) => { rightPlot = r; });
 }
@@ -198,38 +161,37 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <h3 style='padding-left: {buildIDComparisonGraph.left}px; padding-right: {buildIDComparisonGraph.right}px' class=data-graphic__element-title>
     Over Time 
     <span use:tooltipAction={
-      'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
-      { location: 'top' }
+      {
+        text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+        location: 'top',
+}
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
  <DataGraphic
- data={data}
- xDomain={xDomain}
- yDomain={yDomain}
- yType={yScaleType}
- xType={xScaleType}
- width={buildIDComparisonGraph.width
-  - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
- height={buildIDComparisonGraph.height}
- bottom={buildIDComparisonGraph.bottom}
- top={buildIDComparisonGraph.top}
- left={buildIDComparisonGraph.left}
- bind:rollover={dgRollover}
- bind:xScale={xScale}
- bind:yScale={yScale}
- bind:bodyHeight={H}
- bind:topPlot={T}
- bind:leftPlot={L}
- bind:rightPlot={R}
- bind:bottomPlot={B}
- bind:margins={margins}
- right={buildIDComparisonGraph.right}
- key={key}
- bind:dataGraphicMounted={dataGraphicMounted}
- on:click={() => {
-   if (hovered.datum) {
-     reference = hovered.datum;
-   }
- }}
+  data={data}
+  xDomain={xDomain}
+  yDomain={yDomain}
+  yType={yScaleType}
+  xType={xScaleType}
+  width={buildIDComparisonGraph.width
+    - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
+  height={buildIDComparisonGraph.height}
+  bottom={buildIDComparisonGraph.bottom}
+  top={buildIDComparisonGraph.top}
+  left={buildIDComparisonGraph.left}
+  bind:rollover={dgRollover}
+  bind:hoverValue
+  bind:xScale={xScale}
+  bind:leftPlot={L}
+  bind:rightPlot={R}
+  bind:margins={margins}
+  right={buildIDComparisonGraph.right}
+  key={key}
+  bind:dataGraphicMounted={dataGraphicMounted}
+  on:click={() => {
+    if (hovered.datum) {
+      reference = hovered.datum;
+    }
+  }}
 >
 
 <!-- for the additional-plot-elements slot in ProbeExplorer.svelte -->
@@ -237,40 +199,43 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <slot></slot>
 </g>
 
-{#if hovered.datum && xScale && topPlot && bodyHeight}
- {#if aggregationLevel === 'build_id'}
-    <BuildIDRollover 
-      x={hovered.x}
-      label={hovered.datum.label}
+<g slot=background let:top let:height let:xScale>
+{#if hovered.datum}
+    {#if aggregationLevel === 'build_id'}
+        <BuildIDRollover 
+          x={hovered.x}
+          label={hovered.datum.label}
+        />
+      {/if}
+      <!-- this is the hovered value rect -->
+      {#if aggregationLevel === 'build_id'}
+      <rect 
+        x={hoverLabelPlacement}
+        y={top} 
+        width={hoverWidth}
+        height={height}
+        fill="var(--cool-gray-100)"
+      />
+      {:else}
+      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={height}
+        fill="var(--cool-gray-100)" />
+      {/if}
+    {/if}
+    <!-- this is the reference rect -->
+
+    <rect 
+      x={reference}
     />
-  {/if}
-  <!-- this is the hovered value rect -->
-  {#if aggregationLevel === 'build_id'}
-  <rect 
-    x={hoverLabelPlacement}
-    y={topPlot} 
-    width={hoverWidth}
-    height={bodyHeight}
-    fill="var(--cool-gray-100)"
-  />
-  {:else}
-  <rect x={xScale(hovered.x) - xScale.step() / 2} y={topPlot} width={xScale.step()} height={bodyHeight}
-    fill="var(--cool-gray-100)" />
-  {/if}
-  
-
-  {/if}
-
-  <!-- this is the reference rect -->
     <rect
       bind:this={referenceBackgroundElement}
       x={$refLabelSpring} 
-      y={topPlot} 
+      y={top} 
       width={referenceWidth} 
-      height={bodyHeight}
+      height={height}
       fill="var(--cool-gray-100)"
     />
-  
+  </g>
+
  <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
  
  {#if aggregationLevel === 'build_id'}
@@ -280,39 +245,46 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 {/if}
 
  <GraphicBody>
-   {#each transformedData as
-     [lineData, key], i (key)}
-       <Line
-       curve="curveStep"
-       lineDrawAnimation={{ duration: 300 }} 
-       xAccessor="label"
-       yAccessor={'value'}
-       strokeWidth={strokeWidthMap(key)}
-       color={lineColorMap(key)}
-       data={lineData} />
-     {/each}
+   {#each createTimeSeries(data, metricKeys, yAccessor) as {bin, series}, i (bin)}
+    <Line 
+      lineDrawAnimation={{ duration: 300 }} 
+      xAccessor=x
+      yAccessor=y
+      strokeWidth={strokeWidthMap(bin)}
+      color={lineColorMap(bin)}
+      data={series} 
+      curve=curveStep
+    />
+   {/each}
  </GraphicBody>
 
- {#if hovered.datum && extractMouseoverValues}
- {#each metricKeys as bin, i (bin)}
-    <circle 
-    cx={$hoverPoints[bin].x}
-    cy={$hoverPoints[bin].y}
-    r=2
-    stroke="none"
-    fill={lineColorMap(bin)}
-    />
+ <g slot=annotation let:top let:left let:xScale let:yScale let:bottom>
+  {#if hovered.datum}
+    {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
+        <Springable value={[x, y]} let:springValue>
+          <circle 
+            cx={x}
+            cy={y}
+            r=2
+            stroke="none"
+            fill={lineColorMap(bin)}
+          />
+        </Springable>
+    {/each}
+  {/if}
+  {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
+      <g in:fly={{ duration: 150, y: 100, easing }}>
+        <Springable 
+          value={[x, y]}
+          let:springValue>
+            <ReferenceSymbol
+              size={20}
+              xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
+        </Springable>
+      </g>
   {/each}
 
- {/if}
- {#each metricKeys as bin, i (bin)}
-    <ReferenceSymbol
-    size={20}
-    xLocation={$referencePoints[bin].x} yLocation={$referencePoints[bin].y} color={lineColorMap(bin)} 
-  />
-  {/each}
   {#if xScale}
-    <!-- FIXME: let's not do all this calculation in the template itself. -->
     <text
       bind:this={referenceTextElement}
       text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
@@ -330,12 +302,15 @@ $: if (referenceTextElement && referenceBackgroundElement) {
           -3px 3px 0px rgba(255,255,255, 1);'
       x={
         refTextPlacement === 'outside'
-        ? Math.max($refLabelSpring - margins.buffer, leftPlot + refTextWidth + margins.buffer)
+        ? Math.max($refLabelSpring - margins.buffer, left + refTextWidth + margins.buffer)
         : $refLabelSpring + margins.buffer} 
-      y={topPlot + 11 + margins.buffer} 
+      y={top + 11 + margins.buffer} 
       fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
   {/if}
 
+  </g>
+  
   <FirefoxReleaseVersionMarkers />
+
 </DataGraphic>
 </div>

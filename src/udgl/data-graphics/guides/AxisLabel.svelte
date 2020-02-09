@@ -10,7 +10,7 @@ export let bodyDimension = getContext('bodyDimension');
 export let tickDirection = getContext('tickDirection');
 export let fontSizeCorrector = getContext('fontSizeCorrector');
 export let margins = getContext('margins') || { buffer: 0 };
-export let tickFormatter = getContext('tickFormatter') || ((v) => v);
+export let tickFormatter = getContext('tickFormatter') || function format(v) { return v; };
 export let align = getContext('align') || 'middle';
 
 // the domain value where the placement should occur

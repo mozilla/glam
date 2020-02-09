@@ -48,7 +48,7 @@ let button;
 <!-- <Button level={level} compact={compact} on:click={toggle}>
   <slot name='label'></slot>
 </Button> -->
-<button use:tooltipAction={tooltip} class=activating-button on:click={toggle}>
+<button use:tooltipAction={{ text: tooltip }} class=activating-button on:click={toggle}>
     <slot name='label'></slot>
 </button>
 </div>

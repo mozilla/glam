@@ -4,6 +4,7 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 // import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
 
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
@@ -103,8 +104,6 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
 
 <div class=body-content>
   
-  <slot></slot>
-
   <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
@@ -180,21 +179,6 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
             >
 
-                <!-- <g slot='additional-plot-elements'>
-                  <Heatmap 
-                    data={xyheat(data)}
-                    xAccessor=label
-                    yAccessor=bin
-                    heatAccessor=value
-                    transition={{ duration: 100, easing }}
-                    colorMap={colorMap}
-                    scaleType=log
-                    heatRange={[0.075, 0.50]}
-                    opacity={1}
-                  />
-                </g> -->
-
-                <!-- summary bignums -->
                 <div class='probe-body-overview__numbers' slot='summary'>
                   <div class=bignum>
                     <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
@@ -202,7 +186,9 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                   </div>
                   <div class=bignum>
                     <div class=bignum__label>⭑ Total Clients</div>
-                    <div class=bignum__value>{formatCount($movingAudienceSize)}</div>
+                    <div class=bignum__value>
+                        {formatValue($movingAudienceSize)}
+                    </div>
                   </div>
                 </div>
                 

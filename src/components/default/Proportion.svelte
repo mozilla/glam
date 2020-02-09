@@ -50,9 +50,6 @@ $: $totalClients = dist.total_users;
 let hist = dist.histogram;
 let xDomain = Object.keys(hist);
 let yDomain = [0, Math.max(...Object.values(hist)) * 1.3];
-let spr = tweened(1, { duration: 2000, delay: 1000, easing });
-let distSpring = [];
-$: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
 
 let tickFormatter;
 if (info.kind === 'boolean') {
@@ -74,7 +71,10 @@ function perc(k) {
 onMount(() => {
     width = container.getBoundingClientRect().width;
 });
-
+// FIXME: as of svelte 3.18.1, for some reason I have to bind this
+// particular hoverValue instance, but not the same sort of one over in Quantile.svelte.
+// This is clearly a bug in Svelte. There's no reason why this should not work as I've implemented.
+// let hoverValue = {};
 </script>
 
 <div bind:this={container} style="min-height:{height}px">
@@ -93,28 +93,28 @@ onMount(() => {
     left={16}
     right={16}
   >
-    <g slot=body let:bottom let:top let:yScale let:hoverValue let:xScale>
-      {#each Object.entries(hist) as [key, value]}
+    <g slot=body let:xScale let:yScale let:top let:hoverValue let:bottom>
+      {#each Object.keys(hist) as key, i (key)}
         <rect 
           x={xScale(key)}
-          y={yScale(value)}
+          y={yScale(hist[key])}
           width={xScale.bandwidth()}
-          height={yScale(0) - yScale(value)}
+          height={yScale(0) - yScale(hist[key])}
           fill={colorMap(key) || 'var(--cool-gray-200)'}
           stroke={colorMap(key) || 'var(--cool-gray-200)'}
           fill-opacity=.8
         />
       {/each}
       {#if hoverValue.x}
-      <rect
-        in:fade={{ duration: 100 }}
-        x={xScale(hoverValue.x)}
-        y={top}
-        width={xScale.bandwidth()}
-        height={bottom - top}
-        fill=var(--cool-gray-600)
-        opacity=.3
-      />
+        <rect
+          in:fade={{ duration: 100 }}
+          x={xScale(hoverValue.x)}
+          y={top}
+          width={xScale.bandwidth()}
+          height={bottom - top}
+          fill=var(--cool-gray-600)
+          opacity=.3
+        />
       {/if}
     </g>
     <g slot=annotation let:hoverValue let:xScale let:top let:bottom let:left let:right>

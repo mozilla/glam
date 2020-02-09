@@ -1,6 +1,6 @@
 <script>
 import { getContext } from 'svelte';
-import { tooltip as tooltipAction } from '../utils/tooltip'
+import { tooltip as tooltipAction } from '../utils/tooltip';
 
 export let header = getContext('header') || false;
 export let freezeX = false;
@@ -8,15 +8,15 @@ export let freezeY = false;
 export let rightBorder = false;
 export let leftBorder = false;
 export let topBorder = false;
-export let bottomBorder = header ? true : false;
+export let bottomBorder = !!header;
 export let padding = true;
 export let text = false;
-export let align = undefined;
+export let align;
 export let colspan = 1;
 export let tooltip;
 
-export let borderColor = undefined;
-export let borderThickness = undefined;
+export let borderColor;
+export let borderThickness;
 export let bottomBorderColor = borderColor;
 export let bottomBorderThickness = borderThickness;
 export let topBorderColor = borderColor;
@@ -51,17 +51,17 @@ const scrollTop = getContext('scrollTop');
     class:data-cell--has-padding={padding}
     class:data-cell--header--has-padding={padding}
     class:data-cell--header--text={text}
-    use:tooltipAction={tooltip}
+    use:tooltipAction={{ text: tooltip }}
     
     style="
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY ? $scrollTop : 0}px);
-      --bottom-border-color: {bottomBorderColor  || "var(--border-color)"};
+      --bottom-border-color: {bottomBorderColor || "var(--border-color)"};
       --bottom-border-thickness: {bottomBorderThickness || "var(--border-thickness)"};
-      --top-border-color: {topBorderColor  || "var(--border-color)"};
+      --top-border-color: {topBorderColor || "var(--border-color)"};
       --top-border-thickness: {topBorderThickness || "var(--border-thickness)"};
-      --left-border-color: {leftBorderColor  || "var(--border-color)"};
+      --left-border-color: {leftBorderColor || "var(--border-color)"};
       --left-border-thickness: {leftBorderThickness || "var(--border-thickness)"};
-      --right-border-color: {rightBorderColor  || "var(--border-color)"};
+      --right-border-color: {rightBorderColor || "var(--border-color)"};
       --right-border-thickness: {rightBorderThickness || "var(--border-thickness)"};
       background-color: {backgroundColor || "var(--default-background-color)"};
     ">
@@ -83,17 +83,17 @@ const scrollTop = getContext('scrollTop');
     class:data-cell--has-padding={padding}
     style="
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY ? $scrollTop : 0}px);
-      --bottom-border-color: {bottomBorderColor  || "var(--border-color)"};
+      --bottom-border-color: {bottomBorderColor || "var(--border-color)"};
       --bottom-border-thickness: {bottomBorderThickness || "var(--border-thickness)"};
-      --top-border-color: {topBorderColor  || "var(--border-color)"};
+      --top-border-color: {topBorderColor || "var(--border-color)"};
       --top-border-thickness: {topBorderThickness || "var(--border-thickness)"};
-      --left-border-color: {leftBorderColor  || "var(--border-color)"};
+      --left-border-color: {leftBorderColor || "var(--border-color)"};
       --left-border-thickness: {leftBorderThickness || "var(--border-thickness)"};
-      --right-border-color: {rightBorderColor  || "var(--border-color)"};
+      --right-border-color: {rightBorderColor || "var(--border-color)"};
       --right-border-thickness: {rightBorderThickness || "var(--border-thickness)"};
       background-color: {backgroundColor || "var(--default-background-color)"};
     "
-    use:tooltipAction={tooltip}
+    use:tooltipAction={{ text: tooltip }}
     >
     <slot></slot>
   </td  >

@@ -14,8 +14,6 @@ import { formatBuildIDToDateString } from '../../utils/formatters';
 
 import { histogramSpring } from '../../utils/animation';
 
-import { extractBinValues } from '../../utils/probe-utils';
-
 export let data;
 export let title;
 export let markers;
@@ -74,17 +72,9 @@ $: if (aggregationLevel === 'build_id') {
 }
 
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
+
 export let reference = data[data.length - 1];
 // $: if (timeHorizon) reference = data[data.length - 1];
-
-function getBinValueFromMouseover(datum) {
-  let out = {};
-  out = { ...datum[overTimePointMetricType] };
-  Object.keys(out).forEach((k) => {
-    out[k] = { y: out[k], x: datum.label };
-  });
-  return out;
-}
 
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.
@@ -96,7 +86,6 @@ $: if (densityMetricType) {
 $: if (densityMetricType && reference[densityMetricType]) {
   animatedReferenceDistribution.setValue(reference[densityMetricType]);
 }
-
 </script>
 
 <style>
@@ -143,7 +132,7 @@ h4 {
       </slot>
     </h4> -->
   </div>
-    <slot name='summary' reference={reference} hovered={hovered}></slot>
+  <slot name='summary'></slot>
 </div>
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
@@ -155,14 +144,13 @@ h4 {
         timeHorizon={timeHorizon}
         lineColorMap={binColorMap}
         key={key}
+        yAccessor={overTimePointMetricType}
         xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
         yScaleType={yScaleType}
-        transform={(p, d) => extractBinValues(p, d, overTimePointMetricType)}
         yTickFormatter={yTickFormatter}
         metricKeys={activeBins}
         bind:reference={reference}
         bind:hovered={hovered}
-        extractMouseoverValues={getBinValueFromMouseover}
         markers={markers}
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
@@ -186,16 +174,16 @@ h4 {
   >
     <!-- add violin plots on the quantiles -->
     
-    <g slot='body' let:leftPlot={lp} let:rightPlot={rp}>
+    <g slot='body' let:left={lp} let:right={rp}>
       {#if showViolins}
-        {#if hovered.datum}
+        {#if hovered.datum || insufficientData}
           <Violin
             orientation="vertical"
             showLeft={false}
             rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
             key={hovered.x}
             opacity=.9
-            density={hovered.datum[densityMetricType]} 
+            density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]} 
             densityAccessor='value'
             valueAccessor='bin'
             densityRange={[0,
@@ -240,8 +228,7 @@ h4 {
     dataVolume={data.length}
     showLeft={data.length > 1}
     showDiff={data.length > 1}
-  >
-  </ComparisonSummary>
+  />
 
   <!-- <TotalClientsGraph 
     data={data}
