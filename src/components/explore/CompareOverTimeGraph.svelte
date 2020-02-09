@@ -1,5 +1,7 @@
 <script>
 import { spring } from 'svelte/motion';
+import { fly } from 'svelte/transition';
+import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
@@ -256,27 +258,28 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 
  <g slot=annotation let:top let:left let:xScale let:yScale let:bottom>
   {#if hovered.datum}
-  {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
-      <Springable value={[x, y]} let:springValue>
-        <circle 
-          cx={x}
-          cy={y}
-          r=2
-          stroke="none"
-          fill={lineColorMap(bin)}
-        />
-      </Springable>
-  {/each}
+    {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
+        <Springable value={[x, y]} let:springValue>
+          <circle 
+            cx={x}
+            cy={y}
+            r=2
+            stroke="none"
+            fill={lineColorMap(bin)}
+          />
+        </Springable>
+    {/each}
   {/if}
   {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
-      <Springable 
-        value={[x, y]} 
-        from={[xScale(reference.label), bottom]} 
-        let:springValue>
-          <ReferenceSymbol
-            size={20}
-            xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
-      </Springable>
+      <g in:fly={{ duration: 150, y: 100, easing }}>
+        <Springable 
+          value={[x, y]}
+          let:springValue>
+            <ReferenceSymbol
+              size={20}
+              xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
+        </Springable>
+      </g>
   {/each}
 
   {#if xScale}

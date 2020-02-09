@@ -256,9 +256,11 @@ function createMouseStore(svgElem) {
         // but this shoudl be easy. just reverse the value and return it as y.
         y = ys.invert(actualY);
       }
-      internalRolloverStore.set({
+      const nextState = {
         x, y, px: actualX, py: actualY, body,
-      });
+      };
+
+      internalRolloverStore.set(nextState);
     },
   };
 }
@@ -270,10 +272,10 @@ function createMouseStore(svgElem) {
 
 // use bind:rollover to get the current x / y (in domain-land) and px / py (range-land)
 export let rollover = createMouseStore(svg);
-let onMousemove;
-let onMouseleave;
-$: onMousemove = (e) => { rollover.onMousemove(e, $xScaleStore, $yScaleStore); };
-$: onMouseleave = (e) => { rollover.onMouseleave(e, $xScaleStore, $yScaleStore); };
+// let onMousemove = (e) => { rollover.onMousemove(e, $xScaleStore, $yScaleStore); };
+// let onMouseleave = (e) => { rollover.onMouseleave(e, $xScaleStore, $yScaleStore); };
+// $: onMousemove = (e) => { rollover.onMousemove(e, $xScaleStore, $yScaleStore); };
+// $: onMouseleave = (e) => { rollover.onMouseleave(e, $xScaleStore, $yScaleStore); };
 
 
 export let dataGraphicMounted = false;
@@ -284,15 +286,14 @@ const emptyValue = () => ({
 
 export let hoverValue = emptyValue();
 
-
 onMount(() => {
   dataGraphicMounted = true;
 });
 
 $: if (dataGraphicMounted) {
-  // initiateRollovers(svg);
+  // initiateRollovers(svg)
   rollover.setSVG(svg);
-  rollover.subscribe((v) => {
+  internalRolloverStore.subscribe((v) => {
     hoverValue = v;
   });
 }
@@ -315,8 +316,8 @@ $: if (dataGraphicMounted) {
     bind:this={svg}
     shape-rendering="geometricPrecision"
     viewbox='0 0 {$graphicWidth} {$graphicHeight}'
-    on:mousemove={onMousemove}
-    on:mouseleave={onMouseleave}
+    on:mousemove={(e) => { rollover.onMousemove(e, $xScaleStore, $yScaleStore); }}
+    on:mouseleave={(e) => { rollover.onMouseleave(e, $xScaleStore, $yScaleStore); }}
     on:click
     on:mousedown
     on:mouseup
@@ -378,7 +379,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
-        hoverValue={hoverValue}
+        hoverValue={$internalRolloverStore}
       ></slot>
     </g>
   {/if}
@@ -393,7 +394,7 @@ $: if (dataGraphicMounted) {
     <!-- pass the rollover value into the scale -->
     {#if dataGraphicMounted}
       <slot name='mouseover' 
-        value={hoverValue} 
+        value={$internalRolloverStore} 
         xScale={xScale} 
         yScale={yScale}
         left={$leftPlot}
@@ -424,7 +425,7 @@ $: if (dataGraphicMounted) {
         bottom={$bottomPlot}
         width={$graphicWidth}
         height={$graphicHeight}
-        hoverValue={hoverValue}
+        hoverValue={$internalRolloverStore}
       ></slot>
     {/if}
   </svg>
