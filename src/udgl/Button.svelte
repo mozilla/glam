@@ -147,6 +147,6 @@ button {
 
 </style>
 
-<button use:tooltipAction={tooltip} class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>
+<button use:tooltipAction={{ text: tooltip }} class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>
     <slot></slot>
 </button>

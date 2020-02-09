@@ -61,8 +61,10 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 <div>
   <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Compare
       <span use:tooltipAction={
-        'compares the reference ⭑ to the hovered value on the "Over Time" chart ●',
-        { location: 'top' }
+        {
+text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart ●',
+         location: 'top',
+}
       } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 <DataGraphic
   xDomain={xDomain}
@@ -87,8 +89,10 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
       height={bottom - top}
       fill="var(--cool-gray-200)"
       opacity=.25
-      use:tooltipAction={'shows the distribution of the currently-hovered point on the line chart', {
-        location: 'top', alignment: 'center',
+      use:tooltipAction={{
+text: 'shows the distribution of the currently-hovered point on the line chart',
+        location: 'top',
+alignment: 'center',
       }}
     />
     <rect 
@@ -98,8 +102,10 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
       height={bottom - top}
       fill="var(--cool-gray-200)"
       opacity=.25
-      use:tooltipAction={'shows the distribution of the current reference point on the line chart', {
-        location: 'top', alignment: 'center',
+      use:tooltipAction={{
+text: 'shows the distribution of the current reference point on the line chart',
+        location: 'top',
+alignment: 'center',
       }}
     />
     <slot name='body'

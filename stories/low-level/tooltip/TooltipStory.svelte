@@ -15,11 +15,11 @@ import { tooltip } from 'udgl/utils/tooltip';
 
 <div class=story>
   <h1 class=story__title>Tooltips</h1>
-  <div use:tooltip={'tooltip time', { duration: 50 }} class=first>
+  <div use:tooltip={{ text: 'tooltip time', duration: 50 }} class=first>
     This will trigger a tooltip
   </div>
 
-  <span use:tooltip={"let's try on buttons!"}>
+  <span use:tooltip={{ text: "let's try on buttons!" }}>
     <Button>Right on.</Button>
   </span>
 </div>

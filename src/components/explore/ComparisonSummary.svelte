@@ -134,8 +134,10 @@ td, th {
 <div class=summary>
     <h3 class=data-graphic__element-title>Summary
         <span use:tooltipAction={
-          'compares the numeric values of the reference ⭑ to the hovered values ●',
-          { location: 'top' }
+          {
+text: 'compares the numeric values of the reference ⭑ to the hovered values ●',
+           location: 'top',
+}
         } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 
   <table>

@@ -54,7 +54,7 @@
   </style>
   
   <div class=menu-button bind:this={button}>
-    <button class=activating-button on:click={toggle} class:active  use:tooltipAction={'this probe has multiple keys associated with it', {}}>
+    <button class=activating-button on:click={toggle} class:active  use:tooltipAction={{ text: 'this probe has multiple keys associated with it' }}>
 
         <div>
           {#each options as opt, i}

@@ -161,8 +161,10 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <h3 style='padding-left: {buildIDComparisonGraph.left}px; padding-right: {buildIDComparisonGraph.right}px' class=data-graphic__element-title>
     Over Time 
     <span use:tooltipAction={
-      'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
-      { location: 'top' }
+      {
+        text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+        location: 'top',
+}
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
  <DataGraphic
   data={data}
