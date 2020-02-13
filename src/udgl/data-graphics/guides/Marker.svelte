@@ -8,13 +8,20 @@ import {
 } from 'svelte';
 import { cubicOut as easing } from 'svelte/easing';
 import { tweened } from 'svelte/motion';
+import { tooltip } from '../../utils/tooltip';
 
+
+export let animate = true;
 export let location;
 export let direction = 'vertical';
+export let description;
 export let dasharray = '1,1';
 export let lineThickness = 1;
-export let lineColor = 'var(--cool-gray-500)';
-export let textColor = lineColor;
+export let color = 'var(--cool-gray-500)';
+export let lineColor = color;
+export let textColor = color;
+export let labelSize = 11;
+export let labelPlacement = 'top';
 
 const key = getContext('key');
 
@@ -32,7 +39,6 @@ export let endLocation = direction === 'vertical' ? getContext('topPlot') : getC
 export let rootLocation = direction === 'vertical' ? getContext('bottomPlot') : getContext('leftPlot');
 
 const distance = direction === 'vertical' ? getContext('bodyHeight') : getContext('bodyWidth');
-const animate = true;
 
 let pixelDirection = direction === 'vertical' ? 1 : -1;
 
@@ -41,11 +47,35 @@ let scaling = tweened(pixelDirection, { duration: animate ? 500 : 0, delay: ORDE
 let lineEndCoord;
 let lineStartCoord;
 let locationCoord;
-let textEndCoord;
+
+let textEndCoord; // this is how far it should be from the line itself in the line direction.
+let textOrientationCoord; // this is how much it should be shifted perpendicular to line.
+
+let textAnchor = 'middle';
+
+
 $: lineEndCoord = $endLocation + ($distance / 2) * $scaling;
 $: lineStartCoord = $rootLocation;
 $: locationCoord = $scale(location);
-$: textEndCoord = $endLocation + (-pixelDirection) * margins.buffer + ($distance / 2) * $scaling;
+
+$: if (direction === 'vertical') {
+  if (labelPlacement === 'top') {
+    textEndCoord = $endLocation + (-pixelDirection) * margins.buffer + ($distance / 2) * $scaling;
+    textAnchor = 'middle';
+    textOrientationCoord = locationCoord;
+  }
+} else {
+  textEndCoord = $endLocation + ($distance / 2) * $scaling;
+  textAnchor = 'end';
+  if (labelPlacement === 'top') {
+    textOrientationCoord = locationCoord - labelSize;
+  } else if (labelPlacement === 'bottom') {
+    textOrientationCoord = locationCoord + labelSize;
+  }
+}
+
+
+$: textOrientationCoord = locationCoord;
 
 let x1 = 0;
 let x2 = 0;
@@ -53,16 +83,15 @@ let y1 = 0;
 let y2 = 0;
 let textX = 0;
 let textY = 0;
-let textAnchor = 0;
 let dy = 0;
 
 $: x1 = direction === 'vertical' ? locationCoord : lineStartCoord;
 $: x2 = direction === 'vertical' ? locationCoord : lineEndCoord;
 $: y1 = direction === 'vertical' ? lineStartCoord : locationCoord;
 $: y2 = direction === 'vertical' ? lineEndCoord : locationCoord;
-$: textX = direction === 'vertical' ? locationCoord : textEndCoord;
-$: textY = direction === 'vertical' ? textEndCoord : locationCoord;
-$: textAnchor = direction === 'vertical' ? 'middle' : 'start';
+$: textX = direction === 'vertical' ? textOrientationCoord : textEndCoord;
+$: textY = direction === 'vertical' ? textEndCoord : textOrientationCoord;
+// $: textAnchor = direction === 'vertical' ? 'middle' : 'start';
 $: dy = direction === 'vertical' ? 0 : '.35em';
 
 // let mounted = false;
@@ -79,7 +108,6 @@ onDestroy(() => {
 
 
   <g style="opacity: {1 - Math.abs($scaling)}"  class=marker>
-
       <line 
         y1={y1} 
         y2={y2} 
@@ -92,9 +120,10 @@ onDestroy(() => {
         x={textX} 
         y={textY} 
         dy={dy}
-        font-size=11 
+        font-size={labelSize} 
         text-anchor={textAnchor}
-        fill={textColor}>
+        fill={textColor}
+        use:tooltip={{ text: description, location: 'top' }}>
         <slot></slot>
       </text>
   </g>

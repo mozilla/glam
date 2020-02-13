@@ -1,0 +1,82 @@
+
+body {
+  background: linear-gradient(to bottom, white, var(--cool-gray-subtle) var(--space-48x), var(--cool-gray-100) var(--space-96x));
+  background-attachment: fixed;
+}
+
+/* use h3 for subsection headers */
+h3 {
+  font-size: var(--text-06);
+  margin-bottom: var(--space-6x);
+  color: var(--cool-gray-650);
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+/* use h4 for chart titles */
+h4 {
+  margin:0;
+}
+
+.big-number {
+  font-size: var(--text-04);
+  width: max-content;
+  text-align: right;
+}
+
+.big-number--sublabel {
+  font-size: var(--text-02);
+  text-transform: uppercase;
+  color: var(--cool-gray-600);
+}
+.big-number--label {
+  font-weight: 600;
+  color: var(--cool-gray-750);
+}
+.big-number--number {
+  text-align: right;
+  font-size: var(--text-08);
+  font-weight: 300;
+  color: var(--cool-gray-600);
+  font-family: var(--main-mono-font);
+}
+
+.big-number--compare {
+  font-size: var(--text-02);
+  color: var(--cool-gray-700);
+}
+
+.subsection {
+  padding-top: var(--space-4x);
+  padding-bottom: var(--space-8x);
+}
+
+.subsection + .subsection {
+  border-top: 4px solid var(--cool-gray-150);
+}
+
+.at-a-glance {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: var(--space-8x);
+  grid-row-gap: var(--space-8x);
+  justify-items: end;
+  justify-content: stretch;
+  width: 950px;
+  margin: auto;
+}
+
+.at-a-glance--4c {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.sm-3x3 {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-column-gap: var(--space-2x);
+  grid-row-gap: var(--space-4x);
+  align-items: start;
+  justify-content: center;
+  margin: auto;
+  margin-top: var(--space-4x);
+}

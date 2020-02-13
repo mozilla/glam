@@ -7,10 +7,11 @@ export let y;
 export let r = 2;
 export let opacity = 1;
 export let fillOpacity = 1;
+export let color = 'blue';
 export let stroke = 'none';
 export let strokeWidth = 0;
 export let strokeOpacity = 1;
-export let fill = 'blue';
+export let fill = color;
 
 const xScale = getContext('xScale') || writable((v) => v);
 const yScale = getContext('yScale') || writable((v) => v);

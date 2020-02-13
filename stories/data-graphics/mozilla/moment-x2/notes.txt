@@ -1,0 +1,92 @@
+
+2020-02-13
+
+- engagement summary – what are we trying to show? For each feature, how much it is being used by f2f vs. other (organic)?
+– activity zoom-in: is each activity type different?
+
+
+2020-02-10
+
+
+========== emily / marissa sync-up
+
+– KPIs:
+  - are these the right set?
+  - can we clarify what these definitions mean?
+  - is a bignum the right approach here vs. a small multiple?
+
+current period vs. previous: week over week
+no cumulative numbers here
+progress to goal: retention -> move to "% of clients who have migrated"
+  - there is a ceiling because not everyone can transition
+We might still need cumulative number as well
+add % change & baselines below
+
+the comparison should bre wow
+success metric isn't implemented yet
+we needd a goal that is a counterfactual for fennec retention as if fenix didn't exist
+product -> user behavior
+marketing -> acquisition metrics
+the dashboard will need the ability to flip between channels
+channel: fenix channels (not fennec)
+
+churn chart: people who were on fennec who transitioned, people still on fennec, people who actually churned on fennec
+The fennec chart might be better as a series of line charts?
+
+retention charts: for nightly, lets provide some confidence intervals or something?
+smaller graphs: overall, established, new retention rate
+
+growth metrics: f2f, fennec, fenix
+
+
+user behavior pages –––––– mock up, get the conversation rolling
+
+
+
+========== moment-x meeting
+
+PROGRESS:
+– working with ops to get first link deployed. What should the url be? incline.SOMETHING.firefox.com?
+
+– sketching the executive summary section. 
+
+– Focusing on the exec summary will allow a bunch of new components we can easily use for the other sections:
+  - churn chart (we will need this more in the future)
+  – a generalized line chart that supports 1 time series or multiple ones, with lots of options
+  – a BigNumber component that can be used on all three sections
+
+– {demo} this is pretty rough. There aren't annotations, I haven't put much into the design yet, this week
+  expect a lot of changes. I'll be posting gifs and updates in the channel as they occur and collect feedback.
+
+QUESTIONS:
+– what breakoff meetings do we need this week?
+  - ops (melissa) – notified about upcoming deploy, need to file bug and get the ball rolling on the first deploy very quickly.
+    will have this bug filed today and have a link to y'all real soon.
+  – data (jeff & marissa & emily) – let's sync up about the data plan so I know what to expect
+    - jeff and frank will let me know what's going on as soon as possible
+  – executive page review – once I have data for the executive page, let's go through and get feedback (emily + marissa + anyone else)
+
+- category_segment and category_segment_group are all "Overall". Is this expected?
+
+- Big Number KPIs – Current period vs. "previous period" – what should "previous period" be here?
+
+– Big Number KPIs – I'm assuming we want to just show single numbers + some percentage diff. Is that enough? I can easily throw up a bunch of small multiples instead.
+We haven't really talked about that yet and I want to make sure everyone is happy.
+
+– Big Number KPIs – have these all been agreed on? Should we have a conversation about which is which?
+  – if "yes these are the agreed on numbers" 
+    – what is "change in fenix"?
+    – "progress to goal: retention" – which retention is this?
+    – "success metric": 
+– Meetings I want to have:
+  - data sync-up w/ jeff and marissa (format, naming conventions, etc.)
+
+
+
+
+Order of operations:
+
+– demoware – show the proof of concept of the dashboard components.
+– feedback & generalize – incorporate feedback as it comes aggressively, generalize parts so that it is easy to make tweaks
+  - graph annotations
+  – section annotations

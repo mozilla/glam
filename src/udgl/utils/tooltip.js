@@ -15,7 +15,7 @@ export function tooltip(node, args) {
   el.className = 'tooltip';
   el.textContent = options.text;
   el.style.position = 'absolute';
-  el.style.transition = `opacity ${duration}ms`;
+  el.style.transition = `opacity ${duration}ms, transform ${duration}ms`;
 
   function setLocation() {
     const [left, top] = placeElement({
@@ -34,7 +34,12 @@ export function tooltip(node, args) {
     if (el.textContent.length && options.text) {
       document.body.appendChild(el);
       el.style.opacity = '0';
-      setTimeout(() => { el.style.opacity = '1'; });
+
+      el.style.transform = 'scale(.9)';
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+      });
       setLocation();
     }
   }

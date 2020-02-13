@@ -94,6 +94,8 @@
     --increment: var(--space-6x); /* eg. 48dp. */
     --drawer-width: calc(var(--space-base) * 30);
     --header-height: var(--increment);
+
+    /* TOOLBAR */
     --toolbar-background-color: var(--blue-slate-700);
     --toolbar-text-color: white;
 
@@ -341,6 +343,21 @@ button:focus {
     color: var(--toolbar-text-color);
 }
 
+.toolbar h1 {
+    font-family: var(--brand-font);
+    padding:0;
+    margin:0;
+    font-size:1.5em;
+    display: grid;
+    align-items: center;
+    align-content: center;
+    justify-content: start;
+    font-weight: normal;
+    grid-column-gap: var(--space-base);
+    padding-left: var(--space-2x);
+    grid-auto-flow: column;
+}
+
 .toolbar--horizontal {
     box-sizing: border-box;
     align-content: start;
@@ -439,7 +456,7 @@ button:focus {
 
 /*  START OF USER DASHBOARD STUFF */
 
-header {
+/* header {
     min-width: var(--space-24x);
     width: 100%;
     height: var(--header-height);
@@ -447,19 +464,16 @@ header {
     box-sizing: border-box;
     color: var(--primary-text);
     display: grid;
-    /* grid-template-columns: var(--column-grid); */
-    /* align-content: center; */
     align-content: center;
     align-items: center;
-}
-
+} */
+/* 
 header h1 {
     font-family: var(--brand-font);
     padding:0;
     margin:0;
     font-size:1.5em;
     color: var(--cool-gray-100);
-    /* transform: translateY(.05em); */
     display: grid;
     align-items: center;
     align-content: center;
@@ -468,9 +482,9 @@ header h1 {
     grid-column-gap: var(--space-base);
     padding-left: var(--space-2x);
     grid-auto-flow: column;
-}
+} */
 
-header h1 div span {
+/* header h1 div span {
     opacity: .8;
     margin:0;
     padding:0;
@@ -479,7 +493,7 @@ header h1 div span {
     font-weight: normal;
     display: inline-block;
     transform: translateY(.35em);
-}
+} */
 
 .left-drawer {
     grid-column: left;
@@ -915,6 +929,7 @@ tr td.data-cell--graphic:hover {
     font-size: var(--text-015);
     border-radius: var(--space-1h);
     z-index:2001;
+    max-width: var(--space-40x);
 }
 
 .data-graphic__element-title {
