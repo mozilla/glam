@@ -104,6 +104,8 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
 
 <div class=body-content>
   
+  <slot></slot>
+
   <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
