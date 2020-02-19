@@ -9,8 +9,8 @@ class Aggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Partition columns.
     channel = models.IntegerField(choices=constants.CHANNEL_CHOICES)
-    version = models.CharField(max_length=100)
     # Dimensions.
+    version = models.CharField(max_length=100)
     agg_type = models.IntegerField(choices=constants.AGGREGATION_CHOICES)
     os = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
@@ -26,24 +26,25 @@ class Aggregation(models.Model):
     class Meta:
         # This table is a partitioned table, we manage the creation of it ourselves.
         managed = False
-
         db_table = "glam_aggregation"
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "channel",
-                    "version",
-                    "agg_type",
-                    "os",
-                    "build_id",
-                    "process",
-                    "metric",
-                    "metric_key",
-                    "client_agg_type",
-                ],
-                name="dimensions",
-            )
-        ]
+
+
+class NightlyAggregation(Aggregation):
+    class Meta:
+        proxy = True
+        db_table = "view_glam_aggregation_nightly"
+
+
+class BetaAggregation(Aggregation):
+    class Meta:
+        proxy = True
+        db_table = "view_glam_aggregation_beta"
+
+
+class ReleaseAggregation(Aggregation):
+    class Meta:
+        proxy = True
+        db_table = "view_glam_aggregation_release"
 
 
 class Probe(models.Model):
