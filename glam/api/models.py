@@ -5,7 +5,7 @@ from django.db import models
 from glam.api import constants
 
 
-class Aggregation(models.Model):
+class AbstractAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Partition columns.
     channel = models.IntegerField(choices=constants.CHANNEL_CHOICES)
@@ -24,26 +24,31 @@ class Aggregation(models.Model):
     data = JSONField()
 
     class Meta:
+        abstract = True
+
+
+class Aggregation(AbstractAggregation):
+    class Meta(AbstractAggregation.Meta):
         # This table is a partitioned table, we manage the creation of it ourselves.
         managed = False
         db_table = "glam_aggregation"
 
 
-class NightlyAggregation(Aggregation):
-    class Meta:
-        proxy = True
+class NightlyAggregation(AbstractAggregation):
+    class Meta(AbstractAggregation.Meta):
+        managed = False
         db_table = "view_glam_aggregation_nightly"
 
 
-class BetaAggregation(Aggregation):
-    class Meta:
-        proxy = True
+class BetaAggregation(AbstractAggregation):
+    class Meta(AbstractAggregation.Meta):
+        managed = False
         db_table = "view_glam_aggregation_beta"
 
 
-class ReleaseAggregation(Aggregation):
-    class Meta:
-        proxy = True
+class ReleaseAggregation(AbstractAggregation):
+    class Meta(AbstractAggregation.Meta):
+        managed = False
         db_table = "view_glam_aggregation_release"
 
 
