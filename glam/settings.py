@@ -68,7 +68,8 @@ class Core(Configuration):
     DEFAULT_FROM_EMAIL = "telemetry-alerts@mozilla.com"
 
     AUTHENTICATION_BACKENDS = [
-        "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
+        # FIXME: This needs to be uncommented once the Auth0 credentials are configured correctly.
+        #"mozilla_django_oidc.auth.OIDCAuthenticationBackend",
     ]
 
     # Internationalization
