@@ -29,17 +29,6 @@ class TestRandomProbesApi:
     def setup_class(cls):
         cls.url = reverse("v1-random-probes")
 
-    def _make_partitions(self, versions=None):
-        with connection.cursor() as cursor:
-            for version in versions:
-                cursor.execute(
-                    f"""
-                    CREATE TABLE glam_aggregation_nightly_{version}
-                    PARTITION OF glam_aggregation_nightly
-                    FOR VALUES IN ('{version}')
-                    """
-                )
-
     def _create_aggregation(self, name="gc_ms", data=None, multiplier=1.0):
         # Create 1 histogram and 1 percentile record.
         _data = {
@@ -76,12 +65,20 @@ class TestRandomProbesApi:
         )
         Aggregation.objects.create(**_data)
 
+    def _refresh_views(self):
+        with connection.cursor() as cursor:
+            for channel in constants.CHANNEL_IDS.keys():
+                cursor.execute(
+                    f"""
+                    REFRESH MATERIALIZED VIEW CONCURRENTLY
+                    view_glam_aggregation_{channel}
+                    """
+                )
+
     def test_response(self, client):
-        self._make_partitions(versions=["72"])
         Probe.objects.create(
             key="fee",
             info={
-                "kind": "count",
                 "name": "fee",
                 "labels": None,
                 "type": "histogram",
@@ -91,7 +88,6 @@ class TestRandomProbesApi:
         Probe.objects.create(
             key="fii",
             info={
-                "kind": "count",
                 "name": "fii",
                 "labels": None,
                 "type": "histogram",
@@ -101,7 +97,6 @@ class TestRandomProbesApi:
         Probe.objects.create(
             key="foo",
             info={
-                "kind": "count",
                 "name": "foo",
                 "labels": None,
                 "type": "histogram",
@@ -111,7 +106,6 @@ class TestRandomProbesApi:
         Probe.objects.create(
             key="fum",
             info={
-                "kind": "count",
                 "name": "fum",
                 "labels": None,
                 "type": "histogram",
@@ -122,6 +116,7 @@ class TestRandomProbesApi:
         self._create_aggregation(name="fii")
         self._create_aggregation(name="foo")
         self._create_aggregation(name="fum")
+        self._refresh_views()
 
         resp = client.post(self.url, content_type="application/json").json()
         assert len(resp["probes"]) == 3
@@ -133,11 +128,9 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 3
 
     def test_response_with_n(self, client):
-        self._make_partitions(versions=["72"])
         Probe.objects.create(
             key="fee",
             info={
-                "kind": "count",
                 "name": "fee",
                 "labels": None,
                 "type": "histogram",
@@ -147,7 +140,6 @@ class TestRandomProbesApi:
         Probe.objects.create(
             key="fii",
             info={
-                "kind": "count",
                 "name": "fii",
                 "labels": None,
                 "type": "histogram",
@@ -156,6 +148,7 @@ class TestRandomProbesApi:
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
+        self._refresh_views()
 
         resp = client.post(
             self.url, data={"n": 1}, content_type="application/json"
@@ -163,11 +156,9 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 1
 
     def test_n_too_large(self, client):
-        self._make_partitions(versions=["72"])
         Probe.objects.create(
             key="fee",
             info={
-                "kind": "count",
                 "name": "fee",
                 "labels": None,
                 "type": "histogram",
@@ -177,7 +168,6 @@ class TestRandomProbesApi:
         Probe.objects.create(
             key="fii",
             info={
-                "kind": "count",
                 "name": "fii",
                 "labels": None,
                 "type": "histogram",
@@ -194,24 +184,6 @@ class TestAggregationsApi:
     @classmethod
     def setup_class(cls):
         cls.url = reverse("v1-data")
-
-    def _make_partitions(self, versions=None):
-        with connection.cursor() as cursor:
-            for version in versions:
-                cursor.execute(
-                    f"""
-                    CREATE TABLE glam_aggregation_release_{version}
-                    PARTITION OF glam_aggregation_release
-                    FOR VALUES IN ('{version}')
-                    """
-                )
-                cursor.execute(
-                    f"""
-                    CREATE TABLE glam_aggregation_nightly_{version}
-                    PARTITION OF glam_aggregation_nightly
-                    FOR VALUES IN ('{version}')
-                    """
-                )
 
     def _create_aggregation(self, data=None, multiplier=1.0):
         # Create 1 histogram and 1 percentile record.
@@ -249,6 +221,16 @@ class TestAggregationsApi:
         )
         Aggregation.objects.create(**_data)
 
+    def _refresh_views(self):
+        with connection.cursor() as cursor:
+            for channel in constants.CHANNEL_IDS.keys():
+                cursor.execute(
+                    f"""
+                    REFRESH MATERIALIZED VIEW CONCURRENTLY
+                    view_glam_aggregation_{channel}
+                    """
+                )
+
     def test_aggs_method(self, client):
         assert client.get(self.url).status_code == 405
 
@@ -277,11 +259,10 @@ class TestAggregationsApi:
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
 
     def test_histogram(self, client):
-        self._make_partitions(versions=["72"])
-
         # This test adds 2 histograms, one of which will be in the result.
         self._create_aggregation(multiplier=10)
         self._create_aggregation(data={"os": "Windows"}, multiplier=1.5)
+        self._refresh_views()
 
         query = {
             "query": {
@@ -328,8 +309,9 @@ class TestAggregationsApi:
             lambda self, request: (TokenUser(), {"scope": "read:foo"}),
         )
 
-        self._make_partitions(versions=["72"])
         self._create_aggregation({"channel": constants.CHANNEL_RELEASE})
+        self._refresh_views()
+
         query = {
             "query": {
                 "channel": "release",

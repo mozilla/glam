@@ -6,11 +6,12 @@ jobs:
       - image: circleci/python:3.8
         environment:
           DJANGO_CONFIGURATION: Test
-          DATABASE_URL: postgresql://root@localhost/test?sslmode=disable
+          DATABASE_URL: postgresql://postgres:pass@postgres/test?sslmode=disable
       - image: circleci/postgres:11
+        name: postgres
         environment:
-          POSTGRES_USER: root
           POSTGRES_DB: test
+          POSTGRES_PASSWORD: pass
     steps:
       - checkout
       - run: sudo chown -R circleci:circleci /usr/local/bin

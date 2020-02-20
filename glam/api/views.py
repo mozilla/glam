@@ -7,11 +7,21 @@ from rest_framework.exceptions import NotFound, PermissionDenied, ValidationErro
 from rest_framework.response import Response
 
 from glam.api import constants
-from glam.api.models import Aggregation, Probe
+from glam.api.models import (
+    BetaAggregation,
+    NightlyAggregation,
+    ReleaseAggregation,
+    Probe,
+)
 
 
 def get_aggregations(request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
+    MODEL_MAP = {
+        "nightly": NightlyAggregation,
+        "beta": BetaAggregation,
+        "release": ReleaseAggregation,
+    }
 
     labels_cache = caches["probe-labels"]
     if labels_cache.get("__labels__") is None:
@@ -31,7 +41,6 @@ def get_aggregations(request, **kwargs):
 
     dimensions = [
         Q(metric=kwargs["probe"]),
-        Q(channel=constants.CHANNEL_IDS[kwargs["channel"]]),
         Q(version__in=list(map(str, kwargs["versions"]))),
         Q(os=kwargs.get("os") or "*"),
     ]
@@ -43,7 +52,7 @@ def get_aggregations(request, **kwargs):
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
 
-    result = Aggregation.objects.filter(*dimensions)
+    result = MODEL_MAP[kwargs["channel"]].objects.filter(*dimensions)
 
     response = {}
 

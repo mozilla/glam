@@ -3,18 +3,31 @@ from django.db import migrations
 from glam.api import constants
 
 
-channel_partitions = []
+partitions = []
 for channel in constants.CHANNEL_CHOICES:
-    channel_partitions.append(
-        """
-        CREATE TABLE glam_aggregation_{name}
+    partitions.extend([
+        f"""
+        CREATE TABLE glam_aggregation_{channel[1]}
         PARTITION OF glam_aggregation
-        FOR VALUES IN ({value})
-        PARTITION BY LIST(version);
-        """.format(
-            name=channel[1], value=channel[0],
-        )
-    )
+        FOR VALUES IN ({channel[0]});
+        """,
+        f"""
+        CREATE MATERIALIZED VIEW view_glam_aggregation_{channel[1]}
+        AS SELECT * FROM glam_aggregation_{channel[1]};
+        """,
+        f"""
+        CREATE UNIQUE INDEX ON view_glam_aggregation_{channel[1]} (id);
+        """,
+        f"""
+        CREATE INDEX ON view_glam_aggregation_{channel[1]} USING HASH (metric);
+        """,
+        f"""
+        CREATE INDEX ON view_glam_aggregation_{channel[1]} (version);
+        """,
+        f"""
+        CREATE INDEX ON view_glam_aggregation_{channel[1]} USING HASH (os);
+        """,
+    ])
 
 
 class Migration(migrations.Migration):
@@ -27,10 +40,8 @@ class Migration(migrations.Migration):
                 """
                 CREATE TABLE glam_aggregation (
                     id bigserial,
-                    -- partition columns
                     channel integer NOT NULL,
                     version varchar(100) NOT NULL,
-                    -- dimensions
                     agg_type integer NOT NULL,
                     os varchar(100) NOT NULL,
                     build_id varchar(100) NOT NULL,
@@ -38,11 +49,10 @@ class Migration(migrations.Migration):
                     metric varchar(200) NOT NULL,
                     metric_key varchar(200) NOT NULL,
                     client_agg_type varchar(100) NOT NULL,
-                    -- data
                     metric_type varchar(100) NOT NULL,
                     total_users integer,
                     data jsonb,
-                    PRIMARY KEY (id, channel, version)
+                    PRIMARY KEY (id, channel)
                 ) PARTITION BY LIST(channel);
                 """,
                 # Create unique index.
@@ -51,17 +61,13 @@ class Migration(migrations.Migration):
                 ADD CONSTRAINT glam_aggregation_dimensions_idx UNIQUE (
                     channel, version, agg_type, os, build_id, process,
                     metric, metric_key, client_agg_type);
-                """
-                # Create indexes.
-                # HASH indexing for smaller indexes and because we will only ever
-                # do `==` comparisons.
-                "CREATE INDEX ON glam_aggregation USING HASH (os);",
-                "CREATE INDEX ON glam_aggregation USING HASH (process);",
-                "CREATE INDEX ON glam_aggregation USING HASH (metric);",
-                # `build_id` will often use range queries.
-                "CREATE INDEX ON glam_aggregation (build_id);",
-            ]
-            + channel_partitions,
-            reverse_sql=["DROP TABLE glam_aggregation"],
+                """,
+            ] + partitions,
+            reverse_sql=[
+                "DROP TABLE glam_aggregation"
+            ] + [
+                f"DROP MATERIALIZED VIEW view_glam_aggregation_{channel}"
+                for channel in constants.CHANNEL_IDS.keys()
+            ],
         )
     ]
