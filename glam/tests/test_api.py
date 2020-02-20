@@ -1,5 +1,6 @@
 import pytest
 
+from django.db import connection
 from django.urls import reverse
 
 from glam.api import constants
@@ -64,6 +65,16 @@ class TestRandomProbesApi:
         )
         Aggregation.objects.create(**_data)
 
+    def _refresh_views(self):
+        with connection.cursor() as cursor:
+            for channel in constants.CHANNEL_IDS.keys():
+                cursor.execute(
+                    f"""
+                    REFRESH MATERIALIZED VIEW CONCURRENTLY
+                    view_glam_aggregation_{channel}
+                    """
+                )
+
     def test_response(self, client):
         Probe.objects.create(
             key="fee",
@@ -105,6 +116,7 @@ class TestRandomProbesApi:
         self._create_aggregation(name="fii")
         self._create_aggregation(name="foo")
         self._create_aggregation(name="fum")
+        self._refresh_views()
 
         resp = client.post(self.url, content_type="application/json").json()
         assert len(resp["probes"]) == 3
@@ -136,6 +148,7 @@ class TestRandomProbesApi:
         )
         self._create_aggregation(name="fee")
         self._create_aggregation(name="fii")
+        self._refresh_views()
 
         resp = client.post(
             self.url, data={"n": 1}, content_type="application/json"
@@ -208,6 +221,16 @@ class TestAggregationsApi:
         )
         Aggregation.objects.create(**_data)
 
+    def _refresh_views(self):
+        with connection.cursor() as cursor:
+            for channel in constants.CHANNEL_IDS.keys():
+                cursor.execute(
+                    f"""
+                    REFRESH MATERIALIZED VIEW CONCURRENTLY
+                    view_glam_aggregation_{channel}
+                    """
+                )
+
     def test_aggs_method(self, client):
         assert client.get(self.url).status_code == 405
 
@@ -239,6 +262,7 @@ class TestAggregationsApi:
         # This test adds 2 histograms, one of which will be in the result.
         self._create_aggregation(multiplier=10)
         self._create_aggregation(data={"os": "Windows"}, multiplier=1.5)
+        self._refresh_views()
 
         query = {
             "query": {
@@ -286,6 +310,8 @@ class TestAggregationsApi:
         )
 
         self._create_aggregation({"channel": constants.CHANNEL_RELEASE})
+        self._refresh_views()
+
         query = {
             "query": {
                 "channel": "release",
