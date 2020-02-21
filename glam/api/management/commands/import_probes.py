@@ -1,3 +1,4 @@
+import gzip
 import json
 import re
 import urllib.request
@@ -7,11 +8,14 @@ from django.core.management.base import BaseCommand
 from glam.api.models import Probe
 
 
-EXCLUDED_PROBES_RE = [re.compile(x) for x in [
-    r"histogram/SEARCH_COUNTS",
-    r"scalar/browser\.search.*",
-    r"scalar/browser\.engagement\.navigation\..*",
-]]
+EXCLUDED_PROBES_RE = [
+    re.compile(x)
+    for x in [
+        r"histogram/SEARCH_COUNTS",
+        r"scalar/browser\.search.*",
+        r"scalar/browser\.engagement\.navigation\..*",
+    ]
+]
 
 
 class Command(BaseCommand):
@@ -61,7 +65,9 @@ class Command(BaseCommand):
 
     def extract(self):
         # Read in all probes.
-        probes_dict = json.loads(urllib.request.urlopen(self.PROBES_URL).read())
+        probes_dict = json.loads(
+            gzip.decompress(urllib.request.urlopen(self.PROBES_URL).read())
+        )
         print("{} probes loaded from probe dictionary".format(len(probes_dict.keys())))
 
         # Filter probes by histograms or scalars only.
