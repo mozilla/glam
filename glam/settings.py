@@ -115,12 +115,6 @@ class Core(Configuration):
     # Auth0
     OIDC_RP_SIGN_ALGO = "RS256"
     OIDC_OP_JWKS_ENDPOINT = "https://auth.mozilla.auth0.com/.well-known/jwks.json"
-    OIDC_RP_CLIENT_ID = values.Value(
-        environ_name="OIDC_RP_CLIENT_ID", environ_prefix=None
-    )
-    OIDC_RP_CLIENT_SECRET = values.Value(
-        environ_name="OIDC_RP_CLIENT_SECRET", environ_prefix=None
-    )
 
     # Django REST Framework
     REST_FRAMEWORK = {
