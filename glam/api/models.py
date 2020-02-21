@@ -52,6 +52,42 @@ class ReleaseAggregation(AbstractAggregation):
         db_table = "view_glam_aggregation_release"
 
 
+class FenixAggregation(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    channel = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
+    ping_type = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    metric = models.CharField(max_length=200)
+    metric_type = models.CharField(max_length=100)
+    metric_key = models.CharField(max_length=200, blank=True)
+    client_agg_type = models.CharField(max_length=100, blank=True)
+    agg_type = models.CharField(max_length=100)
+    total_users = models.IntegerField()
+    data = JSONField()
+
+    class Meta:
+        db_table = "glam_fenix_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_dimensions",
+                fields=[
+                    "channel",
+                    "version",
+                    "ping_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_type",
+                    "metric_key",
+                    "client_agg_type",
+                    "agg_type",
+                ]
+            )
+        ]
+
+
 class Probe(models.Model):
     id = models.AutoField(primary_key=True)
     key = models.CharField(max_length=100)

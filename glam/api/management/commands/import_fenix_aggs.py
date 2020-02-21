@@ -5,8 +5,6 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from google.cloud import storage
 
-from glam.api import constants
-
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 
@@ -28,7 +26,7 @@ class Command(BaseCommand):
         self.gcs_client = storage.Client()
 
         blobs = self.gcs_client.list_blobs(GCS_BUCKET)
-        blobs = list(filter(lambda b: b.name.startswith("extract-"), blobs))
+        blobs = list(filter(lambda b: b.name.startswith("fenix-extract-"), blobs))
 
         for blob in blobs:
             # Create temp table for data.
@@ -36,7 +34,10 @@ class Command(BaseCommand):
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
-                cursor.execute(f"CREATE TABLE {tmp_table} (LIKE glam_aggregation)")
+                # TODO: Abstract LIKE table.
+                cursor.execute(
+                    f"CREATE TABLE {tmp_table} (LIKE glam_fenix_aggregation)"
+                )
                 cursor.execute(f"ALTER TABLE {tmp_table} DROP COLUMN id")
 
             # Download CSV file to local filesystem.
@@ -55,35 +56,24 @@ class Command(BaseCommand):
             log(f"Deleting local file: {fp.name}.")
             fp.close()
 
-        # Once all files are loaded, refresh the materialized views.
-        with connection.cursor() as cursor:
-            for channel in constants.CHANNEL_IDS.keys():
-                log(f"Refreshing materialized view for view_glam_aggregation_{channel}")
-                cursor.execute(
-                    f"""
-                    REFRESH MATERIALIZED VIEW CONCURRENTLY
-                    view_glam_aggregation_{channel}
-                    """
-                )
-
     def import_file(self, tmp_table, fp):
 
+        # TODO: Generalize this. Pull from the Django model and constraint?
         columns = [
             "channel",
             "version",
-            "agg_type",
+            "ping_type",
             "os",
             "build_id",
-            "process",
             "metric",
+            "metric_type",
             "metric_key",
             "client_agg_type",
-            "metric_type",
+            "agg_type",
             "total_users",
             "data",
         ]
         data_columns = [
-            "metric_type",
             "total_users",
             "data",
         ]
@@ -97,9 +87,10 @@ class Command(BaseCommand):
                 cursor.copy_expert(sql, tmp_file)
 
         log("  Inserting data from temp table into aggregation tables.")
+        # TODO: Abstract table
         with connection.cursor() as cursor:
             sql = """
-                INSERT INTO glam_aggregation ({columns})
+                INSERT INTO glam_fenix_aggregation ({columns})
                 SELECT * from {tmp_table}
                 ON CONFLICT ({conflict_columns})
                 DO UPDATE SET

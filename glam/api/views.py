@@ -11,6 +11,7 @@ from glam.api.models import (
     BetaAggregation,
     NightlyAggregation,
     ReleaseAggregation,
+    FenixAggregation,
     Probe,
 )
 
@@ -35,9 +36,9 @@ def get_aggregations(request, **kwargs):
         )
 
     # If release channel, make sure the user is authenticated.
-    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
+    #if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
+    #    if not request.user.is_authenticated:
+    #        raise PermissionDenied()
 
     try:
         model = MODEL_MAP[kwargs["channel"]]
@@ -54,6 +55,7 @@ def get_aggregations(request, **kwargs):
         kwargs["versions"] = list(range(max_version, max_version - 3, -1))
 
     dimensions = [
+        Q(channel=kwargs["channel"]),
         Q(metric=kwargs["probe"]),
         Q(version__in=list(map(str, kwargs["versions"]))),
         Q(os=kwargs.get("os") or "*"),
@@ -69,25 +71,29 @@ def get_aggregations(request, **kwargs):
     if "process" in kwargs:
         dimensions.append(Q(process=constants.PROCESS_IDS[kwargs["process"]]))
 
-    result = model.objects.filter(*dimensions)
+    # result = model.objects.filter(*dimensions)
+    result = FenixAggregation.objects.filter(*dimensions)
 
     response = {}
 
     for row in result:
 
+        print(row)
         metadata = {
-            "channel": constants.CHANNEL_NAMES[row.channel],
+            #"channel": constants.CHANNEL_NAMES[row.channel],
+            "channel": row.channel,
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
-            "process": constants.PROCESS_NAMES[row.process],
+            #"process": constants.PROCESS_NAMES[row.process],
+            "ping_type": row.ping_type,
             "metric": row.metric,
             "metric_type": row.metric_type,
         }
         aggs = {d["key"]: round(d["value"], 4) for d in row.data}
 
         # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(
+        key = "{channel}-{version}-{metric}-{os}-{build_id}-{ping_type}".format(
             **metadata
         )
         sub_key = "{key}-{client_agg_type}".format(
@@ -117,7 +123,8 @@ def get_aggregations(request, **kwargs):
                         pass
                 aggs = aggs_w_labels
 
-        new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
+        #new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
+        new_data["histogram"] = aggs
 
         if row.metric_key:
             new_data["key"] = row.metric_key
