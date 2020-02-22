@@ -243,12 +243,11 @@ class TestAggregationsApi:
         "query, missing",
         [
             ({"channel": None, "probe": None, "versions": []}, "aggregationLevel"),
-            ({"channel": None, "probe": None, "aggregationLevel": None}, "versions"),
             ({"channel": None, "versions": [], "aggregationLevel": None}, "probe"),
             ({"probe": None, "versions": [], "aggregationLevel": None}, "channel"),
-            ({"channel": None, "probe": None}, "aggregationLevel, versions"),
-            ({"channel": None}, "aggregationLevel, probe, versions"),
-            ({}, "aggregationLevel, channel, probe, versions"),
+            ({"channel": None, "probe": None}, "aggregationLevel"),
+            ({"channel": None}, "aggregationLevel, probe"),
+            ({}, "aggregationLevel, channel, probe"),
         ],
     )
     def test_required_params(self, client, query, missing):
@@ -268,7 +267,6 @@ class TestAggregationsApi:
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
-                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }
@@ -295,7 +293,6 @@ class TestAggregationsApi:
             "query": {
                 "channel": "release",
                 "probe": "gc_ms",
-                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }
@@ -316,7 +313,6 @@ class TestAggregationsApi:
             "query": {
                 "channel": "release",
                 "probe": "gc_ms",
-                "versions": ["72"],
                 "aggregationLevel": "version",
             }
         }
@@ -326,4 +322,19 @@ class TestAggregationsApi:
             content_type="application/json",
             HTTP_AUTHORIZATION="Bearer token",
         )
+        assert resp.status_code == 200
+
+    def test_versions_provided(self, client, monkeypatch):
+        self._create_aggregation({"channel": constants.CHANNEL_NIGHTLY})
+        self._refresh_views()
+
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "versions": [72],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
