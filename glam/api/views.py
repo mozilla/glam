@@ -1,7 +1,7 @@
 from random import shuffle
 
 from django.core.cache import caches
-from django.db.models import Q
+from django.db.models import Max, Q
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -16,7 +16,7 @@ from glam.api.models import (
 
 
 def get_aggregations(request, **kwargs):
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "versions", "aggregationLevel"]
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
     MODEL_MAP = {
         "nightly": NightlyAggregation,
         "beta": BetaAggregation,
@@ -39,6 +39,20 @@ def get_aggregations(request, **kwargs):
         if not request.user.is_authenticated:
             raise PermissionDenied()
 
+    try:
+        model = MODEL_MAP[kwargs["channel"]]
+    except KeyError:
+        raise ValidationError("Unknown channel in query parameters")
+
+    # Check if a version was provided and if not, get the MAX version from our
+    # data to select the last 3 versions by default.
+    if "versions" not in kwargs or not kwargs["versions"]:
+        try:
+            max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        except (ValueError, KeyError):
+            raise ValidationError("Query version cannot be determined")
+        kwargs["versions"] = list(range(max_version, max_version - 3, -1))
+
     dimensions = [
         Q(metric=kwargs["probe"]),
         Q(version__in=list(map(str, kwargs["versions"]))),
@@ -52,7 +66,7 @@ def get_aggregations(request, **kwargs):
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
 
-    result = MODEL_MAP[kwargs["channel"]].objects.filter(*dimensions)
+    result = model.objects.filter(*dimensions)
 
     response = {}
 
@@ -218,8 +232,6 @@ def random_probes(request):
                 probe=probe.info["name"],
                 channel="nightly",
                 os="Windows",
-                # TODO: Update to get latest version.
-                versions=["72"],
                 aggregationLevel="version",
             )
             if aggregations:

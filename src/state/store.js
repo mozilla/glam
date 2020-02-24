@@ -76,7 +76,6 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   return value;
 }
 
-// TODO: get latest version for whatever the default channel is.
 const initialState = {
   probe: {
     name: getFromQueryString('probe'),
@@ -90,7 +89,7 @@ const initialState = {
   product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryString('os') || 'Windows',
-  versions: getFromQueryString('versions', true) || [72, 73, 74],
+  versions: getFromQueryString('versions', true) || [],
   searchIsActive: false,
   searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
