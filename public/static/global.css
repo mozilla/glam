@@ -118,15 +118,23 @@
 
     /* Basic colors: a bluish grayish color, bluer than the UX colors, grayer
     than the digital blues we use for buttons etc. */
-    --blue-slate-100: hsl(209, 75%, 87%);
-    --blue-slate-200: hsl(220, 64%, 82%);
-    --blue-slate-300: hsl(225, 48%, 77%);
-    --blue-slate-400: hsl(229, 25%, 56%);
-    --blue-slate-500: hsl(231, 18%, 36%);
-    --blue-slate-600: hsl(233, 21%, 30%);
-    --blue-slate-700: hsl(235, 25%, 23%);
-    --blue-slate-800: hsl(237, 25%, 14%);
-    --blue-slate-900: hsl(240, 25%, 9%);
+    --blue-slate-100: #c4def6;
+    --blue-slate-150: #b5cde5;
+    --blue-slate-200: #a6bbd4;
+    --blue-slate-250: #97a9c2;
+    --blue-slate-300: #8897b1;
+    --blue-slate-350: #7985a0;
+    --blue-slate-400: #69748f;
+    --blue-slate-450: #5a627d;
+    --blue-slate-500: #4b506c;
+    --blue-slate-550: #444862;
+    --blue-slate-600: #3d4058;
+    --blue-slate-650: #35384f;
+    --blue-slate-700: #2e3145;
+    --blue-slate-750: #27293b;
+    --blue-slate-800: #202131;
+    --blue-slate-850: #191927;
+    --blue-slate-900: #11111d;
 
     /* UX GRAYS – use the cool gray variables. */
     --cool-gray-subtle: #f5fafc;
@@ -148,8 +156,6 @@
     --cool-gray-850: #30404b;
     --cool-gray-900: #273640;
 
-
-
     /* UX gray shorthands */
     --bg-gray-01: var(--cool-gray-100);
     --bg-gray-02: var(--cool-gray-300);
@@ -160,28 +166,43 @@
     --body-gray-01: var(--cool-gray-800);
     --body-gray-02: var(--cool-gray-900);
 
-
     /* use digital blue as link + button color for accessibility */
-    --digital-blue-100: hsl(209, 70%, 93%);
-    --digital-blue-200: hsl(209, 75%, 87%);
-    --digital-blue-300: hsl(209, 85%, 75%);
-    --digital-blue-400: hsl(209, 95%, 60%);
-    --digital-blue-500: hsl(209, 100%, 39%);
-    --digital-blue-600: hsl(209, 100%, 34%);
-    --digital-blue-700: hsl(209, 100%, 29%);
-    --digital-blue-800: hsl(209, 100%, 24%);
-    --digital-blue-900: hsl(209, 100%, 19%);
+    --digital-blue-100: #e0edfa;
+    --digital-blue-150: #c4dcf3;
+    --digital-blue-200: #a8cced;
+    --digital-blue-250: #8cbbe7;
+    --digital-blue-300: #70aae0;
+    --digital-blue-350: #5499da;
+    --digital-blue-400: #3889d4;
+    --digital-blue-450: #1c78cd;
+    --digital-blue-500: #0067c7;
+    --digital-blue-550: #0060ba;
+    --digital-blue-600: #005aae;
+    --digital-blue-650: #0053a1;
+    --digital-blue-700: #004d94;
+    --digital-blue-750: #004688;
+    --digital-blue-800: #003f7b;
+    --digital-blue-850: #00396e;
+    --digital-blue-900: #003262;
 
     /* use pantone red for errors */
-    --pantone-red-100: hsl(355, 100%, 95%);
-    --pantone-red-200: hsl(355, 96%, 85%);
-    --pantone-red-300: hsl(355, 91%, 75%);
-    --pantone-red-400: hsl(355, 88%, 65%);
-    --pantone-red-500: hsl(355, 84%, 45%);
-    --pantone-red-600: hsl(355, 84%, 35%);
-    --pantone-red-700: hsl(355, 90%, 23%);
-    --pantone-red-800: hsl(355, 100%, 18%);
-    --pantone-red-900: hsl(355, 100%, 14%);
+    --pantone-red-100: #ffe4e7;
+    --pantone-red-150: #f9c9ce;
+    --pantone-red-200: #f4afb6;
+    --pantone-red-250: #ee959d;
+    --pantone-red-300: #e97b84;
+    --pantone-red-350: #e3616c;
+    --pantone-red-400: #de4653;
+    --pantone-red-450: #d82c3a;
+    --pantone-red-500: #d31222;
+    --pantone-red-550: #c2101e;
+    --pantone-red-600: #b00e1b;
+    --pantone-red-650: #9f0b18;
+    --pantone-red-700: #8d0914;
+    --pantone-red-750: #7c0711;
+    --pantone-red-800: #6a050d;
+    --pantone-red-850: #59020a;
+    --pantone-red-900: #480006;
 
     /* use pond green for success states */
     --pond-green-100: #c7fadc;
@@ -203,15 +224,23 @@
     --pond-green-900: #0c4037;
 
     /* use bright yellows for warnings */
-    --bright-yellow-100: hsl(53, 100%, 95%);
-    --bright-yellow-200: hsl(50, 100%, 80%);
-    --bright-yellow-300: hsl(44, 100%, 73%);
-    --bright-yellow-400: hsl(40, 100%, 67%);
-    --bright-yellow-500: hsl(37, 100%, 56%);
-    --bright-yellow-600: hsl(35, 100%, 37%);
-    --bright-yellow-700: hsl(33, 100%, 25%);
-    --bright-yellow-800: hsl(27, 100%, 20%);
-    --bright-yellow-900: hsl(20, 100%, 16%);
+    --bright-yellow-100: #fffce4;
+    --bright-yellow-150: #fff1cb;
+    --bright-yellow-200: #ffe7b3;
+    --bright-yellow-250: #ffdd9a;
+    --bright-yellow-300: #ffd282;
+    --bright-yellow-350: #ffc869;
+    --bright-yellow-400: #ffbe50;
+    --bright-yellow-450: #ffb338;
+    --bright-yellow-500: #ffa91f;
+    --bright-yellow-550: #e9971b;
+    --bright-yellow-600: #d48617;
+    --bright-yellow-650: #bf7413;
+    --bright-yellow-700: #a96210;
+    --bright-yellow-750: #94510c;
+    --bright-yellow-800: #7e3f08;
+    --bright-yellow-850: #692e04;
+    --bright-yellow-900: #531c00;
 
     /* probe type colors */
 
