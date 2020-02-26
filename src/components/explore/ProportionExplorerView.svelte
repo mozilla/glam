@@ -129,6 +129,7 @@ h2 {
             <ProbeExplorer
               bind:reference={reference}
               title={key === 'undefined' ? '' : key}
+              summaryLabel='cat.'
               data={data}
               probeType={probeType}
               activeBins={activeBuckets}

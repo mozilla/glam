@@ -11,6 +11,7 @@ export let left;
 export let right;
 export let leftLabel;
 export let rightLabel;
+export let binLabel;
 export let keySet;
 export let compareTo = 'left-right';
 export let valueFormatter = (t) => t;
@@ -83,7 +84,7 @@ tbody tr:last-child td {
 th {
   line-height: 1;
   font-weight: normal;
-  text-transform:uppercase;
+  text-transform: uppercase;
   vertical-align: top;
   border-bottom: var(--heavy-border);
   font-size: var(--text-01);
@@ -93,8 +94,6 @@ th {
 td, th {
   padding-left: var(--space-base);
   padding-right: var(--space-base);
-  /* min-width: var(--space-4x);
-  max-width: var(--space-6x); */
   text-align: right;
   padding-top: var(--space-base);
   padding-bottom: var(--space-base);
@@ -115,14 +114,16 @@ td, th {
   opacity: .2;
 }
 
-/* .value-label, .value-left, .value-right {
-  text-align: right;
-} */
-
-
 .value-left, .value-right {
   background-color: var(--cool-gray-050);
+}
 
+.value-label {
+  min-width: calc(var(--space-base) * 7);
+  max-width: calc(var(--space-base) * 10);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .small-shape {
@@ -145,7 +146,7 @@ text: 'compares the numeric values of the reference â­‘ to the hovered values â—
 
       <tr>
 
-        <th style="min-width: 54px; width: max-content">Perc.</th>
+        <th class="value-label">{binLabel}</th>
 
             <!-- {#if showLeft}
             <th class:hidden={!hovered} class="summary-label ref">
@@ -198,7 +199,7 @@ text: 'compares the numeric values of the reference â­‘ to the hovered values â—
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}}
             <tr>
-              <td  style="width: max-content" class=value-label>
+              <td class="value-label" use:tooltipAction={{text: keyFormatter(key), location: 'top'}}>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
 

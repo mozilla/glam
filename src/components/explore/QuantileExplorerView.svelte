@@ -161,6 +161,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               bind:hovered={hovered}
 
               title={key === 'undefined' ? '' : key}
+              summaryLabel='perc.'
               data={data}
               probeType={probeType}
               activeBins={percentiles}

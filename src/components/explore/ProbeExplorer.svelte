@@ -30,6 +30,7 @@ export let yDomain;
 export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
+export let summaryLabel = 'perc.';
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -221,6 +222,7 @@ h4 {
     right={reference[pointMetricType]}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
     valueFormatter={yTickFormatter}
