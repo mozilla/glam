@@ -66,6 +66,9 @@ def get_aggregations(request, **kwargs):
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
 
+    if "process" in kwargs:
+        dimensions.append(Q(process=constants.PROCESS_IDS[kwargs["process"]]))
+
     result = model.objects.filter(*dimensions)
 
     response = {}

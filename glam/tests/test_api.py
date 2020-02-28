@@ -192,7 +192,7 @@ class TestAggregationsApi:
             "version": "72",
             "os": "*",
             "build_id": "*",
-            "process": 0,
+            "process": constants.PROCESS_ANY,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
             "metric": "gc_ms",
             "metric_key": "",
@@ -325,7 +325,7 @@ class TestAggregationsApi:
         assert resp.status_code == 200
 
     def test_versions_provided(self, client, monkeypatch):
-        self._create_aggregation({"channel": constants.CHANNEL_NIGHTLY})
+        self._create_aggregation()
         self._refresh_views()
 
         query = {
@@ -338,3 +338,24 @@ class TestAggregationsApi:
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
+
+    def test_process_filter(self, client):
+        self._create_aggregation()
+        self._create_aggregation({"process": constants.PROCESS_CONTENT})
+        self._refresh_views()
+
+        query = {
+            "query": {
+                "channel": "nightly",
+                "process": constants.PROCESS_NAMES[constants.PROCESS_CONTENT],
+                "probe": "gc_ms",
+                "versions": [72],
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 200
+
+        query["query"]["process"] = constants.PROCESS_NAMES[constants.PROCESS_GPU]
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 404
