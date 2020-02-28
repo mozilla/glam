@@ -20,3 +20,5 @@ services:
 
   db:
     image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: pass
