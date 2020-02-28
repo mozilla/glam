@@ -4,6 +4,8 @@ import TableView from './TableView.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { formatCount, formatPercentDecimal } from '../../utils/formatters';
+import { fly } from 'svelte/transition';
+import DataError from '../errors/DataError.svelte';
 
 export let data;
 export let probeType = 'categorical';
@@ -30,6 +32,12 @@ let currentKey = probeKeys[0] || undefined;
 
 // probe key
 
+let selectedData = data[currentKey][currentAggregation];
+let isDuplicateDataFound = false;
+
+if (selectedData.length !== new Set(selectedData.map(item => item.label.getTime())).size) {
+  isDuplicateDataFound = true
+}
 </script>
 
 <style>
@@ -40,53 +48,57 @@ let currentKey = probeKeys[0] || undefined;
 
 <div class=body-content>
 
-<slot></slot>
+  <slot></slot>
 
-  {#if (aggregationTypes && aggregationTypes.length > 2) || (probeKeys && probeKeys.length > 1)}
-  <div style="
-      display:grid; 
-      grid-auto-flow: column; 
-      justify-content: start; 
-      grid-column-gap: var(--space-4x);
-      margin-top: var(--space-4x);
-      margin-bottom: var(--space-4x);
-      padding-left: var(--space-4x);
-      padding-right: var(--space-4x);
-    ">
-      {#if aggregationTypes && aggregationTypes.length > 1}
-      <div class=body-control-set>
-        <label class=body-control-set--label>Metric Type</label>
-        <AggregationTypeSelector 
-          aggregationTypes={aggregationTypes}
-          bind:currentAggregation={currentAggregation}
-        />
-      </div>
-      {/if}
+  {#if isDuplicateDataFound}
+    <div in:fly={{ duration: 400, y: 10 }}>
+      <DataError reason='Duplicate rows were found.' />
+    </div>
+  {:else}
+    {#if (aggregationTypes && aggregationTypes.length > 2) || (probeKeys && probeKeys.length > 1)}
+      <div style="
+          display:grid;
+          grid-auto-flow: column;
+          justify-content: start;
+          grid-column-gap: var(--space-4x);
+          margin-top: var(--space-4x);
+          margin-bottom: var(--space-4x);
+          padding-left: var(--space-4x);
+          padding-right: var(--space-4x);
+        ">
+          {#if aggregationTypes && aggregationTypes.length > 1}
+          <div class=body-control-set>
+            <label class=body-control-set--label>Metric Type</label>
+            <AggregationTypeSelector
+              aggregationTypes={aggregationTypes}
+              bind:currentAggregation={currentAggregation}
+            />
+          </div>
+          {/if}
 
-      {#if probeKeys && probeKeys.length > 1}
-      <div class=body-control-set>
-        <label class=body-control-set--label>Key</label>
-        <ProbeKeySelector 
-          options={probeKeys}
-          bind:currentKey={currentKey}
-        />
+          {#if probeKeys && probeKeys.length > 1}
+          <div class=body-control-set>
+            <label class=body-control-set--label>Key</label>
+            <ProbeKeySelector
+              options={probeKeys}
+              bind:currentKey={currentKey}
+            />
+          </div>
+          {/if}
       </div>
-      {/if}
-  </div>
+    {/if}
+    <TableView
+      data={data}
+      aggregationLevel={aggregationLevel}
+      colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
+      visibleBuckets={probeType === 'categorical' ? visibleBuckets : [5, 25, 50, 75, 95]}
+      keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
+      valueFormatter={probeType === 'categorical' ? formatPercentDecimal : formatCount}
+      key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
+      currentKey={currentKey}
+      currentAggregation={currentAggregation}
+      tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
+      bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'}
+    />
   {/if}
-  <TableView 
-    data={data}
-    aggregationLevel={aggregationLevel}
-    colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
-    visibleBuckets={probeType === 'categorical' ? visibleBuckets : [5, 25, 50, 75, 95]}
-    keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
-    valueFormatter={probeType === 'categorical' ? formatPercentDecimal : formatCount}
-    key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
-    currentKey={currentKey}
-    currentAggregation={currentAggregation}
-    tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
-    bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'}
-  />
-
-
 </div>

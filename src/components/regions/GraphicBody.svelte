@@ -61,7 +61,6 @@ function handleBodySelectors(event) {
     store.setField('activeBuckets', selection);
   }
 }
-
 </script>
 
 <style>
@@ -116,7 +115,7 @@ h2 span {
 } */
 
 .graphic-body__content {
-  box-sizing: border-box; 
+  box-sizing: border-box;
   grid-area: content-body;
   min-height: var(--height);
   background-color: white;
@@ -178,49 +177,49 @@ h2 span {
                   <Spinner size={48} color={'var(--cool-gray-400)'} />
               </div>
               {:then data}
-                  {#if $store.probeView === 'explore'}
-                    <div in:fade class="graphic-body__content">
-                        {#if $temporaryViewTypeStore === 'categorical'}
-                            <ProportionExplorerView 
-                                markers={$firefoxVersionMarkers} 
-                                data={data.data}
-                                probeType={`${$store.probe.type}-${$store.probe.kind}`}
-                                metricType={$store.proportionMetricType}
-                                activeBuckets={[...$store.activeBuckets]}
-                                timeHorizon={$store.timeHorizon}
-                                bucketOptions={data.bucketOptions}
-                                bucketColorMap={data.bucketColorMap}
-                                bucketSortOrder={data.bucketSortOrder}
-                                on:selection={handleBodySelectors}
-                                aggregationLevel={$store.aggregationLevel}
-                            >
-                            <h2>explore / <span>{$store.probe.name}</span></h2>
-                          </ProportionExplorerView>
-                        {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}                    
-                            <QuantileExplorerView markers={$firefoxVersionMarkers}
-                                data={data.data}
-                                probeType={$temporaryViewTypeStore}
-                                timeHorizon={$store.timeHorizon}
-                                percentiles={$store.visiblePercentiles}
-                                on:selection={handleBodySelectors}
-                                aggregationLevel={$store.aggregationLevel}
-                            >
-                            <h2>explore / <span>{$store.probe.name}</span></h2>
-                          </QuantileExplorerView>
-                        {:else}
-                        <div  class="graphic-body__content">
-                          <div style="width: 100%">
-                            <Spinner size={48} color={'var(--cool-gray-400)'} />
-                          </div>
+                {#if $store.probeView === 'explore'}
+                  <div in:fade class="graphic-body__content">
+                      {#if $temporaryViewTypeStore === 'categorical'}
+                          <ProportionExplorerView
+                              markers={$firefoxVersionMarkers}
+                              data={data.data}
+                              probeType={`${$store.probe.type}-${$store.probe.kind}`}
+                              metricType={$store.proportionMetricType}
+                              activeBuckets={[...$store.activeBuckets]}
+                              timeHorizon={$store.timeHorizon}
+                              bucketOptions={data.bucketOptions}
+                              bucketColorMap={data.bucketColorMap}
+                              bucketSortOrder={data.bucketSortOrder}
+                              on:selection={handleBodySelectors}
+                              aggregationLevel={$store.aggregationLevel}
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </ProportionExplorerView>
+                      {:else if ['histogram', 'scalar'].includes($temporaryViewTypeStore)}
+                          <QuantileExplorerView markers={$firefoxVersionMarkers}
+                              data={data.data}
+                              probeType={$temporaryViewTypeStore}
+                              timeHorizon={$store.timeHorizon}
+                              percentiles={$store.visiblePercentiles}
+                              on:selection={handleBodySelectors}
+                              aggregationLevel={$store.aggregationLevel}
+                          >
+                          <h2>explore / <span>{$store.probe.name}</span></h2>
+                        </QuantileExplorerView>
+                      {:else}
+                      <div  class="graphic-body__content">
+                        <div style="width: 100%">
+                          <Spinner size={48} color={'var(--cool-gray-400)'} />
                         </div>
-                        {/if}
-                    </div>
-                  {:else if $store.probeView === 'table'} 
+                      </div>
+                      {/if}
+                  </div>
+                {:else if $store.probeView === 'table'}
                   <div  class="graphic-body__content graphic-body__content--no-padding">
                     <div in:fade>
                     <!-- this conditional is a stopgap until we fix https://github.com/mozilla/glam/issues/206 -->
                     {#if $store.probe.type}
-                      <ProbeTableView 
+                      <ProbeTableView
                         data={data.data}
                         probeType={$temporaryViewTypeStore}
                         colorMap={data.bucketColorMap}
@@ -232,7 +231,7 @@ h2 span {
                     {/if}
                     </div>
                   </div>
-                  {/if}
+                {/if}
               {:catch err}
               <div  class="graphic-body__content">
                 <div in:fly={{ duration: 400, y: 10 }}>
@@ -243,7 +242,7 @@ h2 span {
           {:else}
               <div>spinning</div>
           {/if}
-          
+
       {#if $store.appView === 'PROBE'}
         <div class="graphic-body__details">
           <ProbeDetails />
