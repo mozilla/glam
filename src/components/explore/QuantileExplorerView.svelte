@@ -189,7 +189,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                   <div class=bignum>
                     <div class=bignum__label>⭑ Total Clients</div>
                     <div class=bignum__value>
-                        {formatValue($movingAudienceSize)}
+                        {formatCount($movingAudienceSize)}
                     </div>
                   </div>
                 </div>
