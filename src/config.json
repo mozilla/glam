@@ -4,7 +4,7 @@
       "title": "Probe Name",
       "skipValidation": true
     },
-    "os" : {
+    "os": {
       "title": "Operating System",
       "key": "os",
       "values": [
@@ -14,7 +14,7 @@
         {"key": "Linux", "label": "Linux"}
       ]
     },
-    "channel" : {
+    "channel": {
       "title": "Channel",
       "key": "channel",
       "values": [
@@ -31,7 +31,7 @@
         {"key": "version", "label": "by major version"}
       ]
     },
-    "versions" : {
+    "versions": {
       "title": "Versions",
       "key": "version",
       "type": "multi",
@@ -40,6 +40,15 @@
         {"key": "nightly", "label": "Nightly"},
         {"key": "beta", "label": "Beta"},
         {"key": "release", "label": "release"}
+      ]
+    },
+    "process": {
+      "title": "Process",
+      "key": "process",
+      "values": [
+        {"key": "parent", "label": "Parent Process"},
+        {"key": "content", "label": "Content Process"},
+        {"key": "gpu", "label": "GPU Process"}
       ]
     }
   }

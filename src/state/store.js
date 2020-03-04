@@ -90,6 +90,7 @@ const initialState = {
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryString('os') || 'Windows',
   versions: getFromQueryString('versions', true) || [],
+  process: getFromQueryString('process') || 'parent',
   searchIsActive: false,
   searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
@@ -124,6 +125,7 @@ export const resetFilters = () => {
   store.setField('channel', getDefaultFieldValue('channel'));
   store.setField('os', getDefaultFieldValue('os'));
   store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
+  store.setField('process', getDefaultFieldValue('process'))
 };
 
 export const searchResults = derived(
@@ -150,6 +152,7 @@ function getParamsForQueryString(obj) {
     probe: obj.probe.name,
     os: obj.os,
     aggregationLevel: obj.aggregationLevel,
+    process: obj.process,
     timeHorizon: obj.timeHorizon,
     proportionMetricType: obj.proportionMetricType,
     activeBuckets: obj.activeBuckets,
@@ -162,6 +165,7 @@ function getParamsForDataAPI(obj) {
   const channelValue = getFieldValueKey('channel', obj.channel);
   const osValue = getFieldValueKey('os', obj.os);
   const params = getParamsForQueryString(obj);
+  const processValue = getFieldValueKey('process', obj.process);
   delete params.timeHorizon;
   delete params.proportionMetricType;
   delete params.activeBuckets;
