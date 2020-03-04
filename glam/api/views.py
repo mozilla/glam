@@ -132,10 +132,18 @@ def get_aggregations(request, **kwargs):
         response[key] = record
 
     # Restructure data and remove keys only used for merging data.
-    return [
+    response = [
         {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
         for r in response.values()
     ]
+
+    # Check for data with one of "histogram" or "percentiles", but not both.
+    for row in response:
+        for data in row["data"]:
+            if "histogram" not in data or "percentiles" not in data:
+                raise NotFound("Incomplete data for probe")
+
+    return response
 
 
 @api_view(["POST"])
@@ -230,13 +238,16 @@ def random_probes(request):
         probe = Probe.objects.get(id=id)
         # do not proceed if the probe is a boolean scalar
         if not (probe.info["type"] == "scalar" and probe.info["kind"] == "boolean"):
-            aggregations = get_aggregations(
-                request,
-                probe=probe.info["name"],
-                channel="nightly",
-                os="Windows",
-                aggregationLevel="version",
-            )
+            try:
+                aggregations = get_aggregations(
+                    request,
+                    probe=probe.info["name"],
+                    channel="nightly",
+                    os="Windows",
+                    aggregationLevel="version",
+                )
+            except NotFound:
+                continue
             if aggregations:
                 probes.append({"data": aggregations, "info": probe.info})
             if n <= len(probes):

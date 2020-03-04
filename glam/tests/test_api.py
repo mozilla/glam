@@ -179,6 +179,37 @@ class TestRandomProbesApi:
         resp = client.post(self.url, data={"n": 3}, content_type="application/json")
         assert resp.status_code == 400
 
+    def test_missing_data(self, client):
+        # Test that we skip a probe if it's missing part of its data.
+        Probe.objects.create(
+            key="fee",
+            info={
+                "name": "fee",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
+        )
+        Probe.objects.create(
+            key="fii",
+            info={
+                "name": "fii",
+                "labels": None,
+                "type": "histogram",
+                "kind": "enumerated",
+            },
+        )
+        self._create_aggregation(name="fee")
+        # Remove the "percentiles" record.
+        Aggregation.objects.filter(agg_type=constants.AGGREGATION_PERCENTILE).delete()
+        self._create_aggregation(name="fii")
+        self._refresh_views()
+
+        resp = client.post(self.url, data={"n": 2}, content_type="application/json")
+        assert resp.status_code == 200
+        # We asked for 2 but 1 got skipped b/c of incomplete data.
+        assert len(resp.json()["probes"]) == 1
+
 
 class TestAggregationsApi:
     @classmethod
@@ -357,5 +388,21 @@ class TestAggregationsApi:
         assert resp.status_code == 200
 
         query["query"]["process"] = constants.PROCESS_NAMES[constants.PROCESS_GPU]
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 404
+
+    def test_half_data_missing(self, client):
+        self._create_aggregation()
+        # Remove the "percentiles" record.
+        Aggregation.objects.filter(agg_type=constants.AGGREGATION_PERCENTILE).delete()
+        self._refresh_views()
+
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "aggregationLevel": "version",
+            }
+        }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 404
