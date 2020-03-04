@@ -3,7 +3,7 @@ cffi==1.14.0
 chardet==3.0.4
 cryptography==2.8
 dj-database-url==0.5.0
-Django==3.0.3
+Django==3.0.4
 django-configurations==2.2
 djangorestframework==3.11.0
 dockerflow==2019.10.0
