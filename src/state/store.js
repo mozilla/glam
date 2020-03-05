@@ -12,6 +12,7 @@ import CONFIG from '../config.json';
 
 import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 
+import { validate, noDuplicates, noResponse } from '../utils/data-validation';
 
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
@@ -125,7 +126,7 @@ export const resetFilters = () => {
   store.setField('channel', getDefaultFieldValue('channel'));
   store.setField('os', getDefaultFieldValue('os'));
   store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
-  store.setField('process', getDefaultFieldValue('process'))
+  store.setField('process', getDefaultFieldValue('process'));
 };
 
 export const searchResults = derived(
@@ -203,7 +204,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-
 // FIXME: let's remove this function. It's almost comically redundant.
 export function responseToData(data, probeClass = 'quantile', probeType, aggregationMethod = 'build_id') {
   return byKeyAndAggregation(data, probeClass, aggregationMethod, { probeType }, { removeZeroes: probeType === 'histogram-enumerated' });
@@ -270,11 +270,11 @@ export function fetchDataForGLAM(params) {
       const { probe } = st;
       const { aggregationLevel } = st;
 
-      if (!('response' in payload)) {
-        const er = new Error('The data for this probe is unavailable.');
-        if (!probe.active) er.moreInformation = 'This probe appears to be inactive, so it\'s possible we don\'t have data for it.';
-        throw er;
-      }
+      validate(
+        payload,
+        (p) => noResponse(p, probe.active),
+        (p) => noDuplicates(p, aggregationLevel),
+      );
 
       const probeType = probe.type;
       const probeKind = probe.kind;

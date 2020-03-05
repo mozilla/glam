@@ -149,7 +149,7 @@ export function zipByAggregationType(payload) {
 export function topKBuildsPerDay(dataset, k = 2) {
   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
   const topK = Object.entries(byBuildID).map(([_, matches]) => {
-    const out = matches.filter((m) => m.audienceSize > 10);
+    const out = matches;
     out.sort(sortByKey('audienceSize'));
     out.reverse();
     return out.slice(0, k);
@@ -167,7 +167,7 @@ export function gatherBy(payload, by) {
       const aggType = by(entry);
       if (!(aggType in gathered)) gathered[aggType] = [];
       gathered[aggType].push({
-        data: [entry], metadata: aggregation.metadata,
+        data: [entry], metadata: { ...aggregation.metadata },
       });
     });
   });
@@ -179,10 +179,8 @@ export function byKeyAndAggregation(d, preparationType = 'quantile', aggregation
   const data = produce(d, (di) => di);
   const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
   const byKey = gatherBy(data, (entry) => entry.key);
-
   Object.keys(byKey).forEach((k) => {
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
-
     Object.keys(byKey[k]).forEach((aggKey) => {
       byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => prepareFcn(di, aggregationLevel, prepareArgs));
 
@@ -190,7 +188,6 @@ export function byKeyAndAggregation(d, preparationType = 'quantile', aggregation
         byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => topKBuildsPerDay(di, 2));
         // convert label to Date here
       }
-
       byKey[k][aggKey].sort(sortByKey('label'));
 
       if (postProcessArgs.removeZeroes) {

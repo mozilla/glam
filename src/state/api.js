@@ -22,6 +22,19 @@ export async function getProbeData(params, token) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ query: params }),
-  }).then((response) => response.json());
+  }).then(async (response) => {
+    // catch 500-level error responses and surface them into
+    // the frontend.
+    if (response.status >= 500 && response.status < 600) {
+      const msg = 'Oh no! The server encountered an error.';
+      const e = new Error(msg);
+      const txt = await response.text();
+      e.moreInformation = `The GLAM server had some trouble trying to fetch ${params.probe}, so we'll
+      report the error here: 
+      ${txt.split('\n').slice(0, 2)}`;
+      throw e;
+    }
+    return response.json();
+  });
   return data;
 }
