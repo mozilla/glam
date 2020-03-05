@@ -1,40 +1,16 @@
-import { noDuplicates, noResponse, validate } from '../src/utils/data-validation';
-
-const noResponseCases = {};
-noResponseCases.hasResponse = {
-  response: {},
-};
-
-noResponseCases.noResponse = {
-  response_NONE: {},
-};
-
-const noDupsData = {};
-noDupsData.noDups = {
-  response: [
-    { metadata: { build_id: 'abcd' } },
-    { metadata: { build_id: 'abcdefg' } },
-  ],
-};
-
-noDupsData.dups = {
-  response: [
-    { metadata: { build_id: 'abcd' } },
-    { metadata: { build_id: 'abcd' } },
-  ],
-};
-
+import { noDuplicates, noResponse } from '../src/utils/data-validation';
+import { noResponseExamples, noDuplicatesExamples } from './examples/validators';
 
 describe('noResponse', () => {
   it('passes if there is a response key', () => {
-    expect(() => noResponse(noResponseCases.hasResponse)).not.toThrow();
-    expect(() => noResponse(noResponseCases.noResponse)).toThrow();
+    expect(() => noResponse(noResponseExamples.hasResponse)).not.toThrow();
+    expect(() => noResponse(noResponseExamples.noResponse)).toThrow();
   });
 });
 
 describe('noDuplicates', () => {
   it('passes or rejects depending on if there are duplicate keys (build_ids, versions)', () => {
-    expect(() => noDuplicates(noDupsData.noDups, 'build_id')).not.toThrow();
-    expect(() => noDuplicates(noDupsData.dups, 'build_id')).toThrow();
+    expect(() => noDuplicates(noDuplicatesExamples.noDups, 'build_id')).not.toThrow();
+    expect(() => noDuplicates(noDuplicatesExamples.dups, 'build_id')).toThrow();
   });
 });
