@@ -126,7 +126,7 @@ export const resetFilters = () => {
   store.setField('channel', getDefaultFieldValue('channel'));
   store.setField('os', getDefaultFieldValue('os'));
   store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
-  store.setField('process', getDefaultFieldValue('process'))
+  store.setField('process', getDefaultFieldValue('process'));
 };
 
 export const searchResults = derived(
@@ -273,7 +273,7 @@ export function fetchDataForGLAM(params) {
       validate(
         payload,
         (p) => noResponse(p, probe.active),
-        (p) => noDuplicates(p.response, aggregationLevel),
+        (p) => noDuplicates(p, aggregationLevel),
       );
 
       const probeType = probe.type;
