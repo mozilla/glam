@@ -51,7 +51,7 @@ export function tooltip(node, args) {
       removeLeave();
     },
     update(options) {
-      el.textContent = options.txt;
+      el.textContent = options.text;
     },
   };
 }

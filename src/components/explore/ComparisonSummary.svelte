@@ -32,10 +32,10 @@ function percentChange(l, r) {
 
 let displayValues = [];
 
-function createNewPercentiles() {
-  return keySet.map((key) => {
-    const leftValue = left ? left[key] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
-    const rightValue = right ? right[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
+function createNewPercentiles(lVal, rVal, ks) {
+  return ks.map((key) => {
+    const leftValue = lVal ? lVal[key] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
+    const rightValue = rVal ? rVal[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
     return {
       key,
       leftValue,
@@ -45,7 +45,7 @@ function createNewPercentiles() {
   });
 }
 
-$: if (leftLabel || rightLabel || keySet) displayValues = createNewPercentiles();
+$: displayValues = createNewPercentiles(left, right, keySet);
 
 </script>
 
@@ -105,8 +105,8 @@ td, th {
 }
 
 .summary-label--main-date {
-  font-family: var(--main-mono-font); 
-  color: var(--cool-gray-500); 
+  font-family: var(--main-mono-font);
+  color: var(--cool-gray-500);
   font-weight: bold;
 }
 
@@ -188,7 +188,7 @@ text: 'compares the numeric values of the reference â­‘ to the hovered values â—
             <span class='small-shape'>â­‘</span></div>
         </th>
         {/if}
-        
+
         {#if showDiff}
           <th  style="width: max-content" class:hidden={!hovered}>Diff.</th>
         {/if}
@@ -197,7 +197,7 @@ text: 'compares the numeric values of the reference â­‘ to the hovered values â—
 
     </thead>
     <tbody>
-          {#each displayValues as {leftValue, rightValue, percentageChange, key}}
+          {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
             <tr>
               <td class="value-label" use:tooltipAction={{text: keyFormatter(key), location: 'top'}}>
                 <span class=percentile-label-block
