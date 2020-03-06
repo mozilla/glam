@@ -50,8 +50,8 @@ export function tooltip(node, args) {
       removeEnter();
       removeLeave();
     },
-    update(txt) {
-      el.textContent = txt;
+    update(options) {
+      el.textContent = options.text;
     },
   };
 }

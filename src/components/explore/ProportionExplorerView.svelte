@@ -77,26 +77,26 @@ h2 {
 
 
 <div class=body-content>
-  
+
   <slot></slot>
 
   <div class="body-control-row body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
       <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl 
+      <TimeHorizonControl
         horizon={timeHorizon}
         on:selection={makeSelection('timeHorizon')}
       />
       {/if}
     </div>
-  
+
     <div class=body-control-set>
       <label class=body-control-set--label>Categories</label>
-        <KeySelectionControl 
-          sortFunction={bucketSortOrder} 
-          options={bucketOptions} 
-          selections={activeBuckets} 
+        <KeySelectionControl
+          sortFunction={bucketSortOrder}
+          options={bucketOptions}
+          selections={activeBuckets}
           on:selection={makeSelection('activeBuckets')}
           colorMap={bucketColorMap} />
     </div>
@@ -105,7 +105,7 @@ h2 {
   <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       <label class=body-control-set--label>Metric Type</label>
-      <ProportionMetricTypeControl 
+      <ProportionMetricTypeControl
         metricType={metricType}
         on:selection={makeSelection('metricType')}
       />
@@ -113,7 +113,7 @@ h2 {
     {#if probeKeys && probeKeys.length > 1}
     <div class=body-control-set>
       <label class=body-control-set--label>Key</label>
-        <ProbeKeySelector 
+        <ProbeKeySelector
           options={probeKeys}
           bind:currentKey={currentKey}
         />
@@ -122,13 +122,14 @@ h2 {
   </div>
 
   <div class=data-graphics>
-    {#each Object.entries(data) as [key, aggs], i (key)}  
+    {#each Object.entries(data) as [key, aggs], i (key)}
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
         {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
               bind:reference={reference}
               title={key === 'undefined' ? '' : key}
+              summaryLabel='cat.'
               data={data}
               probeType={probeType}
               activeBins={activeBuckets}
