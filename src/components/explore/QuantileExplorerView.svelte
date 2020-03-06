@@ -45,7 +45,6 @@ let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);
 let currentKey = probeKeys[0];
 let currentAggregation = aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0];
-
 let aggregationInfo;
 
 setContext('probeType', probeType);
@@ -103,23 +102,23 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
 </style>
 
 <div class=body-content>
-  
+
   <slot></slot>
 
   <div class="body-control-row  body-control-row--stretch">
     <div class=body-control-set>
       {#if aggregationLevel === 'build_id'}
         <label class=body-control-set--label>Time Horizon</label>
-        <TimeHorizonControl 
+        <TimeHorizonControl
         horizon={timeHorizon}
         on:selection={makeSelection('timeHorizon')}
         />
        {/if}
     </div>
-  
+
     <div class=body-control-set>
         <label class=body-control-set--label>Probe Value Percentiles</label>
-      <PercentileSelectionControl 
+      <PercentileSelectionControl
         percentiles={percentiles}
         on:selection={makeSelection('percentiles')}
         />
@@ -131,9 +130,9 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
     {#if totalAggs > 1 && currentAggregation !== 'summed_histogram' && currentAggregation !== 'summed-histogram'}
     <div class=body-control-set>
       <label class=body-control-set--label>aggregation</label>
-      <AggregationTypeSelector 
-        bind:aggregationInfo={aggregationInfo} 
-        bind:currentAggregation={currentAggregation} 
+      <AggregationTypeSelector
+        bind:aggregationInfo={aggregationInfo}
+        bind:currentAggregation={currentAggregation}
         aggregationTypes={aggregationTypes}
         />
     </div>
@@ -141,7 +140,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
     {#if probeKeys && probeKeys.length > 1}
     <div class=body-control-set>
       <label class=body-control-set--label>Key</label>
-        <ProbeKeySelector 
+        <ProbeKeySelector
           options={probeKeys}
           bind:currentKey={currentKey}
         />
@@ -152,7 +151,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
 
 
   <div class=data-graphics>
-    {#each Object.entries(data) as [key, aggs], i (key)}  
+    {#each Object.entries(data) as [key, aggs], i (key)}
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + key)}
         {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
@@ -175,7 +174,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'histogram' ? 'scalePoint' : 'log'}
-              
+
               yDomain={
                 probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
@@ -193,7 +192,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                     </div>
                   </div>
                 </div>
-                
+
             </ProbeExplorer>
           </div>
         {/if}
