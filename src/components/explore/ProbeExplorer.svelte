@@ -30,6 +30,7 @@ export let yDomain;
 export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
+export let summaryLabel = 'perc.';
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -160,7 +161,7 @@ h4 {
     </CompareOverTimeGraph>
   </div>
 
-  <DistributionComparison 
+  <DistributionComparison
     yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
@@ -173,7 +174,7 @@ h4 {
     dataVolume={data.length}
   >
     <!-- add violin plots on the quantiles -->
-    
+
     <g slot='body' let:left={lp} let:right={rp}>
       {#if showViolins}
         {#if hovered.datum || insufficientData}
@@ -183,7 +184,7 @@ h4 {
             rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
             key={hovered.x}
             opacity=.9
-            density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]} 
+            density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
             densityAccessor='value'
             valueAccessor='bin'
             densityRange={[0,
@@ -201,7 +202,7 @@ h4 {
             rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
             opacity=.9
             key={reference.label}
-            density={$animatedReferenceDistribution} 
+            density={$animatedReferenceDistribution}
             densityAccessor='value'
             valueAccessor='bin'
             densityRange={[0, (explorerComparisonSmallMultiple.width
@@ -214,13 +215,14 @@ h4 {
       {/if}
     </g>
   </DistributionComparison>
-  
-  <ComparisonSummary 
+
+  <ComparisonSummary
     hovered={!!hovered.datum}
-    left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum} 
+    left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum}
     right={reference[pointMetricType]}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
     valueFormatter={yTickFormatter}
@@ -230,7 +232,7 @@ h4 {
     showDiff={data.length > 1}
   />
 
-  <!-- <TotalClientsGraph 
+  <!-- <TotalClientsGraph
     data={data}
     xDomain={$domain}
     timeHorizon={timeHorizon}
@@ -243,4 +245,3 @@ h4 {
   /> -->
 
 </div>
-    
