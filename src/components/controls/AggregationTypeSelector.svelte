@@ -22,11 +22,13 @@ function setValue(event) {
   active = false;
 }
 
+// TODO: This is a good candidate for something that should be provided to us by GLEAN.
 export let aggregationInfo = {
   avg: { name: 'Average', description: 'Shows the distribution of the average scalar value per client.' },
   min: { name: 'Minimum', description: 'Shows the distribution of the smallest scalar value per client.' },
   max: { name: 'Maximum', description: 'Shows the distribution of the largest scalar value per client.' },
   sum: { name: 'Sum', description: 'Shows the distribution of the sum of scalar values per client.' },
+  count: { name: 'Count', description: 'Shows the distribution of session counts per client.' }
 };
 
 </script>
@@ -73,19 +75,19 @@ export let aggregationInfo = {
 </div>
 
 {#if active}
-  <FloatingMenu 
-    bind:width={width} 
-    offset={1} 
-    on:cancel={() => { active = false; }} 
-    position='bottom-left' 
+  <FloatingMenu
+    bind:width={width}
+    offset={1}
+    on:cancel={() => { active = false; }}
+    position='bottom-left'
     parent={button}
   >
     <MenuList  on:selection={setValue}>
       {#each aggregationTypes as agg, i}
-        <MenuListItem  key={agg} value={agg}>
+        <MenuListItem key={agg} value={agg}>
           <div class=menu-list-item__title>{aggregationInfo[agg].name}</div>
           <div class=menu-list-item__description>{aggregationInfo[agg].description}</div>
-        </MenuListItem>  
+        </MenuListItem>
       {/each}
     </MenuList>
   </FloatingMenu>

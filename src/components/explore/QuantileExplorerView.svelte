@@ -45,7 +45,6 @@ let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);
 let currentKey = probeKeys[0];
 let currentAggregation = aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0];
-
 let aggregationInfo;
 
 setContext('probeType', probeType);
