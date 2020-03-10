@@ -160,7 +160,7 @@ h2 {
     {#if visible}
     <div in:fly={paneTransition} class="drawer-section">
         <div class="spinner-and-text">
-            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} /> 
+            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} />
             <div in:fade={{ duration: paneTransition.duration * 2 }}>Loading Probes</div>
         </div>
     </div>
@@ -224,21 +224,21 @@ h2 {
         {/if}
     </div>
     <!-- /probe-details-content -->
-    
+
     <!-- probe-details-download -->
     <div class="probe-details-download">
         <div class="drawer-section drawer-section--end">
-            <h2 class="detail__heading--01">export</h2>
             {#await $dataset}
+                <h2 class="detail__heading--01">export</h2>
                 <div>
                     <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
                 </div>
             {:then value}
+                <h2 class="detail__heading--01">export</h2>
                 <div in:fly={paneTransition}>
-                <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }} level=medium compact>to JSON</Button>
+                    <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }}
+                    level=medium compact>to JSON</Button>
                 </div>
-            {:catch err}
-                {err.message}
             {/await}
         </div>
     </div>
