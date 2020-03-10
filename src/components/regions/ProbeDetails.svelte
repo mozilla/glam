@@ -71,11 +71,13 @@ h2 {
 
 .bug-list {
     display: flex;
+    flex-wrap: wrap;
+    line-height: 1.8;
 }
 
 .bug-list a {
     display: block;
-    margin-right: var(--space-2x);
+    margin-right: var(--space-base);
 }
 
 .spinner-and-text {
@@ -160,7 +162,7 @@ h2 {
     {#if visible}
     <div in:fly={paneTransition} class="drawer-section">
         <div class="spinner-and-text">
-            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} /> 
+            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} />
             <div in:fade={{ duration: paneTransition.duration * 2 }}>Loading Probes</div>
         </div>
     </div>
@@ -224,7 +226,7 @@ h2 {
         {/if}
     </div>
     <!-- /probe-details-content -->
-    
+
     <!-- probe-details-download -->
     <div class="probe-details-download">
         <div class="drawer-section drawer-section--end">
