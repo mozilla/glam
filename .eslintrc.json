@@ -26,6 +26,12 @@
                 "prefer-const": "off",
                 "import/prefer-default-export": "off"
             }
+        },
+        {
+            "files": ["**/*.test.js"],
+            "env": {
+                "jest": true
+            }
         }
     ]
 }

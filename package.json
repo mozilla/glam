@@ -17,6 +17,7 @@
     "immer": "3.2.0",
     "jest": "24.9.0",
     "jest-cli": "24.9.0",
+    "jest-transform-svelte": "2.1.1",
     "npm-run-all": "4.1.5",
     "rollup": "1.27.13",
     "rollup-plugin-commonjs": "10.1.0",
@@ -38,6 +39,7 @@
     "d3-time-format": "2.1.3",
     "firebase": "6.6.0",
     "flexsearch": "0.6.30",
+    "page": "1.11.5",
     "udgl": "file:src/udgl/"
   },
   "scripts": {

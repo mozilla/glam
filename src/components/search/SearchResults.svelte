@@ -6,9 +6,8 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import {
-  searchResults, store,
-} from '../../state/store';
+import { searchResults, store, currentQuery } from '../../state/store';
+import { navigate } from '../../routing/Router.svelte';
 
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
@@ -54,6 +53,7 @@ const handleKeypress = (event) => {
       store.setField('searchIsActive', false);
       // reset focused element
       focusedItem = 0;
+      navigate(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore`, $currentQuery);
     }
     if (key === 'Escape') {
       store.setField('searchIsActive', true);
@@ -239,6 +239,7 @@ li {
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {
                     store.setProbe($searchResults.results[focusedItem].name);
+                    navigate(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore`, $currentQuery);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>

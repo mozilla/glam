@@ -11,6 +11,7 @@ import PercentileSelectionControl from '../controls/PercentileSelectionControl.s
 import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
+import { firefoxVersionMarkers } from '../../state/product-versions';
 
 
 import { formatCount, formatValue } from '../../utils/formatters';
@@ -22,7 +23,6 @@ export let actions = getContext('actions');
 
 export let data;
 export let probeType;
-export let markers;
 export let aggregationLevel = 'build_id';
 
 let totalAggs = Object.keys(Object.values(data)[0]).length;
@@ -166,7 +166,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               probeType={probeType}
               activeBins={percentiles}
               timeHorizon={timeHorizon}
-              markers={markers}
+              markers={$firefoxVersionMarkers}
               showViolins={true}
               aggregationLevel={aggregationLevel}
 

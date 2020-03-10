@@ -2,7 +2,8 @@
 import { fly } from 'svelte/transition';
 import Chart from 'udgl/icons/Chart.svelte';
 import Table from 'udgl/icons/Table.svelte';
-import { store } from '../../state/store';
+import { store, currentQuery } from '../../state/store';
+import { navigate } from '../../routing/Router.svelte';
 
 
 import BodyControl from './BodyControl.svelte';
@@ -23,15 +24,15 @@ export let transformed = options.map((opt) => ({
 }));
 </script>
 
-{#if $store.appView === 'PROBE'}
+{#if $store.route.section === 'probe'}
 <div transition:fly={{ x: -5, duration: 200 }} style="padding-left: var(--space-4x); padding-right: var(--space-4x);">
   <BodyControl
     options={options}
-    selected={$store.probeView}
+    selected={$store.route.view}
     multi={false}
     level="medium"
     on:selection={(evt) => {
-      store.setField('probeView', evt.detail.selection);
+      navigate(`/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}`, $currentQuery);
     }}
   />
 </div>
