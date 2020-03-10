@@ -77,9 +77,11 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   return value;
 }
 
+const pathParts = window.location.pathname.split('/');
+
 const initialState = {
   probe: {
-    name: getFromQueryString('probe'),
+    name: pathParts[2] === 'probe' ? pathParts[3] : undefined,
     description: undefined,
     audienceSize: 0,
     totalSize: 0,
@@ -87,7 +89,6 @@ const initialState = {
   },
   dashboardMode: { }, // FIXME: applicationStatus or dashboardMode, not both.
   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
-  product: 'Firefox',
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryString('os') || 'Windows',
   versions: getFromQueryString('versions', true) || [],
@@ -99,27 +100,22 @@ const initialState = {
   proportionMetricType: getFromQueryString('proportionMetricType') || 'proportions', //
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
-  appView: getFromQueryString('probe') === null || getFromQueryString('probe') === 'null' ? 'DEFAULT' : 'PROBE',
-  probeView: getFromQueryString('probeView') || 'explore', // explore / table
+  route: {},
 };
 
 export const store = createStore(initialState);
 
 store.setProbe = (name) => {
-  // get matching probe heree
+  // get matching probe here
   const probe = get(probeSet).find((d) => d.name === name);
   store.setField('probe', probe);
-  store.setField('appView', 'PROBE');
 };
 
 store.reset = () => {
-  const { token } = get(store);
-
-  store.reinitialize();
-  store.setField('token', token);
-  store.setField('appView', 'DEFAULT');
-  store.setField('probe', { name: null });
-  store.setField('probeView', 'explore');
+  store.reinitialize({
+    token: get(store).token,
+    probe: { name: undefined },
+  });
 };
 
 export const resetFilters = () => {
@@ -150,7 +146,6 @@ function getParamsForQueryString(obj) {
   return {
     versions: obj.versions,
     channel: obj.channel,
-    probe: obj.probe.name,
     os: obj.os,
     aggregationLevel: obj.aggregationLevel,
     process: obj.process,
@@ -158,7 +153,6 @@ function getParamsForQueryString(obj) {
     proportionMetricType: obj.proportionMetricType,
     activeBuckets: obj.activeBuckets,
     visiblePercentiles: obj.visiblePercentiles,
-    probeView: obj.probeView,
   };
 }
 
@@ -166,12 +160,11 @@ function getParamsForDataAPI(obj) {
   const channelValue = getFieldValueKey('channel', obj.channel);
   const osValue = getFieldValueKey('os', obj.os);
   const params = getParamsForQueryString(obj);
-  const processValue = getFieldValueKey('process', obj.process);
   delete params.timeHorizon;
   delete params.proportionMetricType;
   delete params.activeBuckets;
   delete params.visiblePercentiles;
-  delete params.probeView;
+  params.probe = obj.probe.name;
   params.os = osValue;
   params.channel = channelValue;
   return params;

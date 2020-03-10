@@ -41,8 +41,9 @@ export function createStore(initialStore) {
     return (...args) => dispatch(func(...args));
   }
 
-  function reinitialize() {
-    INTERNAL_STORE.set(initialStore);
+  function reinitialize(include = {}) {
+    const nextState = { ...initialStore, ...include };
+    INTERNAL_STORE.set(nextState);
   }
 
   return {
