@@ -24,16 +24,25 @@ class Command(BaseCommand):
 
     help = "Imports aggregation data from BigQuery"
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "channel", choices=constants.CHANNEL_IDS.keys(),
+        )
+
+    def handle(self, *args, **options):
+
+        channel = options["channel"]
 
         self.gcs_client = storage.Client()
 
         blobs = self.gcs_client.list_blobs(GCS_BUCKET)
-        blobs = list(filter(lambda b: b.name.startswith("extract-"), blobs))
+        blobs = list(
+            filter(lambda b: b.name.startswith(f"extract-desktop-{channel}"), blobs)
+        )
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = "tmp_import"
+            tmp_table = f"tmp_import_{channel}"
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
@@ -57,8 +66,8 @@ class Command(BaseCommand):
             fp.close()
 
         # Once all files are loaded, refresh the materialized views.
-        with connection.cursor() as cursor:
-            for channel in constants.CHANNEL_IDS.keys():
+        if blobs:
+            with connection.cursor() as cursor:
                 log(f"Refreshing materialized view for view_glam_aggregation_{channel}")
                 cursor.execute(
                     f"""
