@@ -203,7 +203,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 {#if hovered.datum}
     {#if aggregationLevel === 'build_id'}
         <BuildIDRollover 
-          x={hovered.x}
+          x={hovered.datum.label}
           label={hovered.datum.label}
         />
       {/if}
@@ -258,8 +258,16 @@ $: if (referenceTextElement && referenceBackgroundElement) {
    {/each}
  </GraphicBody>
 
- <g slot=annotation let:top let:left let:xScale let:yScale let:bottom>
+ <g slot=annotation let:top let:bottom let:left let:xScale let:yScale>
   {#if hovered.datum}
+      <line 
+      x1={xScale(hovered.datum.label)}
+      x2={xScale(hovered.datum.label)}
+      y1={top}
+      y2={bottom}
+      stroke=var(--cool-gray-200)
+      stroke-dasharray=2,1
+    />
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
           <circle 
