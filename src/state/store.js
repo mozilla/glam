@@ -80,6 +80,10 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
 const pathParts = window.location.pathname.split('/');
 
 const initialState = {
+  auth: {
+    isAuthenticated: false,
+    token: undefined,
+  },
   probe: {
     name: pathParts[2] === 'probe' ? pathParts[3] : undefined,
     description: undefined,
@@ -113,7 +117,7 @@ store.setProbe = (name) => {
 
 store.reset = () => {
   store.reinitialize({
-    token: get(store).token,
+    auth: get(store).auth,
     probe: { name: undefined },
   });
 };
@@ -251,7 +255,7 @@ export function isCategorical(probeType, probeKind) {
 }
 
 export function fetchDataForGLAM(params) {
-  return getProbeData(params, store.getState().token).then(
+  return getProbeData(params, get(store).auth.token).then(
     (payload) => {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed

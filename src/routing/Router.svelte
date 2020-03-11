@@ -13,6 +13,7 @@
 
 <script>
   import page from 'page';
+  import Spinner from 'udgl/LineSegSpinner.svelte';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
 
@@ -47,7 +48,7 @@
   // We also need to check that the user is authenticated before doing this,
   // otherwise we risk clobbering the "code" and "state" query parameters that
   // the auth0 client needs to read to authenticate the user.
-  $: if (visible && $store.token) {
+  $: if (visible && $store.auth.isAuthenticated) {
     updateQueryString($currentQuery);
   }
 
@@ -76,8 +77,12 @@
   page.start();
 </script>
 
-{#if $store.token}
-  <Layout>
+<Layout>
+  {#if $store.auth.isAuthenticated}
     <svelte:component this={component} />
-  </Layout>
-{/if}
+  {:else}
+    <div class="graphic-body__content">
+      <Spinner size={48} color={'var(--cool-gray-400)'} />
+    </div>
+  {/if}
+</Layout>
