@@ -1,5 +1,5 @@
 {
-  "name": "mdv2-app",
+  "name": "glam",
   "version": "1.0.0",
   "devDependencies": {
     "@babel/core": "7.6.0",
