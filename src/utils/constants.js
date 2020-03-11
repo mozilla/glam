@@ -5,7 +5,7 @@ export const buildIDComparisonGraph = {
   height: 350,
   right: 16,
   left: 60,
-  bottom: 24,
+  bottom: 40,
   top,
   insufficientDataAdjustment: 100, // amount of space to remove from graph when hidden
 };

@@ -129,6 +129,7 @@ h2 {
             <ProbeExplorer
               bind:reference={reference}
               title={key === 'undefined' ? '' : key}
+              yLabel={metricType === 'proportions' ? 'Proportion of Clients' : 'Total Clients'}
               summaryLabel='cat.'
               data={data}
               probeType={probeType}

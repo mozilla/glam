@@ -32,6 +32,8 @@ export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
 export let summaryLabel = 'perc.';
 
+export let yLabel;
+
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
 let hoverActive = data.length > 2;
@@ -156,6 +158,7 @@ h4 {
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
         insufficientData={insufficientData}
+        {yLabel}
     >
       <slot name=additional-plot-elements></slot>
     </CompareOverTimeGraph>

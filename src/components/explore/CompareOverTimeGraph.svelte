@@ -37,6 +37,8 @@ export let yScaleType;
 export let yTickFormatter;
 export let timeHorizon;
 export let aggregationLevel; // build_id or version.
+export let xLabel = aggregationLevel === 'build_id' ? 'Build ID' : 'Version';
+export let yLabel = 'binned values';
 // if !hoverActive, do not allow hovering.
 export let hoverActive = true;
 // if data.length < 2, then suppress this graph.
@@ -199,7 +201,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <slot></slot>
 </g>
 
-<g slot=background let:top let:height let:xScale>
+<g slot=background let:top let:height let:bottom let:xScale>
 {#if hovered.datum}
     {#if aggregationLevel === 'build_id'}
         <BuildIDRollover 
@@ -231,7 +233,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
       x={$refLabelSpring} 
       y={top} 
       width={referenceWidth} 
-      height={height}
+      height={bottom - top}
       fill="var(--cool-gray-100)"
     />
   </g>
@@ -258,7 +260,32 @@ $: if (referenceTextElement && referenceBackgroundElement) {
    {/each}
  </GraphicBody>
 
- <g slot=annotation let:top let:left let:xScale let:yScale let:bottom>
+ <g slot=annotation let:top let:left let:right let:bottom let:xScale let:yScale>
+
+  <!-- axis labels -->
+  <text 
+    x={left - 48} 
+    y={bottom / 2} 
+    font-size=12 
+    text-anchor=middle
+    style="
+      text-transform: uppercase;
+      transform-box: fill-box;
+      transform-origin: center;
+      transform: rotate(90deg);
+      font-style: italic;"
+    fill=var(--cool-gray-550)>
+    {yLabel}
+  </text>
+  <text 
+    x={right / 2} 
+    y={bottom + 40} 
+    font-size=12 
+    style="text-transform: uppercase; font-style: italic;"
+    fill=var(--cool-gray-550)>
+    {xLabel}
+  </text>
+
   {#if hovered.datum}
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
