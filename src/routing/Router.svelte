@@ -43,7 +43,11 @@
   // updateQueryString() with no arguments and use $currentQuery directly in the
   // implementation of updateQueryString(), the query string would not update
   // when the user uses the menu buttons (Channel, OS, etc.), for example.
-  $: if (visible) {
+  //
+  // We also need to check that the user is authenticated before doing this,
+  // otherwise we risk clobbering the "code" and "state" query parameters that
+  // the auth0 client needs to read to authenticate the user.
+  $: if (visible && $store.token) {
     updateQueryString($currentQuery);
   }
 
