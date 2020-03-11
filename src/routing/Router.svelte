@@ -33,8 +33,8 @@
 
   function updateQueryString(query) {
     if (window.history.pushState) {
-      const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?${query}`;
-      window.history.pushState({ path: newurl }, '', newurl);
+      const newURL = `${window.location.origin}${window.location.pathname}?${query}`;
+      window.history.pushState(null, null, newURL);
     }
   }
 
