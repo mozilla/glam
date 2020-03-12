@@ -15,7 +15,6 @@
   import page from 'page';
   import Spinner from 'udgl/LineSegSpinner.svelte';
   import { onMount } from 'svelte';
-  import { get } from 'svelte/store';
 
   import { store, currentQuery } from '../state/store';
 
@@ -57,7 +56,7 @@
   });
 
   function useComponent(componentToUse, view) {
-    return function({ params: { product, section, probeName }}) {
+    return function handle({ params: { product, section, probeName }}) {
       component = componentToUse;
 
       store.setField('route', {

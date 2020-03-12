@@ -11,7 +11,6 @@
   
   let button;
   let width;
-  let offset;
   
   function toggle() {
     active = !active;

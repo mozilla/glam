@@ -1,10 +1,6 @@
 <script>
-import { derived } from 'svelte/store';
-
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
-import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
-import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 
 import FirefoxReleaseVersionMarkers from '../elements/FirefoxReleaseVersionMarkers.svelte';
@@ -100,7 +96,6 @@ div {
     bind:dataGraphicMounted={dataGraphicMounted}
     top={8}
   >
-    <!-- <LeftAxis tickCount={2} /> -->
     <BottomAxis  ticks={ticks} tickFormatter={tickFormatter} />
     <rect 
       x={leftPlot}

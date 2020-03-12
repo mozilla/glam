@@ -18,7 +18,7 @@ export let aggregationLevel = 'build_id';
 export let key = 'proportions';
 export let keyFormatter = (v) => v;
 export let valueFormatter = formatPercentDecimal;
-export let tooltipFormatter = (v) => undefined;
+export let tooltipFormatter = () => undefined;
 export let visibleBuckets;
 export let colorMap; // bucketColorMap
 export let pageSize = 10;
