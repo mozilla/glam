@@ -58,7 +58,7 @@
     "dev": "run-p start:dev autobuild",
     "start": "sirv public --single",
     "start:dev": "sirv public --single --dev",
-    "lint": "eslint --ext .js,.svelte rollup.config.js src/",
+    "lint": "eslint --ext .js,.svelte rollup.config.js stories/ src/",
     "storybook": "start-storybook --static-dir ./public --port 6006",
     "build-storybook": "build-storybook --static-dir ./public --config-dir .storybook",
     "test": "jest test --no-cache"
