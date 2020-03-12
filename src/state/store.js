@@ -322,6 +322,9 @@ export const dataset = derived([store, probeSet], ([$store, $probeSet], set) => 
   // in the demo data is fixed.
   if (!$probeSet) return;
 
+  // We can't fetch anything until the user is authenticated
+  if (!$store.auth.isAuthenticated) return;
+
   const params = getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
@@ -342,7 +345,7 @@ export const dataset = derived([store, probeSet], ([$store, $probeSet], set) => 
   }
 
   if (!(qs in cache)) {
-    cache[qs] = fetchDataForGLAM(params, $store);
+    cache[qs] = fetchDataForGLAM(params);
   }
 
   // compare the previousQuery to the current one.
