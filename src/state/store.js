@@ -117,7 +117,7 @@ store.setProbe = (name) => {
 
 store.reset = () => {
   store.reinitialize({
-    auth: get(store).auth,
+    auth: store.getState().auth,
     probe: { name: undefined },
   });
 };
@@ -255,7 +255,7 @@ export function isCategorical(probeType, probeKind) {
 }
 
 export function fetchDataForGLAM(params) {
-  return getProbeData(params, get(store).auth.token).then(
+  return getProbeData(params, store.getState().auth.token).then(
     (payload) => {
       // FIXME: this should not be reading from the store.
       // the response is kind of messed up so once the API / data is fixed
@@ -263,9 +263,7 @@ export function fetchDataForGLAM(params) {
       // until then, however, we'll have to use the store values
       // for the probeType and probeKind, since they're more accurate than
       // what is in payload.response[0].metric_type.
-      const st = get(store);
-      const { probe } = st;
-      const { aggregationLevel } = st;
+      const { probe, aggregationLevel } = store.getState();
 
       validate(
         payload,
