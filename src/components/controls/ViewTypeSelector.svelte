@@ -10,7 +10,6 @@ export let active;
 
 let button;
 let width;
-let offset;
 
 function toggle() {
   active = !active;

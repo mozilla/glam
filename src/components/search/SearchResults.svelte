@@ -76,7 +76,6 @@ afterUpdate(() => {
 });
 
 let x;
-let y;
 let width;
 
 // update the location once parentElement is defined (that is, the parentElement's component mounts)

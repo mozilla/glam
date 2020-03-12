@@ -18,7 +18,6 @@ function updateScroll() {
   $scrollLeft = container.scrollLeft;
   $scrollTop = container.scrollTop;
 }
-let WIDTH = 0;
 onMount(() => {
   container.addEventListener('scroll', updateScroll);
 });

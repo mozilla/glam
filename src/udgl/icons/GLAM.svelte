@@ -1,6 +1,6 @@
 <script>
 import { onMount } from 'svelte';
-import { fade, fly } from 'svelte/transition';
+import { fly } from 'svelte/transition';
 
 export let size = 32;
 let mounted = false;

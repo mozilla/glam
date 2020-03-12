@@ -4,7 +4,6 @@ import { tweened } from 'svelte/motion';
 import { cubicOut as easing } from 'svelte/easing';
 // import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
 
-import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';

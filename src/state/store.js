@@ -285,7 +285,6 @@ export function fetchDataForGLAM(params) {
 }
 
 function intersection(a, b) {
-  const aSet = new Set(a);
   const bSet = new Set(b);
   return new Set(
     [...a].filter((x) => bSet.has(x)),

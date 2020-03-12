@@ -1,5 +1,5 @@
 import { readable, derived } from 'svelte/store';
-import { store } from './store';
+
 
 export const productDetails = readable(undefined, async (set) => {
   const request = await fetch('https://product-details.mozilla.org/1.0/all.json');

@@ -1,7 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
 import { tooltip as tooltipAction } from '../utils/tooltip';
-import Button from '../Button.svelte';
 import FloatingMenu from './FloatingMenu.svelte';
 
 const dispatch = createEventDispatcher();
