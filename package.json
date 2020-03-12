@@ -43,14 +43,14 @@
     "udgl": "file:src/udgl/"
   },
   "scripts": {
-    "build": "rollup -c --environment NODE_ENV:production",
-    "autobuild": "rollup -c -w --environment NODE_ENV:dev",
+    "build": "rollup --config --environment NODE_ENV:production",
+    "autobuild": "rollup --config --watch --environment NODE_ENV:dev",
     "dev": "run-p start:dev autobuild",
     "start": "sirv public --single",
     "start:dev": "sirv public --single --dev",
     "lint": "eslint --ext .js,.svelte rollup.config.js src/",
-    "storybook": "start-storybook -s ./public -p 6006",
-    "build-storybook": "build-storybook -s ./public -c .storybook",
+    "storybook": "start-storybook --static-dir ./public --port 6006",
+    "build-storybook": "build-storybook --static-dir ./public --config-dir .storybook",
     "test": "jest test --no-cache"
   }
 }
