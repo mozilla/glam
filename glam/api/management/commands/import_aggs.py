@@ -37,7 +37,9 @@ class Command(BaseCommand):
 
         blobs = self.gcs_client.list_blobs(GCS_BUCKET)
         blobs = list(
-            filter(lambda b: b.name.startswith(f"extract-desktop-{channel}"), blobs)
+            filter(
+                lambda b: b.name.startswith(f"glam-extract-firefox-{channel}"), blobs
+            )
         )
 
         for blob in blobs:
