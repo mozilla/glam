@@ -4,7 +4,10 @@ import { store } from './state/store';
 
 
 authenticate((token) => {
-  store.setField('token', token);
+  store.setField('auth', {
+    isAuthenticated: true,
+    token,
+  });
 });
 
 const router = new Router({
