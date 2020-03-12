@@ -58,7 +58,6 @@ ul {
   margin:0;
   padding:0;
   background-color: white;
-  border: 1px solid var(--line-gray-01);
   width: max-content;
   border-radius: var(--space-1h);
   box-shadow: var(--depth-small);
