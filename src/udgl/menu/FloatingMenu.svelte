@@ -55,6 +55,8 @@ $: if (element && parent) {
   position: absolute;
   width: max-content;
   z-index: 10;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .click-area {
@@ -73,6 +75,7 @@ $: if (element && parent) {
   <div class=bound-menu bind:this={element} style="
     left: {leftPlacement}px;
     top: {topPlacement}px;
+    max-height: calc(100vh - {topPlacement}px - var(--screen-padding));
     ">
     <slot></slot>
   </div>
