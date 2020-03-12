@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 export const releases = [
   {
     date: new Date('2019-06-04'),

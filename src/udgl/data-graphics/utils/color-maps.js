@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 import { schemeTableau10 } from 'd3-scale-chromatic';
 
 export function percentileLineColorMap(percentile) {

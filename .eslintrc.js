@@ -10,6 +10,7 @@ module.exports = {
   extends: ["airbnb-base"],
   plugins: ["jest", "svelte3"],
   rules: {
+    "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": ["error", { devDependencies: true }],
     "no-param-reassign": [
       "error",
@@ -24,7 +25,6 @@ module.exports = {
         "import/first": "off",
         "import/no-mutable-exports": "off",
         "prefer-const": "off",
-        "import/prefer-default-export": "off",
       },
     },
     {

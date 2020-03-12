@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import produce from 'immer';
 
 export function groupBy(xs, key, transform = (_) => _) {
