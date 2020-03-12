@@ -19,10 +19,6 @@ const telemetrySearch = derived(probeSet, ($probeSet) => {
 
   const search = new FlexSearch({
     suggest: true,
-    // encode: 'advanced',
-    // tokenize: 'full',
-    // threshold: 1,
-    // resolution: 3,
     doc: {
       id: 'id',
       field: ['name', 'description', 'type'],
