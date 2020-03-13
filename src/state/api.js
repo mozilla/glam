@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
 

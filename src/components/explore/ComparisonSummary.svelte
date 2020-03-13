@@ -2,7 +2,6 @@
 import { format } from 'd3-format';
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 
-let fmt = format(',.4r');
 let pFmt = format('.0%');
 
 export let hovered = false;

@@ -3,7 +3,7 @@
   // get the parent element location;
   // set the position of this element based off the parent element.
   // include offset.
-import { setContext, onMount, createEventDispatcher } from 'svelte';
+import { setContext, createEventDispatcher } from 'svelte';
 import { placeElement } from '../utils/float-placement';
 
 import Portal from '../Portal.svelte';

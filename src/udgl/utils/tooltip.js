@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { listen } from 'svelte/internal';
 import { placeElement } from './float-placement';
 

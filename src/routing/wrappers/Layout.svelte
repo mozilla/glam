@@ -13,7 +13,7 @@
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
 
-  import { store, currentQuery } from '../../state/store';
+  import { store } from '../../state/store';
 </script>
 
 <App>

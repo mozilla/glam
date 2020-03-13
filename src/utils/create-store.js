@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import produce from 'immer';
 import { writable, get } from 'svelte/store';
 

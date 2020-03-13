@@ -4,7 +4,7 @@ import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
-import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line
+import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
 import { getProbeData } from './api';
 
@@ -275,7 +275,6 @@ export function fetchDataForGLAM(params) {
 }
 
 function intersection(a, b) {
-  const aSet = new Set(a);
   const bSet = new Set(b);
   return new Set(
     [...a].filter((x) => bSet.has(x)),

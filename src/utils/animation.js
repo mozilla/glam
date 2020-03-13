@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 

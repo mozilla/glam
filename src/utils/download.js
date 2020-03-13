@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 export function downloadString(text, fileType = 'text', fileName) {
   const blob = new Blob([text], { type: fileType });
   const a = document.createElement('a');
