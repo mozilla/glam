@@ -92,6 +92,7 @@
     --space-96x: calc(var(--space-base) * 96);
 
     --increment: var(--space-6x); /* eg. 48dp. */
+    --screen-padding: var(--space-6x);
     --drawer-width: calc(var(--space-base) * 30);
     --header-height: var(--increment);
     --toolbar-background-color: var(--blue-slate-700);
