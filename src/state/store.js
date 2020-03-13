@@ -60,7 +60,6 @@ export function getDefaultFieldValue(fieldKey) {
 }
 
 export function getFromQueryString(fieldKey, isMulti = false) {
-  // const isMulti = getField(fieldKey).type === 'multi';
   const params = new URLSearchParams(window.location.search);
   const value = params.get(fieldKey);
   if (isMulti) {
@@ -240,15 +239,6 @@ export function extractBucketMetadata(transformedData) {
   return etc;
 }
 
-// let's determine the probe type here
-// so we can handle things accordingly.
-
-// function probeTypeAndKind(probeTypeString) {
-//   const [probeType, probeKind] = probeTypeString.split('-');
-//   return { probeType, probeKind };
-// }
-
-
 export function isCategorical(probeType, probeKind) {
   return ((probeType === 'histogram' && probeKind === 'enumerated')
   || probeKind === 'categorical' || probeKind === 'flag' || probeKind === 'boolean');
@@ -302,11 +292,7 @@ export function updateStoreAfterDataIsReceived({ data }) {
     etc = extractBucketMetadata(data);
   }
 
-  // if the proposed initial buckets have no overlap, reset activeBuckets.
-  // if (st.activeBuckets.length === 0 || intersection(st.activeBuckets, etc.initialBuckets).size !== st.activeBuckets.length) {
   if (isCategoricalTypeProbe) store.setField('activeBuckets', etc.initialBuckets);
-  // }
-  // store.setField('applicationStatus', 'ACTIVE');
   return { data, viewType, ...etc };
 }
 
@@ -331,16 +317,12 @@ export const dataset = derived([store, probeSet], ([$store, $probeSet], set) => 
   // // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    // store.setField('dashboardMode', message);
     return message;
   }
 
   // // no probe selected.
   if (!probeSelected($store.probe.name)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-    // if ($store.dashboardMode.key !== 'DEFAULT_VIEW') {
-    //   store.setField('dashboardMode', message);
-    // }
     return message;
   }
 
