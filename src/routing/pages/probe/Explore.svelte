@@ -10,13 +10,12 @@
 
   function handleBodySelectors(event) {
     const { selection, type } = event.detail;
-    if (type === "percentiles") store.setField("visiblePercentiles", selection);
-    if (type === "timeHorizon") store.setField("timeHorizon", selection);
-    if (type === "metricType")
-      store.setField("proportionMetricType", selection);
-    if (type === "activeBuckets") {
-      store.setField("activeBuckets", selection);
-    }
+    const renames = {
+      percentiles: 'visiblePercentiles',
+      metricType: 'proportionMetricType',
+    };
+    const field = renames[type] || type;
+    store.setField(field, selection);
   }
 </script>
 

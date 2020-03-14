@@ -25,9 +25,10 @@
   // ADDL FIXME: we should wait for the telemetry probes to load if that's what we're
   // looking for here.
 
-  const temporaryViewTypeStore = derived(store, $st => {
-    return getProbeViewType($st.probe.type, $st.probe.kind)
-  });
+  const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType(
+    $st.probe.type,
+    $st.probe.kind,
+  ));
 </script>
 
 {#await $dataset}

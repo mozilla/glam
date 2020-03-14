@@ -8,7 +8,7 @@
   import RandomProbePlaceholder from '../../components/home/RandomProbePlaceholder.svelte';
   import { store, currentQuery } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
-  import { getPath } from '../../routing/Router.svelte';
+  import { getPath } from '../Router.svelte';
 </script>
 
 <style>

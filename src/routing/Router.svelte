@@ -56,7 +56,7 @@
   });
 
   function useComponent(componentToUse, view) {
-    return function handle({ params: { product, section, probeName }}) {
+    return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
 
       store.setField('route', {
