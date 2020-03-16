@@ -32,13 +32,20 @@ export let colorMap = () => 'black';
 
 export let yDomain;
 
+
 export let xType;
 export let yScaleType;
 export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
 export let yAccessor = 'value';
+ 
+export let xDomain = ['HOV.', 'REF.'];
 
-export let xDomain = dataVolume <= 2 ? [leftLabel, rightLabel] : ['HOV.', 'REF.'];
+if (dataVolume === 1) {
+  xDomain = [rightLabel];
+} else if (dataVolume === 2) {
+  xDomain = [leftLabel, rightLabel]
+}
 
 let xScale;
 let yScale;
@@ -118,7 +125,7 @@ alignment: 'center',
     </slot>
   </g>
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
-  <TopAxis ticks={xDomain}  />
+  <TopAxis ticks={xDomain} />
 
   <g slot=mouseover let:left let:right>
     {#if leftPoints && rightPoints}
