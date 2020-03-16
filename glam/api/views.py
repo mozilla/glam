@@ -16,17 +16,9 @@ from glam.api.models import (
 
 
 def get_aggregations(request, **kwargs):
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
-    MODEL_MAP = {
-        "nightly": NightlyAggregation,
-        "beta": BetaAggregation,
-        "release": ReleaseAggregation,
-    }
-
-    labels_cache = caches["probe-labels"]
-    if labels_cache.get("__labels__") is None:
-        Probe.populate_labels_cache()
-
+    # TODO: When glam starts sending "product", make it required.
+    # TODO: Consider combining product + channel for Firefox.
+    REQUIRED_QUERY_PARAMETERS = ["probe", "aggregationLevel"]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
@@ -34,15 +26,45 @@ def get_aggregations(request, **kwargs):
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
-    # If release channel, make sure the user is authenticated.
-    if kwargs.get("channel") == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
+    # Ensure that the product provided is one we support, defaulting to Firefox.
+    product = kwargs.get("product", "firefox")
+    if product not in constants.PRODUCT_IDS.keys():
+        raise ValidationError(
+            "Unsupported product specified. We currently support only: {}".format(
+                ", ".join(constants.PRODUCT_IDS.keys())
+            )
+        )
+
+    channel = None
+    model_key = product
+
+    # If Firefox is the product, channel is required.
+    if product == constants.PRODUCT_NAMES[constants.PRODUCT_FIREFOX]:
+        channel = kwargs.get("channel")
+        if not channel or channel not in constants.CHANNEL_IDS.keys():
+            raise ValidationError(
+                "Unsupported or missing channel. We currently support: {}".format(
+                    ", ".join(constants.CHANNEL_IDS.keys())
+                )
+            )
+
+        # If release channel, make sure the user is authenticated.
+        if channel == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
+            if not request.user.is_authenticated:
+                raise PermissionDenied()
+
+        model_key = f"{product}-{channel}"
+
+    MODEL_MAP = {
+        "firefox-nightly": NightlyAggregation,
+        "firefox-beta": BetaAggregation,
+        "firefox-release": ReleaseAggregation,
+    }
 
     try:
-        model = MODEL_MAP[kwargs["channel"]]
+        model = MODEL_MAP[model_key]
     except KeyError:
-        raise ValidationError("Unknown channel in query parameters")
+        raise ValidationError("Product not currently supported.")
 
     # Check if a version was provided and if not, get the MAX version from our
     # data to select the last 3 versions by default.
@@ -52,6 +74,10 @@ def get_aggregations(request, **kwargs):
         except (ValueError, KeyError):
             raise ValidationError("Query version cannot be determined")
         kwargs["versions"] = list(range(max_version, max_version - 3, -1))
+
+    labels_cache = caches["probe-labels"]
+    if labels_cache.get("__labels__") is None:
+        Probe.populate_labels_cache()
 
     dimensions = [
         Q(metric=kwargs["probe"]),
