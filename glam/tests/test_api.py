@@ -273,12 +273,10 @@ class TestAggregationsApi:
     @pytest.mark.parametrize(
         "query, missing",
         [
-            ({"channel": None, "probe": None, "versions": []}, "aggregationLevel"),
-            ({"channel": None, "versions": [], "aggregationLevel": None}, "probe"),
-            ({"probe": None, "versions": [], "aggregationLevel": None}, "channel"),
-            ({"channel": None, "probe": None}, "aggregationLevel"),
-            ({"channel": None}, "aggregationLevel, probe"),
-            ({}, "aggregationLevel, channel, probe"),
+            ({"probe": None, "versions": []}, "aggregationLevel"),
+            ({"versions": [], "aggregationLevel": None}, "probe"),
+            ({"probe": None}, "aggregationLevel"),
+            ({}, "aggregationLevel, probe"),
         ],
     )
     def test_required_params(self, client, query, missing):
@@ -287,6 +285,39 @@ class TestAggregationsApi:
         )
         assert resp.status_code == 400
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
+
+    def test_channel_required_if_firefox(self, client):
+        query = {
+            "query": {
+                "product": "firefox",
+                "probe": "gc_ms",
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("Unsupported or missing channel.")
+
+        # Also test an invalid channel.
+        query["query"]["channel"] = "ohrora"
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("Unsupported or missing channel.")
+
+    def test_invalid_product(self, client):
+        resp = client.post(
+            self.url,
+            data={
+                "query": {
+                    "product": "feenicks",
+                    "probe": "gc_ms",
+                    "aggregationLevel": "version",
+                }
+            },
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("Unsupported product specified.")
 
     def test_histogram(self, client):
         # This test adds 2 histograms, one of which will be in the result.
