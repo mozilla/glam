@@ -180,19 +180,6 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
             >
 
-                <div class='probe-body-overview__numbers' slot='summary'>
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
-                    <div class=bignum__value>{formatValue($refMedian)}</div>
-                  </div>
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Total Clients</div>
-                    <div class=bignum__value>
-                        {formatCount($movingAudienceSize)}
-                    </div>
-                  </div>
-                </div>
-
             </ProbeExplorer>
           </div>
         {/if}

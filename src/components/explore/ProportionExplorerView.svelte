@@ -144,14 +144,6 @@ h2 {
               yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
             >
 
-              <!-- summary bignums -->
-              <div class="probe-body-overview__numbers" slot="summary">
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Total Clients</div>
-                    <div class=bignum__value>{formatCount($movingAudienceSize)}</div>
-                  </div>
-              </div>
-
             </ProbeExplorer>
           </div>
         {/if}

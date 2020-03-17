@@ -79,6 +79,8 @@ text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart 
   right={explorerComparisonSmallMultiple.right}
   bottom={explorerComparisonSmallMultiple.bottom}
   top={explorerComparisonSmallMultiple.top}
+  bottomBorder
+  borderColor={explorerComparisonSmallMultiple.borderColor}
   key={key}
 >
   <g slot=background let:left let:bottom let:top let:right>

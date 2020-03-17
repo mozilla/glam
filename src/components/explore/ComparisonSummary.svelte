@@ -54,6 +54,8 @@ $: displayValues = createNewPercentiles(left, right, keySet);
   padding-bottom: var(--space-2x);
   max-width: 345px;
   width: 100%;
+  grid-row: 1 / span 2;
+  grid-column: 3;
 }
 
 table {
@@ -87,7 +89,7 @@ th {
   vertical-align: top;
   border-bottom: var(--heavy-border);
   font-size: var(--text-01);
-  color: var(--cool-gray-500);
+  color: var(--cool-gray-650);
 }
 
 td, th {
@@ -156,8 +158,7 @@ text: 'compares the numeric values of the reference ⭑ to the hovered values �
             {#if showLeft}
             <th class:hidden={!hovered} class="summary-label ref">
                   <div>
-                      {leftLabel || ''}
-                    {#if hovered}<span class='small-shape'>●</span>{/if}
+                    <span class='small-shape'>●</span> {leftLabel || ''}
                   </div>
             </th>
             {/if}
@@ -178,8 +179,7 @@ text: 'compares the numeric values of the reference ⭑ to the hovered values �
         {#if showRight}
         <th class="summary-label hov">
             <div>
-                {rightLabel || ''}
-            <span class='small-shape'>⭑</span></div>
+              <span class='small-shape'>⭑</span> {rightLabel || ''}</div>
         </th>
         {/if}
 
@@ -193,7 +193,7 @@ text: 'compares the numeric values of the reference ⭑ to the hovered values �
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
             <tr>
-              <td class="value-label" use:tooltipAction={{text: keyFormatter(key), location: 'top'}}>
+              <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
                 <span class=percentile-label-block
                 style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
 

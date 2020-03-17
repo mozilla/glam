@@ -1,13 +1,30 @@
 
 const top = 32;
+
 export const buildIDComparisonGraph = {
   width: 425,
-  height: 350,
+  height: 325,
   right: 16,
   left: 60,
   bottom: 24,
   top,
+  borderColor: 'var(--cool-gray-400)',
   insufficientDataAdjustment: 100, // amount of space to remove from graph when hidden
+};
+
+export const toplineRefLabel = {
+  left: buildIDComparisonGraph.left,
+  icon: 25,
+};
+
+export const totalClientsGraph = {
+  top: 12,
+  left: buildIDComparisonGraph.left,
+  bottom: 24,
+  width: buildIDComparisonGraph.width,
+  right: buildIDComparisonGraph.right,
+  height: 100,
+  borderColor: buildIDComparisonGraph.borderColor,
 };
 
 export const explorerComparisonSmallMultiple = {
@@ -17,7 +34,18 @@ export const explorerComparisonSmallMultiple = {
   right: 64,
   top,
   bottom: buildIDComparisonGraph.bottom,
+  borderColor: buildIDComparisonGraph.borderColor,
   insufficientDataAdjustment: buildIDComparisonGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
+};
+
+export const compareClientCountsGraph = {
+  top: totalClientsGraph.top,
+  left: explorerComparisonSmallMultiple.left,
+  right: explorerComparisonSmallMultiple.right,
+  bottom: totalClientsGraph.bottom,
+  width: explorerComparisonSmallMultiple.width,
+  height: totalClientsGraph.height,
+  borderColor: buildIDComparisonGraph.borderColor,
 };
 
 // for the table views.

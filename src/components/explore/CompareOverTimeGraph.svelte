@@ -159,7 +159,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 </script>
 <div>
   <h3 style='padding-left: {buildIDComparisonGraph.left}px; padding-right: {buildIDComparisonGraph.right}px' class=data-graphic__element-title>
-    Over Time 
+    Percentiles by Build ID 
     <span use:tooltipAction={
       {
         text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
@@ -178,6 +178,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   bottom={buildIDComparisonGraph.bottom}
   top={buildIDComparisonGraph.top}
   left={buildIDComparisonGraph.left}
+  bottomBorder
+  borderColor={buildIDComparisonGraph.borderColor}
   bind:rollover={dgRollover}
   bind:hoverValue
   bind:xScale={xScale}
@@ -236,13 +238,13 @@ $: if (referenceTextElement && referenceBackgroundElement) {
     />
   </g>
 
- <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
+ <LeftAxis lineStyle=short tickFormatter={yTickFormatter} tickCount=6 />
  
- {#if aggregationLevel === 'build_id'}
-  <BottomAxis  />
-{:else}
-  <BottomAxis ticks={xDomain} />
-{/if}
+  {#if aggregationLevel === 'build_id'}
+    <BottomAxis  />
+  {:else}
+    <BottomAxis ticks={xDomain} />
+  {/if}
 
  <GraphicBody>
    {#each createTimeSeries(data, metricKeys, yAccessor) as {bin, series}, i (bin)}

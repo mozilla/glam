@@ -2,15 +2,20 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
-// import TotalClientsGraph from './TotalClientsGraph.svelte';
+import TotalClientsGraph from './TotalClientsGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
+import BigLabel from './BigLabel.svelte';
 
-import { explorerComparisonSmallMultiple } from '../../utils/constants';
+import { toplineRefLabel, explorerComparisonSmallMultiple } from '../../utils/constants';
 
-import { formatBuildIDToDateString } from '../../utils/formatters';
+import {
+  formatBuildIDToDateString, formatCount, formatSignCount,
+  formatParenPercent,
+} from '../../utils/formatters';
 
 import { histogramSpring } from '../../utils/animation';
 
@@ -87,12 +92,18 @@ $: if (densityMetricType) {
 $: if (densityMetricType && reference[densityMetricType]) {
   animatedReferenceDistribution.setValue(reference[densityMetricType]);
 }
+
+function absDiff(a, b, perc = false) {
+  return (a - b) / (perc ? b : 1);
+}
+
 </script>
 
 <style>
 .graphic-and-summary {
   display: grid;
   grid-template-columns: max-content max-content auto;
+  grid-row-gap: var(--space-2x);
 }
 
 .no-line-chart {
@@ -126,12 +137,56 @@ h4 {
 
 
 <div class='probe-body-overview'>
-  <div>
-    <!-- <h4>
-      <slot name='title'>
-        {title}
-      </slot>
-    </h4> -->
+  <div style='
+      padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;
+      display: grid; grid-template-columns: max-content max-content max-content max-content; grid-column-gap: var(--space-2x);
+      font-size: var(--text-02);
+      align-items: start;
+      min-height: var(--space-8x);
+      align-content: start;
+    '>
+    <Tweenable params={{ duration: 250 }} value={reference.audienceSize} let:tweenValue>
+    <BigLabel value={reference.label}>
+      <span slot='icon'>⭑</span>
+      <span slot='label'>Reference</span>
+      <span slot='count'>
+          <span data-value={reference.audienceSize}>
+            <span style='font-weight: {hovered.datum && hovered.datum.audienceSize > tweenValue ? 'normal' : '500'}'>
+              {formatCount(tweenValue)}
+            </span> 
+            clients
+          </span>
+      </span>
+    </BigLabel>
+    <BigLabel params={{ duration: 0 }} 
+      value={hovered.datum ? hovered.datum.label : undefined}
+      compare={reference.label}
+    >
+      <span slot='icon'>●</span>
+      <span slot='label'>Hovered</span>
+      <span slot='count'>
+        <div>
+          {#if hovered.datum}
+          <span style='font-weight: {hovered.datum && hovered.datum.audienceSize < tweenValue ? 'normal' : '500'}'>
+            {formatCount(hovered.datum.audienceSize)}
+          </span> clients{/if}
+        </div>
+        {#if hovered.datum}
+        <div style="
+          font-weight:300;
+          white-space: pre;
+          color: {hovered.datum.audienceSize >= reference.audienceSize ? "var(--cool-gray-700)" : "var(--pantone-red-500)"}">
+{formatSignCount(absDiff(hovered.datum.audienceSize, tweenValue))}  <span style='font-weight: 500;'>{formatParenPercent(
+  '.0%',
+  absDiff(hovered.datum.audienceSize, tweenValue, true),
+  7,
+)}</span>
+        </div>
+        {/if}
+      </span>
+    </BigLabel>
+  </Tweenable>
+
   </div>
   <slot name='summary'></slot>
 </div>
@@ -220,8 +275,8 @@ h4 {
     hovered={!!hovered.datum}
     left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum}
     right={reference[pointMetricType]}
-    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
-    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    leftLabel={'HOV.'}
+    rightLabel={'REF.'}
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
@@ -232,16 +287,16 @@ h4 {
     showDiff={data.length > 1}
   />
 
-  <!-- <TotalClientsGraph
+  <TotalClientsGraph
     data={data}
     xDomain={$domain}
     timeHorizon={timeHorizon}
     key={key}
     yScaleType={yScaleType}
-    metricKeys={percentiles}
-    hovered={!!hovered.datum}
+    metricKeys={activeBins}
+    hovered={hovered}
     reference={reference}
     markers={markers}
-  /> -->
+  />
 
 </div>
