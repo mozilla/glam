@@ -1,5 +1,6 @@
 <script>
-import { getContext } from 'svelte';
+import { getContext, onMount } from 'svelte';
+import { tweened } from 'svelte/motion';
 
 export let x;
 export let xr;
@@ -22,6 +23,19 @@ $: yLocation = $yStart + ((dir) * (sideCorrection + yOffset + 5));
 let xp = xr || $xScale(x);
 $: xp = xr || $xScale(x);
 
+
+let textElement;
+let elementWidth = 0;
+let elementTw = tweened(0, { duration: 100 });
+onMount(() => {
+  elementWidth = textElement.getBoundingClientRect().width;
+});
+
+$: $elementTw = (xp < $width / 2) ? 5 : (-elementWidth);
+
+let finalX = xp;
+$: finalX = xp;
+
 </script>
 
 <style>
@@ -37,20 +51,21 @@ $: xp = xr || $xScale(x);
   <feComposite operator="out" in="THICKNESS" in2="SourceGraphic"></feComposite>
 </filter>
 
-<text 
+<text
   filter=url(#outline)
-  x={xp + ((xp < $width / 2) ? 5 : -5)}
-  text-anchor={(xp < $width / 2) ? 'start' : 'end'}
+  x={finalX}
+  dx={$elementTw}
   y={yLocation}
   class=tracking-label
-style="fill:{background};"
+  style="fill:{background};"
 >
   {label}
 </text>
 
 <text 
-  x={xp + ((xp < $width / 2) ? 5 : -5)}
-  text-anchor={(xp < $width / 2) ? 'start' : 'end'}
+  bind:this={textElement}
+  x={finalX}
+  dx={$elementTw}
   y={yLocation}
   class=tracking-label
 >

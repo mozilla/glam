@@ -67,7 +67,7 @@ h2 {
 }
 
 .data-graphics {
-  margin-top: var(--space-8x);
+  margin-top: var(--space-4x);
 }
 
 .small-multiple {

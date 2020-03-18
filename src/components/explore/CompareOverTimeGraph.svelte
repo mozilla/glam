@@ -19,6 +19,7 @@ import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-fun
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
 import TrackingLine from './TrackingLine.svelte';
+import TrackingLabel from './TrackingLabel.svelte';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -249,13 +250,14 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   {#if hovered.datum}
     
     <TrackingLine x={hovered.datum.label} />
+    <TrackingLabel x={hovered.datum.label} align=top background=white label=Hov. />
 
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
           <circle 
             cx={x}
             cy={y}
-            r=2
+            r=3
             stroke="none"
             fill={lineColorMap(bin)}
           />
@@ -268,14 +270,20 @@ $: if (referenceTextElement && referenceBackgroundElement) {
           value={[x, y]}
           let:springValue>
             <ReferenceSymbol
-              size={20}
+              size={25}
               xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
         </Springable>
       </g>
   {/each}
 
   {#if xScale}
-    <text
+    <Tweenable value={xScale(reference.label)} let:tweenValue>
+      <TrackingLabel _bugInSvelteRequiresThisSmallFix={reference.label} yOffset={16} xr={tweenValue} align=top background=white label="Ref." />
+    </Tweenable>
+
+    <!-- <TrackingLabel x={hovered.datum.label} align=top yOffset={16} background=white label=Hov. /> -->
+
+    <!-- <text
       bind:this={referenceTextElement}
       text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
       font-size=11
@@ -295,8 +303,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
         ? Math.max($refLabelSpring - margins.buffer, left + refTextWidth + margins.buffer)
         : $refLabelSpring + margins.buffer} 
       y={top + 11 + margins.buffer} 
-      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
-  {/if}
+      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>-->
+  {/if} 
 
   </g>
   

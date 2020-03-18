@@ -92,7 +92,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   }
 
   .data-graphics {
-    margin-top: var(--space-6x);
+    margin-top: var(--space-4x);
   }
 
   .small-multiple {
