@@ -9,6 +9,8 @@ import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import Help from 'udgl/icons/Help.svelte';
 
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
+
 import Springable from 'udgl/data-graphics/motion/Springable.svelte';
 
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
@@ -16,6 +18,7 @@ import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
+import TrackingLine from './TrackingLine.svelte';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -180,8 +183,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <slot></slot>
 </g>
 
-<g slot=background let:top let:height let:xScale>
-{#if hovered.datum}
+<g slot=background let:top let:bottom let:height let:xScale>
+  {#if hovered.datum}
     {#if aggregationLevel === 'build_id'}
         <BuildIDRollover 
           x={hovered.datum.label}
@@ -194,28 +197,31 @@ $: if (referenceTextElement && referenceBackgroundElement) {
         x={hoverLabelPlacement}
         y={top} 
         width={hoverWidth}
-        height={height}
+        height={bottom - top}
         fill="var(--cool-gray-100)"
       />
       {:else}
-      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={height}
+      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={bottom - top}
         fill="var(--cool-gray-100)" />
-      {/if}
     {/if}
-    <!-- this is the reference rect -->
+  {/if}
+  <!-- this is the reference rect -->
 
-    <rect 
-      x={reference}
-    />
-    <rect
-      bind:this={referenceBackgroundElement}
-      x={$refLabelSpring} 
-      y={top} 
-      width={referenceWidth} 
-      height={height}
-      fill="var(--cool-gray-100)"
-    />
-  </g>
+  <rect 
+    x={reference}
+  />
+  <rect
+    bind:this={referenceBackgroundElement}
+    x={$refLabelSpring} 
+    y={top} 
+    width={referenceWidth} 
+    height={bottom - top}
+    fill="var(--cool-gray-100)"
+  />
+  <Tweenable value={xScale(reference.label)} let:tweenValue>
+    <TrackingLine xr={tweenValue} key={reference.label} />
+  </Tweenable>
+</g>
 
  <LeftAxis lineStyle=short tickFormatter={yTickFormatter} tickCount=6 />
  
@@ -241,14 +247,9 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 
  <g slot=annotation let:top let:bottom let:left let:xScale let:yScale>
   {#if hovered.datum}
-      <line 
-      x1={xScale(hovered.datum.label)}
-      x2={xScale(hovered.datum.label)}
-      y1={top}
-      y2={bottom}
-      stroke=var(--cool-gray-200)
-      stroke-dasharray=2,1
-    />
+    
+    <TrackingLine x={hovered.datum.label} />
+
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
           <circle 

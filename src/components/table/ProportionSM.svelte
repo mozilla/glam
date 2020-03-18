@@ -35,6 +35,7 @@ div {
       <g slot=body let:xScale>
         <rect x={xScale(0)} width={xScale(1)} y={0} height={height - marg * 2} fill={!hovered ? 'white' : 'var(--cool-gray-100'} />
         <rect x={xScale(0)} width={xScale($V)} y={0} height={height - marg * 2} fill=var(--digital-blue-200) />
+        <line y1={0} y2={height - marg * 2} x1={xScale($V)} x2={xScale($V)} stroke=var(--cool-gray-400) />
       </g>
     </DataGraphic>
   {/if}

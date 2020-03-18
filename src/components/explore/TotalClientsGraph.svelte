@@ -6,6 +6,8 @@ import Line from 'udgl/data-graphics/elements/Line.svelte';
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import Help from 'udgl/icons/Help.svelte';
 
+import TrackingLine from './TrackingLine.svelte';
+
 import CompareClientCounts from './CompareClientCounts.svelte';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
@@ -152,13 +154,7 @@ div {
       </g>
       <g slot=annotation let:top let:xScale let:bottom let:width>
         {#if hovered && hovered.datum}
-          <line 
-            x1={xScale(hovered.datum.label)}
-            x2={xScale(hovered.datum.label)}
-            y1={top}
-            y2={bottom}
-            class=annotation-line
-          />
+          <TrackingLine x={hovered.datum.label} />
         {/if}
         {#if reference}
         <Tweenable 
@@ -168,12 +164,8 @@ div {
             y: yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,
   }} let:tweenValue={tv1}>
-          <line 
-            x1={tv1.location}
-            x2={tv1.location}
-            y1={top}
-            y2={bottom}
-            class=annotation-line
+          <TrackingLine 
+            xr={tv1.location}
             data-audienceSize={reference.audienceSize}
           />
         </Tweenable>
