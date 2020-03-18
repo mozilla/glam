@@ -7,6 +7,8 @@ import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import Help from 'udgl/icons/Help.svelte';
 
 import TrackingLine from './TrackingLine.svelte';
+import TrackingLabel from './TrackingLabel.svelte';
+
 
 import CompareClientCounts from './CompareClientCounts.svelte';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
@@ -88,7 +90,6 @@ div {
   fill: var(--cool-gray-650);
   text-transform: uppercase;
   font-size: 10px;
-  font-family: var(--main-mono-font);
 }
 
 </style>
@@ -171,32 +172,14 @@ div {
         </Tweenable>
         {/if}
         {#if hovered && hovered.datum}
-          <text 
-            filter=url(#outline)
-            x={xScale(hovered.datum.label) + ((xScale(hovered.datum.label) < width / 2) ? 5 : -5)}
-            text-anchor={(xScale(hovered.datum.label) < width / 2) ? 'start' : 'end'}
-            y={bottom - 4}
-            class=annotation-text
-            style="fill:var(--cool-gray-200)"
-          >
-          Hov. 
-          <!-- {formatCount(hovered.datum.audienceSize)} -->
-          </text>
+          <TrackingLabel align=bottom x={hovered.datum.label} background="var(--cool-gray-200)" label="Hov." />
           <circle 
             cx={xScale(hovered.datum.label)} 
             cy={yScale(hovered.datum.audienceSize)} 
             r=3
             fill=var(--cool-gray-700)
           />
-          <text 
-            x={xScale(hovered.datum.label) + ((xScale(hovered.datum.label) < width / 2) ? 5 : -5)}
-            text-anchor={(xScale(hovered.datum.label) < width / 2) ? 'start' : 'end'}
-            y={bottom - 4}
-            class=annotation-text
-          >
-          Hov. 
-          <!-- {formatCount(hovered.datum.audienceSize)} -->
-          </text>
+
         {/if}
         {#if reference && reference.label && reference.audienceSize !== undefined}
           <Tweenable 
@@ -208,31 +191,18 @@ div {
 }} from={{
  x: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize,
 }} let:tweenValue>
-            <text
-              filter=url(#outline)
-              x={tweenValue.x + ((tweenValue.x < width / 2) ? 5 : -5)}
-              text-anchor={(tweenValue.x < width / 2) ? 'start' : 'end'}
-              y={top + 10 + 2}
-              class=annotation-text
-              style="fill:var(--cool-gray-100)"
-              data-audienceSize={reference.audienceSize}
-              data-top={top}
-            >
-              Ref. 
-              <!-- {formatCount(tweenValue.audienceSize)} -->
-            </text>
             <ReferenceSymbol
-              size={20}
-              xLocation={tweenValue.x} yLocation={tweenValue.y} color=var(--cool-gray-700) />
-            <text 
-              x={tweenValue.x + ((tweenValue.x < width / 2) ? 5 : -5)}
-              text-anchor={(tweenValue.x < width / 2) ? 'start' : 'end'}
-              y={top + 10 + 2}
-              class=annotation-text
-            >
-              Ref. 
-              <!-- {formatCount(tweenValue.audienceSize)} -->
-            </text>
+            size={20}
+            xLocation={tweenValue.x} yLocation={tweenValue.y} color=var(--cool-gray-700) />
+            <TrackingLabel 
+              align=top 
+              label="Ref." 
+              xr={tweenValue.x} 
+              background=var(--cool-gray-100)
+              key={reference.label}
+            />
+
+
         </Tweenable>
       {/if}
       </g>
