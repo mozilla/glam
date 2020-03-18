@@ -2,20 +2,24 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
-import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import { window1D } from 'udgl/data-graphics/utils/window-functions';
-import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
-import TotalClientsGraph from './TotalClientsGraph.svelte';
-import DistributionComparison from './DistributionComparison.svelte';
-import ComparisonSummary from './ComparisonSummary.svelte';
 import ToplineMetrics from './ToplineMetrics.svelte';
+import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
+import DistributionComparison from './DistributionComparison.svelte';
+import TotalClientsGraph from './TotalClientsGraph.svelte';
+import ComparisonSummary from './ComparisonSummary.svelte';
+import CompareClientCounts from './CompareClientCounts.svelte';
 
 import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
 import {
   formatBuildIDToDateString,
 } from '../../utils/formatters';
+
+import {
+  clientCounts,
+} from '../../utils/probe-utils';
 
 import { histogramSpring } from '../../utils/animation';
 
@@ -35,6 +39,11 @@ export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
 export let summaryLabel = 'perc.';
+
+export let aggregationsOverTimeTitle;
+export let aggregationsOverTimeDescription;
+
+//
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -92,6 +101,22 @@ $: if (densityMetricType && reference[densityMetricType]) {
   animatedReferenceDistribution.setValue(reference[densityMetricType]);
 }
 
+// client counts.
+
+
+let clientCountsData = clientCounts(data);
+$: clientCountsData = clientCounts(data);
+
+const MULT = 1.1;
+let yVals = clientCountsData.map((d) => d.totalClients);
+$: yVals = clientCountsData.map((d) => d.totalClients);
+let yMax = Math.max(...yVals);
+$: yMax = Math.max(50, Math.max(...yVals));
+let yClientsDomain;
+$: yClientsDomain = [0, yMax * MULT];
+
+
+// setting hovered value.
 
 function get(d, x) {
   return window1D({
@@ -121,22 +146,7 @@ $: if (hoverValue.x) {
 }
 
 .no-line-chart {
-  grid-template-columns: max-content auto;
   justify-items: start;
-}
-
-.summary {
-  display:grid;
-  grid-auto-flow:column;
-  justify-content: end;
-  font-size: 14px;
-}
-
-h4 {
-  padding: 0px;
-  margin:0px;
-  text-transform: uppercase;
-  color: var(--cool-gray-500);
 }
 
 .probe-body-overview {
@@ -151,7 +161,7 @@ h4 {
 
 
 <div class='probe-body-overview'>
-  <ToplineMetrics {reference} {hovered} />
+  <ToplineMetrics {reference} {hovered} showHover={data.length > 1} {aggregationLevel} />
   <slot name='summary'></slot>
 </div>
 
@@ -159,6 +169,8 @@ h4 {
     <div style="display: {insufficientData ? 'none' : 'block'}">
       <CompareOverTimeGraph
         data={data}
+        title={aggregationsOverTimeTitle}
+        description={aggregationsOverTimeDescription}
         xDomain={$domain}
         yDomain={yDomain}
         timeHorizon={timeHorizon}
@@ -256,23 +268,34 @@ h4 {
     showLeft={data.length > 1}
     showDiff={data.length > 1}
   />
-
-  <TotalClientsGraph
-    data={data}
-    xDomain={$domain}
-    timeHorizon={timeHorizon}
-    key={key}
-    yScaleType={yScaleType}
-    metricKeys={activeBins}
-    hovered={hovered}
-    reference={reference}
-    bind:hoverValue
-    markers={markers}
-    on:click={() => {
-      if (hovered.datum) {
-        reference = hovered.datum;
-      }
-    }}
-  />
+  <div style="display: {insufficientData ? 'none' : 'block'}">
+    <TotalClientsGraph
+      data={clientCountsData}
+      xDomain={$domain}
+      yDomain={yClientsDomain}
+      timeHorizon={timeHorizon}
+      aggregationLevel={aggregationLevel}
+      key={key}
+      yScaleType={yScaleType}
+      metricKeys={activeBins}
+      hovered={hovered}
+      reference={reference}
+      bind:hoverValue
+      markers={markers}
+      on:click={() => {
+        if (hovered.datum) {
+          reference = hovered.datum;
+        }
+      }}
+    />
+  </div>
+  <div style="display: {insufficientData ? 'none' : 'block'}">
+    <CompareClientCounts 
+      data={clientCountsData}
+      yDomain={yClientsDomain}
+      hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
+      referenceValue={reference.audienceSize}
+    />
+  </div>
 
 </div>

@@ -11,6 +11,8 @@ import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
 import { formatPercent, formatCount } from '../../utils/formatters';
 
+import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
+
 export let aggregationLevel = 'build_id';
 export let data;
 export let probeType;
@@ -129,6 +131,8 @@ h2 {
             <ProbeExplorer
               bind:reference={reference}
               title={key === 'undefined' ? '' : key}
+              aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
+              aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
               summaryLabel='cat.'
               data={data}
               probeType={probeType}

@@ -11,7 +11,8 @@ import {
 
 export let reference;
 export let hovered;
-
+export let showHover;
+export let aggregationLevel;
 
 function absDiff(a, b, perc = false) {
   return (a - b) / (perc ? b : 1);
@@ -28,21 +29,29 @@ function absDiff(a, b, perc = false) {
   align-content: start;
 '>
 <Tweenable params={{ duration: 250 }} value={reference.audienceSize} let:tweenValue>
-<BigLabel value={reference.label}>
+<BigLabel value={reference.label} {aggregationLevel}>
   <span slot='icon'>⭑</span>
-  <span slot='label'>Reference</span>
+    <span slot='label'>
+      {#if showHover}
+        Reference
+      {:else}
+        Latest
+      {/if}
+    </span>
   <span slot='count'>
       <span data-value={reference.audienceSize}>
         <span style='font-weight: {hovered.datum && hovered.datum.audienceSize > tweenValue ? 'normal' : '500'}'>
           {formatCount(tweenValue)}
-        </span> 
+        </span>
         clients
       </span>
   </span>
 </BigLabel>
+{#if showHover}
 <BigLabel params={{ duration: 0 }} 
   value={hovered.datum ? hovered.datum.label : undefined}
   compare={reference.label}
+  {aggregationLevel}
 >
   <span slot='icon'>●</span>
   <span slot='label'>Hovered</span>
@@ -67,6 +76,7 @@ absDiff(hovered.datum.audienceSize, tweenValue, true),
     {/if}
   </span>
 </BigLabel>
+{/if}
 </Tweenable>
 
 </div>

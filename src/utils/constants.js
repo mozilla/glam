@@ -7,9 +7,51 @@ export const tween = {
   easing,
 };
 
+// descriptions for the individual charts.
+
+const niceAggregations = {
+  build_id: 'Build ID',
+  version: 'version',
+};
+
+const niceMetricTypes = {
+  percentiles: 'Percentiles',
+  counts: 'Client Counts',
+  proportions: 'Proportions',
+};
+
+export function overTimeTitle(metricType, aggregationLevel) {
+  // const mt = metricType.charAt(0).toUpperCase() + metricType.slice(1);
+  return `${niceMetricTypes[metricType]} by ${niceAggregations[aggregationLevel]}`;
+}
+
+export function percentilesOverTimeDescription(aggregationLevel) {
+  return `
+  Shows the percentile values for the following probe
+  aggregation by ${niceAggregations[aggregationLevel]}.
+  `;
+}
+
+export function proportionsOverTimeDescription(overTimePointMetricType, aggregationLevel) {
+  return `
+  Shows the ${overTimePointMetricType} of clients that have observed the 
+  following category / bin for the probe, grouped by ${niceAggregations[aggregationLevel]}.
+  `;
+}
+
+export function clientVolumeOverTimeDescription(aggregationLevel) {
+  return `Volume of Clients by ${niceAggregations[aggregationLevel]}`;
+}
+
+export function clientProportionOverTimeDescription(aggregationLevel) {
+  return `Proportion of Clients by ${niceAggregations[aggregationLevel]}`;
+}
+
+// layout constants for the explore charts
+
 const BG = 'var(--cool-gray-subtle)';
 
-export const buildIDComparisonGraph = {
+export const aggregationsOverTimeGraph = {
   width: 425,
   height: 325,
   right: 16,
@@ -21,31 +63,31 @@ export const buildIDComparisonGraph = {
 };
 
 export const toplineRefLabel = {
-  left: buildIDComparisonGraph.left,
+  left: aggregationsOverTimeGraph.left,
   icon: 25,
 };
 
 export const totalClientsGraph = {
   top: 12,
-  left: buildIDComparisonGraph.left,
+  left: aggregationsOverTimeGraph.left,
   bottom: 24,
-  width: buildIDComparisonGraph.width,
-  right: buildIDComparisonGraph.right,
+  width: aggregationsOverTimeGraph.width,
+  right: aggregationsOverTimeGraph.right,
   height: 100,
   bgColor: BG,
-  borderColor: buildIDComparisonGraph.borderColor,
+  borderColor: aggregationsOverTimeGraph.borderColor,
 };
 
 export const explorerComparisonSmallMultiple = {
   width: 145,
-  height: buildIDComparisonGraph.height,
+  height: aggregationsOverTimeGraph.height,
   left: 8,
   right: 60,
   top,
-  bottom: buildIDComparisonGraph.bottom,
-  borderColor: buildIDComparisonGraph.borderColor,
+  bottom: aggregationsOverTimeGraph.bottom,
+  borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,
-  insufficientDataAdjustment: buildIDComparisonGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
+  insufficientDataAdjustment: aggregationsOverTimeGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
 };
 
 export const compareClientCountsGraph = {
@@ -56,7 +98,7 @@ export const compareClientCountsGraph = {
   width: explorerComparisonSmallMultiple.width,
   height: totalClientsGraph.height,
   bgColor: BG,
-  borderColor: buildIDComparisonGraph.borderColor,
+  borderColor: aggregationsOverTimeGraph.borderColor,
 };
 
 // for the table views.

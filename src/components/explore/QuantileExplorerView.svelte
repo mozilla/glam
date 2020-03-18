@@ -11,6 +11,7 @@ import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { firefoxVersionMarkers } from '../../state/product-versions';
+import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
 
 
 import { formatCount, formatValue } from '../../utils/formatters';
@@ -159,6 +160,10 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               bind:hovered={hovered}
 
               title={key === 'undefined' ? '' : key}
+              aggregationsOverTimeTitle={overTimeTitle('percentiles', aggregationLevel)}
+              aggregationsOverTimeDescription={proportionsOverTimeDescription('percentiles', aggregationLevel)}
+
+              probeFamily="Percentile"
               summaryLabel='perc.'
               data={data}
               probeType={probeType}

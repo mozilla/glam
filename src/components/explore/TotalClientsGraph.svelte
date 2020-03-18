@@ -10,7 +10,6 @@ import TrackingLine from './TrackingLine.svelte';
 import TrackingLabel from './TrackingLabel.svelte';
 
 
-import CompareClientCounts from './CompareClientCounts.svelte';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
@@ -18,35 +17,15 @@ import { formatCount } from '../../utils/formatters';
 
 import { totalClientsGraph, tween } from '../../utils/constants';
 
-import {
-  clientCounts,
-} from '../../utils/probe-utils';
-
 
 export let data;
+export let aggregationLevel;
 export let xDomain;
-export let timeHorizon;
+export let yDomain;
 export let reference;
 export let hovered;
 
 let margins;
-
-
-let transformed = clientCounts(data);
-$: transformed = clientCounts(data);
-
-let yScale;
-let xScale;
-
-// if
-
-const MULT = 1.1;
-let yVals = transformed.map((d) => d.totalClients);
-$: yVals = transformed.map((d) => d.totalClients);
-let yMax = Math.max(...yVals);
-$: yMax = Math.max(50, Math.max(...yVals));
-let yDomain;
-$: yDomain = [0, yMax * MULT];
 
 let dataGraphicMounted;
 let L;
@@ -107,7 +86,7 @@ div {
   <div class:hovered={!!hovered.datum}>
     <DataGraphic
       yType="linear"
-      xType=time
+      xType={aggregationLevel === 'build_id' ? 'time' : 'scalePoint'}
       xDomain={xDomain}
       yDomain={yDomain}
       width={totalClientsGraph.width}
@@ -118,8 +97,6 @@ div {
       bottom={totalClientsGraph.bottom}
       bottomBorder
       borderColor={totalClientsGraph.borderColor}
-      bind:xScale
-      bind:yScale
       bind:hoverValue
       bind:bodyWidth={BW}
       bind:bodyHeight={BH}
@@ -133,7 +110,15 @@ div {
       </filter>
 
       <LeftAxis tickFormatter={formatCount} lineStyle=short tickCount={3} />
-      <BottomAxis />
+      {#if aggregationLevel === 'build_id'}
+        <BottomAxis  />
+      {:else}
+        {#if xDomain.length <= 5}
+          <BottomAxis ticks={xDomain} />
+        {:else}
+          <BottomAxis />
+        {/if}
+      {/if}
       <g slot=background let:left let:top>
         <rect 
           x={left}
@@ -146,14 +131,14 @@ div {
       <g slot=body>
       <Line 
         curve="curveStep"
-        data={transformed} 
+        {data}
         xAccessor='label' 
         yAccessor="totalClients"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
         area={true} />
       </g>
-      <g slot=annotation let:top let:xScale let:bottom let:width>
+      <g slot=annotation let:top let:xScale let:yScale let:bottom let:width>
         {#if hovered && hovered.datum}
           <TrackingLine x={hovered.datum.label} />
         {/if}
@@ -212,9 +197,3 @@ div {
   </div>
 </div>
 
-<CompareClientCounts 
-  {data}
-  {yDomain}
-  hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
-  referenceValue={reference.audienceSize}
-/>
