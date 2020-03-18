@@ -3,6 +3,7 @@
 
   import Probe from '../../wrappers/Probe.svelte';
   import ProbeTableView from '../../../components/table/ProbeTableView.svelte';
+  import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
   import { store } from '../../../state/store';
 </script>
 
@@ -17,10 +18,7 @@
           colorMap={data.bucketColorMap}
           visibleBuckets={[...$store.activeBuckets]}
           aggregationLevel={$store.aggregationLevel}>
-          <h2 class="graphic-body__title--padding">
-            table /
-            <span>{$store.probe.name}</span>
-          </h2>
+            <ProbeTitle />
         </ProbeTableView>
       {/if}
     </div>

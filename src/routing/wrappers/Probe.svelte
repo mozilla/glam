@@ -9,6 +9,7 @@
   import { derived } from 'svelte/store';
 
   import DataError from '../../components/errors/DataError.svelte';
+  import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
   import { store, dataset } from '../../state/store';
   import { getProbeViewType } from '../../utils/probe-utils';
 
@@ -39,6 +40,7 @@
   <slot {data} probeType={$temporaryViewTypeStore} />
 {:catch err}
   <div class="graphic-body__content">
+    <ProbeTitle />
     <div in:fly={{ duration: 400, y: 10 }}>
       <DataError reason={err.message} moreInformation={err.moreInformation} />
     </div>

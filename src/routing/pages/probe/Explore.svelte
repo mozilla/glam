@@ -5,6 +5,7 @@
   import Probe from '../../wrappers/Probe.svelte';
   import ProportionExplorerView from '../../../components/explore/ProportionExplorerView.svelte';
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
+  import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
   import { store } from '../../../state/store';
 
 
@@ -33,10 +34,7 @@
         bucketSortOrder={data.bucketSortOrder}
         on:selection={handleBodySelectors}
         aggregationLevel={$store.aggregationLevel}>
-        <h2>
-          explore /
-          <span>{$store.probe.name}</span>
-        </h2>
+          <ProbeTitle />
       </ProportionExplorerView>
     {:else if ['histogram', 'scalar'].includes(probeType)}
       <QuantileExplorerView
@@ -46,10 +44,7 @@
         percentiles={$store.visiblePercentiles}
         on:selection={handleBodySelectors}
         aggregationLevel={$store.aggregationLevel}>
-        <h2>
-          explore /
-          <span>{$store.probe.name}</span>
-        </h2>
+          <ProbeTitle />
       </QuantileExplorerView>
     {:else}
       <div class="graphic-body__content">
