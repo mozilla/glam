@@ -40,7 +40,7 @@ export const explorerComparisonSmallMultiple = {
   width: 145,
   height: buildIDComparisonGraph.height,
   left: 8,
-  right: 64,
+  right: 60,
   top,
   bottom: buildIDComparisonGraph.bottom,
   borderColor: buildIDComparisonGraph.borderColor,
