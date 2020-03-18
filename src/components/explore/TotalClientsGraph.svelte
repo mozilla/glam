@@ -5,7 +5,6 @@ import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import Help from 'udgl/icons/Help.svelte';
-import { window1D } from 'udgl/data-graphics/utils/window-functions';
 
 import CompareClientCounts from './CompareClientCounts.svelte';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
@@ -13,8 +12,7 @@ import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 import { formatCount } from '../../utils/formatters';
 
-
-import { totalClientsGraph } from '../../utils/constants';
+import { totalClientsGraph, tween } from '../../utils/constants';
 
 import {
   clientCounts,
@@ -139,7 +137,7 @@ div {
           y={top}
           width={bodyWidth}
           height={bodyHeight}
-          fill=var(--cool-gray-subtle)
+          fill={totalClientsGraph.bgColor}
         />
       </g>
       <g slot=body>
@@ -163,11 +161,13 @@ div {
           />
         {/if}
         {#if reference}
-        <Tweenable value={{
-          location: xScale(reference.label),
-          y: yScale(reference.audienceSize),
-          audienceSize: reference.audienceSize,
-}} let:tweenValue={tv1}>
+        <Tweenable 
+          params={tween}
+          value={{
+            location: xScale(reference.label),
+            y: yScale(reference.audienceSize),
+            audienceSize: reference.audienceSize,
+  }} let:tweenValue={tv1}>
           <line 
             x1={tv1.location}
             x2={tv1.location}
@@ -207,7 +207,9 @@ div {
           </text>
         {/if}
         {#if reference && reference.label && reference.audienceSize !== undefined}
-          <Tweenable value={{
+          <Tweenable 
+            params={tween}
+          value={{
             x: xScale(reference.label),
             y: yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,

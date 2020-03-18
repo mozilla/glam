@@ -6,7 +6,7 @@ import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 import Help from 'udgl/icons/Help.svelte';
 import RightAxis from 'udgl/data-graphics/guides/RightAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
-import { compareClientCountsGraph } from '../../utils/constants';
+import { compareClientCountsGraph, tween } from '../../utils/constants';
 import { formatCount } from '../../utils/formatters';
 
 export let hoverValue;
@@ -59,8 +59,7 @@ export let yDomain;
         y={top}
         width={(right - left) / 2}
         height={bottom - top}
-        fill="var(--cool-gray-200)"
-        opacity=.25
+        fill={compareClientCountsGraph.bgColor}
         use:tooltipAction={{
     text: 'shows the distribution of the currently-hovered point on the line chart',
           location: 'top',
@@ -72,8 +71,7 @@ export let yDomain;
       y={top}
       width={(right - left) / 2}
       height={bottom - top}
-      fill="var(--cool-gray-200)"
-      opacity=.25
+      fill={compareClientCountsGraph.bgColor}
       use:tooltipAction={{
 text: 'shows the distribution of the current reference point on the line chart',
         location: 'top',
@@ -82,7 +80,7 @@ alignment: 'center',
     />
   </g>
   <g slot=body let:top let:bottom let:xScale let:yScale>
-    <Tweenable value={referenceValue} let:tweenValue={tw}>
+    <Tweenable params={tween} value={referenceValue} let:tweenValue={tw}>
       <rect
         class=client-bar
         x={xScale('REF.') - xScale.step() / 4}

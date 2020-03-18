@@ -89,8 +89,7 @@ text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart 
       y={top}
       width={(right - left) / 2}
       height={bottom - top}
-      fill="var(--cool-gray-200)"
-      opacity=.25
+      fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
 text: 'shows the distribution of the currently-hovered point on the line chart',
         location: 'top',
@@ -102,8 +101,7 @@ alignment: 'center',
       y={top}
       width={(right - left) / 2}
       height={bottom - top}
-      fill="var(--cool-gray-200)"
-      opacity=.25
+      fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
 text: 'shows the distribution of the current reference point on the line chart',
         location: 'top',

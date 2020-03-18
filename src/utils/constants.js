@@ -1,5 +1,13 @@
+import { cubicOut as easing } from 'svelte/easing';
 
 const top = 32;
+
+export const tween = {
+  duration: 200,
+  easing,
+};
+
+const BG = 'var(--cool-gray-subtle)';
 
 export const buildIDComparisonGraph = {
   width: 425,
@@ -24,6 +32,7 @@ export const totalClientsGraph = {
   width: buildIDComparisonGraph.width,
   right: buildIDComparisonGraph.right,
   height: 100,
+  bgColor: BG,
   borderColor: buildIDComparisonGraph.borderColor,
 };
 
@@ -35,6 +44,7 @@ export const explorerComparisonSmallMultiple = {
   top,
   bottom: buildIDComparisonGraph.bottom,
   borderColor: buildIDComparisonGraph.borderColor,
+  bgColor: BG,
   insufficientDataAdjustment: buildIDComparisonGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
 };
 
@@ -45,6 +55,7 @@ export const compareClientCountsGraph = {
   bottom: totalClientsGraph.bottom,
   width: explorerComparisonSmallMultiple.width,
   height: totalClientsGraph.height,
+  bgColor: BG,
   borderColor: buildIDComparisonGraph.borderColor,
 };
 
