@@ -59,26 +59,7 @@ $: if (dataGraphicMounted) {
   BH.subscribe((bh) => { bodyHeight = bh; });
 }
 
-// TODO: this is redundant code from CompareOverTimeGraph.svelte.
-// we should unify this approach.
-function get(d, x) {
-  return window1D({
-    data: d, value: x, lowestValue: xDomain[0], highestValue: xDomain[1],
-  });
-}
-
-let hoverValue = {};
-$: if (hoverValue.x) {
-  const i = get(data, hoverValue.x);
-  hovered = {
-    ...hoverValue,
-    datum: data[i.currentIndex],
-    previous: data[i.previousIndex],
-    next: data[i.nextIndex],
-  };
-} else {
-  hovered = {};
-}
+export let hoverValue = {};
 
 </script>
 
@@ -143,6 +124,7 @@ div {
       bind:bodyHeight={BH}
       bind:margins
       bind:dataGraphicMounted={dataGraphicMounted}
+      on:click
     >
       <filter id="outline">
         <feMorphology operator="dilate" radius="1.5" in="SourceGraphic" result="THICKNESS" />
@@ -228,19 +210,19 @@ div {
           <Tweenable value={{
             x: xScale(reference.label),
             y: yScale(reference.audienceSize),
-            yLabel: top + 10 + 2, // hovered.datum ? top + 10 + 2 : yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,
 }} from={{
- x: xScale(reference.label), yLabel: 0, y: 0, audienceSize: reference.audienceSize,
+ x: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize,
 }} let:tweenValue>
             <text
               filter=url(#outline)
               x={tweenValue.x + ((tweenValue.x < width / 2) ? 5 : -5)}
               text-anchor={(tweenValue.x < width / 2) ? 'start' : 'end'}
-              y={tweenValue.yLabel}
+              y={top + 10 + 2}
               class=annotation-text
               style="fill:var(--cool-gray-100)"
               data-audienceSize={reference.audienceSize}
+              data-top={top}
             >
               Ref. 
               <!-- {formatCount(tweenValue.audienceSize)} -->
@@ -251,7 +233,7 @@ div {
             <text 
               x={tweenValue.x + ((tweenValue.x < width / 2) ? 5 : -5)}
               text-anchor={(tweenValue.x < width / 2) ? 'start' : 'end'}
-              y={tweenValue.yLabel}
+              y={top + 10 + 2}
               class=annotation-text
             >
               Ref. 

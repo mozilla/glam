@@ -115,24 +115,7 @@ $: if (xScale && rightPlot) {
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
-function get(d, x) {
-  return window1D({
-    data: d, value: x, lowestValue: xDomain[0], highestValue: xDomain[1],
-  });
-}
-
-let hoverValue = {};
-$: if (hoverValue.x) {
-  const i = get(data, hoverValue.x);
-  hovered = {
-    ...hoverValue,
-    datum: data[i.currentIndex],
-    previous: data[i.previousIndex],
-    next: data[i.nextIndex],
-  };
-} else {
-  hovered = {};
-}
+export let hoverValue = {};
 
 let dataGraphicMounted;
 
@@ -189,11 +172,7 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   right={buildIDComparisonGraph.right}
   key={key}
   bind:dataGraphicMounted={dataGraphicMounted}
-  on:click={() => {
-    if (hovered.datum) {
-      reference = hovered.datum;
-    }
-  }}
+  on:click
 >
 
 <!-- for the additional-plot-elements slot in ProbeExplorer.svelte -->

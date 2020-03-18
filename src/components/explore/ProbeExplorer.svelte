@@ -4,11 +4,13 @@ import { format } from 'd3-format';
 
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
+import { window1D } from 'udgl/data-graphics/utils/window-functions';
 import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
 import TotalClientsGraph from './TotalClientsGraph.svelte';
 import DistributionComparison from './DistributionComparison.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
 import BigLabel from './BigLabel.svelte';
+
 
 import { toplineRefLabel, explorerComparisonSmallMultiple } from '../../utils/constants';
 
@@ -95,6 +97,25 @@ $: if (densityMetricType && reference[densityMetricType]) {
 
 function absDiff(a, b, perc = false) {
   return (a - b) / (perc ? b : 1);
+}
+
+
+function get(d, x) {
+  return window1D({
+    data: d, value: x, lowestValue: $domain[0], highestValue: $domain[1],
+  });
+}
+let hoverValue = {};
+$: if (hoverValue.x) {
+  const i = get(data, hoverValue.x);
+  hovered = {
+    ...hoverValue,
+    datum: data[i.currentIndex],
+    previous: data[i.previousIndex],
+    next: data[i.nextIndex],
+  };
+} else {
+  hovered = {};
 }
 
 </script>
@@ -205,12 +226,18 @@ h4 {
         yScaleType={yScaleType}
         yTickFormatter={yTickFormatter}
         metricKeys={activeBins}
-        bind:reference={reference}
-        bind:hovered={hovered}
+        reference={reference}
+        hovered={hovered}
+        bind:hoverValue
         markers={markers}
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
         insufficientData={insufficientData}
+        on:click={() => {
+          if (hovered.datum) {
+            reference = hovered.datum;
+          }
+        }}
     >
       <slot name=additional-plot-elements></slot>
     </CompareOverTimeGraph>
@@ -296,7 +323,13 @@ h4 {
     metricKeys={activeBins}
     hovered={hovered}
     reference={reference}
+    bind:hoverValue
     markers={markers}
+    on:click={() => {
+      if (hovered.datum) {
+        reference = hovered.datum;
+      }
+    }}
   />
 
 </div>
