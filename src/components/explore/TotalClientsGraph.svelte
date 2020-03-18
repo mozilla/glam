@@ -36,12 +36,15 @@ $: transformed = clientCounts(data);
 let yScale;
 let xScale;
 
-// get yDomain?
+// if
+
 const MULT = 1.1;
 let yVals = transformed.map((d) => d.totalClients);
 $: yVals = transformed.map((d) => d.totalClients);
-let yDomain = [Math.min(...yVals), Math.max(...yVals)];
-$: yDomain = [Math.min(...yVals), Math.max(...yVals) * MULT];
+let yMax = Math.max(...yVals);
+$: yMax = Math.max(50, Math.max(...yVals));
+let yDomain;
+$: yDomain = [0, yMax * MULT];
 
 let dataGraphicMounted;
 let L;
