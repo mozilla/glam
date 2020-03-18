@@ -5,6 +5,7 @@
   import Probe from '../../wrappers/Probe.svelte';
   import ProportionExplorerView from '../../../components/explore/ProportionExplorerView.svelte';
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
+  import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';  
   import { store } from '../../../state/store';
 
 
@@ -21,6 +22,7 @@
 
 <Probe let:data let:probeType>
   <div in:fade class="graphic-body__content">
+    <ProbeTitle view={$store.route.view} probeName={$store.probe.name} />
     {#if probeType === 'categorical'}
       <ProportionExplorerView
         data={data.data}
@@ -32,12 +34,8 @@
         bucketColorMap={data.bucketColorMap}
         bucketSortOrder={data.bucketSortOrder}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.aggregationLevel}>
-        <h2>
-          explore /
-          <span>{$store.probe.name}</span>
-        </h2>
-      </ProportionExplorerView>
+        aggregationLevel={$store.aggregationLevel}
+      />  
     {:else if ['histogram', 'scalar'].includes(probeType)}
       <QuantileExplorerView
         data={data.data}
@@ -45,12 +43,8 @@
         timeHorizon={$store.timeHorizon}
         percentiles={$store.visiblePercentiles}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.aggregationLevel}>
-        <h2>
-          explore /
-          <span>{$store.probe.name}</span>
-        </h2>
-      </QuantileExplorerView>
+        aggregationLevel={$store.aggregationLevel}
+      />
     {:else}
       <div class="graphic-body__content">
         <div style="width: 100%">

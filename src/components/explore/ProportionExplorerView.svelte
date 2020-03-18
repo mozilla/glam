@@ -76,12 +76,9 @@ h2 {
 </style>
 
 
-<div class=body-content>
-
-  <slot></slot>
-
+<div class="body-content">
   <div class="body-control-row body-control-row--stretch">
-    <div class=body-control-set>
+    <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
       <label class=body-control-set--label>Time Horizon  </label>
       <TimeHorizonControl
@@ -91,8 +88,8 @@ h2 {
       {/if}
     </div>
 
-    <div class=body-control-set>
-      <label class=body-control-set--label>Categories</label>
+    <div class="body-control-set">
+      <label class="body-control-set--label">Categories</label>
         <KeySelectionControl
           sortFunction={bucketSortOrder}
           options={bucketOptions}

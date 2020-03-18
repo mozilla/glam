@@ -7,9 +7,7 @@ export let moreInformation;
 
 <style>
 .data-error-msg {
-  /* background-color: var(--cool-gray-050); */
   border-radius: var(--space-1h);
-
   padding: var(--space-4x);
   display: grid;
   align-items: center;
@@ -18,13 +16,12 @@ export let moreInformation;
   height: 300px;
   --error-msg-width: 400px;
   --error-msg-color: var(--cool-gray-500);
-  margin-top: var(--space-8x);
+  margin-top: var(--space-16x);
   margin-bottom: var(--space-2x);
 }
 
 .data-error-msg__bg {
   background: radial-gradient(var(--cool-gray-100), var(--cool-gray-100));
-  /* box-shadow: inset 0px 0px 10px rgba(0,0,0,.1); */
   width: 200px;
   height: 200px;
   padding: var(--space-4x);
@@ -39,13 +36,13 @@ export let moreInformation;
   font-weight: bold;
   margin-bottom: var(--space-2x);
   color: var(--error-msg-color);
-  text-align:center;
+  text-align: center;
 }
 
 .data-error-msg__more-information {
   width: var(--error-msg-width);
   color: var(--error-msg-color);
-  line-height:1.5;
+  line-height: 1.5;
   margin-bottom: var(--space-2x);
   font-style: italic;
   color: var(--error-msg-color);
@@ -55,7 +52,7 @@ export let moreInformation;
 .data-error-msg__call-to-action {
   width: var(--error-msg-width);
   color: var(--error-msg-color);
-  line-height:1.5;
+  line-height: 1.5;
 }
 
 </style>
