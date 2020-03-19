@@ -34,7 +34,14 @@ export function authenticate(successCallback) {
       const query = window.location.search;
       if (query.includes('code=') && query.includes('state=')) {
         await auth0.handleRedirectCallback();
-        window.location.reload();
+
+        // The Auth0 tutorial[1] recommends using window.history.replaceState at
+        // this point to remove the "code" and "state" query parameters. We
+        // don't need to do that because Router.svelte overwrites the
+        // querystring as soon as the user authenticates.
+        //
+        // [1] https://auth0.com/docs/quickstart/spa/vanillajs
+
         withToken(successCallback);
       } else {
         await auth0.loginWithRedirect({
