@@ -949,11 +949,6 @@ h2 span {
   color: var(--cool-gray-750)
 }
 
-.graphic-body__title--padding {
-  padding-left: var(--space-4x);
-  padding-right: var(--space-4x);
-}
-
 .graphic-body-container {
   display: grid;
   grid-template-columns: auto min-content;
@@ -1012,4 +1007,12 @@ h2 span {
   border-right: 0;
   border-radius: var(--content-border-radius);
   width: var(--main-content-width);
+}
+
+.probe-details-title {
+  margin-top: var(--space-2x);
+}
+
+.graphic-body__content--no-padding .probe-details-title {
+  padding-left: var(--space-4x);
 }

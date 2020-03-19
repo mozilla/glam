@@ -18,7 +18,7 @@ export let moreInformation;
   height: 300px;
   --error-msg-width: 400px;
   --error-msg-color: var(--cool-gray-500);
-  margin-top: var(--space-8x);
+  margin-top: var(--space-16x);
   margin-bottom: var(--space-2x);
 }
 
