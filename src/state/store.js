@@ -14,6 +14,9 @@ import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 
 import { validate, noDuplicates, noResponse } from '../utils/data-validation';
 
+// TODO: move this to the new config.js when 'product' is added.
+const DEFAULT_PROBE_PROCESS = 'content';
+
 export function getField(fieldKey) {
   return CONFIG.fields[fieldKey];
 }
@@ -95,7 +98,7 @@ const initialState = {
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryString('os') || 'Windows',
   versions: getFromQueryString('versions', true) || [],
-  process: getFromQueryString('process') || 'parent',
+  process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS,
   searchIsActive: false,
   searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
