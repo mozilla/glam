@@ -20,8 +20,9 @@ function delta(a, b, al) {
   if (al === 'build_id') {
     if (!b) return undefined;
     const hours = (+(b) - +(a)) / 1000 / 60 / 60;
-    if (hours < 24 && hours > -24) return `${~~hours} hour${~~hours === 1 ? '' : 's'}`;
-    const days = ~~(hours / 24);
+    let hoursLabel = Math.floor(hours);
+    if (hours < 24 && hours > -24) return `${hoursLabel} hour${hoursLabel === 1 ? '' : 's'}`;
+    const days = Math.floor(hours / 24);
     return `${days} day${days === 1 ? '' : 's'}`;
   }
   const versions = b - a;
@@ -88,7 +89,7 @@ text: description,
 
       {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
       6)}-{parsedLabel.slice(6, 8)}{' '}</span> 
-    <span class=big-label--value--time> {parsedLabel.slice(8, 10)}:</span><span class=big-label--value--time>{parsedLabel.slice(10, 12)}:</span><span class=big-label--value--time>{parsedLabel.slice(12, 14)}</span>
+    <span class=big-label--value--time>{parsedLabel.slice(8, 10)}:</span><span class=big-label--value--time>{parsedLabel.slice(10, 12)}:</span><span class=big-label--value--time>{parsedLabel.slice(12, 14)}</span>
     {:else}
         {value}
     {/if}

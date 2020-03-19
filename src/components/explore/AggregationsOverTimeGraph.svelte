@@ -27,7 +27,6 @@ import { aggregationsOverTimeGraph } from '../../utils/constants';
 
 export let title;
 export let description;
-export let viewType;
 export let data;
 export let markers;
 export let metricKeys; // the active keys (eg which percentiles / categories are active)

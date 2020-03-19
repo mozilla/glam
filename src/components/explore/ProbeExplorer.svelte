@@ -32,8 +32,6 @@ import {
 
 import { histogramSpring } from '../../utils/animation';
 
-export let viewType;
-
 export let data;
 export let markers;
 export let key;

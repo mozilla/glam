@@ -104,7 +104,8 @@ export const explorerComparisonSmallMultiple = {
   bottom: aggregationsOverTimeGraph.bottom,
   borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,
-  insufficientDataAdjustment: aggregationsOverTimeGraph.insufficientDataAdjustment, // amount of width to add to graph when buildIDComparisonGraph is hidden
+  // amount of width to add to graph when buildIDComparisonGraph is hidden
+  insufficientDataAdjustment: aggregationsOverTimeGraph.insufficientDataAdjustment,
 };
 
 export const compareClientCountsGraph = {

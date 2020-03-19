@@ -31,8 +31,6 @@ export let hovered;
 let margins;
 
 let dataGraphicMounted;
-let L;
-let T;
 let BW;
 let BH;
 let bodyWidth;
@@ -47,35 +45,6 @@ export let hoverValue = {};
 
 </script>
 
-<style>
-div {
-  /* opacity:.6; */
-  transition: opacity 100ms;
-}
-
-.hovered {
-  opacity: 1;
-}
-
-.annotation-line {
-  stroke: var(--cool-gray-650);
-  stroke-dasharray: 1,1;
-}
-
-.annotation-line--vol {
-  stroke: var(--cool-gray-450);
-  stroke-dasharray: 1,0;
-  stroke-width: 3;
-}
-
-.annotation-text {
-  fill: var(--cool-gray-650);
-  text-transform: uppercase;
-  font-size: 10px;
-}
-
-</style>
-
 <div>
 <h3 style='padding-left: {totalClientsGraph.left}px; padding-right: {totalClientsGraph.right}px' class=data-graphic__element-title>
   {title}
@@ -86,7 +55,7 @@ div {
 }
   } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
 
-  <div class:hovered={!!hovered.datum}>
+  <div>
     <DataGraphic
       yType="linear"
       xType={aggregationLevel === 'build_id' ? 'time' : 'scalePoint'}
@@ -177,7 +146,9 @@ div {
             y: yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,
 }} from={{
- x: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize,
+  x: xScale(reference.label),
+  y: yScale(reference.audienceSize),
+  audienceSize: reference.audienceSize,
 }} let:tweenValue>
             <ReferenceSymbol
             size={20}
