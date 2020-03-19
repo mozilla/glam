@@ -1,6 +1,7 @@
 <script>
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
+import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';

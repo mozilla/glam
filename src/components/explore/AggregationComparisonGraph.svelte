@@ -54,8 +54,8 @@ function placeShapeY(value) {
 const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
 
 // If insufficient data, let's not use the spring on mount.
-$: if (leftPoints) dotsAndLines.setHover(leftPoints, dataVolume <= 2);
-$: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
+$: if (leftPoints && yScale) dotsAndLines.setHover(leftPoints, dataVolume <= 2);
+$: if (rightPoints && yScale) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 
 </script>
 
@@ -168,7 +168,7 @@ alignment: 'center',
       <ReferenceSymbol 
         xLocation={dataVolume === 2 ? xScale(rightLabel) : right} 
         yLocation={$dotsAndLines[bin].rightY} 
-        color={$dotsAndLines[bin].color} 
+        color={$dotsAndLines[bin].color}
       />
     {/each}
   </g>
