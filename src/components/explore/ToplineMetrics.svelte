@@ -1,6 +1,6 @@
 <script>
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
-import BigLabel from './BigLabel.svelte';
+import ToplineRow from './ToplineRow.svelte';
 
 import { toplineRefLabel } from '../../utils/constants';
 
@@ -31,7 +31,7 @@ function absDiff(a, b, perc = false) {
   align-content: start;
 '>
 <Tweenable params={{ duration: 250 }} value={reference.audienceSize} let:tweenValue>
-<BigLabel 
+<ToplineRow 
   value={reference.label} 
   {aggregationLevel}
   description="Set the reference point ⭑ by clicking on one of the graphs below."
@@ -52,9 +52,9 @@ function absDiff(a, b, perc = false) {
         clients
       </span>
   </span>
-</BigLabel>
+</ToplineRow>
 {#if showHover}
-<BigLabel params={{ duration: 0 }} 
+<ToplineRow params={{ duration: 0 }} 
   value={hovered.datum ? hovered.datum.label : undefined}
   compare={reference.label}
   {aggregationLevel}
@@ -82,7 +82,7 @@ absDiff(hovered.datum.audienceSize, tweenValue, true),
     </div>
     {/if}
   </span>
-</BigLabel>
+</ToplineRow>
 {/if}
 </Tweenable>
 
