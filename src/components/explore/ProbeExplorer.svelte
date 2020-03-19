@@ -11,7 +11,13 @@ import TotalClientsGraph from './TotalClientsGraph.svelte';
 import ComparisonSummary from './ComparisonSummary.svelte';
 import CompareClientCounts from './CompareClientCounts.svelte';
 
-import { explorerComparisonSmallMultiple } from '../../utils/constants';
+import {
+  explorerComparisonSmallMultiple,
+  overTimeTitle,
+  clientVolumeOverTimeDescription as clientDescription,
+  compareDescription,
+} from '../../utils/constants';
+
 
 import {
   formatBuildIDToDateString,
@@ -22,6 +28,8 @@ import {
 } from '../../utils/probe-utils';
 
 import { histogramSpring } from '../../utils/animation';
+
+export let viewType;
 
 export let data;
 export let markers;
@@ -42,6 +50,8 @@ export let summaryLabel = 'perc.';
 
 export let aggregationsOverTimeTitle;
 export let aggregationsOverTimeDescription;
+export let clientVolumeOverTimeTitle = overTimeTitle('clientVolume', aggregationLevel);
+export let clientVolumeOverTimeDescription = clientDescription(aggregationLevel);
 
 //
 
@@ -168,9 +178,9 @@ $: if (hoverValue.x) {
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
     <div style="display: {insufficientData ? 'none' : 'block'}">
       <CompareOverTimeGraph
-        data={data}
         title={aggregationsOverTimeTitle}
         description={aggregationsOverTimeDescription}
+        data={data}
         xDomain={$domain}
         yDomain={yDomain}
         timeHorizon={timeHorizon}
@@ -199,6 +209,7 @@ $: if (hoverValue.x) {
   </div>
 
   <DistributionComparison
+    description={compareDescription(aggregationsOverTimeTitle)}
     yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
@@ -270,6 +281,8 @@ $: if (hoverValue.x) {
   />
   <div style="display: {insufficientData ? 'none' : 'block'}">
     <TotalClientsGraph
+      title={clientVolumeOverTimeTitle}
+      description={clientVolumeOverTimeDescription}
       data={clientCountsData}
       xDomain={$domain}
       yDomain={yClientsDomain}
@@ -292,6 +305,7 @@ $: if (hoverValue.x) {
   <div style="display: {insufficientData ? 'none' : 'block'}">
     <CompareClientCounts 
       data={clientCountsData}
+      description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}
       hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
       referenceValue={reference.audienceSize}

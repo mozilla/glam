@@ -9,6 +9,7 @@ import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 import { compareClientCountsGraph, tween } from '../../utils/constants';
 import { formatCount } from '../../utils/formatters';
 
+export let description;
 export let hoverValue;
 export let referenceValue;
 export let yDomain;
@@ -31,7 +32,7 @@ export let yDomain;
     Compare
     <span use:tooltipAction={
       {
-        text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+        text: description,
         location: 'top',
   }
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>

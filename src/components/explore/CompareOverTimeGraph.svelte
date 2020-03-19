@@ -27,6 +27,7 @@ import { aggregationsOverTimeGraph } from '../../utils/constants';
 
 export let title;
 export let description;
+export let viewType;
 export let data;
 export let markers;
 export let metricKeys; // the active keys (eg which percentiles / categories are active)
@@ -138,7 +139,7 @@ $: if (dataGraphicMounted) {
     {title} 
     <span use:tooltipAction={
       {
-        text: `${description} Hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●`,
+        text: description,
         location: 'top',
 }
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>

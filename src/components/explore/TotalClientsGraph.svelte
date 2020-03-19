@@ -19,6 +19,8 @@ import { totalClientsGraph, tween } from '../../utils/constants';
 
 
 export let data;
+export let title;
+export let description;
 export let aggregationLevel;
 export let xDomain;
 export let yDomain;
@@ -75,10 +77,10 @@ div {
 
 <div>
 <h3 style='padding-left: {totalClientsGraph.left}px; padding-right: {totalClientsGraph.right}px' class=data-graphic__element-title>
-  Total Clients by Build ID 
+  {title}
   <span use:tooltipAction={
     {
-      text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+      text: description,
       location: 'top',
 }
   } class=data-graphic__element-title__icon><Help size={14} /></span></h3>

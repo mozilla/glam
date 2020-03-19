@@ -22,14 +22,20 @@ function absDiff(a, b, perc = false) {
 
   <div style='
   padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;
-  display: grid; grid-template-columns: max-content max-content max-content max-content; grid-column-gap: var(--space-2x);
+  display: grid; 
+  grid-template-columns: max-content max-content max-content max-content; 
+  grid-column-gap: var(--space-2x);
   font-size: var(--text-02);
   align-items: start;
   min-height: var(--space-8x);
   align-content: start;
 '>
 <Tweenable params={{ duration: 250 }} value={reference.audienceSize} let:tweenValue>
-<BigLabel value={reference.label} {aggregationLevel}>
+<BigLabel 
+  value={reference.label} 
+  {aggregationLevel}
+  description="Set the reference point ⭑ by clicking on one of the graphs below."
+>
   <span slot='icon'>⭑</span>
     <span slot='label'>
       {#if showHover}
@@ -52,6 +58,7 @@ function absDiff(a, b, perc = false) {
   value={hovered.datum ? hovered.datum.label : undefined}
   compare={reference.label}
   {aggregationLevel}
+  description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑."
 >
   <span slot='icon'>●</span>
   <span slot='label'>Hovered</span>

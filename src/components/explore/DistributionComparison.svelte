@@ -15,6 +15,7 @@ import { twoPointSpring } from '../../utils/animation';
 
 import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
+export let description;
 export let leftDistribution;
 export let rightDistribution;
 export let leftLabel;
@@ -62,7 +63,7 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
   <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Compare
       <span use:tooltipAction={
         {
-text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart ●',
+text: description,
          location: 'top',
 }
       } class=data-graphic__element-title__icon><Help size={14} /></span></h3>

@@ -18,6 +18,7 @@ const niceMetricTypes = {
   percentiles: 'Percentiles',
   counts: 'Client Counts',
   proportions: 'Proportions',
+  clientVolume: 'Client Volume',
 };
 
 export function overTimeTitle(metricType, aggregationLevel) {
@@ -25,26 +26,42 @@ export function overTimeTitle(metricType, aggregationLevel) {
   return `${niceMetricTypes[metricType]} by ${niceAggregations[aggregationLevel]}`;
 }
 
+export function exploreInstructionsDescription(aggregationLevel) {
+  return `Hover to compare to reference ⭑; click to set reference ⭑ to hovered ${niceAggregations[aggregationLevel]} ●.`;
+}
+
 export function percentilesOverTimeDescription(aggregationLevel) {
   return `
   Shows the percentile values for the following probe
   aggregation by ${niceAggregations[aggregationLevel]}.
+  
+  ${exploreInstructionsDescription(aggregationLevel)}
   `;
 }
 
 export function proportionsOverTimeDescription(overTimePointMetricType, aggregationLevel) {
   return `
   Shows the ${overTimePointMetricType} of clients that have observed the 
-  following category / bin for the probe, grouped by ${niceAggregations[aggregationLevel]}.
+  following category / bin for the probe for each given ${niceAggregations[aggregationLevel]}.
+
+  ${exploreInstructionsDescription(aggregationLevel)}
   `;
 }
 
 export function clientVolumeOverTimeDescription(aggregationLevel) {
-  return `Volume of Clients by ${niceAggregations[aggregationLevel]}`;
+  return `
+  Shows the total volume of clients that have observed this probe for each given ${niceAggregations[aggregationLevel]}.
+
+  ${exploreInstructionsDescription(aggregationLevel)}
+  `;
 }
 
 export function clientProportionOverTimeDescription(aggregationLevel) {
   return `Proportion of Clients by ${niceAggregations[aggregationLevel]}`;
+}
+
+export function compareDescription(chartName) {
+  return `compares the reference ⭑ to the hovered value ● in the "${chartName}" chart`;
 }
 
 // layout constants for the explore charts

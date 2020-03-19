@@ -1,10 +1,13 @@
 <script>
 import { tweened } from 'svelte/motion';
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+import Help from 'udgl/icons/Help.svelte';
 import { formatToBuildID } from '../../utils/formatters';
 
 export let value;
 export let compare;
 export let aggregationLevel;
+export let description;
 
 export let params = { duration: 250 };
 const tw = tweened(+value, params);
@@ -39,6 +42,10 @@ $: diff = delta(compare, new Date($tw), aggregationLevel);
 .big-label--label {
   text-transform: uppercase;
   color: var(--cool-gray-600);
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  grid-column-gap: var(--space-1h);
 }
 .big-label--value {
   font-family: var(--main-mono-font);
@@ -66,7 +73,12 @@ $: diff = delta(compare, new Date($tw), aggregationLevel);
   <slot name=icon></slot>
 </div>
 <div class=big-label--label>
-  <slot name=label></slot>
+  <slot name=label></slot><span use:tooltipAction={
+    {
+text: description,
+     location: 'top',
+}
+  } class=data-graphic__element-title__icon><Help size={14} /></span>
 </div>
 <div class=big-label--value>
   {#if value}
