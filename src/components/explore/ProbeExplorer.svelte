@@ -5,11 +5,14 @@ import { format } from 'd3-format';
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import { window1D } from 'udgl/data-graphics/utils/window-functions';
 import ToplineMetrics from './ToplineMetrics.svelte';
-import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
-import DistributionComparison from './DistributionComparison.svelte';
-import TotalClientsGraph from './TotalClientsGraph.svelte';
+
+import AggregationsOverTimeGraph from './AggregationsOverTimeGraph.svelte';
+import AggregationComparisonGraph from './AggregationComparisonGraph.svelte';
+
+import ClientVolumeOverTimeGraph from './ClientVolumeOverTimeGraph.svelte';
+import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
+
 import ComparisonSummary from './ComparisonSummary.svelte';
-import CompareClientCounts from './CompareClientCounts.svelte';
 
 import {
   explorerComparisonSmallMultiple,
@@ -177,7 +180,7 @@ $: if (hoverValue.x) {
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
     <div style="display: {insufficientData ? 'none' : 'block'}">
-      <CompareOverTimeGraph
+      <AggregationsOverTimeGraph
         title={aggregationsOverTimeTitle}
         description={aggregationsOverTimeDescription}
         data={data}
@@ -205,10 +208,10 @@ $: if (hoverValue.x) {
         }}
     >
       <slot name=additional-plot-elements></slot>
-    </CompareOverTimeGraph>
+    </AggregationsOverTimeGraph>
   </div>
 
-  <DistributionComparison
+  <AggregationComparisonGraph
     description={compareDescription(aggregationsOverTimeTitle)}
     yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
@@ -262,7 +265,7 @@ $: if (hoverValue.x) {
         {/if}
       {/if}
     </g>
-  </DistributionComparison>
+  </AggregationComparisonGraph>
 
   <ComparisonSummary
     hovered={!!hovered.datum}
@@ -280,7 +283,7 @@ $: if (hoverValue.x) {
     showDiff={data.length > 1}
   />
   <div style="display: {insufficientData ? 'none' : 'block'}">
-    <TotalClientsGraph
+    <ClientVolumeOverTimeGraph
       title={clientVolumeOverTimeTitle}
       description={clientVolumeOverTimeDescription}
       data={clientCountsData}
@@ -303,7 +306,7 @@ $: if (hoverValue.x) {
     />
   </div>
   <div style="display: {insufficientData ? 'none' : 'block'}">
-    <CompareClientCounts 
+    <CompareClientVolumeGraph 
       data={clientCountsData}
       description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}
