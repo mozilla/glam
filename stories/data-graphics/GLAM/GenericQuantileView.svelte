@@ -16,12 +16,14 @@ let which = 1;
 let aggregationLevel = 'build_id';
 
 // let's double or triple GCMS_VERSION.response
-const gcmsVersionFaked = Array.from({ length: 10 })
-  .map((_, i) => GCMS_VERSION.response.slice(-1).map((d) => {
-    const di = { data: [...d.data], metadata: { ...d.metadata } };
-    di.metadata.version = Number(di.metadata.version) - (9 - i);
-    return di;
-  })).flat();
+const lastResponse = GCMS_VERSION.response[GCMS_VERSION.response.length - 1];
+const gcmsVersionFaked = Array.from({ length: 10 }, (_, i) => {
+  const element = {};
+  element.data = [...lastResponse.data];
+  element.metadata = { ...lastResponse.metadata };
+  element.metadata.version = Number(lastResponse.metadata.version) - (9 - i);
+  return element;
+});
 
 let probes = [
   {

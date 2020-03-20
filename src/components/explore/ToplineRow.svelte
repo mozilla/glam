@@ -31,7 +31,9 @@ function delta(a, b, al) {
     return `${str} ${dir} reference`;
   }
   const versions = b - a;
-  return `${versions} versions`;
+  const versionsLabel = Math.abs(versions);
+  const dir = versions > 0 ? 'after' : 'before';
+  return `${versionsLabel} version${versionsLabel === 1 ? '' : 's'} ${dir} reference`;
 }
 let diff;
 

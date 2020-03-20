@@ -102,7 +102,7 @@ export let hoverValue = {};
       <Line 
         curve="curveStep"
         {data}
-        xAccessor='label' 
+        xAccessor="label"
         yAccessor="totalClients"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
