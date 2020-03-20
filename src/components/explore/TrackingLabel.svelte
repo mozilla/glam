@@ -33,9 +33,6 @@ onMount(() => {
 
 $: $elementTw = (xp < $width / 2) ? 5 : (-elementWidth);
 
-let finalX = xp;
-$: finalX = xp;
-
 </script>
 
 <style>
@@ -53,7 +50,7 @@ $: finalX = xp;
 
 <text
   filter=url(#outline)
-  x={finalX}
+  x={xp}
   dx={$elementTw}
   y={yLocation}
   class=tracking-label
@@ -64,7 +61,7 @@ $: finalX = xp;
 
 <text 
   bind:this={textElement}
-  x={finalX}
+  x={xp}
   dx={$elementTw}
   y={yLocation}
   class=tracking-label
