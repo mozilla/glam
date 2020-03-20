@@ -105,5 +105,4 @@ absDiff(hovered.datum.audienceSize, tweenValue, true),
 </ToplineRow>
 {/if}
 </Tweenable>
-
 </div>

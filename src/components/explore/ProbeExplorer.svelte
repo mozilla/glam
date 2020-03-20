@@ -54,8 +54,6 @@ export let aggregationsOverTimeDescription;
 export let clientVolumeOverTimeTitle = overTimeTitle('clientVolume', aggregationLevel);
 export let clientVolumeOverTimeDescription = clientDescription(aggregationLevel);
 
-//
-
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
 let hoverActive = data.length > 2;
@@ -99,7 +97,6 @@ $: if (aggregationLevel === 'build_id') {
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
 export let reference = data[data.length - 1];
-// $: if (timeHorizon) reference = data[data.length - 1];
 
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.
@@ -113,22 +110,14 @@ $: if (densityMetricType && reference[densityMetricType]) {
 }
 
 // client counts.
-
-
-let clientCountsData = clientCounts(data);
-$: clientCountsData = clientCounts(data);
-
 const MULT = 1.1;
-let yVals = clientCountsData.map((d) => d.totalClients);
+$: clientCountsData = clientCounts(data);
 $: yVals = clientCountsData.map((d) => d.totalClients);
-let yMax = Math.max(...yVals);
 $: yMax = Math.max(50, Math.max(...yVals));
-let yClientsDomain;
 $: yClientsDomain = [0, yMax * MULT];
 
 
 // setting hovered value.
-
 function get(d, x) {
   return window1D({
     data: d, value: x, lowestValue: $domain[0], highestValue: $domain[1],

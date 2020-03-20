@@ -13,7 +13,6 @@ export let description;
 export let hoverValue;
 export let referenceValue;
 export let yDomain;
-// get yDomain.
 
 </script>
 

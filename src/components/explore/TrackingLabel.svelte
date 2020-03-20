@@ -17,10 +17,8 @@ const yStart = getContext(`${align}Plot`);
 
 let dir = align === 'top' ? 1 : -1;
 let sideCorrection = align === 'top' ? fontSize - 2 : 0;
-let yLocation = $yStart + ((dir) * (sideCorrection + yOffset + 5));
 $: yLocation = $yStart + ((dir) * (sideCorrection + yOffset + 5));
 
-let xp = xr || $xScale(x);
 $: xp = xr || $xScale(x);
 
 

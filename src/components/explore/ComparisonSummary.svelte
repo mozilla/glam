@@ -12,12 +12,8 @@ export let leftLabel;
 export let rightLabel;
 export let keySet;
 export let binLabel;
-export let compareTo = 'left-right';
 export let valueFormatter = (t) => t;
 export let keyFormatter = (t) => t;
-// FIXME: switch to showLeft, showRight, showDiff, showLabels
-export let dataVolume = 10;
-export let showCategories = true;
 export let showLeft = true;
 export let showRight = true;
 export let showDiff = true;
@@ -33,13 +29,14 @@ let displayValues = [];
 
 function createNewPercentiles(lVal, rVal, ks) {
   return ks.map((key) => {
-    const leftValue = lVal ? lVal[key] : undefined;// left.percentiles.find((p) => p.bin === percentile).value : undefined;
-    const rightValue = rVal ? rVal[key] : undefined; // right.percentiles.find((p) => p.bin === percentile).value : undefined;
+    const leftValue = lVal ? lVal[key] : undefined;
+    const rightValue = rVal ? rVal[key] : undefined;
     return {
       key,
       leftValue,
       rightValue,
-      percentageChange: (leftValue && rightValue) ? percentChange(leftValue, rightValue) : undefined,
+      percentageChange: (leftValue && rightValue)
+        ? percentChange(leftValue, rightValue) : undefined,
     };
   });
 }
@@ -49,7 +46,6 @@ $: displayValues = createNewPercentiles(left, right, keySet);
 </script>
 
 <style>
-
 .summary {
   padding-bottom: var(--space-2x);
   max-width: 345px;
@@ -126,35 +122,26 @@ td, th {
   text-overflow: ellipsis;
 }
 
+.value-change {
+  min-width: 54px; 
+  width: max-content;
+}
 </style>
 
 <div class=summary>
     <h3 class=data-graphic__element-title>Summary
-        <span use:tooltipAction={
-          {
-text: 'compares the numeric values of the reference ⭑ to the hovered values ●',
-           location: 'top',
-}
-        } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
-
+        <span 
+          use:tooltipAction={
+            {
+              text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
+              location: 'top',
+            }
+          } 
+          class=data-graphic__element-title__icon><Help size={14} /></span></h3>
   <table>
     <thead>
-
       <tr>
-
         <th class="value-label">{binLabel}</th>
-
-            <!-- {#if showLeft}
-            <th class:hidden={!hovered} class="summary-label ref">
-                <slot name='left-label'>
-                  <div>
-                      {leftLabel || ''}
-                    </slot>
-                    {#if hovered}<span class='small-shape'>●</span>{/if}
-                  </div>
-              </slot>
-            </th>
-            {/if} -->
             {#if showLeft}
             <th class:hidden={!hovered} class="summary-label ref">
                   <div>
@@ -162,40 +149,23 @@ text: 'compares the numeric values of the reference ⭑ to the hovered values �
                   </div>
             </th>
             {/if}
-
-
-        <!-- FIXME: let's move to slots here -->
-        <!-- {#if showRight}
-        <th class="summary-label hov">
-          <slot name='right-label'>
-            <div>
-              <slot name='right-label-text'>
-                {rightLabel || ''}
-              </slot>
-            <span class='small-shape'>⭑</span></div>
-          </slot>
-        </th>
-        {/if} -->
         {#if showRight}
         <th class="summary-label hov">
             <div>
               <span class='small-shape'>⭑</span> {rightLabel || ''}</div>
         </th>
         {/if}
-
         {#if showDiff}
           <th style="width: max-content" class:hidden={!hovered}>Diff.</th>
         {/if}
-
       </tr>
-
     </thead>
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
             <tr>
               <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
                 <span class=percentile-label-block
-                style="background-color:{colorMap(key)}"></span>{keyFormatter(key)}</td>
+                style="background-color: {colorMap(key)};"></span>{keyFormatter(key)}</td>
 
               {#if showLeft}
               <td  class:hidden={!hovered} class=value-left>
@@ -210,12 +180,13 @@ text: 'compares the numeric values of the reference ⭑ to the hovered values �
                 {:else}
                     {' '}
                 {/if}
-                <!-- {right ? valueFormatter(rightValue) : ' '} -->
               </td>
               {/if}
 
               {#if showDiff}
-              <td style="min-width: 54px; width: max-content"  class:hidden={!hovered} class=value-change>{percentageChange ? pFmt(percentageChange) : ' '}</td>
+              <td class:hidden={!hovered} class=value-change>
+                {percentageChange ? pFmt(percentageChange) : ' '}
+              </td>
               {/if}
 
             </tr>

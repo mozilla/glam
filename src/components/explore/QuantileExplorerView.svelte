@@ -1,7 +1,5 @@
 <script>
 import { setContext, createEventDispatcher } from 'svelte';
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing } from 'svelte/easing';
 
 import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';

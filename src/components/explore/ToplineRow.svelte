@@ -11,10 +11,14 @@ export let description;
 
 export let params = { duration: 250 };
 const tw = tweened(+value, params);
-$: $tw = +value;
 
-let parsedLabel = formatToBuildID(new Date($tw));
-$: parsedLabel = formatToBuildID(new Date($tw));
+function pluralize(s, c) {
+  return `${s}${Math.abs(c) === 1 ? '' : 's'}`;
+}
+
+function when(v) {
+  return v > 0 ? 'after' : 'before';
+}
 
 function delta(a, b, al) {
   if (al === 'build_id') {
@@ -22,22 +26,21 @@ function delta(a, b, al) {
     const hours = (+(b) - +(a)) / 1000 / 60 / 60;
     let hoursLabel = Math.abs(Math.floor(hours));
     let str;
-    if (hours < 24 && hours > -24) str = `${hoursLabel} hour${hoursLabel === 1 ? '' : 's'}`;
+    if (hours < 24 && hours > -24) str = `${hoursLabel} ${pluralize('hour', hoursLabel)}`;
     else {
       const days = Math.abs(Math.floor(hours / 24));
-      str = `${days} day${days === 1 ? '' : 's'}`;
+      str = `${days} ${pluralize('day', days)}`;
     }
-    const dir = hours > 0 ? 'after' : 'before';
-    return `${str} ${dir} reference`;
+    return `${str} ${when(hours)} reference`;
   }
   const versions = b - a;
   const versionsLabel = Math.abs(versions);
-  const dir = versions > 0 ? 'after' : 'before';
-  return `${versionsLabel} version${versionsLabel === 1 ? '' : 's'} ${dir} reference`;
+  return `${versionsLabel} ${pluralize('versions', versionsLabel)} ${when(versions)} reference`;
 }
-let diff;
 
+$: $tw = +value;
 $: diff = delta(compare, new Date($tw), aggregationLevel);
+$: parsedLabel = formatToBuildID(new Date($tw));
 
 </script>
 
@@ -95,18 +98,17 @@ text: description,
 </div>
 <div class=big-label--value>
   {#if value}
-  <div>
-  {#if aggregationLevel === 'build_id'}
-  <span class=big-label--value--date>
-
-      {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
-      6)}-{parsedLabel.slice(6, 8)}{' '}</span> 
-    <span class=big-label--value--time>{parsedLabel.slice(8, 10)}:</span><span class=big-label--value--time>{parsedLabel.slice(10, 12)}:</span><span class=big-label--value--time>{parsedLabel.slice(12, 14)}</span>
-    {:else}
-        {value}
-    {/if}
-  </div>
-    {/if}
+    <div>
+    {#if aggregationLevel === 'build_id'}
+      <span class=big-label--value--date>
+        {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
+        6)}-{parsedLabel.slice(6, 8)}</span> 
+      <span class=big-label--value--time>{parsedLabel.slice(8, 10)}:</span><span class=big-label--value--time>{parsedLabel.slice(10, 12)}:</span><span class=big-label--value--time>{parsedLabel.slice(12, 14)}</span>
+      {:else}
+          {value}
+      {/if}
+    </div>
+  {/if}
 
   <div class=big-label--compare>
     <slot name=compare>
