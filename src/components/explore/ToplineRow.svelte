@@ -46,11 +46,11 @@ $: parsedLabel = formatToBuildID(new Date($tw));
 
 <style>
 
-.big-label--icon {
+.big-label__icon {
   color: var(--cool-gray-600);
 }
 
-.big-label--label {
+.big-label__label {
   text-transform: uppercase;
   color: var(--cool-gray-600);
   display: grid;
@@ -59,66 +59,66 @@ $: parsedLabel = formatToBuildID(new Date($tw));
   grid-column-gap: var(--space-1h);
 }
 
-.big-label--compare {
-  color: var(--cool-gray-600);
-}
-
-.big-label--value {
+.big-label__value {
   font-family: var(--main-mono-font);
   text-align: right;
   width: var(--space-32x);
 }
 
-.big-label--value--date {
+.big-label__value__date {
   font-weight: bold;
   color: var(--cool-gray-700);
 }
 
-.big-label--value--time {
+.big-label__value__time {
   color: var(--cool-gray-600);
 }
 
-.big-label--count {
+.big-label__value__compare {
+  color: var(--cool-gray-600);
+}
+
+.big-label__count {
   text-align: right;
   font-family: var(--main-mono-font);
   min-width: var(--space-24x);
 }
 </style>
 
-<div class=big-label--icon>
+<div class=big-label__icon>
   <slot name=icon></slot>
 </div>
-<div class=big-label--label>
+<div class=big-label__label>
   <slot name=label></slot><span use:tooltipAction={
     {
-text: description,
-     location: 'top',
-}
+      text: description,
+      location: 'top',
+    }
   } class=data-graphic__element-title__icon><Help size={14} /></span>
 </div>
-<div class=big-label--value>
+<div class=big-label__value>
   {#if value}
     <div>
     {#if aggregationLevel === 'build_id'}
-      <span class=big-label--value--date>
+      <span class=big-label__value__date>
         {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
         6)}-{parsedLabel.slice(6, 8)}</span> 
-      <span class=big-label--value--time>{parsedLabel.slice(8, 10)}:</span><span class=big-label--value--time>{parsedLabel.slice(10, 12)}:</span><span class=big-label--value--time>{parsedLabel.slice(12, 14)}</span>
+      <span class=big-label__value__time>{parsedLabel.slice(8, 10)}:</span><span class=big-label__value__time>{parsedLabel.slice(10, 12)}:</span><span class=big-label__value__time>{parsedLabel.slice(12, 14)}</span>
       {:else}
           {value}
       {/if}
     </div>
   {/if}
 
-  <div class=big-label--compare>
+  <div class=big-label__value__compare>
     <slot name=compare>
       {#if value && compare}
         ({diff})
       {/if}
     </slot>
   </div>
+</div>
 
-  </div>
-  <div class=big-label--count>
-    <slot name=count></slot>
-  </div>
+<div class=big-label__count>
+  <slot name=count></slot>
+</div>
