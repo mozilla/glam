@@ -92,7 +92,7 @@ text: description,
       height={bottom - top}
       fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
-text: 'shows the distribution of the currently-hovered point on the line chart',
+text: 'Shows the distribution of the currently-hovered point on the line chart',
         location: 'top',
 alignment: 'center',
       }}
@@ -104,7 +104,7 @@ alignment: 'center',
       height={bottom - top}
       fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
-text: 'shows the distribution of the current reference point on the line chart',
+text: 'Shows the distribution of the current reference point on the line chart',
         location: 'top',
 alignment: 'center',
       }}

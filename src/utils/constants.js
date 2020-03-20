@@ -60,7 +60,7 @@ export function clientProportionOverTimeDescription(aggregationLevel) {
 }
 
 export function compareDescription(chartName) {
-  return `compares the reference ⭑ to the hovered value ● in the "${chartName}" chart`;
+  return `Compares the reference ⭑ to the hovered value ● in the "${chartName}" chart`;
 }
 
 // layout constants for the explore charts
