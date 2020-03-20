@@ -18,7 +18,6 @@ import { formatCount } from '../../utils/formatters';
 
 import { totalClientsGraph, tween } from '../../utils/constants';
 
-
 export let data;
 export let title;
 export let description;
@@ -78,7 +77,7 @@ export let hoverValue = {};
     >
       <filter id="outline">
         <feMorphology operator="dilate" radius="1.5" in="SourceGraphic" result="THICKNESS" />
-        <feComposite operator="out" in="THICKNESS" in2="SourceGraphic"></feComposite>
+        <feComposite operator="out" in="THICKNESS" in2="SourceGraphic" />
       </filter>
 
       <LeftAxis tickFormatter={formatCount} lineStyle=short tickCount={3} />
@@ -106,7 +105,8 @@ export let hoverValue = {};
         yAccessor="totalClients"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
-        area={true} />
+        area={true} 
+      />
       </g>
       <g slot=annotation let:top let:xScale let:yScale let:bottom let:width>
         {#if hovered && hovered.datum}
@@ -119,7 +119,8 @@ export let hoverValue = {};
             location: xScale(reference.label),
             y: yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,
-  }} let:tweenValue={tv1}>
+          }}
+          let:tweenValue={tv1}>
           <TrackingLine 
             xr={tv1.location}
             data-audienceSize={reference.audienceSize}
@@ -127,10 +128,14 @@ export let hoverValue = {};
         </Tweenable>
         {/if}
         {#if hovered && hovered.datum}
-          <TrackingLabel align=bottom x={hovered.datum.label} background="var(--cool-gray-200)" label="Hov." />
+          <TrackingLabel 
+            align=top x={hovered.datum.label}
+            background=var(--cool-gray-100)
+            label="Hov."
+          />
           <circle 
-            cx={xScale(hovered.datum.label)} 
-            cy={yScale(hovered.datum.audienceSize)} 
+            cx={xScale(hovered.datum.label)}
+            cy={yScale(hovered.datum.audienceSize)}
             r=3
             fill=var(--cool-gray-700)
           />
@@ -143,28 +148,26 @@ export let hoverValue = {};
             x: xScale(reference.label),
             y: yScale(reference.audienceSize),
             audienceSize: reference.audienceSize,
-}} from={{
-  x: xScale(reference.label),
-  y: yScale(reference.audienceSize),
-  audienceSize: reference.audienceSize,
-}} let:tweenValue>
+          }}
+          from={{
+            x: xScale(reference.label),
+            y: yScale(reference.audienceSize),
+            audienceSize: reference.audienceSize,
+          }} let:tweenValue>
             <ReferenceSymbol
             size={20}
             xLocation={tweenValue.x} yLocation={tweenValue.y} color=var(--cool-gray-700) />
             <TrackingLabel 
-              align=top 
-              label="Ref." 
-              xr={tweenValue.x} 
-              background=var(--cool-gray-100)
-              key={reference.label}
+              align=bottom
+              label="Ref."
+              xr={tweenValue.x}
+              background={bottom - tweenValue.y < 10 ? 'var(--cool-gray-100)' : 'var(--cool-gray-200)'}
+              _svelteBugWorkaround={reference.label}
             />
-
-
         </Tweenable>
       {/if}
       </g>
       <FirefoxReleaseVersionMarkers labels={false} />
-
     </DataGraphic>
   </div>
 </div>

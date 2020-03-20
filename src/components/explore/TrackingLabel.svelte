@@ -38,6 +38,7 @@ $: $elementTw = (xp < $width / 2) ? 5 : (-elementWidth);
   fill: var(--cool-gray-650);
   text-transform: uppercase;
   font-size: 10px;
+  transition: fill 400ms;
 }
 </style>
 
