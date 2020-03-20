@@ -1,13 +1,13 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
 
-export async function getRandomProbes() {
+export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ n: 9 }),
+    body: JSON.stringify({ n: numProbes, process }),
   }).then((response) => response.json());
   return data;
 }

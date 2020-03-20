@@ -9,6 +9,8 @@
   import { store, currentQuery } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
   import { getPath } from '../Router.svelte';
+
+  const NUMBER_OF_RANDOM_PROBES = 9;  // TODO: add this to the upcoming config.js
 </script>
 
 <style>
@@ -89,9 +91,9 @@
     <MarketingBlock />
     <div class="random-probe-view">
       <h2>Explore</h2>
-      {#await getRandomProbes()}
+      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, $store.process)}
         <div class="probes-overview">
-          {#each Array.from({ length: 9 }).fill(null) as _, i}
+          {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
               <RandomProbePlaceholder />
             </div>

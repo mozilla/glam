@@ -246,6 +246,7 @@ def probes(request):
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
+    process = request.data.get("process", "content")
     try:
         n = int(n)
     except ValueError:
@@ -270,6 +271,7 @@ def random_probes(request):
                     probe=probe.info["name"],
                     channel="nightly",
                     os="Windows",
+                    process=process,
                     aggregationLevel="version",
                 )
             except NotFound:
