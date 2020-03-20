@@ -62,7 +62,7 @@ export let yDomain;
         height={bottom - top}
         fill={compareClientCountsGraph.bgColor}
         use:tooltipAction={{
-    text: 'shows the distribution of the currently-hovered point on the line chart',
+    text: 'Shows the distribution of the currently-hovered point on the line chart',
           location: 'top',
     alignment: 'center',
         }}
@@ -74,7 +74,7 @@ export let yDomain;
       height={bottom - top}
       fill={compareClientCountsGraph.bgColor}
       use:tooltipAction={{
-text: 'shows the distribution of the current reference point on the line chart',
+text: 'Shows the distribution of the current reference point on the line chart',
         location: 'top',
 alignment: 'center',
       }}
