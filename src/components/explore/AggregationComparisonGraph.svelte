@@ -15,6 +15,7 @@ import { twoPointSpring } from '../../utils/animation';
 
 import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
+export let description;
 export let leftDistribution;
 export let rightDistribution;
 export let leftLabel;
@@ -53,8 +54,8 @@ function placeShapeY(value) {
 const dotsAndLines = twoPointSpring(rightPoints, rightPoints, placeShapeY, colorMap);
 
 // If insufficient data, let's not use the spring on mount.
-$: if (leftPoints) dotsAndLines.setHover(leftPoints, dataVolume <= 2);
-$: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
+$: if (leftPoints && yScale) dotsAndLines.setHover(leftPoints, dataVolume <= 2);
+$: if (rightPoints && yScale) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
 
 </script>
 
@@ -62,7 +63,7 @@ $: if (rightPoints) dotsAndLines.setReference(rightPoints, dataVolume <= 2);
   <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Compare
       <span use:tooltipAction={
         {
-text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart ●',
+text: description,
          location: 'top',
 }
       } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
@@ -79,6 +80,8 @@ text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart 
   right={explorerComparisonSmallMultiple.right}
   bottom={explorerComparisonSmallMultiple.bottom}
   top={explorerComparisonSmallMultiple.top}
+  bottomBorder
+  borderColor={explorerComparisonSmallMultiple.borderColor}
   key={key}
 >
   <g slot=background let:left let:bottom let:top let:right>
@@ -87,10 +90,9 @@ text: 'compares the reference ⭑ to the hovered value on the "Over Time" chart 
       y={top}
       width={(right - left) / 2}
       height={bottom - top}
-      fill="var(--cool-gray-200)"
-      opacity=.25
+      fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
-text: 'shows the distribution of the currently-hovered point on the line chart',
+text: 'Shows the distribution of the currently-hovered point on the line chart',
         location: 'top',
 alignment: 'center',
       }}
@@ -100,10 +102,9 @@ alignment: 'center',
       y={top}
       width={(right - left) / 2}
       height={bottom - top}
-      fill="var(--cool-gray-200)"
-      opacity=.25
+      fill={explorerComparisonSmallMultiple.bgColor}
       use:tooltipAction={{
-text: 'shows the distribution of the current reference point on the line chart',
+text: 'Shows the distribution of the current reference point on the line chart',
         location: 'top',
 alignment: 'center',
       }}
@@ -167,7 +168,7 @@ alignment: 'center',
       <ReferenceSymbol 
         xLocation={dataVolume === 2 ? xScale(rightLabel) : right} 
         yLocation={$dotsAndLines[bin].rightY} 
-        color={$dotsAndLines[bin].color} 
+        color={$dotsAndLines[bin].color}
       />
     {/each}
   </g>

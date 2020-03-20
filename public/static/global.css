@@ -915,6 +915,7 @@ tr td.data-cell--graphic:hover {
     padding-right: var(--space-base);
     font-size: var(--text-015);
     border-radius: var(--space-1h);
+    max-width: var(--space-40x);
     z-index:2001;
 }
 
@@ -922,7 +923,7 @@ tr td.data-cell--graphic:hover {
     margin:0;
     font-size: var(--text-02);
     font-weight: 300;
-    color: var(--cool-gray-500);
+    color: var(--cool-gray-700);
     display: grid;
     grid-auto-flow: column;
     align-items: center;

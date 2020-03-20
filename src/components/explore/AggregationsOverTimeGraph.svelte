@@ -9,18 +9,24 @@ import GraphicBody from 'udgl/data-graphics/GraphicBody.svelte';
 import Line from 'udgl/data-graphics/elements/Line.svelte';
 import Help from 'udgl/icons/Help.svelte';
 
+import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
+
 import Springable from 'udgl/data-graphics/motion/Springable.svelte';
 
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
 
-import { window1DPlacement, window1D } from 'udgl/data-graphics/utils/window-functions';
+import { window1DPlacement } from 'udgl/data-graphics/utils/window-functions';
 import ReferenceSymbol from '../ReferenceSymbol.svelte';
 import BuildIDRollover from './BuildIDRollover.svelte';
+import TrackingLine from './TrackingLine.svelte';
+import TrackingLabel from './TrackingLabel.svelte';
 
 import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
-import { buildIDComparisonGraph } from '../../utils/constants';
+import { aggregationsOverTimeGraph } from '../../utils/constants';
 
+export let title;
+export let description;
 export let data;
 export let markers;
 export let metricKeys; // the active keys (eg which percentiles / categories are active)
@@ -115,24 +121,7 @@ $: if (xScale && rightPlot) {
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);
 
-function get(d, x) {
-  return window1D({
-    data: d, value: x, lowestValue: xDomain[0], highestValue: xDomain[1],
-  });
-}
-
-let hoverValue = {};
-$: if (hoverValue.x) {
-  const i = get(data, hoverValue.x);
-  hovered = {
-    ...hoverValue,
-    datum: data[i.currentIndex],
-    previous: data[i.previousIndex],
-    next: data[i.nextIndex],
-  };
-} else {
-  hovered = {};
-}
+export let hoverValue = {};
 
 let dataGraphicMounted;
 
@@ -142,27 +131,14 @@ $: if (dataGraphicMounted) {
 }
 
 // handle Ref element hover-over placement.
-let referenceTextElement;
-let referenceBackgroundElement;
-let refTextPlacement = 'outside';
-let refTextSpace = 8;
-let refTextWidth = 0;
-let refBGWidth = 0;
-$: if (referenceTextElement && referenceBackgroundElement) {
-  refTextWidth = referenceTextElement.getBoundingClientRect().width;
-  refBGWidth = referenceBackgroundElement.getBoundingClientRect().width;
-  if (refTextWidth + refTextSpace * 2 <= refBGWidth) {
-    refTextPlacement = 'inside';
-  }
-}
 
 </script>
 <div>
-  <h3 style='padding-left: {buildIDComparisonGraph.left}px; padding-right: {buildIDComparisonGraph.right}px' class=data-graphic__element-title>
-    Over Time 
+  <h3 style='padding-left: {aggregationsOverTimeGraph.left}px; padding-right: {aggregationsOverTimeGraph.right}px' class=data-graphic__element-title>
+    {title} 
     <span use:tooltipAction={
       {
-        text: 'hover to compare to reference ⭑; click to set reference ⭑ to hovered value ●',
+        text: description,
         location: 'top',
 }
     } class=data-graphic__element-title__icon><Help size={14} /></span></h3>
@@ -172,26 +148,24 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   yDomain={yDomain}
   yType={yScaleType}
   xType={xScaleType}
-  width={buildIDComparisonGraph.width
-    - (insufficientData ? buildIDComparisonGraph.insufficientDataAdjustment : 0)}
-  height={buildIDComparisonGraph.height}
-  bottom={buildIDComparisonGraph.bottom}
-  top={buildIDComparisonGraph.top}
-  left={buildIDComparisonGraph.left}
+  width={aggregationsOverTimeGraph.width
+    - (insufficientData ? aggregationsOverTimeGraph.insufficientDataAdjustment : 0)}
+  height={aggregationsOverTimeGraph.height}
+  bottom={aggregationsOverTimeGraph.bottom}
+  top={aggregationsOverTimeGraph.top}
+  left={aggregationsOverTimeGraph.left}
+  bottomBorder
+  borderColor={aggregationsOverTimeGraph.borderColor}
   bind:rollover={dgRollover}
   bind:hoverValue
   bind:xScale={xScale}
   bind:leftPlot={L}
   bind:rightPlot={R}
   bind:margins={margins}
-  right={buildIDComparisonGraph.right}
+  right={aggregationsOverTimeGraph.right}
   key={key}
   bind:dataGraphicMounted={dataGraphicMounted}
-  on:click={() => {
-    if (hovered.datum) {
-      reference = hovered.datum;
-    }
-  }}
+  on:click
 >
 
 <!-- for the additional-plot-elements slot in ProbeExplorer.svelte -->
@@ -199,8 +173,8 @@ $: if (referenceTextElement && referenceBackgroundElement) {
   <slot></slot>
 </g>
 
-<g slot=background let:top let:height let:xScale>
-{#if hovered.datum}
+<g slot=background let:top let:bottom let:height let:xScale>
+  {#if hovered.datum}
     {#if aggregationLevel === 'build_id'}
         <BuildIDRollover 
           x={hovered.datum.label}
@@ -213,36 +187,40 @@ $: if (referenceTextElement && referenceBackgroundElement) {
         x={hoverLabelPlacement}
         y={top} 
         width={hoverWidth}
-        height={height}
+        height={bottom - top}
         fill="var(--cool-gray-100)"
       />
       {:else}
-      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={height}
+      <rect x={xScale(hovered.x) - xScale.step() / 2} y={top} width={xScale.step()} height={bottom - top}
         fill="var(--cool-gray-100)" />
-      {/if}
     {/if}
-    <!-- this is the reference rect -->
+  {/if}
+  <!-- this is the reference rect -->
 
-    <rect 
-      x={reference}
-    />
-    <rect
-      bind:this={referenceBackgroundElement}
-      x={$refLabelSpring} 
-      y={top} 
-      width={referenceWidth} 
-      height={height}
-      fill="var(--cool-gray-100)"
-    />
-  </g>
+  <rect 
+    x={reference}
+  />
+  <rect
+    x={$refLabelSpring} 
+    y={top} 
+    width={referenceWidth} 
+    height={bottom - top}
+    fill="var(--cool-gray-100)"
+  />
+  <Tweenable value={xScale(reference.label)} let:tweenValue>
+    <TrackingLine xr={tweenValue} key={reference.label} />
+  </Tweenable>
+</g>
 
- <LeftAxis tickFormatter={yTickFormatter} tickCount=6 />
+ <LeftAxis lineStyle=short tickFormatter={yTickFormatter} tickCount=6 />
  
- {#if aggregationLevel === 'build_id'}
-  <BottomAxis  />
-{:else}
-  <BottomAxis ticks={xDomain} />
-{/if}
+  {#if aggregationLevel === 'build_id'}
+    <BottomAxis />
+  {:else if xDomain.length <= 5}
+    <BottomAxis ticks={xDomain} />
+  {:else}
+    <BottomAxis />
+  {/if}
 
  <GraphicBody>
    {#each createTimeSeries(data, metricKeys, yAccessor) as {bin, series}, i (bin)}
@@ -260,20 +238,16 @@ $: if (referenceTextElement && referenceBackgroundElement) {
 
  <g slot=annotation let:top let:bottom let:left let:xScale let:yScale>
   {#if hovered.datum}
-      <line 
-      x1={xScale(hovered.datum.label)}
-      x2={xScale(hovered.datum.label)}
-      y1={top}
-      y2={bottom}
-      stroke=var(--cool-gray-200)
-      stroke-dasharray=2,1
-    />
+    
+    <TrackingLine x={hovered.datum.label} />
+    <TrackingLabel x={hovered.datum.label} align=top background=white label=Hov. />
+
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
           <circle 
             cx={x}
             cy={y}
-            r=2
+            r=3
             stroke="none"
             fill={lineColorMap(bin)}
           />
@@ -286,35 +260,17 @@ $: if (referenceTextElement && referenceBackgroundElement) {
           value={[x, y]}
           let:springValue>
             <ReferenceSymbol
-              size={20}
+              size={25}
               xLocation={springValue[0]} yLocation={springValue[1]} color={lineColorMap(bin)} />
         </Springable>
       </g>
   {/each}
 
   {#if xScale}
-    <text
-      bind:this={referenceTextElement}
-      text-anchor={refTextPlacement === 'outside' ? 'end' : 'start'}
-      font-size=11
-      style='
-        text-transform: uppercase;
-        text-shadow: 
-          -3px 0px 3px rgba(255,255,255, 1),
-           3px 0px 0px rgba(255,255,255, 1),
-          0px 3px 0px rgba(255,255,255, 1),
-          0px -3px 0px rgba(255,255,255, 1),
-          -3px -3px 0px rgba(255,255,255, 1),
-          3px -3px 0px rgba(255,255,255, 1),
-          3px 3px 0px rgba(255,255,255, 1),
-          -3px 3px 0px rgba(255,255,255, 1);'
-      x={
-        refTextPlacement === 'outside'
-        ? Math.max($refLabelSpring - margins.buffer, left + refTextWidth + margins.buffer)
-        : $refLabelSpring + margins.buffer} 
-      y={top + 11 + margins.buffer} 
-      fill={hovered.datum ? 'var(--cool-gray-500)' : 'var(--cool-gray-400)'}>ref.</text>
-  {/if}
+    <Tweenable value={xScale(reference.label)} let:tweenValue>
+      <TrackingLabel _bugInSvelteRequiresThisSmallFix={reference.label} yOffset={16} xr={tweenValue} align=top background=white label="Ref." />
+    </Tweenable>
+  {/if} 
 
   </g>
   

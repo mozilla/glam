@@ -11,6 +11,8 @@ import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
 import { formatPercent, formatCount } from '../../utils/formatters';
 
+import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
+
 export let aggregationLevel = 'build_id';
 export let data;
 export let probeType;
@@ -67,7 +69,7 @@ h2 {
 }
 
 .data-graphics {
-  margin-top: var(--space-8x);
+  margin-top: var(--space-4x);
 }
 
 .small-multiple {
@@ -129,6 +131,8 @@ h2 {
             <ProbeExplorer
               bind:reference={reference}
               title={key === 'undefined' ? '' : key}
+              aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
+              aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
               summaryLabel='cat.'
               data={data}
               probeType={probeType}
@@ -143,14 +147,6 @@ h2 {
               yScaleType={'linear'}
               yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
             >
-
-              <!-- summary bignums -->
-              <div class="probe-body-overview__numbers" slot="summary">
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Total Clients</div>
-                    <div class=bignum__value>{formatCount($movingAudienceSize)}</div>
-                  </div>
-              </div>
 
             </ProbeExplorer>
           </div>

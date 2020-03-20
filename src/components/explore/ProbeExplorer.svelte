@@ -3,19 +3,36 @@ import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
 import Violin from 'udgl/data-graphics/elements/Violin.svelte';
-import CompareOverTimeGraph from './CompareOverTimeGraph.svelte';
-// import TotalClientsGraph from './TotalClientsGraph.svelte';
-import DistributionComparison from './DistributionComparison.svelte';
+import { window1D } from 'udgl/data-graphics/utils/window-functions';
+import ToplineMetrics from './ToplineMetrics.svelte';
+
+import AggregationsOverTimeGraph from './AggregationsOverTimeGraph.svelte';
+import AggregationComparisonGraph from './AggregationComparisonGraph.svelte';
+
+import ClientVolumeOverTimeGraph from './ClientVolumeOverTimeGraph.svelte';
+import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
+
 import ComparisonSummary from './ComparisonSummary.svelte';
 
-import { explorerComparisonSmallMultiple } from '../../utils/constants';
+import {
+  explorerComparisonSmallMultiple,
+  overTimeTitle,
+  clientVolumeOverTimeDescription as clientDescription,
+  compareDescription,
+} from '../../utils/constants';
 
-import { formatBuildIDToDateString } from '../../utils/formatters';
+
+import {
+  formatBuildIDToDateString,
+} from '../../utils/formatters';
+
+import {
+  clientCounts,
+} from '../../utils/probe-utils';
 
 import { histogramSpring } from '../../utils/animation';
 
 export let data;
-export let title;
 export let markers;
 export let key;
 export let timeHorizon;
@@ -31,6 +48,11 @@ export let densityMetricType;
 export let yTickFormatter = format(',d');
 export let comparisonKeyFormatter = (v) => v;
 export let summaryLabel = 'perc.';
+
+export let aggregationsOverTimeTitle;
+export let aggregationsOverTimeDescription;
+export let clientVolumeOverTimeTitle = overTimeTitle('clientVolume', aggregationLevel);
+export let clientVolumeOverTimeDescription = clientDescription(aggregationLevel);
 
 // If there isn't more than one other point to compare,
 // let's turn off the hover.
@@ -75,7 +97,6 @@ $: if (aggregationLevel === 'build_id') {
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
 export let reference = data[data.length - 1];
-// $: if (timeHorizon) reference = data[data.length - 1];
 
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.
@@ -87,31 +108,45 @@ $: if (densityMetricType) {
 $: if (densityMetricType && reference[densityMetricType]) {
   animatedReferenceDistribution.setValue(reference[densityMetricType]);
 }
+
+// client counts.
+const MULT = 1.1;
+$: clientCountsData = clientCounts(data);
+$: yVals = clientCountsData.map((d) => d.totalClients);
+$: yMax = Math.max(50, Math.max(...yVals));
+$: yClientsDomain = [0, yMax * MULT];
+
+
+// setting hovered value.
+function get(d, x) {
+  return window1D({
+    data: d, value: x, lowestValue: $domain[0], highestValue: $domain[1],
+  });
+}
+let hoverValue = {};
+$: if (hoverValue.x) {
+  const i = get(data, hoverValue.x);
+  hovered = {
+    ...hoverValue,
+    datum: data[i.currentIndex],
+    previous: data[i.previousIndex],
+    next: data[i.nextIndex],
+  };
+} else {
+  hovered = {};
+}
+
 </script>
 
 <style>
 .graphic-and-summary {
   display: grid;
   grid-template-columns: max-content max-content auto;
+  grid-row-gap: var(--space-2x);
 }
 
 .no-line-chart {
-  grid-template-columns: max-content auto;
   justify-items: start;
-}
-
-.summary {
-  display:grid;
-  grid-auto-flow:column;
-  justify-content: end;
-  font-size: 14px;
-}
-
-h4 {
-  padding: 0px;
-  margin:0px;
-  text-transform: uppercase;
-  color: var(--cool-gray-500);
 }
 
 .probe-body-overview {
@@ -126,19 +161,15 @@ h4 {
 
 
 <div class='probe-body-overview'>
-  <div>
-    <!-- <h4>
-      <slot name='title'>
-        {title}
-      </slot>
-    </h4> -->
-  </div>
+  <ToplineMetrics {reference} {hovered} showHover={data.length > 1} {aggregationLevel} />
   <slot name='summary'></slot>
 </div>
 
 <div class=graphic-and-summary class:no-line-chart={insufficientData}>
     <div style="display: {insufficientData ? 'none' : 'block'}">
-      <CompareOverTimeGraph
+      <AggregationsOverTimeGraph
+        title={aggregationsOverTimeTitle}
+        description={aggregationsOverTimeDescription}
         data={data}
         xDomain={$domain}
         yDomain={yDomain}
@@ -150,18 +181,25 @@ h4 {
         yScaleType={yScaleType}
         yTickFormatter={yTickFormatter}
         metricKeys={activeBins}
-        bind:reference={reference}
-        bind:hovered={hovered}
+        reference={reference}
+        hovered={hovered}
+        bind:hoverValue
         markers={markers}
         aggregationLevel={aggregationLevel}
         hoverActive={hoverActive}
         insufficientData={insufficientData}
+        on:click={() => {
+          if (hovered.datum) {
+            reference = hovered.datum;
+          }
+        }}
     >
       <slot name=additional-plot-elements></slot>
-    </CompareOverTimeGraph>
+    </AggregationsOverTimeGraph>
   </div>
 
-  <DistributionComparison
+  <AggregationComparisonGraph
+    description={compareDescription(aggregationsOverTimeTitle)}
     yScaleType={yScaleType}
     leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
     rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
@@ -214,14 +252,14 @@ h4 {
         {/if}
       {/if}
     </g>
-  </DistributionComparison>
+  </AggregationComparisonGraph>
 
   <ComparisonSummary
     hovered={!!hovered.datum}
     left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum}
     right={reference[pointMetricType]}
-    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
-    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    leftLabel={'HOV.'}
+    rightLabel={'REF.'}
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
@@ -231,17 +269,37 @@ h4 {
     showLeft={data.length > 1}
     showDiff={data.length > 1}
   />
-
-  <!-- <TotalClientsGraph
-    data={data}
-    xDomain={$domain}
-    timeHorizon={timeHorizon}
-    key={key}
-    yScaleType={yScaleType}
-    metricKeys={percentiles}
-    hovered={!!hovered.datum}
-    reference={reference}
-    markers={markers}
-  /> -->
+  <div style="display: {insufficientData ? 'none' : 'block'}">
+    <ClientVolumeOverTimeGraph
+      title={clientVolumeOverTimeTitle}
+      description={clientVolumeOverTimeDescription}
+      data={clientCountsData}
+      xDomain={$domain}
+      yDomain={yClientsDomain}
+      timeHorizon={timeHorizon}
+      aggregationLevel={aggregationLevel}
+      key={key}
+      yScaleType={yScaleType}
+      metricKeys={activeBins}
+      hovered={hovered}
+      reference={reference}
+      bind:hoverValue
+      markers={markers}
+      on:click={() => {
+        if (hovered.datum) {
+          reference = hovered.datum;
+        }
+      }}
+    />
+  </div>
+  <div style="display: {insufficientData ? 'none' : 'block'}">
+    <CompareClientVolumeGraph 
+      data={clientCountsData}
+      description={compareDescription(clientVolumeOverTimeTitle)}
+      yDomain={yClientsDomain}
+      hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
+      referenceValue={reference.audienceSize}
+    />
+  </div>
 
 </div>

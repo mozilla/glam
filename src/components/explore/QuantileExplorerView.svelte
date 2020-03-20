@@ -1,8 +1,5 @@
 <script>
-import { setContext, getContext, createEventDispatcher } from 'svelte';
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing } from 'svelte/easing';
-// import { interpolateBlues as colorMap } from 'd3-scale-chromatic';
+import { setContext, createEventDispatcher } from 'svelte';
 
 import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
@@ -11,14 +8,9 @@ import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { firefoxVersionMarkers } from '../../state/product-versions';
-
-
-import { formatCount, formatValue } from '../../utils/formatters';
+import { overTimeTitle, percentilesOverTimeDescription } from '../../utils/constants';
 
 const dispatch = createEventDispatcher();
-
-export let store = getContext('store');
-export let actions = getContext('actions');
 
 export let data;
 export let probeType;
@@ -54,21 +46,6 @@ function makeSelection(type) {
   };
 }
 
-// we are going to use this for the summary display
-let reference;
-let hovered;
-
-const movingAudienceSize = tweened(0, { duration: 500, easing });
-
-const refMedian = tweened(0, { duration: 500, easing });
-$: if (reference) movingAudienceSize.set(reference.audienceSize);
-$: if (reference) refMedian.set(reference.percentiles[50]);
-
-$: if (currentKey && reference) {
-  const ref = data[currentKey][currentAggregation].find((d) => d.label.toString() === reference.label.toString());
-  reference = ref;
-}
-
 // for heatmap
 function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   return d.map((di) => {
@@ -92,7 +69,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   }
 
   .data-graphics {
-    margin-top: var(--space-6x);
+    margin-top: var(--space-4x);
   }
 
   .small-multiple {
@@ -155,10 +132,12 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
         {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
-              bind:reference={reference}
-              bind:hovered={hovered}
 
               title={key === 'undefined' ? '' : key}
+              aggregationsOverTimeTitle={overTimeTitle('percentiles', aggregationLevel)}
+              aggregationsOverTimeDescription={percentilesOverTimeDescription(aggregationLevel)}
+
+              probeFamily="Percentile"
               summaryLabel='perc.'
               data={data}
               probeType={probeType}
@@ -179,19 +158,6 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
                 probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
                 : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
             >
-
-                <div class='probe-body-overview__numbers' slot='summary'>
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Ref. Median (50th perc.)</div>
-                    <div class=bignum__value>{formatValue($refMedian)}</div>
-                  </div>
-                  <div class=bignum>
-                    <div class=bignum__label>⭑ Total Clients</div>
-                    <div class=bignum__value>
-                        {formatCount($movingAudienceSize)}
-                    </div>
-                  </div>
-                </div>
 
             </ProbeExplorer>
           </div>
