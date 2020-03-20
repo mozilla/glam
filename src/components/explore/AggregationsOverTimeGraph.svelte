@@ -215,13 +215,11 @@ $: if (dataGraphicMounted) {
  <LeftAxis lineStyle=short tickFormatter={yTickFormatter} tickCount=6 />
  
   {#if aggregationLevel === 'build_id'}
-    <BottomAxis  />
+    <BottomAxis />
+  {:else if xDomain.length <= 5}
+    <BottomAxis ticks={xDomain} />
   {:else}
-    {#if xDomain.length <= 5}
-      <BottomAxis ticks={xDomain} />
-    {:else}
-      <BottomAxis />
-    {/if}
+    <BottomAxis />
   {/if}
 
  <GraphicBody>

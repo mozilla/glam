@@ -20,10 +20,15 @@ function delta(a, b, al) {
   if (al === 'build_id') {
     if (!b) return undefined;
     const hours = (+(b) - +(a)) / 1000 / 60 / 60;
-    let hoursLabel = Math.floor(hours);
-    if (hours < 24 && hours > -24) return `${hoursLabel} hour${hoursLabel === 1 ? '' : 's'}`;
-    const days = Math.floor(hours / 24);
-    return `${days} day${days === 1 ? '' : 's'}`;
+    let hoursLabel = Math.abs(Math.floor(hours));
+    let str;
+    if (hours < 24 && hours > -24) str = `${hoursLabel} hour${hoursLabel === 1 ? '' : 's'}`;
+    else {
+      const days = Math.abs(Math.floor(hours / 24));
+      str = `${days} day${days === 1 ? '' : 's'}`;
+    }
+    const dir = hours > 0 ? 'after' : 'before';
+    return `${str} ${dir} reference`;
   }
   const versions = b - a;
   return `${versions} versions`;
@@ -48,10 +53,15 @@ $: diff = delta(compare, new Date($tw), aggregationLevel);
   justify-content: start;
   grid-column-gap: var(--space-1h);
 }
+
+.big-label--compare {
+  color: var(--cool-gray-600);
+}
+
 .big-label--value {
   font-family: var(--main-mono-font);
   text-align: right;
-  min-width: var(--space-16x);
+  width: var(--space-32x);
 }
 
 .big-label--value--date {
@@ -96,7 +106,7 @@ text: description,
   </div>
     {/if}
 
-  <div>
+  <div class=big-label--compare>
     <slot name=compare>
       {#if value && compare}
         ({diff})

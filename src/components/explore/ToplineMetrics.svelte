@@ -20,6 +20,17 @@ function absDiff(a, b, perc = false) {
 
 </script>
 
+<style>
+.topline--client-count {
+  transition: font-weight 200ms;
+}
+
+.topline--client-count--highlighted {
+  font-weight: 550;
+}
+
+</style>
+
   <div style='
   padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;
   display: grid; 
@@ -46,7 +57,9 @@ function absDiff(a, b, perc = false) {
     </span>
   <span slot='count'>
       <span data-value={reference.audienceSize}>
-        <span style='font-weight: {hovered.datum && hovered.datum.audienceSize > tweenValue ? 'normal' : '500'}'>
+        <span         
+          class=topline--client-count 
+          class:topline--client-count--highlighted={hovered.datum && hovered.datum.audienceSize < tweenValue}>
           {formatCount(tweenValue)}
         </span>
         clients
@@ -65,15 +78,17 @@ function absDiff(a, b, perc = false) {
   <span slot='count'>
     <div>
       {#if hovered.datum}
-      <span style='font-weight: {hovered.datum && hovered.datum.audienceSize < tweenValue ? 'normal' : '500'}'>
+      <span 
+        class=topline--client-count 
+        class:topline--client-count--highlighted={hovered.datum && hovered.datum.audienceSize > tweenValue}>
         {formatCount(hovered.datum.audienceSize)}
       </span> clients{/if}
     </div>
     {#if hovered.datum}
     <div style="
-      font-weight:300;
+      font-weight: 300;
       white-space: pre;
-      color: {hovered.datum.audienceSize >= reference.audienceSize ? "var(--cool-gray-700)" : "var(--pantone-red-500)"}">
+      color: var(--cool-gray-700)">
 {formatSignCount(absDiff(hovered.datum.audienceSize, tweenValue))}  <span style='font-weight: 500;'>{formatParenPercent(
 '.0%',
 absDiff(hovered.datum.audienceSize, tweenValue, true),

@@ -83,13 +83,11 @@ export let hoverValue = {};
 
       <LeftAxis tickFormatter={formatCount} lineStyle=short tickCount={3} />
       {#if aggregationLevel === 'build_id'}
-        <BottomAxis  />
+        <BottomAxis />
+      {:else if xDomain.length <= 5}
+        <BottomAxis ticks={xDomain} />
       {:else}
-        {#if xDomain.length <= 5}
-          <BottomAxis ticks={xDomain} />
-        {:else}
-          <BottomAxis />
-        {/if}
+        <BottomAxis />
       {/if}
       <g slot=background let:left let:top>
         <rect 
