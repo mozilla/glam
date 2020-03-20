@@ -22,7 +22,6 @@ const niceMetricTypes = {
 };
 
 export function overTimeTitle(metricType, aggregationLevel) {
-  // const mt = metricType.charAt(0).toUpperCase() + metricType.slice(1);
   return `${niceMetricTypes[metricType]} by ${niceAggregations[aggregationLevel]}`;
 }
 
