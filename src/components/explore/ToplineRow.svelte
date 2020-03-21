@@ -35,7 +35,7 @@ function delta(a, b, al) {
   }
   const versions = b - a;
   const versionsLabel = Math.abs(versions);
-  return `${versionsLabel} ${pluralize('versions', versionsLabel)} ${when(versions)} reference`;
+  return `${versionsLabel} ${pluralize('version', versionsLabel)} ${when(versions)} reference`;
 }
 
 $: $tw = +value;
