@@ -36,7 +36,7 @@ class TestRandomProbesApi:
             "version": "72",
             "os": "Windows",
             "build_id": "*",
-            "process": 0,
+            "process": constants.PROCESS_CONTENT,
             "agg_type": constants.AGGREGATION_HISTOGRAM,
             "metric": name,
             "metric_key": "",
