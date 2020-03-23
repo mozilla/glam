@@ -4,7 +4,7 @@ from django.db import connection
 from django.urls import reverse
 
 from glam.api import constants
-from glam.api.models import Aggregation, Probe
+from glam.api.models import Aggregation, FirefoxCounts, Probe
 from glam.auth.drf import OIDCTokenAuthentication, TokenUser
 
 
@@ -252,6 +252,14 @@ class TestAggregationsApi:
         )
         Aggregation.objects.create(**_data)
 
+        FirefoxCounts.objects.get_or_create(
+            channel=_data["channel"],
+            version=_data["version"],
+            build_id=_data["build_id"],
+            os=_data["os"],
+            total_users=999,
+        )
+
     def _refresh_views(self):
         with connection.cursor() as cursor:
             for channel in constants.CHANNEL_IDS.keys():
@@ -347,6 +355,7 @@ class TestAggregationsApi:
                 },
                 "percentiles": {"5": 50, "50": 500, "95": 950},
                 "total_users": 1110,
+                "total_addressable_market": 999,
             }
         ]
 

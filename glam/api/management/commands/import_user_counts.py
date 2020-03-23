@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from google.cloud import storage
 
-from glam.api import constants
+from glam.api.models import FirefoxCounts
 
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
@@ -21,33 +21,26 @@ def log(message):
 
 class Command(BaseCommand):
 
-    help = "Imports aggregation data"
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "channel", choices=constants.CHANNEL_IDS.keys(),
-        )
+    help = "Imports user counts"
 
     def handle(self, *args, **options):
-
-        channel = options["channel"]
 
         self.gcs_client = storage.Client()
 
         blobs = self.gcs_client.list_blobs(GCS_BUCKET)
         blobs = list(
             filter(
-                lambda b: b.name.startswith(f"glam-extract-firefox-{channel}"), blobs
+                lambda b: b.name.startswith(f"glam-extract-firefox-counts"), blobs
             )
         )
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = f"tmp_import_{channel}"
+            tmp_table = f"tmp_import_counts"
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
-                cursor.execute(f"CREATE TABLE {tmp_table} (LIKE glam_aggregation)")
+                cursor.execute(f"CREATE TABLE {tmp_table} (LIKE glam_firefox_counts)")
                 cursor.execute(f"ALTER TABLE {tmp_table} DROP COLUMN id")
 
             # Download CSV file to local filesystem.
@@ -66,59 +59,38 @@ class Command(BaseCommand):
             log(f"Deleting local file: {fp.name}.")
             fp.close()
 
-        # Once all files are loaded, refresh the materialized views.
-        if blobs:
-            with connection.cursor() as cursor:
-                log(f"Refreshing materialized view for view_glam_aggregation_{channel}")
-                cursor.execute(
-                    f"""
-                    REFRESH MATERIALIZED VIEW CONCURRENTLY
-                    view_glam_aggregation_{channel}
-                    """
-                )
-
     def import_file(self, tmp_table, fp):
 
-        columns = [
-            "channel",
-            "version",
-            "agg_type",
-            "os",
-            "build_id",
-            "process",
-            "metric",
-            "metric_key",
-            "client_agg_type",
-            "metric_type",
-            "total_users",
-            "data",
+        csv_columns = [
+            f.name for f in FirefoxCounts._meta.get_fields()
+            if f.name not in ["id"]
         ]
-        data_columns = [
-            "metric_type",
-            "total_users",
-            "data",
+        conflict_columns = [
+            f for f in FirefoxCounts._meta.constraints[0].fields
+            if f not in ["id", "total_users"]
         ]
 
         log("  Importing file into temp table.")
         with connection.cursor() as cursor:
             with open(fp.name, "r") as tmp_file:
                 sql = "COPY {tmp_table} ({columns}) FROM STDIN WITH CSV".format(
-                    tmp_table=tmp_table, columns=", ".join(columns)
+                    tmp_table=tmp_table, columns=", ".join(csv_columns)
                 )
+                print(sql)
                 cursor.copy_expert(sql, tmp_file)
 
         log("  Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = """
-                INSERT INTO glam_aggregation ({columns})
+                INSERT INTO glam_firefox_counts ({columns})
                 SELECT * from {tmp_table}
                 ON CONFLICT ({conflict_columns})
                 DO UPDATE SET
-                    total_users = EXCLUDED.total_users,
-                    data = EXCLUDED.data
+                    total_users = EXCLUDED.total_users
             """.format(
-                columns=", ".join(columns),
+                columns=", ".join(csv_columns),
                 tmp_table=tmp_table,
-                conflict_columns=", ".join(set(columns) - set(data_columns)),
+                conflict_columns=", ".join(conflict_columns),
             )
+            print(sql)
             cursor.execute(sql)
