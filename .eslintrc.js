@@ -33,5 +33,13 @@ module.exports = {
         jest: true,
       },
     },
-  ]
+    {
+      files: ["**/*.js"],
+      extends: ["prettier"],
+      plugins: ["prettier"],
+      rules: {
+        "prettier/prettier": "error"
+      },
+    },
+  ],
 };
