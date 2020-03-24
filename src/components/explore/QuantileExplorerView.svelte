@@ -148,7 +148,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               aggregationLevel={aggregationLevel}
 
               binColorMap={percentileLineColorMap}
-              pointMetricType={'percentiles'}
+              pointMetricType={'transformedPercentiles'}
               overTimePointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}

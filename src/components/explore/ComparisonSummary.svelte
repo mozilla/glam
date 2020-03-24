@@ -2,7 +2,6 @@
 import { format } from 'd3-format';
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 
-let pFmt = format('.0%');
 
 export let hovered = false;
 export let colorMap = () => 'black';
@@ -20,6 +19,8 @@ export let showDiff = true;
 import Help from 'udgl/icons/Help.svelte';
 
 import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+import { formatPercentDecimal } from '../../utils/formatters';
+
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -79,6 +80,7 @@ tbody tr:last-child td {
 }
 
 th {
+  font-family: var(--main-text-font);
   line-height: 1;
   font-weight: normal;
   text-transform: uppercase;
@@ -123,7 +125,7 @@ td, th {
 }
 
 .value-change {
-  min-width: 54px; 
+  min-width: calc(var(--space-6x) + var(--space-base)); 
   width: max-content;
 }
 </style>
@@ -169,13 +171,13 @@ td, th {
 
               {#if showLeft}
               <td  class:hidden={!hovered} class=value-left>
-                  {leftValue ? valueFormatter(leftValue) : ' '}
+                  {leftValue !== undefined ? valueFormatter(leftValue) : ' '}
               </td>
               {/if}
 
               {#if showRight}
               <td class=value-right>
-                  {#if rightValue}
+                  {#if rightValue !== undefined}
                   <Tweenable value={rightValue} let:tweenValue>{valueFormatter(tweenValue)}</Tweenable>
                 {:else}
                     {' '}
@@ -185,7 +187,7 @@ td, th {
 
               {#if showDiff}
               <td class:hidden={!hovered} class=value-change>
-                {percentageChange ? pFmt(percentageChange) : ' '}
+                {percentageChange !== undefined ? formatPercentDecimal(percentageChange) : ' '}
               </td>
               {/if}
 
