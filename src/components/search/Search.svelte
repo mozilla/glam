@@ -55,15 +55,12 @@ async function onKeypress(event) {
   }
 
   .inner-container {
-    max-width: var(--width);
     height: calc(var(--space-base) * 4);
     box-shadow: var(--depth-medium);
     display: grid;
     grid-template-columns: [icon] 40px [input] auto;
-    /* padding-left: var(--space-base); */
     align-items: stretch;
     background-color: var(--input-background-color);
-    /* background-color: white; */
     border-radius: var(--space-1h);
 
   }
@@ -95,14 +92,8 @@ async function onKeypress(event) {
     padding-left: 40px;
     margin-left: -40px;
     padding-right: 54px;
-    /* margin-left: calc(-48px - var(--space-base));
-    padding-left: 48px;
-    padding-right: 48px; */
-    /* color: var(--cool-gray-500); */
     color: var(--input-blur);
     border-radius: var(--space-1h);
-
-    /* background-color: white; */
   }
 
   input:focus {

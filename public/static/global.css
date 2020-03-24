@@ -985,6 +985,8 @@ h2 span {
   border-radius: var(--content-border-radius) 0 0 var(--content-border-radius);
 }
 
+
+
 .graphic-body__content--no-padding {
   padding-left:0;
   padding-right:0;
@@ -994,6 +996,7 @@ h2 span {
   grid-area: right;
   border-radius: 0 var(--content-border-radius) var(--content-border-radius) 0;
 }
+
 
 .graphic-body {
   height: 100%;
@@ -1016,4 +1019,23 @@ h2 span {
 
 .graphic-body__content--no-padding .probe-details-title {
   padding-left: var(--space-4x);
+}
+
+
+@media (max-width: 1200px) {
+    .graphic-body {
+        border-radius: 0px;
+    }
+
+    .graphic-body__content {
+        border-radius: 0px;
+    }
+
+    .graphic-body__details {
+        border-radius: 0px;
+    }
+
+    .graphic-body > div:only-child {
+        border-radius: 0px;
+    }
 }
