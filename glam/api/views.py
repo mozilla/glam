@@ -266,7 +266,7 @@ def random_probes(request):
         n = 3
 
     probe_ids = list(
-        Probe.objects.exclude(info__kind="string").values_list("id", flat=True)
+        Probe.objects.exclude(info__kind="string").exclude(info__kind="boolean").values_list("id", flat=True)
     )
     if n > len(probe_ids):
         raise ValidationError("Not enough probes to select `n` items.")
@@ -277,7 +277,7 @@ def random_probes(request):
     for id in probe_ids:
         probe = Probe.objects.get(id=id)
         # do not proceed if the probe is a boolean scalar
-        if not (probe.info["type"] == "scalar" or probe.info["kind"] == "boolean"):
+        if not (probe.info["type"] == "scalar" and probe.info["kind"] == "boolean"):
             try:
                 aggregations = get_aggregations(
                     request,
