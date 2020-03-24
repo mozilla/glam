@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from glam.api import constants
 from glam.api.models import (
     BetaAggregation,
+    FirefoxCounts,
     NightlyAggregation,
     ReleaseAggregation,
     Probe,
@@ -144,6 +145,18 @@ def get_aggregations(request, **kwargs):
                 aggs = aggs_w_labels
 
         new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
+
+        # Get the total distinct client IDs for this set of dimensions.
+        try:
+            client_count = FirefoxCounts.objects.get(
+                channel=row.channel,
+                version=row.version,
+                build_id=row.build_id,
+                os=row.os,
+            )
+        except FirefoxCounts.DoesNotExist:
+            client_count = None
+        new_data["total_addressable_market"] = client_count and client_count.total_users
 
         if row.metric_key:
             new_data["key"] = row.metric_key

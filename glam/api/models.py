@@ -71,3 +71,23 @@ class Probe(models.Model):
         # Add a key/value to check if we've populated the cache.
         # Note: This assumes locmem cache and this sentinal going away on restart.
         cache.set("__labels__", True)
+
+
+class FirefoxCounts(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel = models.IntegerField(
+        choices=constants.CHANNEL_CHOICES, null=True, blank=True
+    )
+    version = models.CharField(max_length=100, null=True, blank=True)
+    build_id = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    total_users = models.IntegerField()
+
+    class Meta:
+        db_table = "glam_firefox_counts"
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_dimensions",
+                fields=["channel", "version", "build_id", "os"],
+            )
+        ]
