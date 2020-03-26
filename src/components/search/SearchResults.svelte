@@ -1,4 +1,5 @@
 <script>
+import page from 'page';
 import { format } from 'd3-format';
 import { fly } from 'svelte/transition';
 import { afterUpdate } from 'svelte';
@@ -7,7 +8,6 @@ import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
 import { searchResults, store, currentQuery } from '../../state/store';
-import { navigate } from '../../routing/Router.svelte';
 
 
 // FIXME: Unless we generalize the search results in some way, I'm not sure
@@ -49,11 +49,10 @@ const handleKeypress = (event) => {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
-      store.setProbe($searchResults.results[focusedItem].name);
       store.setField('searchIsActive', false);
       // reset focused element
       focusedItem = 0;
-      navigate(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore`, $currentQuery);
+      page.show(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore?${$currentQuery}`);
     }
     if (key === 'Escape') {
       store.setField('searchIsActive', true);
@@ -238,8 +237,7 @@ li {
                   role="option"
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {
-                    store.setProbe($searchResults.results[focusedItem].name);
-                    navigate(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore`, $currentQuery);
+                    page.show(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore?${$currentQuery}`);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>

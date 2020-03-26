@@ -1,9 +1,9 @@
 <script>
+import page from 'page';
 import { fly } from 'svelte/transition';
 import Chart from 'udgl/icons/Chart.svelte';
 import Table from 'udgl/icons/Table.svelte';
 import { store, currentQuery } from '../../state/store';
-import { navigate } from '../../routing/Router.svelte';
 
 
 import BodyControl from './BodyControl.svelte';
@@ -32,7 +32,7 @@ export let transformed = options.map((opt) => ({
     multi={false}
     level="medium"
     on:selection={(evt) => {
-      navigate(`/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}`, $currentQuery);
+      page.show(`/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}?${$currentQuery}`);
     }}
   />
 </div>

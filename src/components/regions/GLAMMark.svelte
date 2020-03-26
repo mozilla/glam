@@ -2,7 +2,6 @@
 import { tooltip } from 'udgl/utils/tooltip';
 import Logo from 'udgl/icons/GLAM.svelte';
 import { store, currentQuery } from '../../state/store';
-import { getPath } from '../../routing/Router.svelte';
 </script>
 
 <style>
@@ -16,7 +15,7 @@ a {
 }
 </style>
 
-<a href={getPath('/', $currentQuery)} on:click={store.reset}>
+<a href={`/?${$currentQuery}`} on:click={store.reset}>
   <h1>
     <Logo />
     <div use:tooltip={{
