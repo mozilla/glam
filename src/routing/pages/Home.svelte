@@ -11,6 +11,8 @@
 
   // TODO: add this to the upcoming config.js
   const NUMBER_OF_RANDOM_PROBES = 9;
+
+  $: selectedProcess = $store.process;
 </script>
 
 <style>
@@ -91,7 +93,7 @@
     <MarketingBlock />
     <div class="random-probe-view">
       <h2>Explore</h2>
-      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, $store.process)}
+      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, selectedProcess)}
         <div class="probes-overview">
           {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
