@@ -44,8 +44,24 @@ export function authenticate(successCallback) {
 
         withToken(successCallback);
       } else {
+        // Auth0 requires that the user be redirected to a true static path
+        // after authentication.[1] In our case, the only true static path is
+        // the root path. Everything else is handled by the client-side router.
+        //
+        // However, we can still record the path that the user attempted to
+        // access so that we can return them to it later.
+        //
+        // NB: relativeURLBeforeAuth includes everything except the origin. It
+        // includes the path, the query string, and the fragment. Due to an
+        // apparent bug,[2] if we were to pass an absolute URL to page.redirect
+        // later, it would show the Not Found page.
+        //
+        // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1623800#c1
+        // [2] https://github.com/visionmedia/page.js/issues/559
+        const relativeURLBeforeAuth = window.location.href.replace(window.location.origin, '');
+        sessionStorage.setItem('relativeURLBeforeAuth', relativeURLBeforeAuth);
         await auth0.loginWithRedirect({
-          redirect_uri: window.location.href,
+          redirect_uri: window.location.origin,
         });
       }
     }

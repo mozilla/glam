@@ -8,7 +8,6 @@
   import RandomProbePlaceholder from '../../components/home/RandomProbePlaceholder.svelte';
   import { store, currentQuery } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
-  import { getPath } from '../Router.svelte';
 
   // TODO: add this to the upcoming config.js
   const NUMBER_OF_RANDOM_PROBES = 9;
@@ -106,10 +105,8 @@
             <div class="probe-overview__probe" in:fade={{ duration: 400 }}>
               <a
                 class="probe-sm"
-                href={getPath(`/firefox/probe/${data[0].metadata.metric}/explore`, $currentQuery)}
-                on:click={() => {
-                  store.setProbe(data[0].metadata.metric);
-                }}>
+                href={`/firefox/probe/${data[0].metadata.metric}/explore?${$currentQuery}`}
+              >
                 <div
                   class="probe-small-multiple"
                   class:probe-small-multiple--proportion={whichSmallMultiple(info.type, info.kind) === 'proportion'}

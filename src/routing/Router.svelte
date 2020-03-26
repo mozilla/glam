@@ -1,16 +1,3 @@
-<script context="module">
-  // We could grab the value of currentQuery here rather than requiring that it
-  // be passed as an argument, but that would not cause any links that use this
-  // function to update reactively.
-  export function getPath(path, query) {
-    return query ? `${path}?${query}` : path;
-  }
-
-  export function navigate(...args) {
-    page.show(getPath(...args));
-  }
-</script>
-
 <script>
   import page from 'page';
   import Spinner from 'udgl/LineSegSpinner.svelte';
@@ -28,8 +15,10 @@
   import NotFound from './pages/NotFound.svelte';
 
 
-  let component;
+  const ssAuthKey = 'relativeURLBeforeAuth';
   let visible = false;
+  let handledAuthRedirect = false;
+  let component;
 
   function updateQueryString(query) {
     if (window.history.replaceState) {
@@ -46,9 +35,33 @@
   //
   // We also need to check that the user is authenticated before doing this,
   // otherwise we risk clobbering the "code" and "state" query parameters that
-  // the auth0 client needs to read to authenticate the user.
-  $: if (visible && $store.auth.isAuthenticated) {
+  // the Auth0 client needs to read to authenticate the user. (Strictly
+  // speaking, we don't need to check $store.auth.isAuthenticated here because
+  // it should always be true when handledAuthRedirect is true, but it doesn't hurt
+  // to double check.)
+  $: if (handledAuthRedirect && $store.auth.isAuthenticated && visible) {
     updateQueryString($currentQuery);
+  }
+
+  // Route the user back to the page that they attempted to access before
+  // authentication began.
+  //
+  // Auth0 requires that the user be redirected to a true static path after
+  // authentication.[1] In our case, the only true static path is the root
+  // path. Everything else is handled by the client-side router.
+  //
+  // That said, we do know what location the user attempted to access before
+  // authentiaction began (thanks, auth.js), so we can use this opportunity to
+  // send them back there.
+  //
+  // NB: This is not an HTTP redirect. What page.js calls a redirect is really
+  // just a call to History.replaceState.
+  //
+  // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1623800#c1
+  $: if ($store.auth.isAuthenticated && !handledAuthRedirect) {
+    page.redirect(sessionStorage.getItem(ssAuthKey));
+    sessionStorage.removeItem(ssAuthKey);
+    handledAuthRedirect = true;
   }
 
   onMount(() => {
@@ -58,6 +71,12 @@
   function useComponent(componentToUse, view) {
     return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
+
+      // Issue #355: Update the probe here, whenever the path changes, to ensure
+      // that clicks to the back/forward buttons work as expected.
+      if (probeName) {
+        store.setProbe(probeName);
+      }
 
       store.setField('route', {
         product,
