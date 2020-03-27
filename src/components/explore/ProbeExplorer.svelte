@@ -46,6 +46,7 @@ export let yScaleType;
 export let yDomain;
 export let densityMetricType;
 export let yTickFormatter = format(',d');
+export let summaryNumberFormatter = yTickFormatter;
 export let comparisonKeyFormatter = (v) => v;
 export let summaryLabel = 'perc.';
 
@@ -263,7 +264,7 @@ $: if (hoverValue.x) {
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
-    valueFormatter={yTickFormatter}
+    valueFormatter={summaryNumberFormatter}
     keyFormatter={comparisonKeyFormatter}
     dataVolume={data.length}
     showLeft={data.length > 1}

@@ -9,7 +9,7 @@ import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
 import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
-import { formatPercent, formatCount } from '../../utils/formatters';
+import { formatPercent, formatCount, formatPercentDecimal } from '../../utils/formatters';
 
 import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
 
@@ -144,6 +144,7 @@ h2 {
               aggregationLevel={aggregationLevel}
               pointMetricType={metricType}
               yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
+              summaryNumberFormatter={metricType === 'proportions' ? formatPercentDecimal : formatCount}
               yScaleType={'linear'}
               yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
             >
