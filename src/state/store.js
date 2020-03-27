@@ -79,20 +79,12 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   return value;
 }
 
-const pathParts = window.location.pathname.split('/');
-
 const initialState = {
   auth: {
     isAuthenticated: false,
     token: undefined,
   },
-  probe: {
-    name: pathParts[2] === 'probe' ? pathParts[3] : undefined,
-    description: undefined,
-    audienceSize: 0,
-    totalSize: 0,
-    versions: [],
-  },
+  probeName: '',
   dashboardMode: { }, // FIXME: applicationStatus or dashboardMode, not both.
   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   channel: getFromQueryStringOrDefault('channel'),
@@ -111,16 +103,10 @@ const initialState = {
 
 export const store = createStore(initialState);
 
-store.setProbe = (name) => {
-  // get matching probe here
-  const probe = get(probeSet).find((d) => d.name === name);
-  store.setField('probe', probe);
-};
-
 store.reset = () => {
   store.reinitialize({
     auth: store.getState().auth,
-    probe: { name: undefined },
+    probeName: undefined,
   });
 };
 
@@ -130,6 +116,11 @@ export const resetFilters = () => {
   store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
   store.setField('process', getDefaultFieldValue('process'));
 };
+
+export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
+  if (!$probeSet || !$store.probeName) return undefined;
+  return $probeSet.find((p) => p.name === $store.probeName);
+});
 
 export const searchResults = derived(
   [telemetrySearch, store], ([$telemetrySearch, $store]) => {
@@ -170,7 +161,7 @@ function getParamsForDataAPI(obj) {
   delete params.proportionMetricType;
   delete params.activeBuckets;
   delete params.visiblePercentiles;
-  params.probe = obj.probe.name;
+  params.probe = obj.probeName;
   params.os = osValue;
   params.channel = channelValue;
   return params;
@@ -256,16 +247,15 @@ export function fetchDataForGLAM(params) {
       // until then, however, we'll have to use the store values
       // for the probeType and probeKind, since they're more accurate than
       // what is in payload.response[0].metric_type.
-      const { probe, aggregationLevel } = store.getState();
+      const { aggregationLevel } = store.getState();
+      const { type: probeType, kind: probeKind, active: probeActive } = get(probe);
 
       validate(
         payload,
-        (p) => noResponse(p, probe.active),
+        (p) => noResponse(p, probeActive),
         (p) => noDuplicates(p, aggregationLevel),
       );
 
-      const probeType = probe.type;
-      const probeKind = probe.kind;
       return {
         data: responseToData(payload.response,
           isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
@@ -277,17 +267,10 @@ export function fetchDataForGLAM(params) {
   );
 }
 
-function intersection(a, b) {
-  const bSet = new Set(b);
-  return new Set(
-    [...a].filter((x) => bSet.has(x)),
-  );
-}
-
 export function updateStoreAfterDataIsReceived({ data }) {
-  const st = store.getState();
+  const probeValue = get(probe);
   // THIS WILL BE FALSE BECAUSE WE HAVE NOT RECEIVED THE PROBE DATA YET.
-  const viewType = getProbeViewType(st.probe.type, st.probe.kind);
+  const viewType = getProbeViewType(probeValue.type, probeValue.kind);
   const isCategoricalTypeProbe = viewType === 'categorical';
   let etc = {};
   if (isCategoricalTypeProbe) {
@@ -317,13 +300,13 @@ export const dataset = derived([store, probeSet], ([$store, $probeSet], set) => 
   const qs = toQueryString(params);
 
   // // invalid parameters, probe selected.
-  if (!paramsAreValid(params) && probeSelected($store.probe.name)) {
+  if (!paramsAreValid(params) && probeSelected($store.probeName)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
     return message;
   }
 
   // // no probe selected.
-  if (!probeSelected($store.probe.name)) {
+  if (!probeSelected($store.probeName)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     return message;
   }

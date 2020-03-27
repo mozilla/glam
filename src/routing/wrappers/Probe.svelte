@@ -10,7 +10,7 @@
 
   import DataError from '../../components/errors/DataError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
-  import { store, dataset } from '../../state/store';
+  import { probe, dataset } from '../../state/store';
   import { getProbeViewType } from '../../utils/probe-utils';
 
 
@@ -26,10 +26,13 @@
   // ADDL FIXME: we should wait for the telemetry probes to load if that's what we're
   // looking for here.
 
-  const temporaryViewTypeStore = derived(store, ($st) => getProbeViewType(
-    $st.probe.type,
-    $st.probe.kind,
-  ));
+  const temporaryViewTypeStore = derived(probe, ($probe) => {
+    if (!$probe) return undefined;
+    return getProbeViewType(
+      $probe.type,
+      $probe.kind,
+    );
+  });
 </script>
 
 {#await $dataset}

@@ -26,9 +26,9 @@ const telemetrySearch = derived(probeSet, ($probeSet) => {
   });
   search.add($probeSet);
   search.loaded = true;
-  const { probe } = store.getState();
-  if (probe.name) {
-    const probeInfo = $probeSet.find((d) => d.name === probe.name);
+  const { probeName } = store.getState();
+  if (probeName) {
+    const probeInfo = $probeSet.find((d) => d.name === probeName);
     if (probeInfo) {
       store.setField('probe', probeInfo);
     }
