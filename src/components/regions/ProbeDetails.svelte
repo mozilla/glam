@@ -6,7 +6,7 @@ import Button from 'udgl/Button.svelte';
 import StatusLabel from 'udgl/StatusLabel.svelte';
 import ExternalLink from 'udgl/icons/ExternalLink.svelte';
 import telemetrySearch from '../../state/telemetry-search';
-import { store, dataset } from '../../state/store';
+import { store, probe, dataset } from '../../state/store';
 
 import { downloadString } from '../../utils/download';
 
@@ -22,8 +22,8 @@ const PROBE_TYPE_DOCS = {
 let visible = false;
 onMount(() => { visible = true; });
 
-function probeIsSelected(probe) {
-  return probe.name !== null && probe.name !== 'null';
+function probeIsSelected(probeToTest) {
+  return probeToTest && probeToTest.name !== null && probeToTest.name !== 'null';
 }
 
 </script>
@@ -167,27 +167,27 @@ h2 {
         </div>
     </div>
     {/if}
-{:else if probeIsSelected($store.probe)}
+{:else if probeIsSelected($probe)}
 <div in:fly={paneTransition} class="drawer-section-container probe-details">
     <!-- probe-details-content -->
     <div class="probe-details-content">
         <div class="probe-details-overview">
-        {#if $store.probe.type}
+        {#if $probe.type}
             <dl class="drawer-section probe-details-overview-left">
                 <dt>
-                    <a class="probe-type-link" href={PROBE_TYPE_DOCS[$store.probe.type] || PROBE_TYPE_DOCS.default}>
-                        {$store.probe.type}
+                    <a class="probe-type-link" href={PROBE_TYPE_DOCS[$probe.type] || PROBE_TYPE_DOCS.default}>
+                        {$probe.type}
                     </a>
                 </dt>
-                {#if $store.probe.kind}
-                    <dd>{$store.probe.kind}</dd>
+                {#if $probe.kind}
+                    <dd>{$probe.kind}</dd>
                 {/if}
             </dl>
         {/if}
-        {#if $store.probe.active !== undefined}
+        {#if $probe.active !== undefined}
             <div class="probe-details-overview-right">
-                <StatusLabel tooltip={$store.probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'} level={$store.probe.active ? 'success' : 'info'}>
-                    {$store.probe.active ? 'active' : 'inactive'}
+                <StatusLabel tooltip={$probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'} level={$probe.active ? 'success' : 'info'}>
+                    {$probe.active ? 'active' : 'inactive'}
                 </StatusLabel>
             </div>
         {/if}
@@ -196,27 +196,27 @@ h2 {
             <dl class="drawer-section probe-details-overview-left probe-details-overview-left--subtle">
                 <dt>{$store.channel}</dt>
                 <dd class="probe-details-overview-left--padded">
-                    {$store.probe.versions[$store.channel][0]}
-                    &ndash; {$store.probe.versions[$store.channel][1]}
+                    {$probe.versions[$store.channel][0]}
+                    &ndash; {$probe.versions[$store.channel][1]}
                 </dd>
             </dl>
         {/if}
         <div class=drawer-section>
-            {#if $store.probe.description}
+            {#if $probe.description}
                 <h2 class="detail__heading--01">description</h2>
                 <div class="probe-description helper-text--01">
-                    {@html $store.probe.description}
-                    <a class="more-info-link" href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.apiName}`} target="_blank">
+                    {@html $probe.description}
+                    <a class="more-info-link" href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$probe.apiName}`} target="_blank">
                         more info <ExternalLink size=12 />
                     </a>
                 </div>
             {/if}
         </div>
-        {#if $store.probe.bugs && $store.probe.bugs.length}
+        {#if $probe.bugs && $probe.bugs.length}
         <div class="drawer-section">
             <h2 class="detail__heading--01">associated bugs</h2>
             <div class="bug-list helper-text--01">
-            {#each $store.probe.bugs as bugID, i (bugID)}
+            {#each $probe.bugs as bugID, i (bugID)}
                 <a
                 href='https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}'
                 target="_blank">{bugID}</a>
@@ -238,7 +238,7 @@ h2 {
             {:then value}
                 <h2 class="detail__heading--01">export</h2>
                 <div in:fly={paneTransition}>
-                    <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$store.probe.name}.json`); }}
+                    <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$probe.name}.json`); }}
                     level=medium compact>to JSON</Button>
                 </div>
             {/await}

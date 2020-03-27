@@ -6,7 +6,7 @@
   import ProportionExplorerView from '../../../components/explore/ProportionExplorerView.svelte';
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
   import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
-  import { store } from '../../../state/store';
+  import { store, probe } from '../../../state/store';
 
 
   function handleBodySelectors(event) {
@@ -25,7 +25,7 @@
     {#if probeType === 'categorical'}
       <ProportionExplorerView
         data={data.data}
-        probeType={`${$store.probe.type}-${$store.probe.kind}`}
+        probeType={`${$probe.type}-${$probe.kind}`}
         metricType={$store.proportionMetricType}
         activeBuckets={[...$store.activeBuckets]}
         timeHorizon={$store.timeHorizon}
