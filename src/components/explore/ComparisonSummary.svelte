@@ -1,5 +1,4 @@
 <script>
-import { format } from 'd3-format';
 import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
 
 
