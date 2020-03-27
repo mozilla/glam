@@ -1,6 +1,12 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
 
+// We could eventually make a constants.js, this is low priority.
+const FETCH_ERROR_MESSAGES = {
+  code5xx: 'Oh no! The server encountered an error.',
+  code4xx: 'Oh no! Your client sent an invalid request.'
+};
+
 export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
     method: 'POST',
@@ -21,13 +27,13 @@ export async function getProbeData(params, token) {
     },
     body: JSON.stringify({ query: params }),
   }).then(async (response) => {
-    // catch 500-level error responses and surface them into
+    // catch fetch error responses and surface them into
     // the frontend.
-    if (response.status >= 500 && response.status < 600) {
-      const msg = 'Oh no! The server encountered an error.';
+    if (response.status >= 400 && response.status < 600) {
+      const msg = response.status < 500 ? FETCH_ERROR_MESSAGES.code4xx : FETCH_ERROR_MESSAGES.code5xx;
       const e = new Error(msg);
       const txt = await response.text();
-      e.moreInformation = `The GLAM server had some trouble trying to fetch ${params.probe}, so we'll
+      e.moreInformation = `GLAM encountered a problem trying to show ${params.probe}, so we'll
       report the error here: 
       ${txt.split('\n').slice(0, 2)}`;
       throw e;
