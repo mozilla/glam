@@ -75,7 +75,7 @@
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
-        store.setProbe(probeName);
+        store.setField('probeName', probeName);
       }
 
       store.setField('route', {
