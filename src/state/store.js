@@ -106,7 +106,7 @@ export const store = createStore(initialState);
 store.reset = () => {
   store.reinitialize({
     auth: store.getState().auth,
-    probeName: undefined,
+    probeName: '',
   });
 };
 

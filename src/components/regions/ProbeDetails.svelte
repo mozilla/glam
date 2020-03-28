@@ -22,8 +22,8 @@ const PROBE_TYPE_DOCS = {
 let visible = false;
 onMount(() => { visible = true; });
 
-function probeIsSelected(p) {
-  return p && p.name !== null && p.name !== 'null';
+function probeIsSelected(probeToTest) {
+  return probeToTest && probeToTest.name !== null && probeToTest.name !== 'null';
 }
 
 </script>
