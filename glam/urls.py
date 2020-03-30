@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 from django.views.generic.base import TemplateView
 
@@ -16,5 +15,4 @@ urlpatterns = [
         auth_views.front_end_auth_config,
         name="v1-front-end-auth-config",
     ),
-    path("admin/", admin.site.urls),
 ]
