@@ -38,26 +38,17 @@ class Core(Configuration):
         # Third party apps
         "dockerflow.django",
         # Django apps
-        "django.contrib.admin",
         "django.contrib.auth",
         "mozilla_django_oidc",
         "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
         "django.contrib.staticfiles",
-        # needs to load after django.contrib.auth
-        # "mozilla_django_oidc",
     ]
 
     MIDDLEWARE = [
         "django.middleware.security.SecurityMiddleware",
         "whitenoise.middleware.WhiteNoiseMiddleware",
         "dockerflow.django.middleware.DockerflowMiddleware",
-        "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.common.CommonMiddleware",
-        "django.middleware.csrf.CsrfViewMiddleware",
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
     ]
 
