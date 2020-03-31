@@ -178,6 +178,8 @@ def get_aggregations(request, **kwargs):
 
     # Check for data with one of "histogram" or "percentiles", but not both.
     for row in response:
+        if row["metadata"]["metric_type"] == "boolean":
+            continue
         for data in row["data"]:
             if "histogram" not in data or "percentiles" not in data:
                 raise NotFound("Incomplete data for probe")
