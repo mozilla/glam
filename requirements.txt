@@ -27,4 +27,4 @@ pyflakes==2.1.1
 pytest==5.4.1
 pytest-blockage==0.2.2
 pytest-cov==2.8.1
-pytest-django==3.8.0
+pytest-django==3.9.0
