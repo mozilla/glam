@@ -111,6 +111,9 @@ class Command(BaseCommand):
                 "beta": self.get_probe_versions("beta", probe),
                 "release": self.get_probe_versions("release", probe),
             },
+            "record_in_processes": latest_history["details"].get(
+                "record_in_processes", []
+            ),
             "optout": {
                 "nightly": self.get_optout("nightly", probe),
                 "beta": self.get_optout("beta", probe),
@@ -120,7 +123,8 @@ class Command(BaseCommand):
             # active (bool): TRUE if last recorded nightly version is equal to
             # the latest nightly version.
             "active": expiry == "never" or (
-                nightly_versions[1] and int(expiry) > int(nightly_versions[1])),
+                nightly_versions[1] and int(expiry) > int(nightly_versions[1])
+            ),
             # prelease (bool): TRUE if "optout" is false on the "release"
             # channel, i.e., it's recorded by default on all channels.
             "prerelease": self.get_optout("release", probe) is False,
