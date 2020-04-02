@@ -93,7 +93,9 @@
     <MarketingBlock />
     <div class="random-probe-view">
       <h2>Explore</h2>
-      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, selectedProcess)}
+      <!-- TODO: This won't be pulling random probes going forward.
+           Hardcoding the process for now. -->
+      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent')}
         <div class="probes-overview">
           {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
