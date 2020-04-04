@@ -8,9 +8,7 @@ from google.cloud import storage
 
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
-PRODUCT_MODEL_MAP = {
-    "fenix": "api.FenixAggregation",
-}
+PRODUCT_MODEL_MAP = {"fenix": "api.FenixAggregation"}
 
 
 def log(message):
@@ -27,17 +25,22 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "product", help="The Glean product we are importing data for.",
+            "product", help="The Glean product we are importing data for."
+        )
+        parser.add_argument(
+            "--bucket",
+            help="The bucket location for the exported aggregates",
+            default=GCS_BUCKET,
         )
 
-    def handle(self, product, *args, **options):
+    def handle(self, product, bucket, *args, **options):
 
         csv_prefix = f"glam-extract-{product}"
         model = apps.get_model(PRODUCT_MODEL_MAP[product])
 
         self.gcs_client = storage.Client()
 
-        blobs = self.gcs_client.list_blobs(GCS_BUCKET)
+        blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(filter(lambda b: b.name.startswith(csv_prefix), blobs))
 
         for blob in blobs:
