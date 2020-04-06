@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from glam.api import constants
 from glam.api.models import (
     BetaAggregation,
+    FenixAggregation,
     FirefoxCounts,
     NightlyAggregation,
     ReleaseAggregation,
@@ -16,10 +17,10 @@ from glam.api.models import (
 )
 
 
-def get_aggregations(request, **kwargs):
+def get_firefox_aggregations(request, **kwargs):
     # TODO: When glam starts sending "product", make it required.
     # TODO: Consider combining product + channel for Firefox.
-    REQUIRED_QUERY_PARAMETERS = ["probe", "aggregationLevel"]
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
@@ -28,33 +29,14 @@ def get_aggregations(request, **kwargs):
         )
 
     # Ensure that the product provided is one we support, defaulting to Firefox.
-    product = kwargs.get("product", "firefox")
-    if product not in constants.PRODUCT_IDS.keys():
-        raise ValidationError(
-            "Unsupported product specified. We currently support only: {}".format(
-                ", ".join(constants.PRODUCT_IDS.keys())
-            )
-        )
+    product = "firefox"
+    channel = kwargs.get("channel")
+    model_key = f"{product}-{channel}"
 
-    channel = None
-    model_key = product
-
-    # If Firefox is the product, channel is required.
-    if product == constants.PRODUCT_NAMES[constants.PRODUCT_FIREFOX]:
-        channel = kwargs.get("channel")
-        if not channel or channel not in constants.CHANNEL_IDS.keys():
-            raise ValidationError(
-                "Unsupported or missing channel. We currently support: {}".format(
-                    ", ".join(constants.CHANNEL_IDS.keys())
-                )
-            )
-
-        # If release channel, make sure the user is authenticated.
-        if channel == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
-            if not request.user.is_authenticated:
-                raise PermissionDenied()
-
-        model_key = f"{product}-{channel}"
+    # If release channel, make sure the user is authenticated.
+    if channel == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
 
     MODEL_MAP = {
         "firefox-nightly": NightlyAggregation,
@@ -187,6 +169,105 @@ def get_aggregations(request, **kwargs):
     return response
 
 
+def get_glean_aggregations(request, **kwargs):
+    REQUIRED_QUERY_PARAMETERS = ["product", "probe", "aggregationLevel"]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    MODEL_MAP = {
+        "fenix": FenixAggregation,
+    }
+
+    try:
+        model = MODEL_MAP[kwargs.get("product")]
+    except KeyError:
+        raise ValidationError("Product not currently supported.")
+
+    # Check if a version was provided and if not, get the MAX version from our
+    # data to select the last 3 versions by default.
+    if "versions" not in kwargs or not kwargs["versions"]:
+        try:
+            max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        except (ValueError, KeyError):
+            raise ValidationError("Query version cannot be determined")
+        kwargs["versions"] = list(range(max_version, max_version - 3, -1))
+
+    dimensions = [
+        Q(metric=kwargs["probe"]),
+        Q(version__in=list(map(str, kwargs["versions"]))),
+        Q(os=kwargs.get("os") or "*"),
+    ]
+
+    aggregation_level = kwargs["aggregationLevel"]
+    # Whether to pull aggregations by version or build_id.
+    if aggregation_level == "version":
+        dimensions.append(Q(build_id="*"))
+    elif aggregation_level == "build_id":
+        dimensions.append(~Q(build_id="*"))
+
+    result = model.objects.filter(*dimensions)
+
+    response = {}
+
+    for row in result:
+
+        metadata = {
+            "channel": row.channel,
+            "version": row.version,
+            "os": row.os,
+            "build_id": row.build_id,
+            "metric": row.metric,
+            "metric_type": row.metric_type,
+            "ping_type": row.ping_type,
+        }
+        aggs = {d["key"]: round(d["value"], 4) for d in row.data}
+
+        # We use these keys to merge data dictionaries.
+        key = "{channel}-{version}-{metric}-{os}-{build_id}-{ping_type}".format(
+            **metadata
+        )
+        sub_key = "{key}-{client_agg_type}".format(
+            key=row.metric_key, client_agg_type=row.client_agg_type
+        )
+
+        record = response.get(key, {})
+        if "metadata" not in record:
+            record["metadata"] = metadata
+
+        if sub_key not in record:
+            record[sub_key] = {}
+
+        new_data = {}
+        new_data[row.agg_type] = aggs
+
+        if row.agg_type == constants.AGGREGATION_HISTOGRAM:
+            new_data["total_users"] = row.total_users
+
+        if row.metric_key:
+            new_data["key"] = row.metric_key
+
+        if row.client_agg_type:
+            new_data["client_agg_type"] = row.client_agg_type
+
+        data = record[sub_key].get("data", {})
+        data.update(new_data)
+
+        record[sub_key]["data"] = data
+        response[key] = record
+
+    # Restructure data and remove keys only used for merging data.
+    response = [
+        {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
+        for r in response.values()
+    ]
+
+    return response
+
+
 @api_view(["POST"])
 def aggregations(request):
     """
@@ -243,7 +324,24 @@ def aggregations(request):
     if body is None or body.get("query") is None:
         raise ValidationError("Unexpected JSON body")
 
-    response = get_aggregations(request, **body["query"])
+    # Firefox Desktop is pulling from older telemetry data and will go away in
+    # the future. The code path is separated here in anticipation of this and
+    # separating out Glean data as the future.
+
+    # Ensure that the product provided is one we support, defaulting to Firefox.
+    FIREFOX = constants.PRODUCT_NAMES[constants.PRODUCT_FIREFOX]
+    product = body["query"].get("product", FIREFOX)
+    if product not in constants.PRODUCT_IDS.keys():
+        raise ValidationError(
+            "Unsupported product specified. We currently support only: {}".format(
+                ", ".join(constants.PRODUCT_IDS.keys())
+            )
+        )
+
+    if product == FIREFOX:
+        response = get_firefox_aggregations(request, **body["query"])
+    else:  # Assume everything else is Glean-based.
+        response = get_glean_aggregations(request, **body["query"])
 
     if not response:
         raise NotFound("No documents found for the given parameters")
@@ -289,7 +387,7 @@ def random_probes(request):
         # do not proceed if the probe is a boolean scalar
         if not (probe.info["type"] == "scalar" and probe.info["kind"] == "boolean"):
             try:
-                aggregations = get_aggregations(
+                aggregations = get_firefox_aggregations(
                     request,
                     probe=probe.info["name"],
                     channel=channel,

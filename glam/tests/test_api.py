@@ -281,10 +281,12 @@ class TestAggregationsApi:
     @pytest.mark.parametrize(
         "query, missing",
         [
-            ({"probe": None, "versions": []}, "aggregationLevel"),
-            ({"versions": [], "aggregationLevel": None}, "probe"),
-            ({"probe": None}, "aggregationLevel"),
-            ({}, "aggregationLevel, probe"),
+            ({"channel": None, "probe": None, "versions": []}, "aggregationLevel"),
+            ({"channel": None, "versions": [], "aggregationLevel": None}, "probe"),
+            ({"probe": None, "versions": [], "aggregationLevel": None}, "channel"),
+            ({"channel": None, "probe": None}, "aggregationLevel"),
+            ({"channel": None}, "aggregationLevel, probe"),
+            ({}, "aggregationLevel, channel, probe"),
         ],
     )
     def test_required_params(self, client, query, missing):
@@ -304,13 +306,13 @@ class TestAggregationsApi:
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 400
-        assert resp.json()[0].startswith("Unsupported or missing channel.")
+        assert resp.json()[0].startswith("Missing required query parameters")
 
         # Also test an invalid channel.
         query["query"]["channel"] = "ohrora"
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 400
-        assert resp.json()[0].startswith("Unsupported or missing channel.")
+        assert resp.json()[0].startswith("Product not currently supported")
 
     def test_invalid_product(self, client):
         resp = client.post(
