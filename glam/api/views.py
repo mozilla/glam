@@ -261,14 +261,22 @@ def probes(request):
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
-    process = request.data.get("process", "content")
+    channel = request.data.get(
+        "channel", constants.CHANNEL_NAMES[constants.CHANNEL_NIGHTLY]
+    )
+    process = request.data.get(
+        "process", constants.PROCESS_NAMES[constants.PROCESS_CONTENT]
+    )
+    os = request.data.get("os", "Windows")
     try:
         n = int(n)
     except ValueError:
         n = 3
 
     probe_ids = list(
-        Probe.objects.exclude(info__kind="string").exclude(info__kind="boolean").values_list("id", flat=True)
+        Probe.objects.exclude(info__kind="string")
+        .exclude(info__kind="boolean")
+        .values_list("id", flat=True)
     )
     if n > len(probe_ids):
         raise ValidationError("Not enough probes to select `n` items.")
@@ -284,8 +292,8 @@ def random_probes(request):
                 aggregations = get_aggregations(
                     request,
                     probe=probe.info["name"],
-                    channel="nightly",
-                    os="Windows",
+                    channel=channel,
+                    os=os,
                     process=process,
                     aggregationLevel="version",
                 )
