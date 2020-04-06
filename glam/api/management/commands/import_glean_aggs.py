@@ -41,7 +41,13 @@ class Command(BaseCommand):
         self.gcs_client = storage.Client()
 
         blobs = self.gcs_client.list_blobs(bucket)
-        blobs = list(filter(lambda b: b.name.startswith(csv_prefix), blobs))
+        blobs = list(
+            filter(
+                lambda b: b.name.startswith(csv_prefix)
+                and not b.name.endswith("counts.csv"),
+                blobs,
+            )
+        )
 
         for blob in blobs:
             # Create temp table for data.
