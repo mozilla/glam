@@ -25,6 +25,9 @@ command after logging into the Docker container with ``make shell``:
 python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
+Reach out to someone on the #glam Slack channel for the values of
+`GOOGLE_CLOUD_PROJECT` and `AUTH0_*` variables.
+
 Initial Setup
 -------------
 
@@ -45,22 +48,23 @@ To gather the probe data that populates the probe API, run the following:
 ./manage.py import_probes
 ```
 
-The aggregations table depends on having separate tables for each version of
-a product and channel. The following command will ensure those tables are
-created based on the latest Firefox versions:
+The last step is to populate the aggregation tables with data from desktop
+Firefox:
 
-```
-./manage.py create_version_partitions
+```bash
+./manage.py import_aggs <CHANNEL>
 ```
 
-The last step is to populate the aggregation tables with data. To do this,
-reach out to someone on the #glam Slack channel to help you get a CSV file
-for import. Once you have it, from ``make shell`` log in to the Postgresql
-database via ``./manage.py dbshell`` and run the following command, replacing
-`<filename>` with the path to the file on your local system:
+where `CHANNEL` is one of `nightly`, `beta`, or `release`.
 
-```
-\copy aggregation (channel, version, agg_type, os, build_id, metric, metric_key, client_agg_type, metric_type, total_users, data) FROM <filename> WITH CSV;
+You will need to have viewer permissions in the non-prod GCP project to pull
+down data. Reach out to someone on the #glam Slack channel if you need the
+proper authorization.
+
+Data from glean may be pulled down using the following command:
+
+```bash
+./manage.py import_glean_aggs <PRODUCT>
 ```
 
 Starting the server
