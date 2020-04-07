@@ -49,22 +49,23 @@ To gather the probe data that populates the probe API, run the following:
 ```
 
 The last step is to populate the aggregation tables with data from desktop
-Firefox.
+Firefox:
 
 ```bash
-./manage.py import_aggs
+./manage.py import_aggs <CHANNEL>
 ```
 
-If will need to have viewer permissions to the nonprod GCP project in order to
-pull down data. Reach out to someone on the #glam Slack channel if you need the
+where `CHANNEL` is one of `nightly`, `beta`, or `release`.
+
+You will need to have viewer permissions in the non-prod GCP project to pull
+down data. Reach out to someone on the #glam Slack channel if you need the
 proper authorization.
 
 Data from glean may be pulled down using the following command:
 
 ```bash
-./manage.py import_glean_aggs
+./manage.py import_glean_aggs <PRODUCT>
 ```
-
 
 Starting the server
 -------------------
