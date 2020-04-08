@@ -38,10 +38,15 @@ export function percentilesOverTimeDescription(aggregationLevel) {
   `;
 }
 
-export function proportionsOverTimeDescription(overTimePointMetricType, aggregationLevel) {
+export function proportionsOverTimeDescription(
+  overTimePointMetricType,
+  aggregationLevel
+) {
   return `
   Shows the ${overTimePointMetricType} of clients that have observed the 
-  following category / bin for the probe for each given ${niceAggregations[aggregationLevel]}.
+  following category / bin for the probe for each given ${
+    niceAggregations[aggregationLevel]
+  }.
 
   ${exploreInstructionsDescription(aggregationLevel)}
   `;
@@ -49,7 +54,9 @@ export function proportionsOverTimeDescription(overTimePointMetricType, aggregat
 
 export function clientVolumeOverTimeDescription(aggregationLevel) {
   return `
-  Shows the total volume of clients that have observed this probe for each given ${niceAggregations[aggregationLevel]}.
+  Shows the total volume of clients that have observed this probe for each given ${
+    niceAggregations[aggregationLevel]
+  }.
 
   ${exploreInstructionsDescription(aggregationLevel)}
   `;
@@ -104,7 +111,8 @@ export const explorerComparisonSmallMultiple = {
   borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,
   // amount of width to add to graph when buildIDComparisonGraph is hidden
-  insufficientDataAdjustment: aggregationsOverTimeGraph.insufficientDataAdjustment,
+  insufficientDataAdjustment:
+    aggregationsOverTimeGraph.insufficientDataAdjustment,
 };
 
 export const compareClientCountsGraph = {

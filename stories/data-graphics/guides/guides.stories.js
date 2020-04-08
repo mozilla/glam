@@ -7,6 +7,7 @@ import '../../../public/static/global.css';
 storiesOf('Data Graphics|Guides', module)
   .add('Simple Axes', () => ({
     Component: SimpleAxisStory,
-  })).add('Markers', () => ({
+  }))
+  .add('Markers', () => ({
     Component: Markers,
   }));

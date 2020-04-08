@@ -31,9 +31,11 @@ export function createStore(initialStore) {
   // we call it setField to differentiate it from the store's
   // set function.
   function setField(key, value) {
-    INTERNAL_STORE.update((state) => produce(state, (draft) => {
-      draft[key] = value;
-    }));
+    INTERNAL_STORE.update((state) =>
+      produce(state, (draft) => {
+        draft[key] = value;
+      })
+    );
   }
 
   function connect(func) {

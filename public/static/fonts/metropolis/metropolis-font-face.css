@@ -1,20 +1,20 @@
 @font-face {
-    font-family: 'Metropolis';
-    src: url('/static/fonts/metropolis/Metropolis-Black.woff2') format('woff2');
-    font-weight: 900;
-    font-style: normal;
-  }
+  font-family: 'Metropolis';
+  src: url('/static/fonts/metropolis/Metropolis-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
 
-  @font-face {
-    font-family: 'Metropolis';
-    src: url('/static/fonts/metropolis/Metropolis-Bold.woff2') format('woff2');
-    font-weight: bold;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'Metropolis';
-    src: url('/static/fonts/metropolis/Metropolis-Medium.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-  }
+@font-face {
+  font-family: 'Metropolis';
+  src: url('/static/fonts/metropolis/Metropolis-Bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Metropolis';
+  src: url('/static/fonts/metropolis/Metropolis-Medium.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}

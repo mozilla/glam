@@ -21,10 +21,9 @@ storiesOf('UX Components|Buttons', module)
     Component: ButtonGroup,
   }));
 
-storiesOf('UX Components|Radio', module)
-  .add('Radio', () => ({
-    Component: Radio,
-  }));
+storiesOf('UX Components|Radio', module).add('Radio', () => ({
+  Component: Radio,
+}));
 
 storiesOf('UX Components|Spinners', module)
   .add('Line Segment Spinner', () => ({

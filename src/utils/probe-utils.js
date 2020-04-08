@@ -20,9 +20,15 @@ export const sortByHistogramObjectKey = (a, b) => {
   return 0;
 };
 
-export const responseHistogramToGraphicFormat = (histogram, keyTransform = (k) => +k) => {
+export const responseHistogramToGraphicFormat = (
+  histogram,
+  keyTransform = (k) => +k
+) => {
   // turn histogram to array of objects, sorted.
-  const formatted = Object.entries(histogram).map(([k, v]) => ({ bin: keyTransform(k), value: v }));
+  const formatted = Object.entries(histogram).map(([k, v]) => ({
+    bin: keyTransform(k),
+    value: v,
+  }));
   formatted.sort((a, b) => {
     if (a.key > b.key) return -1;
     if (a.key <= b.key) return 1;
@@ -34,11 +40,12 @@ export const responseHistogramToGraphicFormat = (histogram, keyTransform = (k) =
 const errors = {
   MISSING_PERCENTILES: {
     message: 'This probe is missing data.',
-    moreInformation: 'We can\'t find the percentile calculations for this probe.',
+    moreInformation:
+      "We can't find the percentile calculations for this probe.",
   },
   MISSING_HISTOGRAM: {
     message: 'This probe is missing data.',
-    moreInformation: 'We can\'t find the histogram aggregations for this probe.',
+    moreInformation: "We can't find the histogram aggregations for this probe.",
   },
 };
 
@@ -49,33 +56,41 @@ function createNewError(which) {
   return error;
 }
 
+export const prepareForQuantilePlot = (probeData, key = 'version') =>
+  probeData.map((probe) => {
+    const h = probe.data[0].histogram;
+    if (!h) {
+      throw createNewError('MISSING_HISTOGRAM');
+    }
+    const histogram = responseHistogramToGraphicFormat(h);
+    const { percentiles } = probe.data[0];
 
-export const prepareForQuantilePlot = (probeData, key = 'version') => probeData.map((probe) => {
-  const h = probe.data[0].histogram;
-  if (!h) {
-    throw createNewError('MISSING_HISTOGRAM');
-  }
-  const histogram = responseHistogramToGraphicFormat(h);
-  const { percentiles } = probe.data[0];
+    if (!percentiles) {
+      throw createNewError('MISSING_PERCENTILES');
+    }
 
-  if (!percentiles) {
-    throw createNewError('MISSING_PERCENTILES');
-  }
-
-  const transformedPercentiles = Object.entries(percentiles).reduce((acc, [bin, value]) => {
-    acc[bin] = nearestBelow(value, histogram.map((h) => h.bin));
-    return acc;
-  }, {});
-  return {
-    label: key === 'version' ? probe.metadata[key] : fullBuildIDToDate(probe.metadata[key]),
-    histogram,
-    percentiles,
-    transformedPercentiles,
-    version: probe.metadata.version,
-    audienceSize: probe.data[0].total_users,
-  };
-});
-
+    const transformedPercentiles = Object.entries(percentiles).reduce(
+      (acc, [bin, value]) => {
+        acc[bin] = nearestBelow(
+          value,
+          histogram.map((h) => h.bin)
+        );
+        return acc;
+      },
+      {}
+    );
+    return {
+      label:
+        key === 'version'
+          ? probe.metadata[key]
+          : fullBuildIDToDate(probe.metadata[key]),
+      histogram,
+      percentiles,
+      transformedPercentiles,
+      version: probe.metadata.version,
+      audienceSize: probe.data[0].total_users,
+    };
+  });
 
 function toProportions(obj) {
   const proportions = { ...obj };
@@ -86,27 +101,37 @@ function toProportions(obj) {
   return proportions;
 }
 
-export const prepareForProportionPlot = (probeData, key = 'version', prepareArgs = {}) => probeData.map((probe) => {
-  const counts = { ...probe.data[0].histogram };
-  if (prepareArgs.probeType === 'histogram-boolean') {
-    counts.no = counts['0'];
-    counts.yes = counts['1'];
-    delete counts['0'];
-    delete counts['1'];
-    delete counts['2'];
-  }
-  const proportions = toProportions(counts);
-  return {
-    label: key === 'version' ? probe.metadata[key] : fullBuildIDToDate(probe.metadata[key]),
-    counts,
-    version: probe.metadata.version,
-    proportions,
-    audienceSize: probe.data[0].total_users,
-  };
-});
+export const prepareForProportionPlot = (
+  probeData,
+  key = 'version',
+  prepareArgs = {}
+) =>
+  probeData.map((probe) => {
+    const counts = { ...probe.data[0].histogram };
+    if (prepareArgs.probeType === 'histogram-boolean') {
+      counts.no = counts['0'];
+      counts.yes = counts['1'];
+      delete counts['0'];
+      delete counts['1'];
+      delete counts['2'];
+    }
+    const proportions = toProportions(counts);
+    return {
+      label:
+        key === 'version'
+          ? probe.metadata[key]
+          : fullBuildIDToDate(probe.metadata[key]),
+      counts,
+      version: probe.metadata.version,
+      proportions,
+      audienceSize: probe.data[0].total_users,
+    };
+  });
 
 export function isScalar(payload) {
-  return payload.every((aggregation) => aggregation.metadata.metric_type === 'scalar');
+  return payload.every(
+    (aggregation) => aggregation.metadata.metric_type === 'scalar'
+  );
 }
 
 function sortByBuildID(a, b) {
@@ -145,7 +170,6 @@ export function zipByAggregationType(payload) {
   return out;
 }
 
-
 export function topKBuildsPerDay(dataset, k = 2) {
   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
   const topK = Object.entries(byBuildID).map(([_, matches]) => {
@@ -167,25 +191,38 @@ export function gatherBy(payload, by) {
       const aggType = by(entry);
       if (!(aggType in gathered)) gathered[aggType] = [];
       gathered[aggType].push({
-        data: [entry], metadata: { ...aggregation.metadata },
+        data: [entry],
+        metadata: { ...aggregation.metadata },
       });
     });
   });
   return gathered;
 }
 
-
-export function byKeyAndAggregation(d, preparationType = 'quantile', aggregationLevel = 'build_id', prepareArgs = {}, postProcessArgs = {}) {
+export function byKeyAndAggregation(
+  d,
+  preparationType = 'quantile',
+  aggregationLevel = 'build_id',
+  prepareArgs = {},
+  postProcessArgs = {}
+) {
   const data = produce(d, (di) => di);
-  const prepareFcn = preparationType === 'quantile' ? prepareForQuantilePlot : prepareForProportionPlot;
+  const prepareFcn =
+    preparationType === 'quantile'
+      ? prepareForQuantilePlot
+      : prepareForProportionPlot;
   const byKey = gatherBy(data, (entry) => entry.key);
   Object.keys(byKey).forEach((k) => {
     byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
     Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => prepareFcn(di, aggregationLevel, prepareArgs));
+      byKey[k][aggKey] = produce(byKey[k][aggKey], (di) =>
+        prepareFcn(di, aggregationLevel, prepareArgs)
+      );
 
       if (aggregationLevel === 'build_id') {
-        byKey[k][aggKey] = produce(byKey[k][aggKey], (di) => topKBuildsPerDay(di, 2));
+        byKey[k][aggKey] = produce(byKey[k][aggKey], (di) =>
+          topKBuildsPerDay(di, 2)
+        );
         // convert label to Date here
       }
       byKey[k][aggKey].sort(sortByKey('label'));
@@ -194,14 +231,20 @@ export function byKeyAndAggregation(d, preparationType = 'quantile', aggregation
         // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
         const keys = Object.keys(byKey[k][aggKey][0].counts);
         const toRemove = keys
-          .map((ki) => [ki, byKey[k][aggKey].every((datum) => datum.counts[ki] === 0.0)])
-          .filter(([ki, tf]) => tf).map(([k]) => k);
-        byKey[k][aggKey] = byKey[k][aggKey].map((datum) => produce(datum, (draft) => {
-          toRemove.forEach((k) => {
-            delete draft.counts[k];
-            delete draft.proportions[k];
-          });
-        }));
+          .map((ki) => [
+            ki,
+            byKey[k][aggKey].every((datum) => datum.counts[ki] === 0.0),
+          ])
+          .filter(([ki, tf]) => tf)
+          .map(([k]) => k);
+        byKey[k][aggKey] = byKey[k][aggKey].map((datum) =>
+          produce(datum, (draft) => {
+            toRemove.forEach((k) => {
+              delete draft.counts[k];
+              delete draft.proportions[k];
+            });
+          })
+        );
       }
     });
   });
@@ -209,7 +252,8 @@ export function byKeyAndAggregation(d, preparationType = 'quantile', aggregation
 }
 
 function typeAndKind(probeType, probeKind) {
-  return (matchType, matchKind) => probeType === matchType && probeKind === matchKind;
+  return (matchType, matchKind) =>
+    probeType === matchType && probeKind === matchKind;
 }
 
 export function getProbeViewType(probeType, probeKind) {

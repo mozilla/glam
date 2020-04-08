@@ -2,15 +2,23 @@ function minmax(v, min, max) {
   return Math.max(min, Math.min(v, max));
 }
 
-export function mouseLocationToBoundingRect({
-  x, y, width = 0, height = 0,
-}) {
+export function mouseLocationToBoundingRect({ x, y, width = 0, height = 0 }) {
   return {
     parentPosition: {
-      width, height, left: x, right: x + width, top: y, bottom: y + height,
+      width,
+      height,
+      left: x,
+      right: x + width,
+      top: y,
+      bottom: y + height,
     },
     elementPosition: {
-      width, height, left: x, right: x + width, top: y, bottom: y + height,
+      width,
+      height,
+      left: x,
+      right: x + width,
+      top: y,
+      bottom: y + height,
     },
   };
 }
@@ -20,7 +28,8 @@ export function placeElement({
   alignment,
   parentPosition,
   elementPosition,
-  distance = 0, y = 0,
+  distance = 0,
+  y = 0,
   windowWidth = window.innerWidth,
   windowHeight = window.innerHeight,
 }) {
@@ -74,11 +83,19 @@ export function placeElement({
   } else if (location === 'left' || location === 'right') {
     // align center + location is left or right
     // do something here
-    top = minmax(parentTop - (elementHeight - parentHeight) / 2, distance, windowHeight - distance);
+    top = minmax(
+      parentTop - (elementHeight - parentHeight) / 2,
+      distance,
+      windowHeight - distance
+    );
   } else {
     // align center + location is top or bottom
     // location is top or bottom
-    left = minmax(parentLeft - (elementWidth - parentWidth) / 2, distance, windowWidth - distance);
+    left = minmax(
+      parentLeft - (elementWidth - parentWidth) / 2,
+      distance,
+      windowWidth - distance
+    );
   }
   return [left, top];
 }

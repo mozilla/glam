@@ -1,4 +1,6 @@
-function sum(vs) { return vs.reduce((a, b) => a + b, 0); }
+function sum(vs) {
+  return vs.reduce((a, b) => a + b, 0);
+}
 
 export function ascending(a, b) {
   if (a < b) return -1;
@@ -54,9 +56,11 @@ export function nearestBelow(value, neighbors) {
   return Math.max(...below);
 }
 
-export function weightedQuantile(probs = [0.05, 0.25, 0.5, 0.75, 0.95],
+export function weightedQuantile(
+  probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   values,
-  weights = values.map(() => 1)) {
+  weights = values.map(() => 1)
+) {
   // rough port of Hmisc's wtd.quantile function. https://github.com/harrelfe/Hmisc/blob/master/R/wtd.stats.s
   const n = sum(weights);
   // in the case where n === values.length, I believe this is just R-7
@@ -67,6 +71,8 @@ export function weightedQuantile(probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   // here is where approx comes in handy, but our specific use-case is easy to recreate
   const lowStats = nnInterp(cumSum(weights), values, low);
   const highStats = nnInterp(cumSum(weights), values, high);
-  const quantiles = modOrder.map((o, i) => (1 - o) * lowStats[i] + o * highStats[i]);
+  const quantiles = modOrder.map(
+    (o, i) => (1 - o) * lowStats[i] + o * highStats[i]
+  );
   return quantiles;
 }

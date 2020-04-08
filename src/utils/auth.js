@@ -58,7 +58,10 @@ export function authenticate(successCallback) {
         //
         // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1623800#c1
         // [2] https://github.com/visionmedia/page.js/issues/559
-        const relativeURLBeforeAuth = window.location.href.replace(window.location.origin, '');
+        const relativeURLBeforeAuth = window.location.href.replace(
+          window.location.origin,
+          ''
+        );
         sessionStorage.setItem('relativeURLBeforeAuth', relativeURLBeforeAuth);
         await auth0.loginWithRedirect({
           redirect_uri: window.location.origin,
