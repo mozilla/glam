@@ -1,15 +1,19 @@
 import { spring } from 'svelte/motion';
 import { derived } from 'svelte/store';
 
-export function histogramSpring(initial, params = { damping: 1, stiffness: 0.9 }) {
+export function histogramSpring(
+  initial,
+  params = { damping: 1, stiffness: 0.9 }
+) {
   function getHistValues(d) {
     return d.map((di) => di.value);
   }
   let value = initial;
   const referenceDistSpring = spring(getHistValues(value), params);
 
-  const { subscribe } = derived(referenceDistSpring,
-    ($d) => $d.map((di, i) => ({ value: di, bin: value[i].bin })));
+  const { subscribe } = derived(referenceDistSpring, ($d) =>
+    $d.map((di, i) => ({ value: di, bin: value[i].bin }))
+  );
   return {
     subscribe,
     setValue: (v) => {
@@ -19,7 +23,12 @@ export function histogramSpring(initial, params = { damping: 1, stiffness: 0.9 }
   };
 }
 
-export function twoPointSpring(initialHoverValue, initialReferenceValue, scale, colorMap = () => 'black') {
+export function twoPointSpring(
+  initialHoverValue,
+  initialReferenceValue,
+  scale,
+  colorMap = () => 'black'
+) {
   function ptToSpringValue(pt) {
     if (pt === undefined) return undefined;
     const out = { ...pt };

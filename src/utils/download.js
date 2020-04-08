@@ -8,5 +8,7 @@ export function downloadString(text, fileType = 'text', fileName) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  setTimeout(() => { URL.revokeObjectURL(a.href); }, 1500);
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+  }, 1500);
 }

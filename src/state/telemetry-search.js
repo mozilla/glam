@@ -8,32 +8,37 @@ const url = '__BASE_DOMAIN__/api/v1/probes/';
 
 export const probeSet = readable(undefined, async (set) => {
   const resp = await fetch(url).then((r) => r.json());
-  const data = Object.keys(resp.probes).map((key, i) => (
-    { id: i, ...resp.probes[key] }
-  ));
+  const data = Object.keys(resp.probes).map((key, i) => ({
+    id: i,
+    ...resp.probes[key],
+  }));
   set(data);
 });
 
-const telemetrySearch = derived(probeSet, ($probeSet) => {
-  if (!$probeSet) return { loaded: false };
+const telemetrySearch = derived(
+  probeSet,
+  ($probeSet) => {
+    if (!$probeSet) return { loaded: false };
 
-  const search = new FlexSearch({
-    suggest: true,
-    doc: {
-      id: 'id',
-      field: ['name', 'description', 'type'],
-    },
-  });
-  search.add($probeSet);
-  search.loaded = true;
-  const { probeName } = store.getState();
-  if (probeName) {
-    const probeInfo = $probeSet.find((d) => d.name === probeName);
-    if (probeInfo) {
-      store.setField('probe', probeInfo);
+    const search = new FlexSearch({
+      suggest: true,
+      doc: {
+        id: 'id',
+        field: ['name', 'description', 'type'],
+      },
+    });
+    search.add($probeSet);
+    search.loaded = true;
+    const { probeName } = store.getState();
+    if (probeName) {
+      const probeInfo = $probeSet.find((d) => d.name === probeName);
+      if (probeInfo) {
+        store.setField('probe', probeInfo);
+      }
     }
-  }
-  return search;
-}, { loaded: false });
+    return search;
+  },
+  { loaded: false }
+);
 
 export default telemetrySearch;

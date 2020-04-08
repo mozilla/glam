@@ -7,7 +7,11 @@ const dtFormatter = timeFormat('%Y%m%d');
 const dtParser = timeParse('%Y%m%d');
 const parse = (build) => dtParser(build.slice(0, 8));
 
-const toBuildObj = (build) => ({ build, truncated: build.slice(0, 8), dt: parse(build) });
+const toBuildObj = (build) => ({
+  build,
+  truncated: build.slice(0, 8),
+  dt: parse(build),
+});
 
 export function buildIDToDate(buildID) {
   return parse(buildID);
@@ -28,7 +32,7 @@ export function getFirstBuildOfDays(scale) {
   const seenDates = new Set([]);
   const firstBuilds = [];
   domain.forEach(({ truncated, build }) => {
-    if (!(seenDates.has(truncated))) {
+    if (!seenDates.has(truncated)) {
       seenDates.add(truncated);
       firstBuilds.push(build);
     }
@@ -45,7 +49,9 @@ export function mondays(scale) {
 }
 
 export function firstOfMonth(scale) {
-  return getFirstBuildOfDays(scale).filter((buildID) => buildID.slice(6, 8) === '01');
+  return getFirstBuildOfDays(scale).filter(
+    (buildID) => buildID.slice(6, 8) === '01'
+  );
 }
 
 export function buildIDToMonth(buildID) {

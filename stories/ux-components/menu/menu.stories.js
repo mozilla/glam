@@ -10,7 +10,8 @@ import '../../glean-design-stories.css';
 storiesOf('UX Components|Menu', module)
   .add('Basic Menus', () => ({
     Component: BasicMenuStory,
-  })).add('Floating Menus', () => ({
+  }))
+  .add('Floating Menus', () => ({
     Component: FloatingMenuStory,
   }))
   .add('Menu Button', () => ({

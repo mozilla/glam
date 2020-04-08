@@ -2,14 +2,15 @@ import { listen } from 'svelte/internal';
 import { placeElement } from './float-placement';
 
 const defaults = {
-  duration: 50, location: 'bottom', alignment: 'center', distance: 4,
+  duration: 50,
+  location: 'bottom',
+  alignment: 'center',
+  distance: 4,
 };
 
 export function tooltip(node, args) {
   const options = { ...defaults, ...args };
-  const {
-    duration, location, alignment, distance,
-  } = options;
+  const { duration, location, alignment, distance } = options;
   const el = document.createElement('div');
   el.className = 'tooltip';
   el.textContent = options.text;
@@ -33,12 +34,16 @@ export function tooltip(node, args) {
     if (el.textContent.length && options.text) {
       document.body.appendChild(el);
       el.style.opacity = '0';
-      setTimeout(() => { el.style.opacity = '1'; });
+      setTimeout(() => {
+        el.style.opacity = '1';
+      });
       setLocation();
     }
   }
 
-  function remove() { el.remove(); }
+  function remove() {
+    el.remove();
+  }
 
   const removeEnter = listen(node, 'mouseenter', append);
   const removeLeave = listen(node, 'mouseleave', remove);
