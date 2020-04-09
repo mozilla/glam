@@ -155,6 +155,10 @@ h2 {
     color: var(--subhead-gray-01);
 }
 
+.process-list {
+  font-family: var(--main-mono-font);
+}
+
 </style>
 
 <div class="drawer right-drawer">
@@ -212,6 +216,18 @@ h2 {
                 </div>
             {/if}
         </div>
+        <div class=drawer-section>
+          {#if $probe.record_in_processes}
+              <h2 class="detail__heading--01">Processes</h2>
+              <div class="probe-description helper-text--01">
+                  {#each $probe.record_in_processes as process}
+                  <div class="process-list helper-text--01">
+                    {process}
+                  </div>
+                  {/each}
+              </div>
+          {/if}
+      </div>
         {#if $probe.bugs && $probe.bugs.length}
         <div class="drawer-section">
             <h2 class="detail__heading--01">associated bugs</h2>
