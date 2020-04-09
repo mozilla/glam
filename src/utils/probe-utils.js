@@ -220,6 +220,7 @@ export function getProbeViewType(probeType, probeKind) {
   // scalar (hist rep) blocks FIXME: maybe conflate w/ histogram
   if (m('scalar', 'uint')) return 'scalar';
   // categorical blocks
+  if (m('scalar', 'boolean')) return 'categorical';
   if (m('histogram', 'enumerated')) return 'categorical';
   if (m('histogram', 'categorical')) return 'categorical';
   if (m('histogram', 'flag')) return 'categorical';
