@@ -294,7 +294,7 @@ $: if (hoverValue.x) {
     />
   </div>
   <div style="display: {insufficientData ? 'none' : 'block'}">
-    <CompareClientVolumeGraph 
+    <CompareClientVolumeGraph
       data={clientCountsData}
       description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}

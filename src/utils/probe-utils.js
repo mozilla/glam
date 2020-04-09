@@ -226,26 +226,6 @@ export function byKeyAndAggregation(
         // convert label to Date here
       }
       byKey[k][aggKey].sort(sortByKey('label'));
-
-      if (postProcessArgs.removeZeroes) {
-        // go through byKey[k][aggKey] and delete counts and proportions that are always zero.
-        const keys = Object.keys(byKey[k][aggKey][0].counts);
-        const toRemove = keys
-          .map((ki) => [
-            ki,
-            byKey[k][aggKey].every((datum) => datum.counts[ki] === 0.0),
-          ])
-          .filter(([ki, tf]) => tf)
-          .map(([k]) => k);
-        byKey[k][aggKey] = byKey[k][aggKey].map((datum) =>
-          produce(datum, (draft) => {
-            toRemove.forEach((k) => {
-              delete draft.counts[k];
-              delete draft.proportions[k];
-            });
-          })
-        );
-      }
     });
   });
   return byKey;

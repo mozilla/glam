@@ -223,13 +223,9 @@ export function responseToData(
   probeType,
   aggregationMethod = 'build_id'
 ) {
-  return byKeyAndAggregation(
-    data,
-    probeClass,
-    aggregationMethod,
-    { probeType },
-    { removeZeroes: probeType === 'histogram-enumerated' }
-  );
+  return byKeyAndAggregation(data, probeClass, aggregationMethod, {
+    probeType,
+  });
 }
 
 const makeSortOrder = (latest, which = 'counts') => (a, b) => {
