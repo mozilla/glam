@@ -84,6 +84,11 @@ def get_firefox_aggregations(request, **kwargs):
 
     for row in result:
 
+        # We skip boolean percentiles.
+        if row.metric_type == "boolean":
+            if row.agg_type == constants.AGGREGATION_PERCENTILE:
+                continue
+
         metadata = {
             "channel": constants.CHANNEL_NAMES[row.channel],
             "version": row.version,
@@ -125,6 +130,10 @@ def get_firefox_aggregations(request, **kwargs):
                     except IndexError:
                         pass
                 aggs = aggs_w_labels
+
+            # If boolean, we add a fake client_agg_type for the front-end.
+            if row.metric_type == "boolean":
+                new_data["client_agg_type"] = "boolean-histogram"
 
         new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
 
