@@ -3,13 +3,14 @@ import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 import Button from 'udgl/Button.svelte';
+import ButtonGroup from 'udgl/ButtonGroup.svelte';
 import StatusLabel from 'udgl/StatusLabel.svelte';
 import ExternalLink from 'udgl/icons/ExternalLink.svelte';
 import telemetrySearch from '../../state/telemetry-search';
 import { store, probe, dataset } from '../../state/store';
 
 import { downloadString } from '../../utils/download';
-
+import { getProcessName } from '../../config/firefox-desktop';
 
 const paneTransition = { x: 10, duration: 300 };
 const PROBE_TYPE_DOCS = {
@@ -217,14 +218,20 @@ h2 {
             {/if}
         </div>
         <div class=drawer-section>
-          {#if $probe.record_in_processes}
+          {#if $probe.record_in_processes && $probe.record_in_processes.length}
               <h2 class="detail__heading--01">Processes</h2>
               <div class="probe-description helper-text--01">
+                <ButtonGroup>
                   {#each $probe.record_in_processes as process}
                   <div class="process-list helper-text--01">
-                    {process}
+                      <Button toggled={getProcessName(process) === $store.process}
+                        on:click={() => { store.setField('process', getProcessName(process)); }}
+                        compact level=low>
+                          {getProcessName(process)}
+                      </Button>
                   </div>
                   {/each}
+                </ButtonGroup>
               </div>
           {/if}
       </div>
