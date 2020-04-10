@@ -73,15 +73,17 @@ const COMPACT = true;
         </MenuList>
     </div>
   </MenuButton>
-  <MenuButton tooltip={'Select a Process'} compact={COMPACT}  offset={OFFSET} location='bottom' alignment='left'>
-    <div class=main-filter__label slot="label">{getFieldValueLabel('process', $store.process)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
-    <div slot="menu">
-        <MenuList on:selection={(event) => { store.setField('process', event.detail.key); }}>
-          {#each CONFIG.fields.process.values as {key, label}, i (key)}
-          <MenuListItem  key={key} value={key}><span class='story-label
-            first'></span>{label}</MenuListItem>
-          {/each}
-        </MenuList>
-    </div>
-  </MenuButton>
+  {#if $store.route.view} <!-- Hide process selector on home page. -->
+    <MenuButton tooltip={'Select a Process'} compact={COMPACT}  offset={OFFSET} location='bottom' alignment='left'>
+      <div class=main-filter__label slot="label">{getFieldValueLabel('process', $store.process) || 'select a process'}<div class=pull-right-edge><DownCarat size=14 /></div></div>
+      <div slot="menu">
+          <MenuList on:selection={(event) => { store.setField('process', event.detail.key); }}>
+            {#each CONFIG.fields.process.values as {key, label}, i (key)}
+            <MenuListItem  key={key} value={key}><span class='story-label
+              first'></span>{label}</MenuListItem>
+            {/each}
+          </MenuList>
+      </div>
+    </MenuButton>
+  {/if}
 </div>

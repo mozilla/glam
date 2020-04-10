@@ -10,8 +10,8 @@
 
   import DataError from '../../components/errors/DataError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
-  import { probe, dataset } from '../../state/store';
-  import { getProbeViewType } from '../../utils/probe-utils';
+  import { probe, dataset, store } from '../../state/store';
+  import { getProbeViewType, isSelectedProcessValid } from '../../utils/probe-utils';
 
 
   // FIXME: for now, once we have retreived the data set, there are
@@ -40,7 +40,11 @@
     <Spinner size={48} color={'var(--cool-gray-400)'} />
   </div>
 {:then data}
-  <slot {data} probeType={$temporaryViewTypeStore} />
+  {#if isSelectedProcessValid($store.recordedInProcesses, $store.process)}
+    <slot {data} probeType={$temporaryViewTypeStore} />
+  {:else}
+    <DataError reason={`This probe does not record in the ${$store.process} process.`} />
+  {/if}
 {:catch err}
   <div class="graphic-body__content">
     <ProbeTitle />

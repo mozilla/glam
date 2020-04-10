@@ -94,7 +94,8 @@ const initialState = {
   channel: getFromQueryStringOrDefault('channel'),
   os: getFromQueryString('os') || 'Windows',
   versions: getFromQueryString('versions', true) || [],
-  process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS,
+  process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
+  recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.
   searchIsActive: false,
   searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
@@ -317,8 +318,10 @@ export function updateStoreAfterDataIsReceived({ data }) {
     etc = extractBucketMetadata(data);
   }
 
-  if (isCategoricalTypeProbe)
+  if (isCategoricalTypeProbe) {
     store.setField('activeBuckets', etc.initialBuckets);
+  }
+  store.setField('recordedInProcesses', probeValue.record_in_processes);
   return { data, viewType, ...etc };
 }
 

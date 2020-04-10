@@ -276,3 +276,15 @@ export function getProbeViewType(probeType, probeKind) {
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
+
+export function isSelectedProcessValid(processes, selectedProcess) {
+  let process = selectedProcess;
+
+  // TODO: This is definitely bad, we should standardize that 'parent' === 'main'
+  // across the data pipeline.
+  if (process === 'parent') {
+    process = 'main';
+  }
+
+  return processes.includes(process);
+}
