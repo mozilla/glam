@@ -5,6 +5,7 @@ const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
 const FETCH_ERROR_MESSAGES = {
   code5xx: 'Oh no! The server encountered an error.',
   code4xx: 'Oh no! Your client sent an invalid request.',
+  code404: 'No data found for the selected dimensions.',
 };
 
 export async function getRandomProbes(numProbes, process) {
@@ -29,7 +30,12 @@ export async function getProbeData(params, token) {
   }).then(async (response) => {
     // catch fetch error responses and surface them into
     // the frontend.
-    if (response.status >= 400 && response.status < 600) {
+    if (response.status === 404) {
+      const e = new Error(FETCH_ERROR_MESSAGES.code404);
+      e.moreInformation =
+        "You may try changing the probe's current data filters.";
+      throw e;
+    } else if (response.status >= 400 && response.status < 600) {
       const msg =
         response.status < 500
           ? FETCH_ERROR_MESSAGES.code4xx
@@ -39,7 +45,7 @@ export async function getProbeData(params, token) {
       e.moreInformation = `GLAM encountered a problem trying to show ${
         params.probe
       }, so we'll
-      report the error here: 
+      report the error here:
       ${txt.split('\n').slice(0, 2)}`;
       throw e;
     }
