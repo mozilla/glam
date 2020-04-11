@@ -1,6 +1,6 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
 
 export let level = 'medium';

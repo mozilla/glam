@@ -1,6 +1,6 @@
 <script>
 import { createEventDispatcher } from 'svelte';
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
 import LeftCarat from 'udgl/icons/LeftCarat.svelte';
 import RightCarat from 'udgl/icons/RightCarat.svelte';

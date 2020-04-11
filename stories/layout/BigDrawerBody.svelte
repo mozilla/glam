@@ -5,7 +5,7 @@ import Content from 'udgl/layout/Content.svelte';
 import ContentBody from 'udgl/layout/ContentBody.svelte';
 import ContentHeader from 'udgl/layout/ContentHeader.svelte';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 
 import UsageMetricsContent from '../data-graphics/mozilla/UsageMetricsContent.svelte';
 </script>
@@ -20,14 +20,14 @@ import UsageMetricsContent from '../data-graphics/mozilla/UsageMetricsContent.sv
       <ButtonGroup>
         <Button level=medium compact dark>Nightly</Button>
         <Button level=medium compact dark>Beta</Button>
-        <Button level=medium compact dark>Release</Button>  
+        <Button level=medium compact dark>Release</Button>
       </ButtonGroup>
       <Button level=medium compact dark>First Click</Button>
       <Button level=medium compact dark>Second Click</Button>
       <Button level=medium compact dark>Third Option</Button>
     </div>
   </Toolbar>
-  
+
   <div style='background-color: white;'>
     <Content>
       <ContentHeader>

@@ -13,7 +13,7 @@ import MarginText from 'udgl/data-graphics/guides/MarginText.svelte';
 import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 
-import Button from 'udgl/Button.svelte';
+import { Button } from '@graph-paper/button';
 
 const fmt = (v) => (v ? format(',.2f')(v) : '');
 const perc = format('.2p');
@@ -126,19 +126,19 @@ h3 {
       <BottomAxis ticks={[1900, 1950, 2000]} />
       <Line
       lineDrawAnimation={{ duration: 1000, delay: i * 45 }}
-        data={line} 
-        xAccessor=x 
+        data={line}
+        xAccessor=x
         yAccessor=y />
 
       <g slot='mouseover' let:value=>
         {#if hoverValue.body}
-        <Point 
+        <Point
             x={hoverValue.x} y={getY(line, Math.floor(hoverValue.x))} r={2} />
           />
-          <Point 
-            x={hoverValue.x} 
-            y={getY(line, Math.floor(hoverValue.x))} 
-            r={1 + 10 * (getY(line, Math.floor(hoverValue.x)) / 100)} 
+          <Point
+            x={hoverValue.x}
+            y={getY(line, Math.floor(hoverValue.x))}
+            r={1 + 10 * (getY(line, Math.floor(hoverValue.x)) / 100)}
             opacity={0.2}
             />
           <MarginText fontSize=11.5 justify=left temporaryLabel={Math.floor(value.x) || ''} />

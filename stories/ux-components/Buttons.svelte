@@ -1,6 +1,6 @@
 <script>
 
-import Button from 'udgl/Button.svelte';
+import { Button } from '@graph-paper/button';
 
 </script>
 <style>

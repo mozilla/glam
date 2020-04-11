@@ -1,7 +1,7 @@
 <script>
 import { fly, fade } from 'svelte/transition';
 
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
 
 
@@ -86,7 +86,7 @@ h3 {
       <label>Alignment</label>
       <ButtonGroup>
         {#each ['Good', 'Bad', 'Neutral'] as alignment, i}
-          <Button 
+          <Button
           level=medium
           toggled={which.includes(alignment) }
           on:click={() => { toggle(alignment); }}
@@ -118,9 +118,9 @@ h3 {
             <!-- {#each genericPointData as {x, y, color}, i (x + y + color)}
               {#if which.includes(color)}
               <g>
-                <Point 
-                  r={3} x={x} y={y} 
-                  fillOpacity={0.2} 
+                <Point
+                  r={3} x={x} y={y}
+                  fillOpacity={0.2}
                   fill={colors[color]}
                   stroke={colors[color]} strokeWidth={2} strokeOpacity={0.4} />
                 </g>
@@ -129,9 +129,9 @@ h3 {
           {#each marvel as {strength, weight, height, alignment, URL}, i (URL)}
             {#if which.includes(alignment)}
             <g>
-              <Point 
-                r={1 + strength / 2} x={height} y={weight} 
-                fillOpacity={0.3} 
+              <Point
+                r={1 + strength / 2} x={height} y={weight}
+                fillOpacity={0.3}
                 fill={alignmentColors[alignment]}
                 opacity={0.6}
                 stroke={alignmentColors[alignment]} strokeWidth=1 strokeOpacity={0.6} />

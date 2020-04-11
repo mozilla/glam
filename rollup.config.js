@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import replace from '@rollup/plugin-replace';
+import postcss from 'rollup-plugin-postcss';
 
 const production = process.env.NODE_ENV === 'production';
 
@@ -27,6 +28,10 @@ export default {
       css: (css) => {
         css.write('public/static/bundle.css');
       },
+      emitCss: true,
+    }),
+    postcss({
+      extract: true,
     }),
 
     // If you have external dependencies installed from

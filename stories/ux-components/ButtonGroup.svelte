@@ -1,5 +1,5 @@
 <script>
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
 
 let first = 0;

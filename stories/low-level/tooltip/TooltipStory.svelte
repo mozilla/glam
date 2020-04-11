@@ -1,5 +1,5 @@
 <script>
-import Button from 'udgl/Button.svelte';
+import { Button } from '@graph-paper/button';
 import { tooltip } from 'udgl/utils/tooltip';
 </script>
 

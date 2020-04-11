@@ -6,7 +6,7 @@ import ContentHeader from 'udgl/layout/ContentHeader.svelte';
 import ContentBody from 'udgl/layout/ContentBody.svelte';
 import ContentFooter from 'udgl/layout/ContentFooter.svelte';
 
-import Button from 'udgl/Button.svelte';
+import Button from '@graph-paper/button';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
 import Chart from 'udgl/icons/Chart.svelte';
 import Table from 'udgl/icons/Table.svelte';
@@ -38,7 +38,7 @@ import UsageMetricsContent from '../data-graphics/mozilla/UsageMetricsContent.sv
           <h2 style="margin:0; margin-top: var(--space-base);">Some Compelling Graphs <Chart /></h2>
           <UsageMetricsContent />
         </div>
-        
+
       </div>
     </ContentBody>
     <ContentFooter>
