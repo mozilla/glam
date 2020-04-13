@@ -38,6 +38,14 @@ export function createStore(initialStore) {
     );
   }
 
+  function setDimension(key, value) {
+    INTERNAL_STORE.update((state) =>
+      produce(state, (draft) => {
+        draft.productDimensions[key] = value;
+      })
+    );
+  }
+
   function connect(func) {
     return (...args) => dispatch(func(...args));
   }
@@ -53,6 +61,7 @@ export function createStore(initialStore) {
     subscribe: INTERNAL_STORE.subscribe,
     getState,
     setField,
+    setDimension,
     reinitialize,
   };
 }

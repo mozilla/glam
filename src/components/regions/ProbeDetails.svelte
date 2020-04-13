@@ -194,10 +194,10 @@ h2 {
         </div>
         {#if $store.versions && $store.versions.length}
             <dl class="drawer-section probe-details-overview-left probe-details-overview-left--subtle">
-                <dt>{$store.channel}</dt>
+                <dt>{$store.productDimensions.channel}</dt>
                 <dd class="probe-details-overview-left--padded">
-                    {$probe.versions[$store.channel][0]}
-                    &ndash; {$probe.versions[$store.channel][1]}
+                    {$probe.versions[$store.productDimensions.channel][0]}
+                    &ndash; {$probe.versions[$store.productDimensions.channel][1]}
                 </dd>
             </dl>
         {/if}
