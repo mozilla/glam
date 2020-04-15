@@ -124,19 +124,15 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
     {/if}
   </div>
 
-
-
   <div class=data-graphics>
     {#each Object.entries(data) as [key, aggs], i (key)}
       {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + key)}
         {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
-
               title={key === 'undefined' ? '' : key}
               aggregationsOverTimeTitle={overTimeTitle('percentiles', aggregationLevel)}
               aggregationsOverTimeDescription={percentilesOverTimeDescription(aggregationLevel)}
-
               probeFamily="Percentile"
               summaryLabel='perc.'
               data={data}
@@ -146,17 +142,15 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               markers={$firefoxVersionMarkers}
               showViolins={true}
               aggregationLevel={aggregationLevel}
-
               binColorMap={percentileLineColorMap}
-              pointMetricType={'transformedPercentiles'}
+              pointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
               overTimePointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}
-              yScaleType={probeType === 'histogram' ? 'scalePoint' : 'log'}
-
+              yScaleType={probeType === 'histogram' ? 'scalePoint' : 'linear'}
               yDomain={
                 probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
-                : [0, Math.max(...data.map((d) => d.percentiles[95]))]}
+                : [1, Math.max(...data.map((d) => d.percentiles[95]))]}
             >
 
             </ProbeExplorer>

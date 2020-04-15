@@ -85,7 +85,7 @@ text: description,
   key={key}
 >
   <g slot=background let:left let:bottom let:top let:right>
-    <rect 
+    <rect
       x={left}
       y={top}
       width={(right - left) / 2}
@@ -97,7 +97,7 @@ text: 'Shows the distribution of the currently-hovered point on the line chart',
 alignment: 'center',
       }}
     />
-    <rect 
+    <rect
       x={(left + right) / 2}
       y={top}
       width={(right - left) / 2}
@@ -109,14 +109,14 @@ text: 'Shows the distribution of the current reference point on the line chart',
 alignment: 'center',
       }}
     />
+  </g>
+  <g slot=body let:left let:right let:top let:bottom>
     <slot name='body'
-      left={left} 
-      right={right} 
-      top={top} 
+      left={left}
+      right={right}
+      top={top}
       bottom={bottom}
-    >
-    
-    </slot>
+    ></slot>
   </g>
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
   <TopAxis ticks={xDomain}  />
@@ -125,7 +125,7 @@ alignment: 'center',
     {#if leftPoints && rightPoints}
       {#each activeBins as bin, i}
         {#if dataVolume !== 2}
-        <line 
+        <line
           x1={left}
           x2={right}
           y1={$dotsAndLines[bin].leftY}
@@ -156,22 +156,22 @@ alignment: 'center',
             ]}
           />
         {/if}
-        <circle 
-          cx={dataVolume === 2 ? xScale(leftLabel) : left} 
-          cy={$dotsAndLines[bin].leftY} 
+        <circle
+          cx={dataVolume === 2 ? xScale(leftLabel) : left}
+          cy={$dotsAndLines[bin].leftY}
           r=3
           fill={$dotsAndLines[bin].color}
         />
       {/each}
     {/if}
     {#each activeBins as bin, i}
-      <ReferenceSymbol 
-        xLocation={dataVolume === 2 ? xScale(rightLabel) : right} 
-        yLocation={$dotsAndLines[bin].rightY} 
+      <ReferenceSymbol
+        xLocation={dataVolume === 2 ? xScale(rightLabel) : right}
+        yLocation={$dotsAndLines[bin].rightY}
         color={$dotsAndLines[bin].color}
       />
     {/each}
   </g>
 
-</DataGraphic>    
+</DataGraphic>
 </div>
