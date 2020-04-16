@@ -62,7 +62,7 @@
     "start": "sirv public --single",
     "start:dev": "sirv public --single --dev",
     "format": "prettier --write .",
-    "lint": "eslint --ext .js,.svelte rollup.config.js stories/ src/",
+    "lint": "eslint --ext .js,.svelte .",
     "storybook": "start-storybook --static-dir ./public --port 6006",
     "build-storybook": "build-storybook --static-dir ./public --config-dir .storybook",
     "test": "jest test --no-cache"

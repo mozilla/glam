@@ -1,2 +1,4 @@
 # Do not ignore .eslintrc.js itself
 !.eslintrc.js
+
+public/static/bundle.js
