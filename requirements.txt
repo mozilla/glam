@@ -16,7 +16,7 @@ mozilla-django-oidc==1.2.3
 PyOpenSSL==19.1.0
 psycopg2-binary==2.8.5
 requests==2.23.0
-urllib3==1.25.8
+urllib3==1.25.9
 whitenoise==5.0.1
 
 # For linting and testing.
