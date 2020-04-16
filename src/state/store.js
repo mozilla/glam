@@ -127,7 +127,10 @@ store.reset = () => {
 export const resetFilters = () => {
   store.setDimension('channel', getDefaultFieldValue('channel'));
   store.setDimension('os', getDefaultFieldValue('os'));
-  store.setDimension('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
+  store.setDimension(
+    'aggregationLevel',
+    getDefaultFieldValue('aggregationLevel')
+  );
   store.setDimension('process', getDefaultFieldValue('process'));
 };
 
@@ -179,7 +182,10 @@ function getParamsForQueryString(obj) {
 
 function getParamsForDataAPI(obj) {
   if (obj.product === 'firefox') {
-    const channelValue = getFieldValueKey('channel', obj.productDimensions.channel);
+    const channelValue = getFieldValueKey(
+      'channel',
+      obj.productDimensions.channel
+    );
     const osValue = getFieldValueKey('os', obj.productDimensions.os);
     const process = getFieldValueKey('os', obj.productDimensions.process);
     const params = getParamsForQueryString(obj);

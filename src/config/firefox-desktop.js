@@ -1,5 +1,5 @@
 export default {
-  sampleRate: .1,
+  sampleRate: 0.1,
   dimensions: {
     os: {
       title: 'Operating System',
@@ -37,5 +37,5 @@ export default {
         { key: 'gpu', label: 'GPU Process' },
       ],
     },
-  }
+  },
 };
