@@ -8,7 +8,7 @@ import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disabl
 
 import { getProbeData } from './api';
 
-import CONFIG from '../config.json';
+import CONFIG from '../config/firefox-desktop';
 
 import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
 
@@ -18,7 +18,7 @@ import { validate, noDuplicates, noResponse } from '../utils/data-validation';
 const DEFAULT_PROBE_PROCESS = 'content';
 
 export function getField(fieldKey) {
-  return CONFIG.fields[fieldKey];
+  return CONFIG.dimensions[fieldKey];
 }
 
 export function getFieldValues(fieldKey) {
@@ -26,7 +26,7 @@ export function getFieldValues(fieldKey) {
 }
 
 export function isField(fieldKey) {
-  return Object.keys(CONFIG.fields).includes(fieldKey);
+  return Object.keys(CONFIG.dimensions).includes(fieldKey);
 }
 
 export function getFieldValueMetadata(fieldKey, valueKey) {
@@ -88,13 +88,15 @@ const initialState = {
     isAuthenticated: false,
     token: undefined,
   },
+  product: 'firefox', // FIXME: derive this elsewhere like QS
+  productDimensions: {
+    channel: getFromQueryStringOrDefault('channel'),
+    os: getFromQueryString('os') || 'Windows',
+    process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
+    aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
+  },
   probeName: '',
   dashboardMode: {}, // FIXME: applicationStatus or dashboardMode, not both.
-  aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
-  channel: getFromQueryStringOrDefault('channel'),
-  os: getFromQueryString('os') || 'Windows',
-  versions: getFromQueryString('versions', true) || [],
-  process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
   recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.
   searchIsActive: false,
   searchQuery: '',
@@ -123,10 +125,10 @@ store.reset = () => {
 };
 
 export const resetFilters = () => {
-  store.setField('channel', getDefaultFieldValue('channel'));
-  store.setField('os', getDefaultFieldValue('os'));
-  store.setField('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
-  store.setField('process', getDefaultFieldValue('process'));
+  store.setDimension('channel', getDefaultFieldValue('channel'));
+  store.setDimension('os', getDefaultFieldValue('os'));
+  store.setDimension('aggregationLevel', getDefaultFieldValue('aggregationLevel'));
+  store.setDimension('process', getDefaultFieldValue('process'));
 };
 
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
@@ -149,7 +151,7 @@ export const searchResults = derived(
 );
 
 export const hasDefaultControlFields = derived(store, ($store) =>
-  Object.values(CONFIG.fields).every(
+  Object.values(CONFIG.dimensions).every(
     (field) =>
       !field.values ||
       field.skipValidation === true ||
@@ -160,31 +162,37 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 // ///// probe querying infrastructure.
 
 function getParamsForQueryString(obj) {
-  return {
-    versions: obj.versions,
-    channel: obj.channel,
-    os: obj.os,
-    aggregationLevel: obj.aggregationLevel,
-    process: obj.process,
-    timeHorizon: obj.timeHorizon,
-    proportionMetricType: obj.proportionMetricType,
-    activeBuckets: obj.activeBuckets,
-    visiblePercentiles: obj.visiblePercentiles,
-  };
+  if (obj.product === 'firefox') {
+    return {
+      channel: obj.productDimensions.channel,
+      os: obj.productDimensions.os,
+      aggregationLevel: obj.productDimensions.aggregationLevel,
+      process: obj.productDimensions.process,
+      timeHorizon: obj.timeHorizon,
+      proportionMetricType: obj.proportionMetricType,
+      activeBuckets: obj.activeBuckets,
+      visiblePercentiles: obj.visiblePercentiles,
+    };
+  }
+  throw Error('Product not recognized.');
 }
 
 function getParamsForDataAPI(obj) {
-  const channelValue = getFieldValueKey('channel', obj.channel);
-  const osValue = getFieldValueKey('os', obj.os);
-  const params = getParamsForQueryString(obj);
-  delete params.timeHorizon;
-  delete params.proportionMetricType;
-  delete params.activeBuckets;
-  delete params.visiblePercentiles;
-  params.probe = obj.probeName;
-  params.os = osValue;
-  params.channel = channelValue;
-  return params;
+  if (obj.product === 'firefox') {
+    const channelValue = getFieldValueKey('channel', obj.productDimensions.channel);
+    const osValue = getFieldValueKey('os', obj.productDimensions.os);
+    const process = getFieldValueKey('os', obj.productDimensions.process);
+    const params = getParamsForQueryString(obj);
+    delete params.timeHorizon;
+    delete params.proportionMetricType;
+    delete params.activeBuckets;
+    delete params.visiblePercentiles;
+    params.probe = obj.probeName;
+    params.os = osValue;
+    params.channel = channelValue;
+    params.process = process;
+    return params;
+  }
 }
 
 const toQueryStringPair = (k, v) => {

@@ -40,10 +40,10 @@
     <Spinner size={48} color={'var(--cool-gray-400)'} />
   </div>
 {:then data}
-  {#if isSelectedProcessValid($store.recordedInProcesses, $store.process)}
+  {#if isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
     <slot {data} probeType={$temporaryViewTypeStore} />
   {:else}
-    <DataError reason={`This probe does not record in the ${$store.process} process.`} />
+    <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
   {/if}
 {:catch err}
   <div class="graphic-body__content">

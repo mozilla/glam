@@ -12,7 +12,7 @@
   // TODO: add this to the upcoming config.js
   const NUMBER_OF_RANDOM_PROBES = 9;
 
-  $: selectedProcess = $store.process;
+  $: selectedProcess = $store.productDimensions.process;
 </script>
 
 <style>
