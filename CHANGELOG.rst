@@ -1,6 +1,24 @@
 Changelog
 =========
 
+unreleased
+----------
+
+
+m1
+--
+
+:date: 2020-04-16
+
+* add error handling for 4xx responses
+* add specific error handling for 404, when data is not available
+* ran prettier on all JS (but not svelte) assets
+* clean up unused storybook stories
+* fix for keyed enumerated histograms
+* add editorconfig to standardize editor code syntax
+* add initial support for importing fenix data
+* update to API to better support boolean histograms
+
 m0
 --
 
