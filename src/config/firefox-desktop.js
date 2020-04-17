@@ -24,17 +24,17 @@ export default {
       title: 'Aggregation Level',
       key: 'aggregationLevel',
       values: [
-        { key: 'build_id', label: 'by build id' },
-        { key: 'version', label: 'by major version' },
+        { key: 'build_id', label: 'Build ID' },
+        { key: 'version', label: 'Major Version' },
       ],
     },
     process: {
       title: 'Process',
       key: 'process',
       values: [
-        { key: 'parent', label: 'Parent Process' },
-        { key: 'content', label: 'Content Process' },
-        { key: 'gpu', label: 'GPU Process' },
+        { key: 'parent', label: 'Parent' },
+        { key: 'content', label: 'Content' },
+        { key: 'gpu', label: 'GPU' },
       ],
     },
   },

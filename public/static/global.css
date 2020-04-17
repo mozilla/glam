@@ -405,6 +405,9 @@ button:focus {
   display: grid;
   align-items: center;
   height: 100%;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-items: start;
 }
 .content-content {
   grid-column: body-content;

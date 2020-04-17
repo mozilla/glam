@@ -35,10 +35,11 @@ let button;
   padding: var(--space-1h);
   padding-left: var(--space-base);
   padding-right: var(--space-base);
-  font-size: var(--text-02);
+  border-radius: var(--space-1h);
+  font-size: calc(var(--space-base) * 1.5);
   border: none;
-  background-color: hsla(240,50%,80%,.3);
-  color: white;
+  border: 1px solid var(--cool-gray-200);
+  color: var(--digital-blue-600);
 }
 
 </style>
