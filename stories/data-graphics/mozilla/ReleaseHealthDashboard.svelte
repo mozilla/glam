@@ -8,8 +8,7 @@ import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 import AxisLabel from 'udgl/data-graphics/guides/AxisLabel.svelte';
 import AxisLine from 'udgl/data-graphics/guides/AxisLine.svelte';
 import AxisTick from 'udgl/data-graphics/guides/AxisTick.svelte';
-import Button from '@graph-paper/button';
-import ButtonGroup from 'udgl/ButtonGroup.svelte';
+import { Button, ButtonGroup } from '@graph-paper/button';
 
 import { groupBy } from 'udgl/utils/transforms';
 

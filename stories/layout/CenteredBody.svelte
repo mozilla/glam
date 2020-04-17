@@ -6,8 +6,7 @@ import ContentHeader from 'udgl/layout/ContentHeader.svelte';
 import ContentBody from 'udgl/layout/ContentBody.svelte';
 import ContentFooter from 'udgl/layout/ContentFooter.svelte';
 
-import Button from '@graph-paper/button';
-import ButtonGroup from 'udgl/ButtonGroup.svelte';
+import { Button, ButtonGroup } from '@graph-paper/button';
 import Chart from 'udgl/icons/Chart.svelte';
 import Table from 'udgl/icons/Table.svelte';
 import Help from 'udgl/icons/Help.svelte';

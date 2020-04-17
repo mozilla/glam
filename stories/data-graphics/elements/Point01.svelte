@@ -1,8 +1,7 @@
 <script>
 import { fly, fade } from 'svelte/transition';
 
-import Button from '@graph-paper/button';
-import ButtonGroup from 'udgl/ButtonGroup.svelte';
+import { Button, ButtonGroup } from '@graph-paper/button';
 
 
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';

@@ -4,8 +4,7 @@ import Toolbar from 'udgl/layout/Toolbar.svelte';
 import Content from 'udgl/layout/Content.svelte';
 import ContentBody from 'udgl/layout/ContentBody.svelte';
 import ContentHeader from 'udgl/layout/ContentHeader.svelte';
-import ButtonGroup from 'udgl/ButtonGroup.svelte';
-import Button from '@graph-paper/button';
+import { Button, ButtonGroup } from '@graph-paper/button';
 
 import UsageMetricsContent from '../data-graphics/mozilla/UsageMetricsContent.svelte';
 </script>
