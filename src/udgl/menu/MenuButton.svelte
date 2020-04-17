@@ -39,15 +39,22 @@ let button;
   font-size: calc(var(--space-base) * 1.5);
   border: none;
   border: 1px solid var(--cool-gray-200);
-  color: var(--digital-blue-600);
+  color: var(--digital-blue-700);
+  background-color: var(--cool-gray-subtle);
+  box-shadow: 0px 2px 2px rgba(0,0,0,.05);
+  transition: 100ms;
+  cursor: pointer;
+}
+
+.activating-button:hover {
+  background-color: var(--cool-gray-150);
+  color: var(--digital-blue-900);
+  box-shadow: 0px 2px 2px rgba(0,0,0,.1);
 }
 
 </style>
 
 <div class=menu-button bind:this={button}>
-<!-- <Button level={level} compact={compact} on:click={toggle}>
-  <slot name='label'></slot>
-</Button> -->
 <button use:tooltipAction={{ text: tooltip }} class=activating-button on:click={toggle}>
     <slot name='label'></slot>
 </button>
