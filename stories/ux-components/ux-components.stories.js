@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/svelte';
+import { ButtonGroup } from '@graph-paper/button';
 
 import DataLoadSpinner01 from './DataLoadSpinner.svelte';
 import DataLoadSpinner02 from './DataLoadSpinner02.svelte';
@@ -6,7 +7,6 @@ import DataError from '../../src/components/errors/DataError.svelte';
 import LineSegSpinner from './LineSegSpinner.svelte';
 
 import Buttons from './Buttons.svelte';
-import ButtonGroup from './ButtonGroup.svelte';
 
 import Radio from './Radio.svelte';
 
