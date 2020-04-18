@@ -1,3 +1,5 @@
+import { isSelectedProcessValid } from '../utils/probe-utils';
+
 export default {
   sampleRate: 0.1,
   dimensions: {
@@ -37,5 +39,18 @@ export default {
         { key: 'gpu', label: 'GPU' },
       ],
     },
+  },
+  setDefaultsForProbe(store, probe) {
+    const state = store.getState();
+    if (
+      !isSelectedProcessValid(
+        probe.record_in_processes,
+        state.productDimensions.process
+      )
+    ) {
+      let newProcess = probe.record_in_processes[0];
+      if (newProcess === 'main') newProcess = 'parent';
+      store.setDimension('process', newProcess);
+    }
   },
 };

@@ -4,7 +4,8 @@
   import { onMount } from 'svelte';
 
   import { store, currentQuery } from '../state/store';
-
+  import { probeSet } from '../state/telemetry-search';
+  import FIREFOX_DESKTOP from '../config/firefox-desktop';
   // Wrappers
   import Layout from './wrappers/Layout.svelte';
 
@@ -76,6 +77,12 @@
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
         store.setField('probeName', probeName);
+        // FIXME: all post-probe dimension setting should be done
+        // in a per-product function.
+        if ($probeSet) {
+          const newProbe = $probeSet.find((p) => p.name === probeName);
+          FIREFOX_DESKTOP.setDefaultsForProbe(store, newProbe);
+        }
       }
 
       store.setField('route', {
