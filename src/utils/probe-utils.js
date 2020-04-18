@@ -51,7 +51,6 @@ const errors = {
 
 function createNewError(which) {
   const error = new Error(errors[which].message);
-  console.error(error);
   error.moreInformation = errors[which].moreInformation;
   return error;
 }
@@ -71,9 +70,10 @@ export const prepareForQuantilePlot = (probeData, key = 'version') =>
 
     const transformedPercentiles = Object.entries(percentiles).reduce(
       (acc, [bin, value]) => {
+        // eslint-disable-next-line no-param-reassign
         acc[bin] = nearestBelow(
           value,
-          histogram.map((h) => h.bin)
+          histogram.map((hi) => hi.bin)
         );
         return acc;
       },
@@ -172,7 +172,7 @@ export function zipByAggregationType(payload) {
 
 export function topKBuildsPerDay(dataset, k = 2) {
   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
-  const topK = Object.entries(byBuildID).map(([_, matches]) => {
+  const topK = Object.values(byBuildID).map((matches) => {
     const out = matches;
     out.sort(sortByKey('audienceSize'));
     out.reverse();
@@ -203,8 +203,7 @@ export function byKeyAndAggregation(
   d,
   preparationType = 'quantile',
   aggregationLevel = 'build_id',
-  prepareArgs = {},
-  postProcessArgs = {}
+  prepareArgs = {}
 ) {
   const data = produce(d, (di) => di);
   const prepareFcn =
@@ -223,7 +222,6 @@ export function byKeyAndAggregation(
         byKey[k][aggKey] = produce(byKey[k][aggKey], (di) =>
           topKBuildsPerDay(di, 2)
         );
-        // convert label to Date here
       }
       byKey[k][aggKey].sort(sortByKey('label'));
     });
