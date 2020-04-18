@@ -4,12 +4,12 @@ import MenuButton from 'udgl/menu/MenuButton.svelte';
 import MenuList from 'udgl/menu/MenuList.svelte';
 import MenuListItem from 'udgl/menu/MenuListItem.svelte';
 import DownCarat from 'udgl/icons/DownCarat.svelte';
-import CONFIG from '../../config/firefox-desktop';
 import productConfig from '../../config/products';
 
 import {
   store,
   getFieldValueLabel,
+  probe,
 } from '../../state/store';
 
 const OFFSET = 10;
@@ -55,22 +55,28 @@ const COMPACT = true;
 
 </style>
 
-{#if $store.route.section === 'probe'}
+{#if $store.route.section === 'probe' && $probe}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
     {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
+      {#if dimension.values.some(
+            (di) => dimension.isValidKey === undefined
+                    || dimension.isValidKey(di.key, $probe, store),
+      )}
       <MenuButton tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
           <span class='main-filter__label__dimension'>{dimension.title}</span>
           {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
         <div slot="menu">
           <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
-              {#each dimension.values as {key, label}, i (key)}
+              {#each dimension.values.filter((di) => dimension.isValidKey === undefined
+                || dimension.isValidKey(di.key, $probe, store)) as {key, label}, i (key)}
                 <MenuListItem  key={key} value={key}><span class='story-label
                   first'></span>{label}</MenuListItem>
                 {/each}
             </MenuList>
         </div>
       </MenuButton>
+      {/if}
     {/each}
   </div>
 {/if}

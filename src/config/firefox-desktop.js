@@ -4,7 +4,7 @@ export default {
   sampleRate: 0.1,
   dimensions: {
     os: {
-      title: 'Operating System',
+      title: 'OS',
       key: 'os',
       values: [
         { key: 'ALL', label: 'All OSes', keyTransform: 'NULL' },
@@ -38,6 +38,9 @@ export default {
         { key: 'content', label: 'Content' },
         { key: 'gpu', label: 'GPU' },
       ],
+      isValidKey(key, probe) {
+        return isSelectedProcessValid(probe.record_in_processes, key);
+      },
     },
   },
   setDefaultsForProbe(store, probe) {

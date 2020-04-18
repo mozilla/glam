@@ -5,8 +5,6 @@
   import ContentHeader from 'udgl/layout/ContentHeader.svelte';
   import ContentBody from 'udgl/layout/ContentBody.svelte';
   import ContentFooter from 'udgl/layout/ContentFooter.svelte';
-  import Button from 'udgl/Button.svelte';
-  import Doc from '../../components/Doc.svelte';
 
   import MainSelectors from '../../components/regions/MainSelectors.svelte';
   import GLAMMark from '../../components/regions/GLAMMark.svelte';
@@ -22,12 +20,7 @@
   <Toolbar sticky>
     <GLAMMark />
     <Search />
-    <div style="justify-self: end; padding-right: var(--space-4x);">
-      <Button dark compact level=medium>
-        <div style="display: grid; grid-auto-flow: column; grid-column-gap: var(--space-base); align-items: center;">
-          <Doc size={9} /> Documentation
-        </div>
-      </Button>
+    <div style="justify-self: end; padding-right: var(--space-4x); min-width: var(--space-16x);">
     </div>
   </Toolbar>
   <Content centered>

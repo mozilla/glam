@@ -5,6 +5,7 @@ import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 import Button from 'udgl/Button.svelte';
 import StatusLabel from 'udgl/StatusLabel.svelte';
 import ExternalLink from 'udgl/icons/ExternalLink.svelte';
+import Doc from '../Doc.svelte';
 import telemetrySearch from '../../state/telemetry-search';
 import { store, probe, dataset } from '../../state/store';
 
@@ -229,7 +230,7 @@ h2 {
 
     <!-- probe-details-download -->
     <div class="probe-details-download">
-        <div class="drawer-section drawer-section--end">
+        <div class="drawer-section">
             {#await $dataset}
                 <h2 class="detail__heading--01">export</h2>
                 <div>
@@ -242,6 +243,9 @@ h2 {
                     level=medium compact>to JSON</Button>
                 </div>
             {/await}
+        </div>
+        <div class='drawer-section  drawer-section--end'>
+          <Button level=low><Doc size={16} /> Documentation</Button>
         </div>
     </div>
     <!-- /probe-details-download -->

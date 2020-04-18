@@ -165,6 +165,7 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 // ///// probe querying infrastructure.
 
 function getParamsForQueryString(obj) {
+  // FIXME: turn this conditional into a function in firefox-desktop.js
   if (obj.product === 'firefoxDesktop') {
     return {
       channel: obj.productDimensions.channel,
@@ -181,6 +182,7 @@ function getParamsForQueryString(obj) {
 }
 
 function getParamsForDataAPI(obj) {
+  // FIXME: turn this conditional into a function in firefox-desktop.js
   if (obj.product === 'firefoxDesktop') {
     const channelValue = getFieldValueKey(
       'channel',
