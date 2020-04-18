@@ -5,6 +5,7 @@ import MenuList from 'udgl/menu/MenuList.svelte';
 import MenuListItem from 'udgl/menu/MenuListItem.svelte';
 import DownCarat from 'udgl/icons/DownCarat.svelte';
 import CONFIG from '../../config/firefox-desktop';
+import productConfig from '../../config/products';
 
 import {
   store,
@@ -56,58 +57,20 @@ const COMPACT = true;
 
 {#if $store.route.section === 'probe'}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
-
-    <MenuButton tooltip={'Select a Channel'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
-      <div class=main-filter__label slot="label">
-        <span class='main-filter__label__dimension'>Channel</span>
-        {getFieldValueLabel('channel', $store.productDimensions.channel)} <div class=pull-right-edge><DownCarat size=14 /></div></div>
-      <div slot="menu">
-        <MenuList on:selection={(event) => { store.setDimension('channel', event.detail.key); }}>
-            {#each CONFIG.dimensions.channel.values as {key, label}, i (key)}
-              <MenuListItem  key={key} value={key}><span class='story-label
-                first'></span>{label}</MenuListItem>
-              {/each}
-          </MenuList>
-      </div>
-    </MenuButton>
-    <MenuButton tooltip={'Select an OS'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
-      <div class=main-filter__label slot="label">
-        <span class='main-filter__label__dimension'>OS</span> {getFieldValueLabel('os', $store.productDimensions.os)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
-      <div slot="menu">
-        <MenuList on:selection={(event) => { store.setDimension('os', event.detail.key); }}>
-          {#each CONFIG.dimensions.os.values as {key, label}, i (key)}
-            <MenuListItem key={key} value={key}><span class='story-label
-              first'></span>{label}</MenuListItem>
-            {/each}
-        </MenuList>
-      </div>
-    </MenuButton>
-    <MenuButton tooltip={'Select an Aggregation Level'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
-      <div class=main-filter__label slot="label">
-        <span class='main-filter__label__dimension'>Aggregate by</span> {getFieldValueLabel('aggregationLevel', $store.productDimensions.aggregationLevel)}<div class=pull-right-edge><DownCarat size=14 /></div></div>
-      <div slot="menu">
-          <MenuList on:selection={(event) => { store.setDimension('aggregationLevel', event.detail.key); }}>
-            {#each CONFIG.dimensions.aggregationLevel.values as {key, label}, i (key)}
-            <MenuListItem key={key} value={key}><span class='story-label
-              first'></span>{label}</MenuListItem>
-            {/each}
-          </MenuList>
-      </div>
-    </MenuButton>
-    {#if $store.route.view} <!-- Hide process selector on home page. -->
-      <MenuButton tooltip={'Select a Process'} compact={COMPACT} offset={OFFSET} location='bottom' alignment='left'>
+    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
+      <MenuButton tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
-          <span class='main-filter__label__dimension'>Process</span>
-          {getFieldValueLabel('process', $store.productDimensions.process) || 'select a process'}<div class=pull-right-edge><DownCarat size=14 /></div></div>
+          <span class='main-filter__label__dimension'>{dimension.title}</span>
+          {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
         <div slot="menu">
-            <MenuList on:selection={(event) => { store.setDimension('process', event.detail.key); }}>
-              {#each CONFIG.dimensions.process.values as {key, label}, i (key)}
-              <MenuListItem  key={key} value={key}><span class='story-label
-                first'></span>{label}</MenuListItem>
-              {/each}
+          <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
+              {#each dimension.values as {key, label}, i (key)}
+                <MenuListItem  key={key} value={key}><span class='story-label
+                  first'></span>{label}</MenuListItem>
+                {/each}
             </MenuList>
         </div>
       </MenuButton>
-    {/if}
+    {/each}
   </div>
 {/if}
