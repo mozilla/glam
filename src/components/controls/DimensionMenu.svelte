@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-import { tooltip as tooltipAction } from '../utils/tooltip';
-import FloatingMenu from './FloatingMenu.svelte';
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+import FloatingMenu from 'udgl/menu/FloatingMenu.svelte';
 
 const dispatch = createEventDispatcher();
 
@@ -9,8 +9,6 @@ export let active = false;
 export let location = 'bottom';
 export let alignment = 'left';
 export let offset = 0;
-export let level = 'high';
-export let compact = false;
 export let tooltip;
 
 let width;

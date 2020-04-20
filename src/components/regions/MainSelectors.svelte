@@ -1,9 +1,9 @@
 <script>
 import { fly } from 'svelte/transition';
-import MenuButton from 'udgl/menu/MenuButton.svelte';
 import MenuList from 'udgl/menu/MenuList.svelte';
 import MenuListItem from 'udgl/menu/MenuListItem.svelte';
 import DownCarat from 'udgl/icons/DownCarat.svelte';
+import DimensionMenu from '../controls/DimensionMenu.svelte';
 import productConfig from '../../config/products';
 
 import {
@@ -62,7 +62,7 @@ const COMPACT = true;
             (di) => dimension.isValidKey === undefined
                     || dimension.isValidKey(di.key, $probe, store),
       )}
-      <MenuButton tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
+      <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
           <span class='main-filter__label__dimension'>{dimension.title}</span>
           {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
@@ -75,7 +75,7 @@ const COMPACT = true;
                 {/each}
             </MenuList>
         </div>
-      </MenuButton>
+      </DimensionMenu>
       {/if}
     {/each}
   </div>
