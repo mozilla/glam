@@ -3,7 +3,8 @@ Changelog
 
 unreleased
 ----------
-
+* fix bug with body selectors (`#421 <https://github.com/mozilla/glam/pull/421>`_)
+* fix bug with aggregation level selector (`#422 <https://github.com/mozilla/glam/pull/422>`_)
 
 m1
 --
