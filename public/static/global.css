@@ -743,7 +743,9 @@ main .details {
   text-transform: uppercase;
   font-size: var(--text-01);
   padding-bottom: var(--space-1h);
-  color: var(--cool-gray-500);
+  color: var(--cool-gray-650);
+  padding-left: var(--space-base);
+  padding-right: var(--space-base);
 }
 
 .body-control-row .body-control-set:last-child {
