@@ -17,7 +17,7 @@
           probeType={probeType}
           colorMap={data.bucketColorMap}
           visibleBuckets={[...$store.activeBuckets]}
-          aggregationLevel={$store.aggregationLevel}>
+          aggregationLevel={$store.productDimensions.aggregationLevel}>
             <ProbeTitle />
         </ProbeTableView>
       {/if}

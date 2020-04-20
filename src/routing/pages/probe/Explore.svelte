@@ -8,15 +8,17 @@
   import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
   import { store, probe } from '../../../state/store';
 
-
   function handleBodySelectors(event) {
     const { selection, type } = event.detail;
     const renames = {
       percentiles: 'visiblePercentiles',
       metricType: 'proportionMetricType',
     };
+
     const field = renames[type] || type;
-    store.setField(field, selection);
+    // FIXME: use the productConfig from an upcoming PR.
+    if (field === 'aggregationLevel') store.setDimension(field, selection);
+    else store.setField(field, selection);
   }
 </script>
 
@@ -33,7 +35,7 @@
         bucketColorMap={data.bucketColorMap}
         bucketSortOrder={data.bucketSortOrder}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.aggregationLevel}>
+        aggregationLevel={$store.productDimensions.aggregationLevel}>
           <ProbeTitle />
       </ProportionExplorerView>
     {:else if ['histogram', 'scalar'].includes(probeType)}
@@ -43,7 +45,7 @@
         timeHorizon={$store.timeHorizon}
         percentiles={$store.visiblePercentiles}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.aggregationLevel}>
+        aggregationLevel={$store.productDimensions.aggregationLevel}>
           <ProbeTitle />
       </QuantileExplorerView>
     {:else}
