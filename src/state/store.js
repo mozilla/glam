@@ -294,7 +294,7 @@ export function fetchDataForGLAM(params) {
     // until then, however, we'll have to use the store values
     // for the probeType and probeKind, since they're more accurate than
     // what is in payload.response[0].metric_type.
-    const { aggregationLevel } = store.getState();
+    const { aggregationLevel } = store.getState().productDimensions;
     const { type: probeType, kind: probeKind, active: probeActive } = get(
       probe
     );
