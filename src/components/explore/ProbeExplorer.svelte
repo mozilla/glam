@@ -97,6 +97,18 @@ $: if (aggregationLevel === 'build_id') {
 
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
+function leftLabelForAggComparison(d, aggLevel, x) {
+  if (d.length === 2) return d[0].label;
+  if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
+  return x;
+}
+
+function leftPointsForAggComparison(d, pmt, dt) {
+  if (d.length === 2) return d[0][pmt];
+  if (d.length > 2 && dt) return dt[pmt];
+  return undefined;
+}
+
 export let reference = data[data.length - 1];
 
 // This will lightly animate the reference distribution part of the violin plot.
@@ -160,9 +172,8 @@ $: if (hoverValue.x) {
 
 </style>
 
-
 <div class='probe-body-overview'>
-  <ToplineMetrics {reference} {hovered} showHover={data.length > 1} {aggregationLevel} />
+  <ToplineMetrics {reference} hovered={data.length > 2 ? hovered.datum : data[0]} dataLength={data.length} {aggregationLevel} />
   <slot name='summary'></slot>
 </div>
 
@@ -202,11 +213,11 @@ $: if (hoverValue.x) {
   <AggregationComparisonGraph
     description={compareDescription(aggregationsOverTimeTitle)}
     yScaleType={yScaleType}
-    leftLabel={aggregationLevel === 'build_id' && hovered.x ? formatBuildIDToDateString(hovered.x) : hovered.x}
-    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    leftLabel={leftLabelForAggComparison(data, aggregationLevel, hovered.x)}
+    rightLabel={(aggregationLevel === 'build_id') ? formatBuildIDToDateString(reference.label) : reference.label}
     colorMap={binColorMap}
     yTickFormatter={yTickFormatter}
-    leftPoints={hovered.datum ? hovered.datum[pointMetricType] : undefined}
+    leftPoints={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
     rightPoints={reference[pointMetricType]}
     activeBins={activeBins}
     yDomain={yDomain}
@@ -256,11 +267,11 @@ $: if (hoverValue.x) {
   </AggregationComparisonGraph>
 
   <ComparisonSummary
-    hovered={!!hovered.datum}
-    left={hovered.datum ? hovered.datum[pointMetricType] : hovered.datum}
+    hovered={data.length === 2 || !!hovered.datum}
+    left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
     right={reference[pointMetricType]}
-    leftLabel={'HOV.'}
-    rightLabel={'REF.'}
+    leftLabel={data.length === 2 ? 'PREV.' : 'HOV.'}
+    rightLabel={data.length <= 2 ? 'LATEST' : 'REF.'}
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}

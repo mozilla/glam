@@ -16,16 +16,11 @@ import { twoPointSpring } from '../../utils/animation';
 import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
 export let description;
-export let leftDistribution;
-export let rightDistribution;
 export let leftLabel;
 export let rightLabel;
 export let leftPoints;
 export let rightPoints;
 export let activeBins;
-
-// this is the case of having only 2 points.
-export let insufficientData = false;
 export let dataVolume = Infinity;
 
 export let yTickFormatter = (t) => t;
@@ -33,13 +28,18 @@ export let colorMap = () => 'black';
 
 export let yDomain;
 
-export let xType;
 export let yScaleType;
-export let showViolins = true;
 export let key = Math.random().toString(36).substring(7);
-export let yAccessor = 'value';
 
-export let xDomain = dataVolume <= 2 ? [leftLabel, rightLabel] : ['HOV.', 'REF.'];
+let labelSet = ['HOV.', 'REF.'];
+
+if (dataVolume === 1) {
+  labelSet = [rightLabel];
+} else if (dataVolume === 2) {
+  labelSet = [leftLabel, rightLabel];
+}
+
+export let xDomain = labelSet;
 
 let xScale;
 let yScale;
