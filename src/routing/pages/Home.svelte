@@ -10,7 +10,7 @@
   import { getRandomProbes } from '../../state/api';
 
   // TODO: add this to the upcoming config.js
-  const NUMBER_OF_RANDOM_PROBES = 9;
+  const NUMBER_OF_RANDOM_PROBES = 3;
 
   $: selectedProcess = $store.productDimensions.process;
 </script>
