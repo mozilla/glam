@@ -2,7 +2,7 @@ import { schemeTableau10 } from 'd3-scale-chromatic';
 
 export function percentileLineColorMap(percentile) {
   const p = +percentile;
-  if (p === 5) return 'var(--digital-blue-300)';
+  if (p === 5) return 'var(--digital-blue-250)';
   if (p === 25) return 'var(--digital-blue-500)';
   if (p === 50) return 'var(--cool-gray-600)';
   if (p === 75) return 'var(--pantone-red-500)';

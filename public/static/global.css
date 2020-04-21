@@ -168,14 +168,14 @@
     --body-gray-02: var(--cool-gray-900);
 
     /* use digital blue as link + button color for accessibility */
-    --digital-blue-100: hsl(209, 70%, 93%);
-    --digital-blue-150: hsl(209, 71%, 86%);
-    --digital-blue-200:	hsl(209, 71%, 79%);
-    --digital-blue-250: hsl(209, 70%, 73%);
-    --digital-blue-300: hsl(209, 69%, 66%);
-    --digital-blue-350: hsl(209, 69%, 59%);
-    --digital-blue-400: hsl(209, 69%, 53%);
-    --digital-blue-450: hsl(209, 81%, 46%);
+    --digital-blue-100: hsl(209, 90%, 93%);
+    --digital-blue-150: hsl(209, 90%, 86%);
+    --digital-blue-200:	hsl(209, 90%, 79%);
+    --digital-blue-250: hsl(209, 85%, 73%);
+    --digital-blue-300: hsl(209, 85%, 66%);
+    --digital-blue-350: hsl(209, 85%, 59%);
+    --digital-blue-400: hsl(209, 85%, 53%);
+    --digital-blue-450: hsl(209, 95%, 46%);
     --digital-blue-500: hsl(209, 100%, 39%);
     --digital-blue-550: hsl(209, 100%, 36%);
     --digital-blue-600: hsl(209, 100%, 34%);
