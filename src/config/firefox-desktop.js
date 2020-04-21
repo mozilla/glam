@@ -1,8 +1,10 @@
+import { isSelectedProcessValid } from '../utils/probe-utils';
+
 export default {
   sampleRate: 0.1,
   dimensions: {
     os: {
-      title: 'Operating System',
+      title: 'OS',
       key: 'os',
       values: [
         { key: 'ALL', label: 'All OSes', keyTransform: 'NULL' },
@@ -24,18 +26,34 @@ export default {
       title: 'Aggregation Level',
       key: 'aggregationLevel',
       values: [
-        { key: 'build_id', label: 'by build id' },
-        { key: 'version', label: 'by major version' },
+        { key: 'build_id', label: 'Build ID' },
+        { key: 'version', label: 'Major Version' },
       ],
     },
     process: {
       title: 'Process',
       key: 'process',
       values: [
-        { key: 'parent', label: 'Parent Process' },
-        { key: 'content', label: 'Content Process' },
-        { key: 'gpu', label: 'GPU Process' },
+        { key: 'parent', label: 'Parent' },
+        { key: 'content', label: 'Content' },
+        { key: 'gpu', label: 'GPU' },
       ],
+      isValidKey(key, probe) {
+        return isSelectedProcessValid(probe.record_in_processes, key);
+      },
     },
+  },
+  setDefaultsForProbe(store, probe) {
+    const state = store.getState();
+    if (
+      !isSelectedProcessValid(
+        probe.record_in_processes,
+        state.productDimensions.process
+      )
+    ) {
+      let newProcess = probe.record_in_processes[0];
+      if (newProcess === 'main') newProcess = 'parent';
+      store.setDimension('process', newProcess);
+    }
   },
 };

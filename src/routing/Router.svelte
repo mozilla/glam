@@ -4,7 +4,8 @@
   import { onMount } from 'svelte';
 
   import { store, currentQuery } from '../state/store';
-
+  import { probeSet } from '../state/telemetry-search';
+  import productConfig from '../config/products';
   // Wrappers
   import Layout from './wrappers/Layout.svelte';
 
@@ -76,6 +77,10 @@
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
         store.setField('probeName', probeName);
+        if ($probeSet) {
+          const newProbe = $probeSet.find((p) => p.name === probeName);
+          productConfig[$store.product].setDefaultsForProbe(store, newProbe);
+        }
       }
 
       store.setField('route', {

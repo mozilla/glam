@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-import { tooltip as tooltipAction } from '../utils/tooltip';
-import FloatingMenu from './FloatingMenu.svelte';
+import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+import FloatingMenu from 'udgl/menu/FloatingMenu.svelte';
 
 const dispatch = createEventDispatcher();
 
@@ -9,8 +9,6 @@ export let active = false;
 export let location = 'bottom';
 export let alignment = 'left';
 export let offset = 0;
-export let level = 'high';
-export let compact = false;
 export let tooltip;
 
 let width;
@@ -35,18 +33,26 @@ let button;
   padding: var(--space-1h);
   padding-left: var(--space-base);
   padding-right: var(--space-base);
-  font-size: var(--text-02);
+  border-radius: var(--space-1h);
+  font-size: calc(var(--space-base) * 1.5);
   border: none;
-  background-color: hsla(240,50%,80%,.3);
-  color: white;
+  border: 1px solid var(--cool-gray-200);
+  color: var(--digital-blue-700);
+  background-color: var(--cool-gray-subtle);
+  box-shadow: 0px 2px 2px rgba(0,0,0,.05);
+  transition: 100ms;
+  cursor: pointer;
+}
+
+.activating-button:hover {
+  background-color: var(--cool-gray-150);
+  color: var(--digital-blue-900);
+  box-shadow: 0px 2px 2px rgba(0,0,0,.1);
 }
 
 </style>
 
 <div class=menu-button bind:this={button}>
-<!-- <Button level={level} compact={compact} on:click={toggle}>
-  <slot name='label'></slot>
-</Button> -->
 <button use:tooltipAction={{ text: tooltip }} class=activating-button on:click={toggle}>
     <slot name='label'></slot>
 </button>

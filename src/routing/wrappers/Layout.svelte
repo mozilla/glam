@@ -20,11 +20,13 @@
   <Toolbar sticky>
     <GLAMMark />
     <Search />
-    <MainSelectors />
+    <div style="justify-self: end; padding-right: var(--space-4x); min-width: var(--space-16x);">
+    </div>
   </Toolbar>
   <Content centered>
     <ContentHeader>
       <ProbeViewControl />
+      <MainSelectors />
     </ContentHeader>
     <ContentBody>
       <div class="graphic-body">

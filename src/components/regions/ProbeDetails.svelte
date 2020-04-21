@@ -2,9 +2,10 @@
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
-import Button from 'udgl/Button.svelte';
 import StatusLabel from 'udgl/StatusLabel.svelte';
 import ExternalLink from 'udgl/icons/ExternalLink.svelte';
+import Doc from '../Doc.svelte';
+import Brackets from '../Brackets.svelte';
 import telemetrySearch from '../../state/telemetry-search';
 import { store, probe, dataset } from '../../state/store';
 
@@ -26,6 +27,11 @@ function probeIsSelected(probeToTest) {
   return probeToTest && probeToTest.name !== null && probeToTest.name !== 'null';
 }
 
+async function exportData() {
+  const data = await $dataset;
+  downloadString(JSON.stringify(data), 'text', `${$probe.name}.json`);
+}
+
 </script>
 
 <style>
@@ -37,6 +43,9 @@ function probeIsSelected(probeToTest) {
 .drawer-section--end {
     align-self: end;
     min-height: calc(var(--increment)*2);
+    position: grid;
+    grid-auto-flow: row;
+    grid-row-gap: var(--space-base);
 }
 
 .drawer-section-container {
@@ -155,6 +164,35 @@ h2 {
     color: var(--subhead-gray-01);
 }
 
+/* FIXME: once @graph-paper/button supports href, use the Button component. */
+.docs-button {
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: transparent;
+  display: grid;
+  width: 100%;
+  color: var(--digital-blue-500);
+  border: none;
+  cursor: pointer;
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+  grid-column-gap: var(--space-base);
+  text-transform: uppercase;
+  font-size: var(--text-015);
+  font-weight: 500;
+  padding: var(--space-base);
+  transition: background-color 100ms;
+  border-radius: var(--space-1h);
+}
+
+.docs-button:hover {
+  background-color: var(--cool-gray-150);
+}
+
 </style>
 
 <div class="drawer right-drawer">
@@ -229,19 +267,23 @@ h2 {
 
     <!-- probe-details-download -->
     <div class="probe-details-download">
-        <div class="drawer-section drawer-section--end">
-            {#await $dataset}
-                <h2 class="detail__heading--01">export</h2>
-                <div>
-                    <LineSegSpinner size={36} color={'var(--cool-gray-400)'} />
-                </div>
-            {:then value}
-                <h2 class="detail__heading--01">export</h2>
-                <div in:fly={paneTransition}>
-                    <Button on:click={() => { downloadString(JSON.stringify(value), 'text', `${$probe.name}.json`); }}
-                    level=medium compact>to JSON</Button>
-                </div>
-            {/await}
+
+        <div class='drawer-section  drawer-section--end'>
+          <!-- FIXME: once @graph-paper/button supports href, use that instead. -->
+          <button
+            on:click={exportData}
+            class="docs-button"
+          >
+            <Brackets size={16} /> Export to JSON
+          </button>
+          <a
+            class="docs-button"
+            href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/edit?usp=sharing"
+            target="_blank"
+          >
+            <Doc size={16} />
+            Documentation
+          </a>
         </div>
     </div>
     <!-- /probe-details-download -->

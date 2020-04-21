@@ -88,7 +88,7 @@ const initialState = {
     isAuthenticated: false,
     token: undefined,
   },
-  product: 'firefox', // FIXME: derive this elsewhere like QS
+  product: 'firefoxDesktop', // FIXME: derive this elsewhere like QS
   productDimensions: {
     channel: getFromQueryStringOrDefault('channel'),
     os: getFromQueryString('os') || 'Windows',
@@ -165,7 +165,8 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 // ///// probe querying infrastructure.
 
 function getParamsForQueryString(obj) {
-  if (obj.product === 'firefox') {
+  // FIXME: turn this conditional into a function in firefox-desktop.js
+  if (obj.product === 'firefoxDesktop') {
     return {
       channel: obj.productDimensions.channel,
       os: obj.productDimensions.os,
@@ -181,7 +182,8 @@ function getParamsForQueryString(obj) {
 }
 
 function getParamsForDataAPI(obj) {
-  if (obj.product === 'firefox') {
+  // FIXME: turn this conditional into a function in firefox-desktop.js
+  if (obj.product === 'firefoxDesktop') {
     const channelValue = getFieldValueKey(
       'channel',
       obj.productDimensions.channel
@@ -199,6 +201,7 @@ function getParamsForDataAPI(obj) {
     params.process = process;
     return params;
   }
+  throw Error('product not recognized.');
 }
 
 const toQueryStringPair = (k, v) => {

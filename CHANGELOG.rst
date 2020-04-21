@@ -5,6 +5,8 @@ unreleased
 ----------
 * fix bug with body selectors (`#421 <https://github.com/mozilla/glam/pull/421>`_)
 * fix bug with aggregation level selector (`#422 <https://github.com/mozilla/glam/pull/422>`_)
+* move dimension filters into the content body (`#418 <https://github.com/mozilla/glam/pull/418>`_)
+* automatically adjust process if current one is not valid for probe (`#418 <https://github.com/mozilla/glam/pull/418>`_)
 
 m1
 --
