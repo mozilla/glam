@@ -187,7 +187,7 @@ function getParamsForDataAPI(obj) {
       obj.productDimensions.channel
     );
     const osValue = getFieldValueKey('os', obj.productDimensions.os);
-    const process = getFieldValueKey('os', obj.productDimensions.process);
+    const process = getFieldValueKey('process', obj.productDimensions.process);
     const params = getParamsForQueryString(obj);
     delete params.timeHorizon;
     delete params.proportionMetricType;
