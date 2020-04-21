@@ -13,9 +13,9 @@ let delay = 200;
 <style>
 
 svg {
-    --dark: var(--digital-blue-300);
-    --medium:var(--digital-blue-600);
-    --light:var(--digital-blue-400);
+    --dark: var(--digital-blue-250);
+    --medium: var(--digital-blue-600);
+    --light: var(--digital-blue-350);
     fill-rule: evenodd;
     clip-rule: evenodd;
     stroke-linejoin: round;
@@ -24,7 +24,7 @@ svg {
 
 </style>
 {#if mounted}
-<svg width="100%" height={size} viewBox="0 0 512 333" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" 
+<svg width="100%" height={size} viewBox="0 0 512 333" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
     style="min-width: {size}px;">
     <g transform="matrix(1,0,0,1,-686.333,-953.365)">
         <g  transform="matrix(-0.866025,-0.5,-0.5,0.866025,2318.33,620.811)">
