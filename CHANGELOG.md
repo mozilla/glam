@@ -2,6 +2,7 @@
 
 ## unreleased
 
+- fix bugs around low-volume probe displays ([#327](https://github.com/mozilla/glam/issues/327))
 - fix bug where store values were reset after authentication ([#429](https://github.com/mozilla/glam/pull/429))
 - fix bug with body selectors ([#421](https://github.com/mozilla/glam/pull/421))
 - fix bug with aggregation level selector ([#422](https://github.com/mozilla/glam/pull/422))
