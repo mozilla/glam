@@ -1,5 +1,7 @@
 import createAuth0Client from '@auth0/auth0-spa-js';
 
+import { codeAndStateInQuery } from './url';
+
 let auth0 = null;
 
 function fetchAuthConfig() {
@@ -22,6 +24,41 @@ async function withToken(cb) {
   cb(await auth0.getTokenSilently());
 }
 
+async function kickOffAuthentication() {
+  // Auth0 requires that the user be redirected to a true static path
+  // after authentication.[1] In our case, the only true static path is
+  // the root path. Everything else is handled by the client-side router.
+  //
+  // However, we can still record the path that the user attempted to
+  // access so that we can return them to it after they authenticate.
+  //
+  // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1623800#c1
+  sessionStorage.setItem('realAuthRedirectTarget', window.location.href);
+  await auth0.loginWithRedirect({
+    redirect_uri: window.location.origin,
+  });
+}
+
+async function wrapUpAuthentication() {
+  await auth0.handleRedirectCallback();
+  const realAuthRedirectTarget = sessionStorage.getItem(
+    'realAuthRedirectTarget'
+  );
+  sessionStorage.removeItem('realAuthRedirectTarget');
+
+  // It's important to use window.location.replace here rather than
+  // window.history.replaceState or window.history.pushState because we
+  // want the app to load from scratch once the user arrives at the target
+  // path. That way, the store will be initialized based on the target
+  // path.
+  //
+  // Using window.location.replace also ensures that the homepage does not
+  // appear in the user's history between auth0.com and the target path.
+  if (window.location.href !== realAuthRedirectTarget) {
+    window.location.replace(realAuthRedirectTarget);
+  }
+}
+
 export function authenticate(successCallback) {
   window.onload = async () => {
     await configureClient();
@@ -30,43 +67,10 @@ export function authenticate(successCallback) {
 
     if (isAuthenticated) {
       withToken(successCallback);
-    } else {
-      const query = window.location.search;
-      if (query.includes('code=') && query.includes('state=')) {
-        await auth0.handleRedirectCallback();
-
-        // The Auth0 tutorial[1] recommends using window.history.replaceState at
-        // this point to remove the "code" and "state" query parameters. We
-        // don't need to do that because Router.svelte overwrites the
-        // querystring as soon as the user authenticates.
-        //
-        // [1] https://auth0.com/docs/quickstart/spa/vanillajs
-
-        withToken(successCallback);
-      } else {
-        // Auth0 requires that the user be redirected to a true static path
-        // after authentication.[1] In our case, the only true static path is
-        // the root path. Everything else is handled by the client-side router.
-        //
-        // However, we can still record the path that the user attempted to
-        // access so that we can return them to it later.
-        //
-        // NB: relativeURLBeforeAuth includes everything except the origin. It
-        // includes the path, the query string, and the fragment. Due to an
-        // apparent bug,[2] if we were to pass an absolute URL to page.redirect
-        // later, it would show the Not Found page.
-        //
-        // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1623800#c1
-        // [2] https://github.com/visionmedia/page.js/issues/559
-        const relativeURLBeforeAuth = window.location.href.replace(
-          window.location.origin,
-          ''
-        );
-        sessionStorage.setItem('relativeURLBeforeAuth', relativeURLBeforeAuth);
-        await auth0.loginWithRedirect({
-          redirect_uri: window.location.origin,
-        });
-      }
+    } else if (!isAuthenticated && !codeAndStateInQuery()) {
+      kickOffAuthentication();
+    } else if (!isAuthenticated && codeAndStateInQuery()) {
+      wrapUpAuthentication();
     }
   };
 }
