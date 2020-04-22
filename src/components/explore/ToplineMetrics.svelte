@@ -11,7 +11,7 @@ import {
 
 export let reference;
 export let hovered;
-export let showHover;
+export let dataLength;
 export let aggregationLevel;
 
 function absDiff(a, b, perc = false) {
@@ -23,8 +23,8 @@ function absDiff(a, b, perc = false) {
 <style>
 
 .topline {
-  display: grid; 
-  grid-template-columns: max-content max-content max-content max-content; 
+  display: grid;
+  grid-template-columns: max-content max-content max-content max-content;
   grid-column-gap: var(--space-2x);
   font-size: var(--text-02);
   align-items: start;
@@ -50,14 +50,14 @@ function absDiff(a, b, perc = false) {
 
 <div class='topline' style='padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;'>
 <Tweenable params={{ duration: 250 }} value={reference.audienceSize} let:tweenValue>
-<ToplineRow 
-  value={reference.label} 
+<ToplineRow
+  value={reference.label}
   {aggregationLevel}
   description="Set the reference point ⭑ by clicking on one of the graphs below."
 >
   <span slot='icon'>⭑</span>
     <span slot='label'>
-      {#if showHover}
+      {#if dataLength > 2}
         Reference
       {:else}
         Latest
@@ -65,38 +65,38 @@ function absDiff(a, b, perc = false) {
     </span>
   <span slot='count'>
       <span data-value={reference.audienceSize}>
-        <span         
-          class=topline__client-count 
-          class:topline--client-count--highlighted={hovered.datum && hovered.datum.audienceSize < tweenValue}>
+        <span
+          class=topline__client-count
+          class:topline--client-count--highlighted={hovered && hovered.audienceSize < tweenValue}>
           {formatCount(tweenValue)}
         </span>
         clients
       </span>
   </span>
 </ToplineRow>
-{#if showHover}
-<ToplineRow params={{ duration: 0 }} 
-  value={hovered.datum ? hovered.datum.label : undefined}
+{#if dataLength > 1}
+<ToplineRow params={{ duration: 0 }}
+  value={hovered ? hovered.label : undefined}
   compare={reference.label}
   {aggregationLevel}
   description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑."
 >
   <span slot='icon'>●</span>
-  <span slot='label'>Hovered</span>
+  <span slot='label'>{#if dataLength > 2}Hovered{:else}Previous{/if}</span>
   <span slot='count'>
     <div>
-      {#if hovered.datum}
-      <span 
-        class='topline__client-count' 
-        class:topline__client-count--highlighted={hovered.datum && hovered.datum.audienceSize > tweenValue}>
-        {formatCount(hovered.datum.audienceSize)}
+      {#if hovered}
+      <span
+        class='topline__client-count'
+        class:topline__client-count--highlighted={hovered && hovered.audienceSize > tweenValue}>
+        {formatCount(hovered.audienceSize)}
       </span> clients{/if}
     </div>
-    {#if hovered.datum}
+    {#if hovered}
     <div class='topline__client-count__comparison'>
-{formatSignCount(absDiff(hovered.datum.audienceSize, tweenValue))}  <span style='font-weight: 500;'>{formatParenPercent(
+{formatSignCount(absDiff(hovered.audienceSize, tweenValue))}  <span style='font-weight: 500;'>{formatParenPercent(
 '.0%',
-absDiff(hovered.datum.audienceSize, tweenValue, true),
+absDiff(hovered.audienceSize, tweenValue, true),
 7,
 )}</span>
     </div>
