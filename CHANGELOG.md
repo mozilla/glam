@@ -2,6 +2,12 @@
 
 ## unreleased
 
+- 
+
+## 2020.4.0
+
+Date: 2020-04-22
+
 - fix bugs around low-volume probe displays ([#327](https://github.com/mozilla/glam/issues/327))
 - fix bug where store values were reset after authentication ([#429](https://github.com/mozilla/glam/pull/429))
 - fix bug with body selectors ([#421](https://github.com/mozilla/glam/pull/421))
