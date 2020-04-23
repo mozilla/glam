@@ -27,14 +27,19 @@ class Command(BaseCommand):
         parser.add_argument(
             "channel", choices=constants.CHANNEL_IDS.keys(),
         )
+        parser.add_argument(
+            "--bucket",
+            help="The bucket location for the exported aggregates",
+            default=GCS_BUCKET,
+        )
 
-    def handle(self, *args, **options):
+    def handle(self, bucket, *args, **options):
 
         channel = options["channel"]
 
         self.gcs_client = storage.Client()
 
-        blobs = self.gcs_client.list_blobs(GCS_BUCKET)
+        blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(
             filter(
                 lambda b: b.name.startswith(f"glam-extract-firefox-{channel}"), blobs
