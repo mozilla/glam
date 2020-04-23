@@ -54,6 +54,14 @@ Firefox:
 
 where `CHANNEL` is one of `nightly`, `beta`, or `release`.
 
+You can also import data from a custom bucket using the bucket argument.
+Remember to set the project accordingly:
+
+```bash
+export GOOGLE_CLOUD_PROJECT=<PROJECT>
+./manage.py import_aggs release --bucket <BUCKET>
+```
+
 You will need to have viewer permissions in the non-prod GCP project to pull
 down data. Reach out to someone on the #glam Slack channel if you need the
 proper authorization.
