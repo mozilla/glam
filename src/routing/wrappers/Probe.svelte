@@ -9,7 +9,6 @@
   import { derived } from 'svelte/store';
 
   import DataError from '../../components/errors/DataError.svelte';
-  import TempDataForProcessMissingError from '../../components/errors/TempDataForProcessMissingError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
   import { probe, dataset, store } from '../../state/store';
   import { getProbeViewType, isSelectedProcessValid } from '../../utils/probe-utils';
@@ -50,11 +49,7 @@
   <div class="graphic-body__content">
     <ProbeTitle />
     <div in:fly={{ duration: 400, y: 10 }}>
-      {#if err.statusCode === 404}
-        <TempDataForProcessMissingError />
-      {:else}
-        <DataError reason={err.message} moreInformation={err.moreInformation} />
-      {/if}
+      <DataError reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
     </div>
   </div>
 {/await}
