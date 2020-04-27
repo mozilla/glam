@@ -63,7 +63,7 @@
     </div>
   </div>
   <h2>Oh no! GLAM hit a known bug.</h2>
-  <p class="more-info">This probe has no data for the dimensions you have selected.</p>
+  <p class="more-info">We couldn't find data for the dimensions currently selected.</p>
   <p>For now, try selecting another process below to see data:</p>
   <div>
     <label  class=body-control-set--label>Process</label>
