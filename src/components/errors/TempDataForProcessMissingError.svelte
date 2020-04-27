@@ -107,6 +107,6 @@
     </div>
   </div>
 
-  <p>If none of that worked, try reporting this in the
+  <p>If you still get this error, try reporting this in the
     <a target="_blank" href="https://mozilla.slack.com/archives/CB1EQ437S">#GLAM</a> Slack channel.</p>
 </div>
