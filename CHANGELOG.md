@@ -2,7 +2,7 @@
 
 ## unreleased
 
-- Added special-cased probe dimension missing data error component.
+- Add special-cased probe dimension missing data error component ([#441](https://github.com/mozilla/glam/pull/441))
 
 ## 2020.4.0
 
