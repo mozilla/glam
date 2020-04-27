@@ -2,7 +2,7 @@
 
 ## unreleased
 
-- 
+- Added special-cased probe dimension missing data error component.
 
 ## 2020.4.0
 
