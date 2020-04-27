@@ -49,7 +49,7 @@
   <div class="graphic-body__content">
     <ProbeTitle />
     <div in:fly={{ duration: 400, y: 10 }}>
-      <DataError reason={err.message} moreInformation={err.moreInformation} />
+      <DataError reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
     </div>
   </div>
 {/await}
