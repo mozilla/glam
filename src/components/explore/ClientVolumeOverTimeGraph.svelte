@@ -89,7 +89,7 @@ export let hoverValue = {};
         <BottomAxis />
       {/if}
       <g slot=background let:left let:top>
-        <rect 
+        <rect
           x={left}
           y={top}
           width={bodyWidth}
@@ -98,14 +98,14 @@ export let hoverValue = {};
         />
       </g>
       <g slot=body>
-      <Line 
-        curve="curveStep"
+      <Line
+        curve="curveMonotoneX"
         {data}
         xAccessor="label"
         yAccessor="totalClients"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
-        area={true} 
+        area={true}
       />
       </g>
       <g slot=annotation let:top let:xScale let:yScale let:bottom let:width>
@@ -113,7 +113,7 @@ export let hoverValue = {};
           <TrackingLine x={hovered.datum.label} />
         {/if}
         {#if reference}
-        <Tweenable 
+        <Tweenable
           params={tween}
           value={{
             location: xScale(reference.label),
@@ -121,19 +121,19 @@ export let hoverValue = {};
             audienceSize: reference.audienceSize,
           }}
           let:tweenValue={tv1}>
-          <TrackingLine 
+          <TrackingLine
             xr={tv1.location}
             data-audienceSize={reference.audienceSize}
           />
         </Tweenable>
         {/if}
         {#if hovered && hovered.datum}
-          <TrackingLabel 
+          <TrackingLabel
             align=top x={hovered.datum.label}
             background=var(--cool-gray-100)
             label="Hov."
           />
-          <circle 
+          <circle
             cx={xScale(hovered.datum.label)}
             cy={yScale(hovered.datum.audienceSize)}
             r=3
@@ -142,7 +142,7 @@ export let hoverValue = {};
 
         {/if}
         {#if reference && reference.label && reference.audienceSize !== undefined}
-          <Tweenable 
+          <Tweenable
             params={tween}
           value={{
             x: xScale(reference.label),
@@ -157,7 +157,7 @@ export let hoverValue = {};
             <ReferenceSymbol
             size={20}
             xLocation={tweenValue.x} yLocation={tweenValue.y} color=var(--cool-gray-700) />
-            <TrackingLabel 
+            <TrackingLabel
               align=bottom
               label="Ref."
               xr={tweenValue.x}
