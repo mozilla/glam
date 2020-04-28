@@ -2,7 +2,7 @@
 import { getContext, onMount } from 'svelte';
 import { scaleLinear } from 'd3-scale';
 import {
-  area, curveStepBefore as curve,
+  area, curveMonotoneX as curve,
 } from 'd3-shape';
 
 export let orientation = 'vertical';
@@ -80,9 +80,9 @@ $: histogramArea(plotDensities);
 {#if mounted}
 <g transform={translate} opacity={opacity}>
   {#if showLeft}
-  <path d={histogramArea(plotDensities)} fill={areaColor} opacity={opacity} 
+  <path d={histogramArea(plotDensities)} fill={areaColor} opacity={opacity}
   />
-  <path d={histogramLine(plotDensities)} stroke={lineColor} opacity={opacity} 
+  <path d={histogramLine(plotDensities)} stroke={lineColor} opacity={opacity}
   fill=none />
   {/if}
   {#if showRight}
