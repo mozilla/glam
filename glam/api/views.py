@@ -1,7 +1,8 @@
 from random import shuffle
 
 from django.core.cache import caches
-from django.db.models import Max, Q
+from django.db.models import Max, Q, Value
+from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.response import Response
@@ -62,18 +63,24 @@ def get_firefox_aggregations(request, **kwargs):
     if labels_cache.get("__labels__") is None:
         Probe.populate_labels_cache()
 
+    probe = kwargs["probe"]
+    versions = list(map(str, kwargs["versions"]))
+    os = kwargs.get("os", "*")
+
     dimensions = [
-        Q(metric=kwargs["probe"]),
-        Q(version__in=list(map(str, kwargs["versions"]))),
-        Q(os=kwargs.get("os") or "*"),
+        Q(metric=probe),
+        Q(version__in=versions),
+        Q(os=os),
     ]
 
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
+        counts = _get_firefox_counts(channel, os, versions, by_build=False)
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
+        counts = _get_firefox_counts(channel, os, versions, by_build=True)
 
     if "process" in kwargs:
         dimensions.append(Q(process=constants.PROCESS_IDS[kwargs["process"]]))
@@ -138,16 +145,9 @@ def get_firefox_aggregations(request, **kwargs):
         new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
 
         # Get the total distinct client IDs for this set of dimensions.
-        try:
-            client_count = FirefoxCounts.objects.get(
-                channel=row.channel,
-                version=row.version,
-                build_id=row.build_id,
-                os=row.os,
-            )
-        except FirefoxCounts.DoesNotExist:
-            client_count = None
-        new_data["total_addressable_market"] = client_count and client_count.total_users
+        new_data["total_addressable_market"] = counts.get(
+            f"{row.version}-{row.build_id}"
+        )
 
         if row.metric_key:
             new_data["key"] = row.metric_key
@@ -176,6 +176,29 @@ def get_firefox_aggregations(request, **kwargs):
                 raise NotFound("Incomplete data for probe")
 
     return response
+
+
+def _get_firefox_counts(channel, os, versions, by_build):
+    """
+    Helper method to gather the `FirefoxCounts` data in a single query.
+
+    Returns the data as a Python dict keyed by "{version}-{build_id}" for
+    quick lookup.
+
+    """
+    query = FirefoxCounts.objects.filter(
+        channel=constants.CHANNEL_IDS[channel], os=os, version__in=versions
+    )
+    if by_build:
+        query = query.exclude(build_id="*")
+    else:
+        query = query.filter(build_id="*")
+    query = query.annotate(key=Concat("version", Value("-"), "build_id"))
+    data = {
+        row["key"]: row["total_users"] for row in query.values("key", "total_users")
+    }
+
+    return data
 
 
 def get_glean_aggregations(request, **kwargs):
