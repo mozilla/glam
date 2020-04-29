@@ -14,6 +14,8 @@ import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
 
 import ComparisonSummary from './ComparisonSummary.svelte';
 
+import AdHocViolin from './AdHocViolin.svelte';
+
 import {
   explorerComparisonSmallMultiple,
   overTimeTitle,
@@ -225,9 +227,17 @@ $: if (hoverValue.x) {
   >
     <!-- add violin plots on the quantiles -->
 
-    <g slot='body' let:left={lp} let:right={rp}>
+    <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
+        <line
+          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-300)
+        />
         {#if hovered.datum || insufficientData}
+        <AdHocViolin start={lp + 5} direction={-1} density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+          width={
+            (explorerComparisonSmallMultiple.width
+          - explorerComparisonSmallMultiple.left
+          - explorerComparisonSmallMultiple.right) / 2 - 6} />
           <Violin
             orientation="vertical"
             showLeft={false}
@@ -241,12 +251,20 @@ $: if (hoverValue.x) {
               (explorerComparisonSmallMultiple.width
               - explorerComparisonSmallMultiple.left
               - explorerComparisonSmallMultiple.right) / 2 - 5]}
-            areaColor="var(--digital-blue-400)"
-            lineColor="var(--digital-blue-500)"
+            areaColor="var(--pantone-red-400)"
+            lineColor="var(--pantone-red-500)"
           />
         {/if}
-        {#if reference}
-          <Violin
+        {#if reference && reference[densityMetricType]}
+              <AdHocViolin start={(lp + rp) / 2} density={reference[densityMetricType]}
+                width={
+                  (explorerComparisonSmallMultiple.width
+                - explorerComparisonSmallMultiple.left
+                - explorerComparisonSmallMultiple.right) / 2 - 7} />
+              <!-- {#each reference[densityMetricType] as {bin, value}, i (densityMetricType + bin)}
+                <rect x={(lp + rp) / 2} y={yScale(bin)} width={i} height={5} fill=black />
+              {/each} -->
+          <!-- <Violin
             orientation="vertical"
             showRight={false}
             rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
@@ -260,7 +278,7 @@ $: if (hoverValue.x) {
               - explorerComparisonSmallMultiple.right) / 2 - 5]}
             areaColor="var(--digital-blue-400)"
             lineColor="var(--digital-blue-500)"
-          />
+          /> -->
         {/if}
       {/if}
     </g>
