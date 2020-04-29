@@ -135,7 +135,7 @@ $: if (dataGraphicMounted) {
 </script>
 <div>
   <h3 style='padding-left: {aggregationsOverTimeGraph.left}px; padding-right: {aggregationsOverTimeGraph.right}px' class=data-graphic__element-title>
-    {title} 
+    {title}
     <span use:tooltipAction={
       {
         text: description,
@@ -176,16 +176,16 @@ $: if (dataGraphicMounted) {
 <g slot=background let:top let:bottom let:height let:xScale>
   {#if hovered.datum}
     {#if aggregationLevel === 'build_id'}
-        <BuildIDRollover 
+        <BuildIDRollover
           x={hovered.datum.label}
           label={hovered.datum.label}
         />
       {/if}
       <!-- this is the hovered value rect -->
       {#if aggregationLevel === 'build_id'}
-      <rect 
+      <rect
         x={hoverLabelPlacement}
-        y={top} 
+        y={top}
         width={hoverWidth}
         height={bottom - top}
         fill="var(--cool-gray-100)"
@@ -197,13 +197,13 @@ $: if (dataGraphicMounted) {
   {/if}
   <!-- this is the reference rect -->
 
-  <rect 
+  <rect
     x={reference}
   />
   <rect
-    x={$refLabelSpring} 
-    y={top} 
-    width={referenceWidth} 
+    x={$refLabelSpring}
+    y={top}
+    width={referenceWidth}
     height={bottom - top}
     fill="var(--cool-gray-100)"
   />
@@ -213,7 +213,7 @@ $: if (dataGraphicMounted) {
 </g>
 
  <LeftAxis lineStyle=short tickFormatter={yTickFormatter} tickCount=6 />
- 
+
   {#if aggregationLevel === 'build_id'}
     <BottomAxis />
   {:else if xDomain.length <= 5}
@@ -224,27 +224,27 @@ $: if (dataGraphicMounted) {
 
  <GraphicBody>
    {#each createTimeSeries(data, metricKeys, yAccessor) as {bin, series}, i (bin)}
-    <Line 
-      lineDrawAnimation={{ duration: 300 }} 
+    <Line
+      lineDrawAnimation={{ duration: 300 }}
       xAccessor=x
       yAccessor=y
       strokeWidth={strokeWidthMap(bin)}
       color={lineColorMap(bin)}
-      data={series} 
-      curve=curveStep
+      data={series}
+      curve=curveMonotoneX
     />
    {/each}
  </GraphicBody>
 
  <g slot=annotation let:top let:bottom let:left let:xScale let:yScale>
   {#if hovered.datum}
-    
+
     <TrackingLine x={hovered.datum.label} />
     <TrackingLabel x={hovered.datum.label} align=top background=white label=Hov. />
 
     {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
         <Springable value={[x, y]} let:springValue>
-          <circle 
+          <circle
             cx={x}
             cy={y}
             r=3
@@ -256,7 +256,7 @@ $: if (dataGraphicMounted) {
   {/if}
   {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}
       <g in:fly={{ duration: 150, y: 100, easing }}>
-        <Springable 
+        <Springable
           value={[x, y]}
           let:springValue>
             <ReferenceSymbol
@@ -270,10 +270,10 @@ $: if (dataGraphicMounted) {
     <Tweenable value={xScale(reference.label)} let:tweenValue>
       <TrackingLabel _bugInSvelteRequiresThisSmallFix={reference.label} yOffset={16} xr={tweenValue} align=top background=white label="Ref." />
     </Tweenable>
-  {/if} 
+  {/if}
 
   </g>
-  
+
   <FirefoxReleaseVersionMarkers />
 
 </DataGraphic>
