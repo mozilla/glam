@@ -230,7 +230,7 @@ $: if (hoverValue.x) {
     <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
         <line
-          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-300)
+          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
         />
         {#if hovered.datum || insufficientData}
         <AdHocViolin start={lp + 5} direction={-1} density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
@@ -238,7 +238,7 @@ $: if (hoverValue.x) {
             (explorerComparisonSmallMultiple.width
           - explorerComparisonSmallMultiple.left
           - explorerComparisonSmallMultiple.right) / 2 - 6} />
-          <Violin
+          <!-- <Violin
             orientation="vertical"
             showLeft={false}
             rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
@@ -253,7 +253,7 @@ $: if (hoverValue.x) {
               - explorerComparisonSmallMultiple.right) / 2 - 5]}
             areaColor="var(--pantone-red-400)"
             lineColor="var(--pantone-red-500)"
-          />
+          /> -->
         {/if}
         {#if reference && reference[densityMetricType]}
               <AdHocViolin start={(lp + rp) / 2} density={reference[densityMetricType]}

@@ -110,7 +110,7 @@ alignment: 'center',
       }}
     />
   </g>
-  <g slot=annotation let:left let:right let:top let:bottom let:xScale let:yScale>
+  <g slot=mouseover let:left let:right let:top let:bottom let:xScale let:yScale>
     <slot name='glam-body'
       left={left}
       right={right}
@@ -123,7 +123,7 @@ alignment: 'center',
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
   <TopAxis ticks={xDomain}  />
 
-  <g slot=mouseover let:left let:right>
+  <g slot=annotation let:left let:right>
     {#if leftPoints && rightPoints}
       {#each activeBins as bin, i}
         {#if dataVolume !== 2}
