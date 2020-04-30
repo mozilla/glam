@@ -2,7 +2,6 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
-import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import { window1D } from 'udgl/data-graphics/utils/window-functions';
 import ToplineMetrics from './ToplineMetrics.svelte';
 
@@ -13,6 +12,8 @@ import ClientVolumeOverTimeGraph from './ClientVolumeOverTimeGraph.svelte';
 import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
 
 import ComparisonSummary from './ComparisonSummary.svelte';
+
+import AdHocViolin from './AdHocViolin.svelte';
 
 import {
   explorerComparisonSmallMultiple,
@@ -49,6 +50,8 @@ export let yTickFormatter = format(',d');
 export let summaryNumberFormatter = yTickFormatter;
 export let comparisonKeyFormatter = (v) => v;
 export let summaryLabel = 'perc.';
+
+const VIOLIN_PLOT_OFFSET = 7; // this is for padding our ad hoc violin
 
 export let aggregationsOverTimeTitle;
 export let aggregationsOverTimeDescription;
@@ -225,42 +228,24 @@ $: if (hoverValue.x) {
   >
     <!-- add violin plots on the quantiles -->
 
-    <g slot='body' let:left={lp} let:right={rp}>
+    <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
+        <line
+          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
+        />
         {#if hovered.datum || insufficientData}
-          <Violin
-            orientation="vertical"
-            showLeft={false}
-            rawPlacement={(rp - lp) / 2 + lp - Boolean(data.length > 2)}
-            key={hovered.x}
-            opacity=.9
-            density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
-            densityAccessor='value'
-            valueAccessor='bin'
-            densityRange={[0,
-              (explorerComparisonSmallMultiple.width
-              - explorerComparisonSmallMultiple.left
-              - explorerComparisonSmallMultiple.right) / 2 - 5]}
-            areaColor="var(--digital-blue-400)"
-            lineColor="var(--digital-blue-500)"
-          />
+        <AdHocViolin start={lp + VIOLIN_PLOT_OFFSET} direction={-1} density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+          width={
+            (explorerComparisonSmallMultiple.width
+          - explorerComparisonSmallMultiple.left
+          - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
-        {#if reference}
-          <Violin
-            orientation="vertical"
-            showRight={false}
-            rawPlacement={(rp - lp) / 2 + lp + Boolean(data.length > 2)}
-            opacity=.9
-            key={reference.label}
-            density={$animatedReferenceDistribution}
-            densityAccessor='value'
-            valueAccessor='bin'
-            densityRange={[0, (explorerComparisonSmallMultiple.width
-              - explorerComparisonSmallMultiple.left
-              - explorerComparisonSmallMultiple.right) / 2 - 5]}
-            areaColor="var(--digital-blue-400)"
-            lineColor="var(--digital-blue-500)"
-          />
+        {#if reference && reference[densityMetricType]}
+              <AdHocViolin start={(lp + rp) / 2} density={reference[densityMetricType]}
+                width={
+                  (explorerComparisonSmallMultiple.width
+                - explorerComparisonSmallMultiple.left
+                - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
       {/if}
     </g>
