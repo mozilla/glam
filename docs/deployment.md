@@ -14,3 +14,8 @@ The steps for tagging a release for the staging server are as follows:
 2. Update the `CHANGELOG.md` file, adding the tag name and ensuring the changelog notes are up to date
 3. Tag a release locally in git via: `git tag <tag>`
 4. Push the tag to github via: `git push origin --tags`
+
+## Logs
+
+The results of the deploy will be logged to the **#datatools-deploys** channel
+on Slack.
