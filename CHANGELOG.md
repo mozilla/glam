@@ -1,6 +1,7 @@
 # Changelog
 
-## unreleased
+## 2020.4.2
+
 - changes the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
 - changes curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
 
