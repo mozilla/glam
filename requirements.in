@@ -7,7 +7,7 @@ google-cloud-bigquery==1.24.0
 google-cloud-storage==1.28.0
 gunicorn==20.0.4
 mozilla-django-oidc==1.2.3
-orjson==2.6.8     
+orjson==3.0.0     
 psycopg2-binary==2.8.5
 whitenoise==5.0.1
 
