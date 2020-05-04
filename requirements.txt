@@ -14,7 +14,7 @@ coverage==5.1             # via pytest-cov
 cryptography==2.9.2       # via josepy, mozilla-django-oidc, pyopenssl
 dj-database-url==0.5.0    # via -r requirements.in
 django-configurations==2.2  # via -r requirements.in
-django==3.0.5             # via -r requirements.in, djangorestframework, mozilla-django-oidc
+django==3.0.6             # via -r requirements.in, djangorestframework, mozilla-django-oidc
 djangorestframework==3.11.0  # via -r requirements.in
 dockerflow==2019.10.0     # via -r requirements.in
 entrypoints==0.3          # via flake8
