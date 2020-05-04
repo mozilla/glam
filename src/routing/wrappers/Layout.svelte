@@ -12,15 +12,41 @@
   import Search from '../../components/search/Search.svelte';
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
+  import SlackLogo from '../../components/SlackLogo.svelte';
 
   import { store } from '../../state/store';
 </script>
+
+<style>
+.temporary-link-button {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  color: var(--digital-blue-200);
+  text-decoration: none;
+  font-size: var(--text-02);
+  padding: var(--space-base);
+  padding-top: var(--space-1h);
+  padding-bottom: var(--space-1h);
+  border-radius: var(--space-1h);
+  grid-gap: var(--space-base);
+  transition: background-color 100ms;
+}
+
+.temporary-link-button:hover {
+  text-decoration: none;
+  background-color: rgba(255,255,255,.1);
+}
+</style>
 
 <App>
   <Toolbar sticky>
     <GLAMMark />
     <Search />
-    <div style="justify-self: end; padding-right: var(--space-4x); min-width: var(--space-16x);">
+    <div style="justify-self: end; padding-right: var(--space-base)">
+      <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
+        <SlackLogo size={16} />FEEDBACK
+      </a>
     </div>
   </Toolbar>
   <Content centered>
