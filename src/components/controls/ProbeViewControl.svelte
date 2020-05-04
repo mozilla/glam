@@ -25,7 +25,7 @@ export let transformed = options.map((opt) => ({
 </script>
 
 {#if $store.route.section === 'probe'}
-<div transition:fly={{ x: -5, duration: 200 }} style="padding-left: var(--space-4x); padding-right: var(--space-4x);">
+<div transition:fly={{ x: -5, duration: 200 }} style="padding-left: var(--space-2x); padding-right: var(--space-2x);">
   <BodyControl
     options={options}
     selected={$store.route.view}
