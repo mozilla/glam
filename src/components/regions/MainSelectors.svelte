@@ -23,7 +23,6 @@ const COMPACT = true;
   grid-column-gap:var(--space-base);
   align-items: center;
   justify-self: end;
-  margin-right: var(--space-4x);
 }
 
 .main-filter__label {

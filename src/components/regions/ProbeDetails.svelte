@@ -37,7 +37,7 @@ async function exportData() {
 <style>
 
 .drawer-section {
-    padding: var(--space-2x);
+    padding: var(--space-2x) 0;
 }
 
 .drawer-section--end {
@@ -46,12 +46,6 @@ async function exportData() {
     position: grid;
     grid-auto-flow: row;
     grid-row-gap: var(--space-base);
-}
-
-.drawer-section-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 .probe-details {
@@ -145,7 +139,7 @@ h2 {
 }
 
 .probe-details-overview-right {
-    padding: var(--space-2x);
+    padding: var(--space-2x) 0;
 }
 
 .more-info-link {
@@ -195,7 +189,7 @@ h2 {
 
 </style>
 
-<div class="drawer right-drawer">
+<div class="drawer details-drawer">
 {#if !$telemetrySearch.loaded}
     {#if visible}
     <div in:fly={paneTransition} class="drawer-section">
