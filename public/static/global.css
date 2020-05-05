@@ -276,6 +276,11 @@
 
   --content-border-radius: var(--space-2x);
   --main-content-width: 1200px;
+
+  --alert-notice-item-padding: var(--space-2x);
+  --alert-notice-background: var(--bright-yellow-100);
+  --alert-notice-border: 1px solid var(--bright-yellow-500);
+  --alert-notice-text-color: var(--bright-yellow-700);
 }
 
 html,

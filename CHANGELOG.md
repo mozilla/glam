@@ -4,6 +4,8 @@
 
 - Fix issue with categorical explorer counts
   ([#587](https://github.com/mozilla/glam/pull/587))
+- query Probe Search Service for probe results
+  ([#602](https://github.com/mozilla/glam/pull/602))
 
 ## [2020.5.2](https://github.com/mozilla/glam/compare/2020.5.1...2020.5.2) (2020-05-26)
 

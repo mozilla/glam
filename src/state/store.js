@@ -87,8 +87,6 @@ const initialState = {
   probeName: '',
   dashboardMode: {}, // FIXME: applicationStatus or dashboardMode, not both.
   recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.
-  searchIsActive: false,
-  searchQuery: '',
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
   visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [
     95,
@@ -129,20 +127,6 @@ export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
   if (CONFIG.transformProbeForGLAM) pr = CONFIG.transformProbeForGLAM(pr);
   return pr;
 });
-
-export const searchResults = derived(
-  [telemetrySearch, store],
-  ([$telemetrySearch, $store]) => {
-    const $query = $store.searchQuery;
-    let resultSet = [];
-    if ($telemetrySearch.loaded) {
-      resultSet = $telemetrySearch
-        .search($query)
-        .map((r, searchID) => ({ ...r, searchID }));
-    }
-    return { results: resultSet, total: $telemetrySearch.length };
-  }
-);
 
 export const hasDefaultControlFields = derived(store, ($store) =>
   Object.values(CONFIG.dimensions).every(
