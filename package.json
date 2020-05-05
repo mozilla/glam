@@ -54,6 +54,7 @@
     "d3-time-format": "2.2.3",
     "flexsearch": "0.6.30",
     "page": "1.11.6",
+    "throttle-debounce": "^2.2.1",
     "udgl": "file:src/udgl/"
   },
   "scripts": {

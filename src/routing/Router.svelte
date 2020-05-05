@@ -54,7 +54,7 @@
       if (probeName) {
         store.setField('probeName', probeName);
         if ($probeSet) {
-          let newProbe = $probeSet.find((p) => p.name === probeName);
+          let newProbe = $probeSet.find((p) => p.name.toLowerCase() === probeName.toLowerCase());
           if (productConfig[$store.product].transformProbeForGLAM) {
             newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
           }
