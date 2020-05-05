@@ -1105,39 +1105,12 @@ h2 span {
 }
 
 @media (max-width: 1200px) {
-  :root {
-    --main-content-width: 960px;
-  }
-
   .graphic-body {
     border-radius: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .drawer-section-container {
-    flex-direction: row;
-  }
-
-  .probe-details-content {
-    display: flex;
-    justify-content: space-between;
-    grid-gap: var(--space-2x);
-  }
-
-  .main-filters {
-    margin-right: var(--space-2x);
-  }
-
-  .details-drawer {
-    width: var(--main-content-width);
-    height: auto;
-    padding: var(--space-2x);
   }
 
   .graphic-body__content {
     border-radius: 0;
-    padding: var(--space-2x);
   }
 
   .graphic-body__details {
@@ -1146,9 +1119,5 @@ h2 span {
 
   .graphic-body > div:only-child {
     border-radius: 0;
-  }
-
-  .probe-details-overview {
-    flex-direction: column;
   }
 }

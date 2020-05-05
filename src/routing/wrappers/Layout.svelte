@@ -15,8 +15,7 @@
 
   import { store } from '../../state/store';
 
-  let isHomePageView = true;
-  $: isHomePageView = !($store.route.section === 'probe');
+  $: isProbeDetailsView = $store.route.section === 'probe';
 </script>
 
 <App>
@@ -32,9 +31,9 @@
       <MainSelectors />
     </ContentHeader>
     <ContentBody>
-      <div class="graphic-body" class:graphic-body-home={isHomePageView}>
+      <div class="graphic-body" class:graphic-body-home={!isProbeDetailsView}>
         <slot />
-        {#if !isHomePageView}
+        {#if isProbeDetailsView}
           <!-- Mark up the probe details here so that they don't re-animate when
                the user switches between the Explore page and the Table page -->
           <div class="graphic-body__details">
