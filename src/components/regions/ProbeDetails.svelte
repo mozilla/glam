@@ -48,12 +48,6 @@ async function exportData() {
     grid-row-gap: var(--space-base);
 }
 
-.drawer-section-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 .probe-details {
     height: 100%;
 }

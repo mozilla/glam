@@ -14,6 +14,9 @@
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
 
   import { store } from '../../state/store';
+
+  let isHomePageView = true;
+  $: isHomePageView = !($store.route.section === 'probe');
 </script>
 
 <App>
@@ -29,9 +32,9 @@
       <MainSelectors />
     </ContentHeader>
     <ContentBody>
-      <div class="graphic-body">
+      <div class="graphic-body" class:graphic-body-home={isHomePageView}>
         <slot />
-        {#if $store.route.section === 'probe'}
+        {#if !isHomePageView}
           <!-- Mark up the probe details here so that they don't re-animate when
                the user switches between the Explore page and the Table page -->
           <div class="graphic-body__details">
