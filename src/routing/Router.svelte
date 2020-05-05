@@ -54,7 +54,7 @@
       if (probeName) {
         store.setField('probeName', probeName);
         if ($probeSet) {
-          const newProbe = $probeSet.find((p) => p.name === probeName);
+          const newProbe = $probeSet.find((p) => p.name.toLowerCase() === probeName.toLowerCase());
           productConfig[$store.product].setDefaultsForProbe(store, newProbe);
         }
       }

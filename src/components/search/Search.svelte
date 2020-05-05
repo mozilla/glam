@@ -16,6 +16,7 @@ import TelemetrySearchResults from './SearchResults.svelte';
 
 let inputElement;
 let searchContainer;
+let results = [];
 
 function turnOnSearch() {
     store.setField('searchIsActive', true);
@@ -36,6 +37,28 @@ async function onKeypress(event) {
     }
 }
 
+const domain = (str, product = 'desktop') => {
+    let formattedStr = str.replace(' ', '%20');
+    return `https://dev.probe-search.nonprod.dataops.mozgcp.net/probes?limit=15&select=name,definition&product=eq.${product}&or=(name.eq.${formattedStr},index.phfts(english).${formattedStr},description.phfts(english).${formattedStr},name.ilike.${formattedStr}%)`;
+};
+
+function probeSearchServiceRequest(str) {
+    return fetch(domain(str)).then((r) => r.json())
+      .then((d) => {
+        // sort these?
+        d.sort((a, b) => {
+          const aHas = a.name.toLowerCase().includes(str);
+          const bHas = b.name.toLowerCase().includes(str);
+          if (aHas && !bHas) return -1;
+          if (bHas && !aHas) return 1;
+          return 0;
+        });
+        return d;
+      });
+}
+
+let searchResults = Promise.resolve([]);
+let query = '';
 </script>
 
 <style>
@@ -130,18 +153,19 @@ async function onKeypress(event) {
         </div>
       {/if}
     </div>
-    <input 
+    <input
       type="search"
       aria-autocomplete="list"
-      aria-controls="telemetry-search-results" 
+      aria-controls="telemetry-search-results"
       on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
       value={$store.searchQuery} on:input={(evt) => {
-          store.setField('searchQuery', evt.target.value);
+          query = evt.target.value;
+          searchResults = probeSearchServiceRequest(query).then((r) => { results = r; });
           store.setField('searchIsActive', true);
       }} />
     </div>
 </div>
 
-<TelemetrySearchResults parentElement={searchContainer} />
+<TelemetrySearchResults query={query} results={results} parentElement={searchContainer} />

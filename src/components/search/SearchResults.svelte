@@ -7,12 +7,15 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import { searchResults, store, currentQuery } from '../../state/store';
+import { store, currentQuery } from '../../state/store';
 
-
+export let results = [];
+$: rrr = results.map((r) => r.name);
+$: console.log(rrr.length, new Set(rrr).size);
 // FIXME: Unless we generalize the search results in some way, I'm not sure
 // these shouldn't just be imported directly into this component.
 export let parentElement;
+export let query = '';
 
 // when search query changes for any reason, always center back to first item,
 // even if the result set is the exact same (for now, potential FIXME)
@@ -23,7 +26,8 @@ let formatTotal = format(',.4d');
 let focusedItem = 0;
 let focusedElement;
 
-$: if ($store.searchQuery) { focusedItem = 0; }
+// $: if ($store.searchQuery) { focusedItem = 0; }
+$: if (query) { focusedItem = 0; }
 
 $: if (searchListElement) {
   focusedElement = searchListElement.querySelector(`li:nth-child(${focusedItem + 1})`);
@@ -38,21 +42,21 @@ const keyUp = () => {
 
 const keyDown = () => {
   if (!focusedItem) focusedItem = 0;
-  if (focusedItem < $searchResults.results.length - 1) {
+  if (focusedItem < results.length - 1) {
     focusedItem += 1;
   }
 };
 
 const handleKeypress = (event) => {
   const { key } = event;
-  if ($searchResults.results && $store.searchIsActive && $searchResults.results.length >= 1) {
+  if (results && $store.searchIsActive && results.length >= 1) {
     if (key === 'ArrowUp') keyUp(event.target);
     if (key === 'ArrowDown') keyDown(event.target);
     if (key === 'Enter') {
       store.setField('searchIsActive', false);
       // reset focused element
       focusedItem = 0;
-      page.show(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore?${$currentQuery}`);
+      page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
     }
     if (key === 'Escape') {
       store.setField('searchIsActive', true);
@@ -63,7 +67,7 @@ const handleKeypress = (event) => {
       focusedItem = 0;
     }
     if (key === 'End') {
-      focusedItem = $searchResults.results.length - 1;
+      focusedItem = results.length - 1;
     }
   }
 };
@@ -205,17 +209,16 @@ li {
 <svelte:window bind:innerWidth={windowWidth} on:keydown={handleKeypress} />
 
 <Portal>
-{#if $store.searchIsActive && $store.searchQuery.length}
-  <div 
+{#if $store.searchIsActive && query.length}
+  <div
   id="telemetry-search-results"
   style="left: calc({x}px + var(--space-base)); width: calc({width}px - var(--space-base));"
     transition:fly={{ duration: 20, y: -10 }}
     class="telemetry-results">
       <div class="header-container">
-          {#if $searchResults.total}
+          {#if results.length}
           <div class="header header--loaded" in:fly={{ x: -5, duration: 200 }}>
-              <div>found {$searchResults.results.length} of
-                  {formatTotal($searchResults.total)} probes
+              <div>found {results.length} probes
               </div>
           </div>
           {:else}
@@ -226,18 +229,18 @@ li {
               </div>
           </div>
           {/if}
-          
+
       </div>
-      {#if $searchResults.results.length}
+      {#if results.length}
           <ul bind:this={searchListElement}
             aria-label="probe search results"
-            activedescendent={$searchResults.results[focusedItem].name}>
-          {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-              <li 
+            activedescendent={results[focusedItem].name}>
+          {#each results as {name, definition: {type, description, versions}}, i (name)}
+              <li
                   role="option"
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {
-                    page.show(`/firefox/probe/${$searchResults.results[focusedItem].name}/explore?${$currentQuery}`);
+                    page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
               }}
                   on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{name}</div>
