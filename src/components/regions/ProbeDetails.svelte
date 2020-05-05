@@ -278,7 +278,7 @@ h2 {
           </button>
           <a
             class="docs-button"
-            href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/edit?usp=sharing"
+            href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview"
             target="_blank"
           >
             <Doc size={16} />

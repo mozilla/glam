@@ -1089,6 +1089,10 @@ h2 span {
   padding-left: var(--space-4x);
 }
 
+.button-link, .button-link:hover {
+  text-decoration: none;
+}
+
 @media (max-width: 1200px) {
   .graphic-body {
     border-radius: 0px;

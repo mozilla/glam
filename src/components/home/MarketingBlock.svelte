@@ -8,7 +8,7 @@ $: $t = 1;
 </script>
 
 <style>
-/* 
+/*
 .marketing-block {
   background: linear-gradient(to bottom right, var(--blue-slate-700), var(--blue-slate-800));
   color: white;
@@ -83,7 +83,9 @@ $: $t = 1;
     </div>
     <!-- <img src='bg.jpg' alt='yes' /> -->
     <div class='marketing-block__call-to-action'>
-      <Button tooltip="coming soon!">Documentation</Button>
+      <a class="button-link" target="_blank" href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview">
+        <Button>Documentation</Button>
+      </a>
     </div>
 
     <div class='marketing-block__ask-us'>
