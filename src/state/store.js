@@ -33,27 +33,11 @@ export function getFieldValueMetadata(fieldKey, valueKey) {
   return getFieldValues(fieldKey).find((v) => v.key === valueKey);
 }
 
-export function getFieldValueKey(fieldKey, valueKey) {
-  const metadata = getFieldValueMetadata(fieldKey, valueKey);
-  if (metadata && metadata.keyTransform) {
-    if (metadata.keyTransform === 'NULL') {
-      return null;
-    }
-  }
-  return valueKey;
-}
-
 export function isValidFieldValue(fieldKey, valueKey) {
   const field = getField(fieldKey);
   if (field.skipValidation) return true;
   return getFieldValues(fieldKey)
-    .map((fv) => {
-      // apply any key transforms that might need to happen.
-      if (fv.keyTransform) {
-        if (fv.keyTransform === 'NULL') return null;
-      }
-      return fv.key;
-    })
+    .map(fv => fv.key)
     .includes(valueKey);
 }
 
@@ -184,12 +168,9 @@ function getParamsForQueryString(obj) {
 function getParamsForDataAPI(obj) {
   // FIXME: turn this conditional into a function in firefox-desktop.js
   if (obj.product === 'firefoxDesktop') {
-    const channelValue = getFieldValueKey(
-      'channel',
-      obj.productDimensions.channel
-    );
-    const osValue = getFieldValueKey('os', obj.productDimensions.os);
-    const process = getFieldValueKey('os', obj.productDimensions.process);
+    const channelValue = obj.productDimensions.channel;
+    const osValue = obj.productDimensions.os;
+    const process = obj.productDimensions.process;
     const params = getParamsForQueryString(obj);
     delete params.timeHorizon;
     delete params.proportionMetricType;
