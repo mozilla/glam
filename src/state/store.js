@@ -37,7 +37,7 @@ export function isValidFieldValue(fieldKey, valueKey) {
   const field = getField(fieldKey);
   if (field.skipValidation) return true;
   return getFieldValues(fieldKey)
-    .map(fv => fv.key)
+    .map((fv) => fv.key)
     .includes(valueKey);
 }
 
