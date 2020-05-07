@@ -7,7 +7,7 @@ export default {
       title: 'OS',
       key: 'os',
       values: [
-        { key: 'ALL', label: 'All OSes', keyTransform: 'NULL' },
+        { key: '*', label: 'All OSes' },
         { key: 'Windows', label: 'Windows' },
         { key: 'Mac', label: 'Mac' },
         { key: 'Linux', label: 'Linux' },
