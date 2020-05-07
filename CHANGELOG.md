@@ -7,6 +7,7 @@
 
 ## 2020.4.1
 
+- Add feedback button to top ([#464](https://github.com/mozilla/glam/pull/464))
 - Add special-cased probe dimension missing data error component ([#441](https://github.com/mozilla/glam/pull/441))
 
 ## 2020.4.0
