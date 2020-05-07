@@ -74,13 +74,16 @@ class Command(BaseCommand):
         # Once all files are loaded, refresh the materialized views.
         if blobs:
             with connection.cursor() as cursor:
-                log(f"Refreshing materialized view for view_glam_aggregation_{channel}")
+                log(
+                    f"Refreshing materialized view for view_glam_aggregation_{channel}."
+                )
                 cursor.execute(
                     f"""
                     REFRESH MATERIALIZED VIEW CONCURRENTLY
                     view_glam_aggregation_{channel}
                     """
                 )
+                log("Refresh completed.")
 
     def import_file(self, tmp_table, fp):
 
