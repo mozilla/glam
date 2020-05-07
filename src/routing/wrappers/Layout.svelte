@@ -25,12 +25,11 @@
   color: var(--digital-blue-200);
   text-decoration: none;
   font-size: var(--text-02);
-  padding: var(--space-base);
-  padding-top: var(--space-1h);
-  padding-bottom: var(--space-1h);
+  padding: var(--space-1h) var(--space-base);
   border-radius: var(--space-1h);
   grid-gap: var(--space-base);
   transition: background-color 100ms;
+  text-transform: uppercase;
 }
 
 .temporary-link-button:hover {
@@ -43,9 +42,9 @@
   <Toolbar sticky>
     <GLAMMark />
     <Search />
-    <div style="justify-self: end; padding-right: var(--space-base)">
+    <div style="justify-self: end; padding-right: var(--space-2x)">
       <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
-        <SlackLogo size={16} />FEEDBACK
+        <SlackLogo size={16} />feedback
       </a>
     </div>
   </Toolbar>
