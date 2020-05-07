@@ -13,6 +13,7 @@
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
   import SlackLogo from '../../components/SlackLogo.svelte';
+  import AlertNotice from '../../components/controls/AlertNotice.svelte';
 
   import { store } from '../../state/store';
 
@@ -71,4 +72,7 @@
       <Footer />
     </ContentFooter>
   </Content>
+  <AlertNotice toggleKey="dataErrorsWarning">
+    <p>The staging and development instances of GLAM are likely to have data issues and UI bugs.</p>
+  </AlertNotice>
 </App>
