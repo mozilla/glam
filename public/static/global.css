@@ -424,11 +424,11 @@ button:focus {
 
 .content--centered-body {
   grid-template-columns:
-  [left] auto
-  [left-gutter] minmax(0px, 80px)
-  [body-content] var(--body-width)
-  [right-gutter] minmax(0px, 80px)
-  [right] auto;
+    [left] auto
+    [left-gutter] minmax(0px, 80px)
+    [body-content] var(--body-width)
+    [right-gutter] minmax(0px, 80px)
+    [right] auto;
 }
 
 .content-header {
@@ -1090,7 +1090,8 @@ h2 span {
   padding-left: var(--space-4x);
 }
 
-.button-link, .button-link:hover {
+.button-link,
+.button-link:hover {
   text-decoration: none;
 }
 
