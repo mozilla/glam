@@ -11,7 +11,16 @@ GLAM has a 3-stage deployment:
 The steps for tagging a release for the staging server are as follows:
 
 1. Ensure that the development server is working as intended
-2. Update the `CHANGELOG.md` file, adding the tag name and ensuring the changelog notes are up to date
+2. Update the `CHANGELOG.md` file:
+  - Update any changelog entries based on git history:
+    - View git history since the last tag either by using compare link or via git locally:
+      - `git log $(git describe --tags --abbrev=0)..HEAD --oneline` 
+  - Copy/paste the "unreleased" header for editing, leaving an unreleased header for future updates
+  - Update the pasted "unreleased" header with the following:
+    - Add the appropriate tag name
+    - Update the Github compare link replacing "HEAD" with the tag being created
+    - Include the date that the tag was created
+  - Update the top "unreleased" header to compare from tag being made to HEAD
 3. Tag a release locally in git via: `git tag <tag>`
 4. Push the tag to github via: `git push origin --tags`
 
