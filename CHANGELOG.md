@@ -1,11 +1,21 @@
 # Changelog
 
+## unreleased
+
+Date:
+
+-
+
 ## 2020.4.2
+
+Date: 2020-04-30
 
 - changes the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
 - changes curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
 
 ## 2020.4.1
+
+Date: 2020-04-28
 
 - Add feedback button to top ([#464](https://github.com/mozilla/glam/pull/464))
 - Add special-cased probe dimension missing data error component ([#441](https://github.com/mozilla/glam/pull/441))
