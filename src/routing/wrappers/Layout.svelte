@@ -73,6 +73,6 @@
     </ContentFooter>
   </Content>
   <AlertNotice toggleKey="dataErrorsWarning">
-    <p>The staging and development instances of GLAM are likely to have data issues and UI bugs.</p>
+    <p>This dashboard is under active development. Bugs and data accuracy issues may exist.</p>
   </AlertNotice>
 </App>

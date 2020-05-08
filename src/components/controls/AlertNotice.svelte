@@ -2,18 +2,22 @@
   import { fade } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
 
-  // So we don't pollute the entire LS namespace.
-  const KEY_PREFIX = 'alertNotice-';
   export let dismissText = 'dismiss'; // Label of 'dismiss' button.
-
   // Required: Which localStorage key to check whether this notice has been dismissed.
   export let toggleKey = '';
 
-  $: alertVisible = window.localStorage.getItem(KEY_PREFIX + toggleKey) !== 'true';
+  const today = new Date().getDate();
+
+  // So we don't pollute the entire LS namespace.
+  const KEY_PREFIX = 'alertNotice-';
+
+  // Intentional loose (coerced) comparison.
+  // This will fail if you continually visit on the same day of the month and that's fine.
+  let alertVisible = window.localStorage.getItem(KEY_PREFIX + toggleKey) != today;
 
   function dismissNotice() {
     alertVisible = false;
-    window.localStorage.setItem(KEY_PREFIX + toggleKey, 'true');
+    window.localStorage.setItem(KEY_PREFIX + toggleKey, today);
   }
 </script>
 
@@ -30,7 +34,6 @@
     padding: var(--space-2x);
     align-items: center;
     grid-gap: var(--space-3x);
-    width: fit-content;
   }
 
   .alert-notice-content {
@@ -62,7 +65,7 @@
 </style>
 
 {#if alertVisible}
-  <div class="alert-notice" transition:fade={{easing: cubicOut}}>
+  <div class="alert-notice" transition:fade={{ easing: cubicOut }}>
     <div class="alert-notice-content">
       <slot></slot>
     </div>
