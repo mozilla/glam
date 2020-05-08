@@ -39,7 +39,7 @@ export async function getProbeData(params, token) {
             ? FETCH_ERROR_MESSAGES.code4xx
             : FETCH_ERROR_MESSAGES.code5xx;
       }
-      let error = new Error(msg);
+      const error = new Error(msg);
       error.statusCode = response.status;
       throw error;
     }

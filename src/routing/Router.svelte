@@ -54,7 +54,10 @@
       if (probeName) {
         store.setField('probeName', probeName);
         if ($probeSet) {
-          const newProbe = $probeSet.find((p) => p.name === probeName);
+          let newProbe = $probeSet.find((p) => p.name === probeName);
+          if (productConfig[$store.product].transformProbeForGLAM) {
+            newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
+          }
           productConfig[$store.product].setDefaultsForProbe(store, newProbe);
         }
       }
