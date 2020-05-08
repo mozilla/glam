@@ -77,7 +77,7 @@
     <p>
       This tool is still in active development so UX bugs and data issues may
       exist. Help us make it suit your needs by directing questions or feedback
-      to the #glam Slack channel.
+      to the <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a> Slack channel.
     </p>
   </AlertNotice>
 </App>

@@ -48,8 +48,8 @@
 
   .alert-notice-action {
     position: absolute;
-    right: calc(-1 * var(--space-1h));
-    top: calc(-1 * var(--space-1h));
+    right: var(--space-1h);
+    top: var(--space-1h);
     padding: var(--space-1h); /* makes the click target a bit larger */
     cursor: pointer;
     border-radius: 50%;
