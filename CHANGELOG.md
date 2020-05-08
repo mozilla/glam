@@ -3,11 +3,14 @@
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.4.2...HEAD) (date TBD)
 
 - adds prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
+- Fix bug where process=all should convert to process=[parent,content,gpu](<[#481](https://github.com/mozilla/glam/pull/451)>)
 
-## [2020.4.2](https://github.com/mozilla/glam/compare/2020.4.1...2020.4.2) (2020-04-30)
+## 2020.4.2
 
-- changes the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
-- changes curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
+Date: 2020-04-30
+
+- Change the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
+- Change curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
 
 ## [2020.4.1](https://github.com/mozilla/glam/compare/2020.4.0...2020.4.1) (2020-04-28)
 
