@@ -2,7 +2,7 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.4.2...HEAD) (date TBD)
 
--
+- adds prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
 
 ## [2020.4.2](https://github.com/mozilla/glam/compare/2020.4.1...2020.4.2) (2020-04-30)
 

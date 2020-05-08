@@ -1,6 +1,7 @@
 <script>
-  import { fade } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
+  import { Cancel } from '@graph-paper/icons';
 
   export let dismissText = 'dismiss'; // Label of 'dismiss' button.
   // Required: Which localStorage key to check whether this notice has been dismissed.
@@ -23,54 +24,59 @@
 
 <style>
   .alert-notice {
-    position: absolute;
-    left: var(--space-4x);
-    bottom: var(--space-4x);
+    position: fixed;
+    left: var(--space-6x);
+    bottom: var(--space-6x);
     border: 1px solid var(--bright-yellow-500);
-    display: flex;
     background-color: var(--bright-yellow-100);
     color: var(--bright-yellow-700);
     border-radius: var(--border-radius-base);
     padding: var(--space-2x);
-    align-items: center;
-    grid-gap: var(--space-3x);
+    box-shadow: var(--depth-small);
+    z-index: 10;
   }
 
   .alert-notice-content {
     line-height: 1.5;
     font-size: var(--text-015);
-    width: 350px;
+    width: 400px;
   }
 
   .alert-notice-content > * {
     margin: 0;
   }
 
-  .alert-notice-action button {
-    padding: var(--space-base);
-    border: 1px solid var(--bright-yellow-500);
-    background-color: var(--bright-yellow-150);
-    text-transform: uppercase;
-    border-radius: var(--border-radius-base);
-    font-size: var(--text-01);
-    color: var(--bright-yellow-700);
-    margin: 0;
+  .alert-notice-action {
+    position: absolute;
+    right: calc(-1 * var(--space-1h));
+    top: calc(-1 * var(--space-1h));
+    padding: var(--space-1h); /* makes the click target a bit larger */
     cursor: pointer;
+    border-radius: 50%;
   }
 
-  .alert-notice-action button:hover {
-    background-color: var(--bright-yellow-200);
-    color: var(--bright-yellow-750);
+  .alert-notice-action button {
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--border-radius-base);
+    font-size: var(--text-01);
+    margin: 0;
+    cursor: pointer;
+    color: var(--bright-yellow-700);
+  }
+
+  .alert-notice-action:hover button {
+    color: var(--bright-yellow-600);
   }
 </style>
 
 {#if alertVisible}
-  <div class="alert-notice" transition:fade={{ easing: cubicOut }}>
+  <div class="alert-notice" transition:fly={{ y: 10, duration: 200, easing: cubicOut }}>
     <div class="alert-notice-content">
       <slot></slot>
     </div>
-    <div class="alert-notice-action">
-      <button on:click={dismissNotice}>{dismissText}</button>
+    <div class="alert-notice-action" on:click={dismissNotice}>
+      <button><Cancel size={24} /></button>
     </div>
   </div>
 {/if}
