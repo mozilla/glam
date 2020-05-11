@@ -120,7 +120,9 @@ export const resetFilters = () => {
 
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
   if (!$probeSet || !$store.probeName) return undefined;
-  return $probeSet.find((p) => p.name === $store.probeName);
+  let pr = $probeSet.find((p) => p.name === $store.probeName);
+  if (CONFIG.transformProbeForGLAM) pr = CONFIG.transformProbeForGLAM(pr);
+  return pr;
 });
 
 export const searchResults = derived(
@@ -170,7 +172,7 @@ function getParamsForDataAPI(obj) {
   if (obj.product === 'firefoxDesktop') {
     const channelValue = obj.productDimensions.channel;
     const osValue = obj.productDimensions.os;
-    const process = obj.productDimensions.process;
+    const { process } = obj.productDimensions;
     const params = getParamsForQueryString(obj);
     delete params.timeHorizon;
     delete params.proportionMetricType;

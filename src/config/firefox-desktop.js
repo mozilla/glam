@@ -43,6 +43,13 @@ export default {
       },
     },
   },
+  transformProbeForGLAM(probe) {
+    const pr = { ...probe };
+    if (pr.record_in_processes[0] === 'all') {
+      pr.record_in_processes = ['main', 'content', 'gpu'];
+    }
+    return pr;
+  },
   setDefaultsForProbe(store, probe) {
     const state = store.getState();
     if (

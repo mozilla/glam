@@ -13,7 +13,6 @@
   import { probe, dataset, store } from '../../state/store';
   import { getProbeViewType, isSelectedProcessValid } from '../../utils/probe-utils';
 
-
   // FIXME: for now, once we have retreived the data set, there are
   // a few additional operations that need to be performed.
   // to start, we will need to reset the activeBuckets in the non-
@@ -43,7 +42,12 @@
   {#if isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
     <slot {data} probeType={$temporaryViewTypeStore} />
   {:else}
-    <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+    <div class='graphic-body__content'>
+      <ProbeTitle />
+      <div in:fly={{ duration: 400, y: 10 }}>
+        <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+      </div>
+    </div>
   {/if}
 {:catch err}
   <div class="graphic-body__content">
