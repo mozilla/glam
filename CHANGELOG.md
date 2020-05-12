@@ -1,19 +1,15 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.5.1...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.5.0...HEAD) (date TBD)
 
 ## [2020.5.0](https://github.com/mozilla/glam/compare/2020.4.2...2020.5.0) (2020-05-12)
 
-Date: 2020-05-12
-
 - Add prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
-- Fix bug where process=all should convert to process=[parent,content,gpu](<[#481](https://github.com/mozilla/glam/pull/451)>)
+- Fix bug where process=all should convert to `process=[parent,content,gpu]` ([#481](https://github.com/mozilla/glam/pull/451))
 - Switch to `curveLinear` for explore plots ([#483](https://github.com/mozilla/glam/pull/483/))
 - Fix low-volume comparison chart ([#483](https://github.com/mozilla/glam/pull/483/), [#486](https://github.com/mozilla/glam/pull/486/))
 
-## 2020.4.2
-
-Date: 2020-04-30
+## [2020.4.2](https://github.com/mozilla/glam/compare/2020.4.1...2020.4.2) (2020-04-30)
 
 - Change the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
 - Change curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
