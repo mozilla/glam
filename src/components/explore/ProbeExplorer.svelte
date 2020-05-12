@@ -34,6 +34,7 @@ import {
 import { histogramSpring } from '../../utils/animation';
 
 export let data;
+data = data.slice(-2);
 export let markers;
 export let key;
 export let timeHorizon;
@@ -67,6 +68,7 @@ $: hoverActive = data.length > 2;
 // and blow up the other.
 let insufficientData = data.length <= 2;
 $: insufficientData = data.length <= 2;
+$: justOne = data.length === 1;
 
 let domain = writable(aggregationLevel === 'version' ? data.map((d) => d.label) : [
   new Date(Math.min(...data.map((d) => d.label))), new Date(Math.max(...data.map((d) => d.label))),
@@ -225,25 +227,41 @@ $: if (hoverValue.x) {
     activeBins={activeBins}
     yDomain={yDomain}
     dataVolume={data.length}
+    showTopAxis={!justOne}
   >
     <!-- add violin plots on the quantiles -->
 
     <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
-        <line
-          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
-        />
-        {#if hovered.datum || insufficientData}
-        <AdHocViolin start={lp + VIOLIN_PLOT_OFFSET} direction={-1} density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+        {#if !justOne}
+          <line
+            x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
+          />
+        {/if}
+        {#if hovered.datum || (data.length > 1)}
+        <AdHocViolin
+          start={
+            ((lp + rp) / 2) - (explorerComparisonSmallMultiple.width
+            - explorerComparisonSmallMultiple.left
+            - explorerComparisonSmallMultiple.right) / 2 + VIOLIN_PLOT_OFFSET
+          }
+          direction={-1}
+          density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
           width={
             (explorerComparisonSmallMultiple.width
           - explorerComparisonSmallMultiple.left
           - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if reference && reference[densityMetricType]}
-              <AdHocViolin start={(lp + rp) / 2} density={reference[densityMetricType]}
+              <AdHocViolin
+                start={justOne ? lp : (lp + rp) / 2}
+                density={reference[densityMetricType]}
                 width={
-                  (explorerComparisonSmallMultiple.width
+                justOne
+
+                  ? rp - lp - VIOLIN_PLOT_OFFSET * 2
+
+                  : (explorerComparisonSmallMultiple.width
                 - explorerComparisonSmallMultiple.left
                 - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}

@@ -22,6 +22,7 @@ export let leftPoints;
 export let rightPoints;
 export let activeBins;
 export let dataVolume = Infinity;
+export let showTopAxis = true;
 
 export let yTickFormatter = (t) => t;
 export let colorMap = () => 'black';
@@ -121,7 +122,9 @@ alignment: 'center',
     ></slot>
   </g>
   <RightAxis tickFormatter={yTickFormatter} tickCount=6 />
-  <TopAxis ticks={xDomain}  />
+  {#if showTopAxis}
+    <TopAxis ticks={xDomain}  />
+  {/if}
 
   <g slot=annotation let:left let:right>
     {#if leftPoints && rightPoints}
