@@ -34,7 +34,6 @@ import {
 import { histogramSpring } from '../../utils/animation';
 
 export let data;
-data = data.slice(-2);
 export let markers;
 export let key;
 export let timeHorizon;
