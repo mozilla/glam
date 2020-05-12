@@ -232,12 +232,7 @@ $: if (hoverValue.x) {
 
     <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
-        {#if !justOne}
-          <line
-            x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
-          />
-        {/if}
-        {#if hovered.datum || (data.length > 1)}
+        {#if hovered.datum && (!justOne)}
         <AdHocViolin
           start={
             ((lp + rp) / 2) - (explorerComparisonSmallMultiple.width
@@ -245,7 +240,7 @@ $: if (hoverValue.x) {
             - explorerComparisonSmallMultiple.right) / 2 + VIOLIN_PLOT_OFFSET
           }
           direction={-1}
-          density={(data.length > 1) ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+          density={((data.length < 3) || !hovered.datum) ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
           width={
             (explorerComparisonSmallMultiple.width
           - explorerComparisonSmallMultiple.left
@@ -264,6 +259,11 @@ $: if (hoverValue.x) {
                 - explorerComparisonSmallMultiple.left
                 - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
+        {#if !justOne}
+        <line
+          x1={(lp + rp) / 2} x2={(lp + rp) / 2} y1={top} y2={bottom} stroke=var(--digital-blue-150)
+        />
+      {/if}
       {/if}
     </g>
   </AggregationComparisonGraph>
