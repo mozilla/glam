@@ -2,7 +2,7 @@
 import { getContext, onMount } from 'svelte';
 import { scaleLinear } from 'd3-scale';
 import {
-  area, curveMonotoneX as curve,
+  area, curveLinear as curve,
 } from 'd3-shape';
 
 export let orientation = 'vertical';
