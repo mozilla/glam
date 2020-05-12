@@ -37,6 +37,9 @@ $: pos = direction > 0;
 
 <g style="transform: translateX({start}px); fill: {color};">
   {#each density as {bin, value}, i (`${bin}-${value}`)}
-      <rect x={pos ? 0 : width - x(value)} y={$yScale(bin) - offset[i] - 0.1} width={x(value)} height={Math.max(2, spacing[i] + 0.2)} />
+      <rect
+        x={pos ? 0 : width - x(value)}
+        stroke={color}
+        y={$yScale(bin) - offset[i] - 0.1} width={x(value)} height={Math.max(2, spacing[i] + 0.2)} />
   {/each}
 </g>
