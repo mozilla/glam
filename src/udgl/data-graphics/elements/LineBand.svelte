@@ -13,7 +13,7 @@ export let xAccessor = 'x';
 export let yMinAccessor = 'low';
 export let yMaxAccessor = 'high';
 export let color = 'var(--cool-gray-200)';
-export let curve = 'curveMonotoneX';
+export let curve = 'curveLinear';
 export let mixBlendMode = 'multiply';
 
 const curveFunction = SHAPE[curve];
@@ -28,9 +28,9 @@ $: areaGenerator = SHAPE.area()
 </script>
 
 <g class=line-band>
-  <path 
-    d={areaGenerator(data)} 
-    fill={color} 
+  <path
+    d={areaGenerator(data)}
+    fill={color}
     in:fade
     style="mix-blend-mode: {mixBlendMode};" />
 </g>

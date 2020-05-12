@@ -231,7 +231,7 @@ $: if (dataGraphicMounted) {
       strokeWidth={strokeWidthMap(bin)}
       color={lineColorMap(bin)}
       data={series}
-      curve=curveMonotoneX
+      curve=curveLinear
     />
    {/each}
  </GraphicBody>

@@ -2,8 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.4.2...HEAD) (date TBD)
 
-- adds prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
+- Add prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
 - Fix bug where process=all should convert to process=[parent,content,gpu](<[#481](https://github.com/mozilla/glam/pull/451)>)
+- Switch to `curveLinear` for explore plots ([#483](https://github.com/mozilla/glam/pull/483/))
 
 ## 2020.4.2
 

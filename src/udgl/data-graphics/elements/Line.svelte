@@ -16,7 +16,7 @@ export let color = 'var(--digital-blue-500)';
 export let areaColor = 'var(--digital-blue-400)';
 export let strokeWidth = 1;
 export let lineDrawAnimation = { duration: 0 };
-export let curve = 'curveMonotoneX';
+export let curve = 'curveLinear';
 export let area = false;
 const curveFunction = SHAPE[curve];
 let lineGenerator;
@@ -35,15 +35,15 @@ $: areaGenerator = SHAPE.area()
 </script>
 
 <g class=line>
-  <path 
-    stroke={color} 
+  <path
+    stroke={color}
     stroke-width={strokeWidth}
-    fill=none 
+    fill=none
     in:draw={lineDrawAnimation}
     d={lineGenerator(data)} />
   {#if area}
-  <path 
-    fill={areaColor} 
+  <path
+    fill={areaColor}
     in:fade
     d={areaGenerator(data)} />
   {/if}

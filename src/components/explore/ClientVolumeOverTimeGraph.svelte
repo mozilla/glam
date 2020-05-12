@@ -99,7 +99,7 @@ export let hoverValue = {};
       </g>
       <g slot=body>
       <Line
-        curve="curveMonotoneX"
+        curve="curveLinear"
         {data}
         xAccessor="label"
         yAccessor="totalClients"
