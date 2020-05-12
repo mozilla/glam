@@ -245,7 +245,7 @@ $: if (hoverValue.x) {
             - explorerComparisonSmallMultiple.right) / 2 + VIOLIN_PLOT_OFFSET
           }
           direction={-1}
-          density={insufficientData ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+          density={(data.length > 1) ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
           width={
             (explorerComparisonSmallMultiple.width
           - explorerComparisonSmallMultiple.left
