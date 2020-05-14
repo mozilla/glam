@@ -5,19 +5,18 @@ GLAM is maintained on GitHub at:
 https://github.com/mozilla/glam
 
 GLAM uses Docker for local development and deployment. Please make sure to
-install [Docker] and [Docker Compose] on your computer to contribute code
-or documentation changes.
+install [Docker] and [Docker Compose] on your computer to contribute code or
+documentation changes.
 
 [docker]: https://docs.docker.com/engine/installation/#supported-platforms
 [docker compose]: https://docs.docker.com/compose/install/
 
 ## Configuration
 
-To set the application up, please copy the `.env-dist` file to one named
-`.env`.
+To set the application up, please copy the `.env-dist` file to one named `.env`.
 
-Set the `DJANGO_SECRET_KEY` variable using the output of the following
-command after logging into the Docker container with `make shell`:
+Set the `DJANGO_SECRET_KEY` variable using the output of the following command
+after logging into the Docker container with `make shell`:
 
 ```
 python -c "import secrets; print(secrets.token_urlsafe(50))"
@@ -89,14 +88,33 @@ curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1
 
 ## Starting the front-end
 
-To build and run the front-end, run the following command on your computer
-(not in the docker container) at the root of the repository:
+To build and run the front-end, run the following command on your computer (not
+in the docker container) at the root of the repository:
 
 ```
 npm run dev
 ```
 
 Once finished open the website at http://localhost:5000 to start browsing.
+
+## Code quality
+
+To automatically benefit from the code quality tools that are included with this
+project, use an editor (such as
+[Visual Studio Code](https://code.visualstudio.com/)) with plugins for
+[EditorConfig](https://editorconfig.org/), [ESLint](https://eslint.org/),
+[Prettier](https://prettier.io/), and [Svelte](https://svelte.dev/).
+
+When installed correctly, these plugins will warn you when your code contains
+potential problems or when it's formatted inconsistently. If you choose to, you
+can also configure your editor to automatically format files with Prettier upon
+save.
+
+Even with these plugins, you may want to run `npm run format` and `npm test`
+before sharing your code to be sure that you didn't miss anything. Also, be
+aware that Prettier and its plugins can rarely break existing code. You may want
+to double-check that everything works after running `npm run format` just in
+case.
 
 ## Run the tests
 
@@ -109,8 +127,8 @@ make test
 This will spin up a Docker container to run the tests, so please set up the
 development setup first.
 
-The default options for running the test are in `pytest.ini`. This is a
-good set of defaults.
+The default options for running the test are in `pytest.ini`. This is a good set
+of defaults.
 
 Alternatively, e.g. when you want to only run part of the tests first open a
 console to the web container..
@@ -127,16 +145,12 @@ pytest
 
 Some helpful command line arguments to pytest (won't work on `make test`):
 
-`--pdb`:
-Drop into pdb on test failure.
+`--pdb`: Drop into pdb on test failure.
 
-`--create-db`:
-Create a new test database.
+`--create-db`: Create a new test database.
 
-`--showlocals`:
-Shows local variables in tracebacks on errors.
+`--showlocals`: Shows local variables in tracebacks on errors.
 
-`--exitfirst`:
-Exits on the first failure.
+`--exitfirst`: Exits on the first failure.
 
 See `pytest --help` for more arguments.

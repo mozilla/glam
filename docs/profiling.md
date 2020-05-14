@@ -15,9 +15,9 @@ Within the docker container launch the `profilingServer.py` file:
 python -m cProfile -o <profile-file> glam/profilingServer.py
 ```
 
-Test the app as needed, for example, hit a specific API endpoint with `curl`
-or browse the app. When finished, quit the `profilingServer.py` and examine
-the profile file using `pstats`:
+Test the app as needed, for example, hit a specific API endpoint with `curl` or
+browse the app. When finished, quit the `profilingServer.py` and examine the
+profile file using `pstats`:
 
 ```
 >>> import pstats

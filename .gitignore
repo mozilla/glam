@@ -73,7 +73,7 @@ tests/data
 .vscode/
 
 # for OSX devs
-.DS_Store 
+.DS_Store
 
 # Database dumps
 *.sql
