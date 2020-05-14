@@ -4,29 +4,42 @@
 
 ## [2020.5.0](https://github.com/mozilla/glam/compare/2020.4.2...2020.5.0) (2020-05-12)
 
-- Add prototype app warning dialog ([#478](https://github.com/mozilla/glam/pull/478))
-- Fix bug where process=all should convert to `process=[parent,content,gpu]` ([#481](https://github.com/mozilla/glam/pull/451))
-- Switch to `curveLinear` for explore plots ([#483](https://github.com/mozilla/glam/pull/483/))
-- Fix low-volume comparison chart ([#483](https://github.com/mozilla/glam/pull/483/), [#486](https://github.com/mozilla/glam/pull/486/))
+- Add prototype app warning dialog
+  ([#478](https://github.com/mozilla/glam/pull/478))
+- Fix bug where process=all should convert to `process=[parent,content,gpu]`
+  ([#481](https://github.com/mozilla/glam/pull/451))
+- Switch to `curveLinear` for explore plots
+  ([#483](https://github.com/mozilla/glam/pull/483/))
+- Fix low-volume comparison chart
+  ([#483](https://github.com/mozilla/glam/pull/483/),
+  [#486](https://github.com/mozilla/glam/pull/486/))
 
 ## [2020.4.2](https://github.com/mozilla/glam/compare/2020.4.1...2020.4.2) (2020-04-30)
 
-- Change the violin plot implementation ([#451](https://github.com/mozilla/glam/pull/451))
-- Change curvature of percentile lines ([#447](https://github.com/mozilla/glam/pull/447))
+- Change the violin plot implementation
+  ([#451](https://github.com/mozilla/glam/pull/451))
+- Change curvature of percentile lines
+  ([#447](https://github.com/mozilla/glam/pull/447))
 
 ## [2020.4.1](https://github.com/mozilla/glam/compare/2020.4.0...2020.4.1) (2020-04-28)
 
 - Add feedback button to top ([#464](https://github.com/mozilla/glam/pull/464))
-- Add special-cased probe dimension missing data error component ([#441](https://github.com/mozilla/glam/pull/441))
+- Add special-cased probe dimension missing data error component
+  ([#441](https://github.com/mozilla/glam/pull/441))
 
 ## [2020.4.0](https://github.com/mozilla/glam/compare/m1...2020.4.0) (2020-04-22)
 
-- fix bugs around low-volume probe displays ([#327](https://github.com/mozilla/glam/issues/327))
-- fix bug where store values were reset after authentication ([#429](https://github.com/mozilla/glam/pull/429))
+- fix bugs around low-volume probe displays
+  ([#327](https://github.com/mozilla/glam/issues/327))
+- fix bug where store values were reset after authentication
+  ([#429](https://github.com/mozilla/glam/pull/429))
 - fix bug with body selectors ([#421](https://github.com/mozilla/glam/pull/421))
-- fix bug with aggregation level selector ([#422](https://github.com/mozilla/glam/pull/422))
-- move dimension filters into the content body ([#418](https://github.com/mozilla/glam/pull/418))
-- automatically adjust process if current one is not valid for probe ([#418](https://github.com/mozilla/glam/pull/418))
+- fix bug with aggregation level selector
+  ([#422](https://github.com/mozilla/glam/pull/422))
+- move dimension filters into the content body
+  ([#418](https://github.com/mozilla/glam/pull/418))
+- automatically adjust process if current one is not valid for probe
+  ([#418](https://github.com/mozilla/glam/pull/418))
 
 ## [m1](https://github.com/mozilla/glam/compare/m0...m1) (2020-04-16)
 

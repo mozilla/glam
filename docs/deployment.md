@@ -2,8 +2,12 @@
 
 GLAM has a 3-stage deployment:
 
-1. **Dev**: Deployments to the development server happen automatically for all commits that land on the `master` branch
-2. **Stage**: Deployments to the staging server happen automatically for tags of the form `m<integer>` or of the [CalVer](http://calver.org/) format `YYYY.MM.N` where `N` is a zero-based counter for the number of tags during the month
+1. **Dev**: Deployments to the development server happen automatically for all
+   commits that land on the `master` branch
+2. **Stage**: Deployments to the staging server happen automatically for tags of
+   the form `m<integer>` or of the [CalVer](http://calver.org/) format
+   `YYYY.MM.N` where `N` is a zero-based counter for the number of tags during
+   the month
 3. **Production**: TBD
 
 ## Tagging for release
@@ -14,9 +18,11 @@ The steps for tagging a release for the staging server are as follows:
 2. Update the `CHANGELOG.md` file:
 
 - Update any changelog entries based on git history:
-  - View git history since the last tag either by using compare link or via git locally:
+  - View git history since the last tag either by using compare link or via git
+    locally:
     - `git log $(git describe --tags --abbrev=0)..HEAD --oneline`
-- Copy/paste the "unreleased" header for editing, leaving an unreleased header for future updates
+- Copy/paste the "unreleased" header for editing, leaving an unreleased header
+  for future updates
 - Update the pasted "unreleased" header with the following:
   - Add the appropriate tag name
   - Update the Github compare link replacing "HEAD" with the tag being created
