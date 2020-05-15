@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.5.0...HEAD) (date TBD)
 
+- Select prerelease channel if current channel = release & probe only exists in
+  prerelease ([#492](https://github.com/mozilla/glam/pull/492))
+
 ## [2020.5.0](https://github.com/mozilla/glam/compare/2020.4.2...2020.5.0) (2020-05-12)
 
 - Add prototype app warning dialog
