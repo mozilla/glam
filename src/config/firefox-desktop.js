@@ -21,6 +21,9 @@ export default {
         { key: 'beta', label: 'Beta' },
         { key: 'release', label: 'Release' },
       ],
+      isValidKey(key, probe) {
+        return (probe.prerelease && key !== 'release') || !probe.prerelease;
+      },
     },
     aggregationLevel: {
       title: 'Aggregation Level',
