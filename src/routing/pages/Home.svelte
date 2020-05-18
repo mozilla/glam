@@ -109,7 +109,7 @@
             <div class="probe-overview__probe" in:fade={{ duration: 400 }}>
               <a
                 class="probe-sm"
-                href={`/firefox/probe/${data[0].metadata.metric}/explore?${$currentQuery}`}
+                href={`/firefox/probe/${data[0].metric}/explore?${$currentQuery}`}
               >
                 <div
                   class="probe-small-multiple"
@@ -136,7 +136,7 @@
                     <span>{info.kind || ''}</span>
                   </div>
                   <div class="probe-overview__title">
-                    {data[0].metadata.metric}
+                    {data[0].metric}
                   </div>
                   <div class="probe-overview__etc">
                     Nightly {info.versions.nightly[0]}-{info.versions.nightly[1]}

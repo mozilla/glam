@@ -10,7 +10,7 @@ import { getProbeData } from './api';
 
 import CONFIG from '../config/firefox-desktop';
 
-import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+import { transformResponse, getProbeViewType } from '../utils/probe-utils';
 
 import { validate, noDuplicates, noResponse } from '../utils/data-validation';
 
@@ -217,18 +217,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-// FIXME: let's remove this function. It's almost comically redundant.
-export function responseToData(
-  data,
-  probeClass = 'quantile',
-  probeType,
-  aggregationMethod = 'build_id'
-) {
-  return byKeyAndAggregation(data, probeClass, aggregationMethod, {
-    probeType,
-  });
-}
-
 const makeSortOrder = (latest, which = 'counts') => (a, b) => {
   // get latest data point and see
   if (latest[which][a] < latest[which][b]) return 1;
@@ -287,17 +275,20 @@ export function fetchDataForGLAM(params) {
 
     validate(
       payload,
-      (p) => noResponse(p, probeActive),
-      (p) => noDuplicates(p, aggregationLevel)
+      (p) => noResponse(p, probeActive)
+      // (p) => noDuplicates(p, aggregationLevel)
+    );
+    const data = transformResponse(
+      payload.response,
+      isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
+      aggregationLevel,
+      {
+        probeType: `${probeType}-${probeKind}`,
+      }
     );
 
     return {
-      data: responseToData(
-        payload.response,
-        isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-        `${probeType}-${probeKind}`,
-        aggregationLevel
-      ),
+      data,
       probeType,
       probeKind,
     };

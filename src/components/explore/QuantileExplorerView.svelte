@@ -22,20 +22,26 @@ let totalAggs = Object.keys(Object.values(data)[0]).length;
 export let timeHorizon = 'MONTH';
 export let percentiles = [95, 75, 50, 25, 5];
 
-
-function gatherProbeKeys(nestedData) {
-  return Object.keys(nestedData);
+function uniques(d, k) {
+  return Array.from(new Set(d.map((di) => di[k])));
 }
 
-function gatherAggregationTypes(nestedData) {
-  return Object.keys(Object.values(nestedData)[0]);
+function gatherProbeKeys(d) {
+  // return Object.keys(nestedData);
+  return uniques(d, 'metric_key');
 }
 
+function gatherAggregationTypes(d) {
+  // return Object.keys(Object.values(nestedData)[0]);
+  return uniques(d, 'client_agg_type');
+}
 
 let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);
+
 let currentKey = probeKeys[0];
 let currentAggregation = aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0];
+
 let aggregationInfo;
 
 setContext('probeType', probeType);
@@ -46,20 +52,11 @@ function makeSelection(type) {
   };
 }
 
-// for heatmap
-function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
-  return d.map((di) => {
-    const label = di[x];
-    // this needs to return an array of values
-    return di.histogram.map((dii) => {
-      let out = {};
-      out[x] = label;
-      out[y] = dii[y];
-      out[heat] = dii[heat];
-      return out;
-    });
-  }).flat();
+function filterQuantileData(d, agg, key) {
+  return d.filter((di) => di.client_agg_type === agg && di.metric_key === key);
 }
+
+$: selectedData = filterQuantileData(data, currentAggregation, currentKey);
 
 </script>
 
@@ -125,9 +122,9 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
   </div>
 
   <div class=data-graphics>
-    {#each Object.entries(data) as [key, aggs], i (key)}
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + key)}
-        {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
+    {#each probeKeys as key, i (key)}
+      {#each aggregationTypes as aggType, i (aggType + timeHorizon + key)}
+        {#if key === currentKey && aggType === currentAggregation}
           <div class='small-multiple'>
             <ProbeExplorer
               title={key === 'undefined' ? '' : key}
@@ -135,7 +132,7 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               aggregationsOverTimeDescription={percentilesOverTimeDescription(aggregationLevel)}
               probeFamily="Percentile"
               summaryLabel='perc.'
-              data={data}
+              data={selectedData}
               probeType={probeType}
               activeBins={percentiles}
               timeHorizon={timeHorizon}
@@ -149,8 +146,8 @@ function xyheat(d, x = 'label', y = 'bin', heat = 'value') {
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'histogram' ? 'scalePoint' : 'linear'}
               yDomain={
-                probeType === 'histogram' ? data[0].histogram.map((d) => d.bin)
-                : [1, Math.max(...data.map((d) => d.percentiles[95]))]}
+                probeType === 'histogram' ? selectedData[0].histogram.map((d) => d.bin)
+                : [1, Math.max(...selectedData.map((d) => d.percentiles[95]))]}
             >
 
             </ProbeExplorer>
