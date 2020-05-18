@@ -52,7 +52,7 @@ export default {
       pr.record_in_processes = ['main', 'content', 'gpu'];
     }
     if (pr.record_in_processes[0] === 'all_childs') {
-      pr.record_in_processes = ['main', 'content'];
+      pr.record_in_processes = ['content', 'gpu'];
     }
     return pr;
   },
