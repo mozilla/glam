@@ -22,18 +22,15 @@ export let tooltipFormatter = () => undefined;
 export let visibleBuckets;
 export let colorMap; // bucketColorMap
 export let pageSize = 10;
-export let currentAggregation;
-export let currentKey;
 export let bucketTypeLabel = 'Categories';
 
 let totalPages = 0;
 let currentPage = 0;
-let selectedData = data;
-$: if (selectedData) currentPage = 0;
-$: totalPages = Math.ceil(selectedData.length / pageSize);
+$: if (data) currentPage = 0;
+$: totalPages = Math.ceil(data.length / pageSize);
 
 let largestAudience;
-$: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
+$: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 
 </script>
 
@@ -110,7 +107,7 @@ span.bucket {
 
     </thead>
     <tbody>
-      {#each [...backwards(selectedData)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (ymd(row.label) + timecode(row.label))}
+      {#each [...backwards(data)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (row.version + ymd(row.label) + timecode(row.label))}
         <Row>
           <Cell freezeX backgroundColor=white>
             <div class=build-version>
