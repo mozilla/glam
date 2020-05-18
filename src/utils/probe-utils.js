@@ -119,6 +119,7 @@ export const prepareForProportionPlot = (
     }
     const proportions = toProportions(counts);
     return {
+      ...probe,
       label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
       counts,
       version: probe.version,

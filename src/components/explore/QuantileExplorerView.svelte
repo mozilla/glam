@@ -10,6 +10,9 @@ import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { firefoxVersionMarkers } from '../../state/product-versions';
 import { overTimeTitle, percentilesOverTimeDescription } from '../../utils/constants';
 
+import { gatherProbeKeys, gatherAggregationTypes } from './shared';
+
+
 const dispatch = createEventDispatcher();
 
 export let data;
@@ -22,19 +25,6 @@ let totalAggs = Object.keys(Object.values(data)[0]).length;
 export let timeHorizon = 'MONTH';
 export let percentiles = [95, 75, 50, 25, 5];
 
-function uniques(d, k) {
-  return Array.from(new Set(d.map((di) => di[k])));
-}
-
-function gatherProbeKeys(d) {
-  // return Object.keys(nestedData);
-  return uniques(d, 'metric_key');
-}
-
-function gatherAggregationTypes(d) {
-  // return Object.keys(Object.values(nestedData)[0]);
-  return uniques(d, 'client_agg_type');
-}
 
 let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);

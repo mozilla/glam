@@ -225,9 +225,7 @@ const makeSortOrder = (latest, which = 'counts') => (a, b) => {
 };
 
 function latestDatapoint(tr) {
-  const series = Object.values(Object.values(tr)[0])[0];
-  // FIXME: this should be the last value, not the second to last
-  return series[series.length - 1];
+  return tr[tr.length - 1];
 }
 
 export function getBucketKeys(tr) {
@@ -236,9 +234,7 @@ export function getBucketKeys(tr) {
 
 export function extractBucketMetadata(transformedData) {
   const etc = {};
-
   const options = getBucketKeys(transformedData);
-
   const cmpBuckets = getBucketKeys(transformedData);
   const sorter = makeSortOrder(latestDatapoint(transformedData));
   cmpBuckets.sort(sorter);
