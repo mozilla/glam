@@ -10,9 +10,7 @@ import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 import { formatCount } from '../../utils/formatters';
 
 export let probe;
-export let info;
 export let metricType;
-export let metricKind;
 
 export let xScaleType = 'scalePoint';
 
@@ -21,11 +19,14 @@ let width;
 let height = 100;
 let dist;
 if (metricType === 'histogram' && 'summed-histogram' in probe) {
-    dist = probe.data.find((d) => d.client_agg_type === 'summed-histogram');
+    dist = probe.filter((d) => d.client_agg_type === 'summed-histogram');
+    dist = dist[dist.length - 1];
   } else if (metricType === 'scalar' && 'avg' in probe) {
-    dist = probe.data.find((d) => d.client_agg_type === 'avg');
+    dist = probe.filter((d) => d.client_agg_type === 'avg');
+    dist = dist[dist.length - 1];
   } else {
-    dist = probe.data[0];
+    dist = probe[probe.length - 1];
+    // dist = probe.histogram;
 }
 
 let totalClients = tweened(0, { duration: 1000, easing });
@@ -92,7 +93,6 @@ onMount(() => {
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>{formatCount(hoverValue.x)}</text>
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatCount(hist[hoverValue.x])} clients</text>
         {/if}
-        <!-- <text  fill=var(--cool-gray-600) text-anchor=end x={right}  y={top - 4}>{formatCount($totalClients)} clients </text> -->
       </g>
     </g>
   </DataGraphic>

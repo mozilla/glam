@@ -16,18 +16,18 @@ export let info;
 export let metricType;
 export let metricKind;
 
-export let xScaleType = 'scalePoint';
-export let buffer = 8;
 let container;
 let width;
 let height = 100;
 let dist;
 if (metricType === 'histogram' && 'summed-histogram' in probe) {
-    dist = probe.data.find((d) => d.client_agg_type === 'summed-histogram');
+    dist = probe.filter((d) => d.client_agg_type === 'summed-histogram');
+    dist = dist[dist.length - 1];
   } else if (metricType === 'scalar' && 'avg' in probe) {
-    dist = probe.data.find((d) => d.client_agg_type === 'avg');
+    dist = probe.filter((d) => d.client_agg_type === 'avg');
+    dist = dist[dist.length - 1];
   } else {
-    dist = probe.data[0];
+    dist = probe[probe.length - 1];
 }
 
 function sortEntriesByValue(a, b) {
@@ -95,7 +95,7 @@ onMount(() => {
   >
     <g slot=body let:xScale let:yScale let:top let:hoverValue let:bottom>
       {#each Object.keys(hist) as key, i (key)}
-        <rect 
+        <rect
           x={xScale(key)}
           y={yScale(hist[key])}
           width={xScale.bandwidth()}

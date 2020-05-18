@@ -119,13 +119,13 @@
                     <QuantileSmallMultiple
                       metricType={info.type}
                       metricKind={info.kind}
-                      probe={data[0]}
+                      probe={data}
                       {info} />
                   {:else if whichSmallMultiple(info.type, info.kind) === 'proportion'}
                     <ProportionSmallMultiple
                       metricType={info.type}
                       metricKind={info.kind}
-                      probe={data[0]}
+                      probe={data}
                       {info} />
                   {/if}
                 </div>
