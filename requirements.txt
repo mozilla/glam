@@ -17,8 +17,7 @@ django-configurations==2.2  # via -r requirements.in
 django==3.0.6             # via -r requirements.in, djangorestframework, mozilla-django-oidc
 djangorestframework==3.11.0  # via -r requirements.in
 dockerflow==2019.10.0     # via -r requirements.in
-entrypoints==0.3          # via flake8
-flake8==3.7.9             # via -r requirements.in
+flake8==3.8.1             # via -r requirements.in
 google-api-core==1.17.0   # via google-cloud-bigquery, google-cloud-core
 google-auth==1.14.1       # via google-api-core, google-cloud-bigquery, google-cloud-storage
 google-cloud-bigquery==1.24.0  # via -r requirements.in
@@ -40,9 +39,9 @@ psycopg2-binary==2.8.5    # via -r requirements.in
 py==1.8.1                 # via pytest
 pyasn1-modules==0.2.8     # via google-auth
 pyasn1==0.4.8             # via pyasn1-modules, rsa
-pycodestyle==2.5.0        # via flake8
+pycodestyle==2.6.0        # via flake8
 pycparser==2.20           # via cffi
-pyflakes==2.1.1           # via flake8
+pyflakes==2.2.0           # via flake8
 pyopenssl==19.1.0         # via josepy
 pyparsing==2.4.7          # via packaging
 pytest-blockage==0.2.2    # via -r requirements.in
