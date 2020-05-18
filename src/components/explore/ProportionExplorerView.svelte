@@ -13,7 +13,7 @@ import { formatPercent, formatCount, formatPercentDecimal } from '../../utils/fo
 
 import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
 
-import { gatherProbeKeys, gatherAggregationTypes } from './shared';
+import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils';
 
 export let aggregationLevel = 'build_id';
 export let data;

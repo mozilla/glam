@@ -10,7 +10,7 @@ import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { firefoxVersionMarkers } from '../../state/product-versions';
 import { overTimeTitle, percentilesOverTimeDescription } from '../../utils/constants';
 
-import { gatherProbeKeys, gatherAggregationTypes } from './shared';
+import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils';
 
 
 const dispatch = createEventDispatcher();
