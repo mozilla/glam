@@ -21,24 +21,52 @@
 </script>
 
 <style>
-.temporary-link-button {
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  color: var(--digital-blue-200);
-  text-decoration: none;
-  font-size: var(--text-02);
-  padding: var(--space-1h) var(--space-base);
-  border-radius: var(--space-1h);
-  grid-gap: var(--space-base);
-  transition: background-color 100ms;
-  text-transform: uppercase;
-}
+  .temporary-link-button {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    color: var(--digital-blue-200);
+    text-decoration: none;
+    font-size: var(--text-02);
+    padding: var(--space-1h) var(--space-base);
+    border-radius: var(--space-1h);
+    grid-gap: var(--space-base);
+    transition: background-color 100ms;
+    text-transform: uppercase;
+  }
 
-.temporary-link-button:hover {
-  text-decoration: none;
-  background-color: rgba(255,255,255,.1);
-}
+  .temporary-link-button:hover {
+    text-decoration: none;
+    background-color: rgba(255,255,255,.1);
+  }
+
+  .graphic-body__details {
+    grid-area: left;
+  }
+
+  .graphic-body {
+    height: 100%;
+    display: grid;
+    grid-template-areas: 'left content-body';
+    grid-template-columns: auto calc(var(--space-base) * 120);
+    border-radius: var(--content-border-radius);
+    box-shadow: var(--depth-large);
+  }
+
+  .graphic-body-home {
+    grid-template-areas: 'content-body';
+    width: var(--main-content-width);
+  }
+
+  @media (max-width: 1200px) {
+    .graphic-body {
+      border-radius: 0;
+    }
+
+    .graphic-body__details {
+      border-radius: 0;
+    }
+  }
 </style>
 
 <App>
@@ -46,7 +74,7 @@
     <GLAMMark />
     <Search />
     <div style="justify-self: end; padding-right: var(--space-2x)">
-      <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
+      <a target="_blank" class="temporary-link-button" href="https://mozilla.slack.com/archives/CB1EQ437S">
         <SlackLogo size={16} />feedback
       </a>
     </div>

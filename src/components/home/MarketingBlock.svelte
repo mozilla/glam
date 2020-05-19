@@ -8,38 +8,42 @@ $: $t = 1;
 </script>
 
 <style>
-.marketing-block {
-  padding: var(--space-2x);
-    background: linear-gradient(to top, white, transparent), url('bg.jpg');
-    background-position: top right -100px;
-  background-repeat: no-repeat;
-}
+  .marketing-block {
+    padding: var(--space-2x);
+      background: linear-gradient(to top, white, transparent), url('bg.jpg');
+      background-position: top right -100px;
+    background-repeat: no-repeat;
+  }
 
-.marketing-block__inner-container {
-  width: var(--space-72x);
-}
+  .marketing-block__inner-container {
+    width: var(--space-72x);
+  }
 
-.marketing-block__title {
-  margin:0;
-  margin-bottom: var(--space-4x);
-  line-height:1.2;
-  font-size: var(--text-08);
-}
+  .marketing-block__title {
+    margin: 0;
+    margin-bottom: var(--space-4x);
+    line-height: 1.2;
+    font-size: var(--text-08);
+  }
 
-.marketing-block__description {
-  margin-bottom: var(--space-4x);
-}
+  .marketing-block__description {
+    margin-bottom: var(--space-4x);
+  }
 
-.marketing-block__call-to-action {
-  margin-top: var(--space-2x);
-  margin-bottom: var(--space-4x);
-}
+  .marketing-block__call-to-action {
+    margin-top: var(--space-2x);
+    margin-bottom: var(--space-4x);
+  }
 
-.marketing-block__ask-us {
-  font-weight: 200;
-  font-style: italic;
-}
+  .marketing-block__ask-us {
+    font-weight: 200;
+    font-style: italic;
+  }
 
+  .button-link,
+  .button-link:hover {
+    text-decoration: none;
+  }
 </style>
 
 <div class='marketing-block'>
@@ -48,13 +52,13 @@ $: $t = 1;
     <div class='marketing-block__description'>
       Currently serving: Firefox. Coming soon: Fenix.
     </div>
-    <div class='marketing-block__call-to-action'>
+    <div class="marketing-block__call-to-action">
       <a class="button-link" target="_blank" href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview">
         <Button>Documentation</Button>
       </a>
     </div>
 
-    <div class='marketing-block__ask-us'>
+    <div class="marketing-block__ask-us">
       Questions? Bugs? Requests? Find us at #GLAM on Slack.
     </div>
   </div>

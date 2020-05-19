@@ -22,10 +22,16 @@ onMount(() => {
   container.addEventListener('scroll', updateScroll);
 });
 onDestroy(() => { container.removeEventListener('scroll', updateScroll); });
-
 </script>
 
-<div 
+<style>
+  .data-table {
+    box-sizing: initial;
+    border-spacing: 0;
+  }
+</style>
+
+<div
   bind:this={container}
   style="
     overflow-x: {overflowX ? 'auto' : 'visible'};
@@ -34,7 +40,7 @@ onDestroy(() => { container.removeEventListener('scroll', updateScroll); });
     height: {height};
     "
 >
-  <table class=data-table>
+  <table class="data-table">
     <slot></slot>
   </table>
 </div>

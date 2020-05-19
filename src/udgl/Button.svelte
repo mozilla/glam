@@ -15,8 +15,7 @@ export let dark = getContext('appDarkMode') || false;
 </script>
 
 <style>
-
-button {
+  button {
     --primary-color: var(--digital-blue-600);
     --primary-color-dark: var(--digital-blue-800);
     --primary-color-light: var(--digital-blue-400);
@@ -33,118 +32,110 @@ button {
     display: flex;
     column-gap: var(--space-base);
     text-align: center;
-}
+  }
 
-/* high emphasis, medium emphasis, low emphasis */
+  /* high emphasis, medium emphasis, low emphasis */
 
-.button--high {
+  .button--high {
     background-color: var(--primary-color);
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: white;
-}
+  }
 
-.button--high:hover {
+  .button--high:hover {
     box-shadow: var(--depth-small);
-}
+  }
 
-.button--high:active, .button--high.toggled {
+  .button--high:active, .button--high.toggled {
     box-shadow: none;
     background-color: var(--primary-color-dark);
-}
+  }
 
-.button--medium {
+  .button--medium {
     background-color: transparent;
     color: var(--primary-color);
-}
+  }
 
-.button--medium:hover,.button--low:hover {
+  .button--medium:hover,.button--low:hover {
     background-color: rgba(0,0,0,.05);
-}
+  }
 
-.button--medium:active,
-.button--medium.toggled, 
-.button--low:active,
-.button--low.toggled {
+  .button--medium:active,
+  .button--medium.toggled,
+  .button--low:active,
+  .button--low.toggled {
     background-color: rgba(0,0,0,.1);
-}
+  }
 
-.button--low {
+  .button--low {
     background-color: transparent;
     color: var(--primary-color);
     border: 1px solid transparent;
-}
+  }
 
-.dark.button--high {
+  .dark.button--high {
     background-color: var(--primary-color-light);
     border-color: var(--primary-color-light);
     color: black;
-}
+  }
 
-.dark.button--high:hover {
+  .dark.button--high:hover {
     box-shadow: var(--depth-small);
-}
+  }
 
-.dark.button--high:active, .dark.button--high.toggled {
+  .dark.button--high:active, .dark.button--high.toggled {
     box-shadow: none;
     background-color: var(--primary-color-lightest);
     border-color: var(--primary-color-lightest);
-}
+  }
 
-.dark.button--medium {
+  .dark.button--medium {
     background-color: transparent;
     color: var(--primary-color-light);
     border-color: var(--primary-color-light);
-}
+  }
 
-.dark.button--medium:hover, .dark.button--low:hover {
+  .dark.button--medium:hover, .dark.button--low:hover {
     background-color: var(--primary-color-dark);
-}
+  }
 
-.dark.button--medium:active, 
-.dark.button--medium.toggled, 
-.dark.button--low:active,
-.dark.button--low.toggled {
+  .dark.button--medium:active,
+  .dark.button--medium.toggled,
+  .dark.button--low:active,
+  .dark.button--low.toggled {
     background-color: rgba(0,0,0,.1);
     color: var(--primary-color-lightest);
-}
+  }
 
-.dark.button--medium:active, .dark.button--medium.toggled {
+  .dark.button--medium:active, .dark.button--medium.toggled {
     border-color: var(--primary-color-lightest);
-}
+  }
 
-.dark.button--low {
+  .dark.button--low {
     background-color: transparent;
     color: var(--primary-color-light);
     border: 1px solid transparent;
-}
+  }
 
-/* I don't like how to select dark mode here. Yikes. */
-.button--compact, .dark.button--compact {
+  /* I don't like how to select dark mode here. Yikes. */
+  .button--compact, .dark.button--compact {
     padding: var(--space-1h);
     padding-left: var(--space-base);
     padding-right: var(--space-base);
     font-size: var(--button-text-size-compact);
     column-gap: var(--space-1h);
-}
+  }
 
-/* desaturate. */
-/* .button--high.button--pale {
-    color: var(--digital-blue-pale);
-    border: 1px solid var(--digital-blue-pale);
-    background-color: 1px solid var(--digital-blue-pale);
-}
+  .button-text--standard {
+    font-size: var(--text-02);
+    text-transform: uppercase;
+  }
 
-.button--medium.button--pale {
-    color: var(--digital-blue-pale);
-    border: 1px solid var(--digital-blue-pale);
-}
-
-.button--low.button--pale {
-    color: var(--digital-blue-pale);
-
-} */
-
+  .button-text--compact {
+    font-size: var(--text-01);
+    text-transform: uppercase;
+  }
 </style>
 
 <button use:tooltipAction={{ text: tooltip }} class="button--{level} button--{size} button-text--{size}" class:dark class:toggled on:click>

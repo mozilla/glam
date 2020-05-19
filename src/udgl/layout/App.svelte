@@ -9,11 +9,25 @@ const layout = writable({});
 $layout.orientation = orientation;
 
 setContext('_layout', layout);
-
 </script>
 
-<div 
-  class=app-layout
+<style>
+.app-layout {
+  display: grid;
+  min-height: 100vh;
+}
+
+.app-layout--vertical {
+  grid-template-rows: max-content auto;
+}
+
+.app-layout--horizontal {
+  grid-template-columns: var(--drawer-width) auto;
+}
+</style>
+
+<div
+  class="app-layout"
   class:app-layout--vertical={orientation === 'vertical'}
   class:app-layout--horizontal={orientation === 'horizontal'}
 >

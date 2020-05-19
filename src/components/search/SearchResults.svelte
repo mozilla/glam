@@ -89,124 +89,155 @@ $: if (parentElement && windowWidth) {
 </script>
 
 <style>
+  /* FIXME: move toward BEM */
+  .telemetry-results {
+    --header-bg-color: var(--cool-gray-200);
+    --list-border-color: gainsboro;
+    --list-border: 1px solid var(--list-border-color);
+    max-height: calc(100vh - var(--header-height) * 3);
+    border: 1px solid var(--cool-gray-250);
+    background-color: white;
+    max-width: calc(var(--increment) * 16);
+    box-shadow: var(--depth-5l);
+    border-bottom-right-radius: var(--border-radius-base);
+    border-bottom-left-radius: var(--border-radius-base);
+    position: fixed;
+    left: 0;
+    top: var(--increment);
+    overflow: hidden;
+    z-index: 2000;
+  }
 
-/* FIXME: move toward BEM */
-.telemetry-results {
-  --header-bg-color: var(--cool-gray-200);
-  --list-border-color: gainsboro;
-  --list-border: 1px solid var(--list-border-color);
-  max-height: calc(100vh - var(--header-height) * 3);
-  border: 1px solid var(--cool-gray-250);
-  background-color: white;
-  max-width: calc(var(--increment) * 16);
-  box-shadow: var(--depth-5l);
-  border-bottom-right-radius: var(--border-radius-base);
-  border-bottom-left-radius: var(--border-radius-base);
-  position: fixed;
-  left: 0;
-  top: var(--increment);
-  overflow: hidden;
-  z-index: 2000;
-}
+  .header-container {
+    background-color: var(--cool-gray-250);
+    --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
+    font-size:.8em;
+    color: var(--body-gray-01);
+    font-style: italic;
+    height: var(--height);
+    max-height: var(--height);
+    display: grid;
+    align-items: stretch;
+  }
 
-.header-container {
-  background-color: var(--cool-gray-250);
-  --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
-  font-size:.8em;
-  color: var(--body-gray-01);
-  font-style: italic;
-  height: var(--height);
-  max-height: var(--height);
-  display: grid;
-  align-items: stretch;
-}
+  .header {
+    padding:var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items:center;
+    grid-column-gap: var(--space-base);
+    position:relative;
+  }
 
-.header {
-  padding:var(--space-base);
-  padding-left: var(--space-2x);
-  padding-right: var(--space-2x);
-  display: grid;
-  grid-template-columns: max-content auto;
-  align-items:center;
-  grid-column-gap: var(--space-base);
-  position:relative;
-}
+  .header--loaded {
+    grid-template-columns: auto;
+    grid-column-gap: 0px;
+    align-items:center;
+  }
 
-.header--loaded {
-  grid-template-columns: auto;
-  grid-column-gap: 0px;
-  align-items:center;
-}
+  ul {
+    max-height: calc(100vh - var(--header-height) * 3 - 40px);
+    padding:0;
+    margin:0;
+    list-style-type: none;
+    overflow-y: scroll;
+  }
 
-ul {
-  max-height: calc(100vh - var(--header-height) * 3 - 40px);
-  padding:0;
-  margin:0;
-  list-style-type: none;
-  overflow-y: scroll;
-}
+  li:first-child {
+    border-top: var(--list-border);
+  }
 
-li:first-child {
-  border-top: var(--list-border);
-}
+  li {
+    padding:var(--space-2x);
+    border-bottom: var(--list-border);
+    display:grid;
+    grid-template-columns: auto 100px;
+    grid-column-gap: var(--space-2x);
+    grid-template-rows: max-content max-content;
+    grid-template-areas: "title probe-type"
+                          "description versions";
+    cursor: pointer;
+    color: var(--body-gray-01);
+  }
 
-li {
-  padding:var(--space-2x);
-  border-bottom: var(--list-border);
-  display:grid;
-  grid-template-columns: auto 100px;
-  grid-column-gap: var(--space-2x);
-  grid-template-rows: max-content max-content;
-  grid-template-areas: "title probe-type"
-                        "description versions";
-  cursor: pointer;
-  color: var(--body-gray-01);
-}
+  .name {
+    grid-area: title;
+    word-break: break-all;
+    font-weight:bold;
+  }
 
-.name {
-  grid-area: title;
-  word-break: break-all;
-  font-weight:bold;
-}
+  .probe-type, .first-release {
+    justify-self: end;
+    padding: var(--border-radius-1h);
+  }
 
-.probe-type, .first-release {
-  justify-self: end;
-  padding: var(--border-radius-1h);
-}
+  .first-release {
+    font-size: .8em;
+    text-align: right;
+    align-self: end;
+  }
 
-.first-release {
-  font-size:.8em;
-  text-align: right;
-  align-self: end;
-}
+  .probe-type {
+    grid-area: probe-type;
+  }
 
-.probe-type {
-  grid-area: probe-type;
-}
+  .description {
+    grid-area: description;
+    font-size: .8em;
+    line-height: 1.4;
+    outline: 1px;
+    max-height: 2.6em;
+    overflow: hidden;
+    color: var(--subhead-gray-02);
+    font-style: italic;
+    padding-bottom: var(--space-1h);
+  }
 
-.description {
-  grid-area: description;
-  font-size:.8em;
-  line-height:1.4;
-  outline: 1px;
-  max-height: 2.6em;
-  overflow: hidden;
-  color: var(--subhead-gray-02);
-  font-style: italic;
-  padding-bottom: var(--space-1h);
-}
-
-.focused {
+  .focused {
     background-color: var(--bg-gray-01);
-}
+  }
 
+  .label {
+    border-radius: var(--border-radius-1h);
+    text-transform: uppercase;
+    color: white;
+    display: grid;
+    align-items: center;
+    align-self: start;
+    padding: var(--space-1h);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+  }
+
+  .label--histogram {
+    background-color: var(--histogram-bg);
+    color: var(--histogram-color);
+  }
+
+  .label--event {
+    color: var(--event-color);
+    background-color: var(--event-bg);
+  }
+
+  .label--scalar {
+    color: var(--scalar-color);
+    background-color: var(--scalar-bg);
+  }
+
+  .label-text--01 {
+    font-size: var(--text-01);
+    line-height: 1rem;
+    font-weight: 400;
+  }
 </style>
 
 <svelte:window bind:innerWidth={windowWidth} on:keydown={handleKeypress} />
 
 <Portal>
 {#if $store.searchIsActive && $store.searchQuery.length}
-  <div 
+  <div
   id="telemetry-search-results"
   style="left: calc({x}px + var(--space-base)); width: calc({width}px - var(--space-base));"
     transition:fly={{ duration: 20, y: -10 }}
@@ -226,14 +257,14 @@ li {
               </div>
           </div>
           {/if}
-          
+
       </div>
       {#if $searchResults.results.length}
           <ul bind:this={searchListElement}
             aria-label="probe search results"
             activedescendent={$searchResults.results[focusedItem].name}>
           {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-              <li 
+              <li
                   role="option"
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {

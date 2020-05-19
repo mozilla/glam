@@ -46,115 +46,129 @@ $: displayValues = createNewPercentiles(left, right, keySet);
 </script>
 
 <style>
-.summary {
-  padding-bottom: var(--space-2x);
-  max-width: 345px;
-  width: 100%;
-  grid-row: 1 / span 2;
-  grid-column: 3;
-}
+  .summary {
+    padding-bottom: var(--space-2x);
+    max-width: 345px;
+    width: 100%;
+    grid-row: 1 / span 2;
+    grid-column: 3;
+  }
 
-table {
-  padding-top: 8px;
-  font-family: var(--main-mono-font);
-  font-size: var(--text-015);
-  margin: auto;
-  border-spacing: 0px;
-  --heavy-border: 1px solid var(--line-gray-01);
-  --lighter-border: 1px dotted var(--bg-gray-01);
-  width: 100%;
-}
+  table {
+    padding-top: 8px;
+    font-family: var(--main-mono-font);
+    font-size: var(--text-015);
+    margin: auto;
+    border-spacing: 0;
+    --heavy-border: 1px solid var(--line-gray-01);
+    --lighter-border: 1px dotted var(--bg-gray-01);
+    width: 100%;
+  }
 
-tbody tr td {
-  border: var(--lighter-border);
-}
+  tbody tr td {
+    border: var(--lighter-border);
+  }
 
-tbody tr td:first-child, tbody tr td:last-child {
-  border-right: var(--heavy-border);
-  border-left: var(--heavy-border);
-}
+  tbody tr td:first-child, tbody tr td:last-child {
+    border-right: var(--heavy-border);
+    border-left: var(--heavy-border);
+  }
 
-tbody tr:last-child td {
-  border-bottom: var(--heavy-border);
-}
+  tbody tr:last-child td {
+    border-bottom: var(--heavy-border);
+  }
 
-th {
-  font-family: var(--main-text-font);
-  line-height: 1;
-  font-weight: normal;
-  text-transform: uppercase;
-  vertical-align: top;
-  border-bottom: var(--heavy-border);
-  font-size: var(--text-01);
-  color: var(--cool-gray-650);
-}
+  th {
+    font-family: var(--main-text-font);
+    line-height: 1;
+    font-weight: normal;
+    text-transform: uppercase;
+    vertical-align: top;
+    border-bottom: var(--heavy-border);
+    font-size: var(--text-01);
+    color: var(--cool-gray-650);
+  }
 
-td, th {
-  padding-left: var(--space-base);
-  padding-right: var(--space-base);
-  text-align: right;
-  padding-top: var(--space-base);
-  padding-bottom: var(--space-base);
-  transition: opacity 100ms;
-}
+  td, th {
+    padding-left: var(--space-base);
+    padding-right: var(--space-base);
+    text-align: right;
+    padding-top: var(--space-base);
+    padding-bottom: var(--space-base);
+    transition: opacity 100ms;
+  }
 
-.ref, .hov {
-  width: 50%;
-}
+  .ref, .hov {
+    width: 50%;
+  }
 
-.hidden {
-  opacity: .2;
-}
+  .hidden {
+    opacity: .2;
+  }
 
-.value-left, .value-right {
-  background-color: var(--cool-gray-050);
+  .value-left, .value-right {
+    background-color: var(--cool-gray-050);
 
-}
+  }
 
-.small-shape {
-  padding-left: var(--space-1h);
-}
+  .small-shape {
+    padding-left: var(--space-1h);
+  }
 
-.value-label {
-  min-width: calc(var(--space-base) * 7);
-  max-width: calc(var(--space-base) * 10);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .value-label {
+    min-width: calc(var(--space-base) * 7);
+    max-width: calc(var(--space-base) * 10);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-.value-change {
-  min-width: calc(var(--space-6x) + var(--space-base)); 
-  width: max-content;
-}
+  .value-change {
+    min-width: calc(var(--space-6x) + var(--space-base));
+    width: max-content;
+  }
+
+  .percentile-label-block {
+    display: inline-block;
+    width: var(--space-base);
+    height: var(--space-base);
+    border-radius: var(--space-1q);
+    margin-right: var(--space-1h);
+  }
+
+  table {
+    box-sizing: initial;
+  }
 </style>
 
-<div class=summary>
-    <h3 class=data-graphic__element-title>Summary
-        <span 
-          use:tooltipAction={
-            {
-              text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
-              location: 'top',
-            }
-          } 
-          class=data-graphic__element-title__icon><Help size={14} /></span></h3>
+<div class="summary">
+  <h3 class="data-graphic__element-title">Summary
+    <span
+      use:tooltipAction={
+        {
+          text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
+          location: 'top',
+        }
+      }
+      class="data-graphic__element-title__icon"><Help size={14} />
+    </span>
+  </h3>
   <table>
     <thead>
       <tr>
         <th class="value-label">{binLabel}</th>
-            {#if showLeft}
+          {#if showLeft}
             <th class:hidden={!hovered} class="summary-label ref">
-                  <div>
-                    <span class='small-shape'>●</span> {leftLabel || ''}
-                  </div>
+              <div>
+                <span class="small-shape">●</span> {leftLabel || ''}
+              </div>
             </th>
-            {/if}
+          {/if}
         {#if showRight}
-        <th class="summary-label hov">
+          <th class="summary-label hov">
             <div>
-              <span class='small-shape'>⭑</span> {rightLabel || ''}</div>
-        </th>
+              <span class="small-shape">⭑</span> {rightLabel || ''}</div>
+          </th>
         {/if}
         {#if showDiff}
           <th style="width: max-content" class:hidden={!hovered}>Diff.</th>
@@ -162,36 +176,36 @@ td, th {
       </tr>
     </thead>
     <tbody>
-          {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
-            <tr>
-              <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
-                <span class=percentile-label-block
-                style="background-color: {colorMap(key)};"></span>{keyFormatter(key)}</td>
+      {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
+        <tr>
+          <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
+            <span class="percentile-label-block"
+            style="background-color: {colorMap(key)};"></span>{keyFormatter(key)}
+          </td>
 
-              {#if showLeft}
-              <td  class:hidden={!hovered} class=value-left>
-                  {leftValue !== undefined ? valueFormatter(leftValue) : ' '}
-              </td>
+          {#if showLeft}
+            <td  class:hidden={!hovered} class="value-left">
+              {leftValue !== undefined ? valueFormatter(leftValue) : ' '}
+            </td>
+          {/if}
+
+          {#if showRight}
+            <td class="value-right">
+              {#if rightValue !== undefined}
+                <Tweenable value={rightValue} let:tweenValue>{valueFormatter(tweenValue)}</Tweenable>
+              {:else}
+                {' '}
               {/if}
+            </td>
+          {/if}
 
-              {#if showRight}
-              <td class=value-right>
-                  {#if rightValue !== undefined}
-                  <Tweenable value={rightValue} let:tweenValue>{valueFormatter(tweenValue)}</Tweenable>
-                {:else}
-                    {' '}
-                {/if}
-              </td>
-              {/if}
-
-              {#if showDiff}
-              <td class:hidden={!hovered} class=value-change>
-                {percentageChange !== undefined ? formatPercentDecimal(percentageChange) : ' '}
-              </td>
-              {/if}
-
-            </tr>
-          {/each}
+          {#if showDiff}
+            <td class:hidden={!hovered} class="value-change">
+              {percentageChange !== undefined ? formatPercentDecimal(percentageChange) : ' '}
+            </td>
+          {/if}
+        </tr>
+      {/each}
     </tbody>
   </table>
 </div>

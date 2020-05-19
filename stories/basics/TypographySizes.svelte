@@ -20,41 +20,44 @@ let headings = ['01', '02', '03', '04', '05', '06', '07'];
 </script>
 
 <style>
-
-.component {
+  .component {
     padding: var(--space-base);
     border-radius: var(--space-1h);
     background-color: var(--digital-blue-500);
     color: white;
     width: max-content;
-}
+  }
 
-:global(:root) {
+  :global(:root) {
     --text-base-size: 1em;
-}
+  }
 
 
-:global(body) {
+  :global(body) {
     font-size: var(--text-base-size);
-}
+  }
 
-.display {
+  .display {
     display: grid;
     grid-template-columns: 250px max-content;
     grid-column-gap: var(--space-4x);
     align-items: center;
     margin-bottom: var(--space-2x);
-}
+  }
 
-.display div:first-child {
+  .display div:first-child {
     justify-self: end;
     font-family: 'Courier New', Courier, monospace;
-}
+  }
 
-.display p {
+  .display p {
     width: 400px;
-}
+  }
 
+  .heading {
+    margin: 0;
+    padding: 0;
+  }
 </style>
 <div class=story>
     <h1 class='story__title'>Typography Sizes</h1>

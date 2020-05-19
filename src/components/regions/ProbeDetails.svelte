@@ -35,28 +35,44 @@ async function exportData() {
 </script>
 
 <style>
-
-.drawer-section {
+  .drawer-section {
     padding: var(--space-2x) 0;
-}
+  }
 
-.drawer-section--end {
+  .drawer-section--end {
     align-self: end;
-    min-height: calc(var(--increment)*2);
+    min-height: calc(var(--increment) * 2);
     position: grid;
     grid-auto-flow: row;
     grid-row-gap: var(--space-base);
-}
+  }
 
-.probe-details {
+  .probe-details {
     height: 100%;
-}
+  }
 
-h2 {
+  .drawer {
+    width: var(--drawer-width);
+  }
+
+  .details-drawer {
+    background-color: var(--cool-gray-subtle);
+    height: calc(100% - var(--space-3x));
+    border-radius: var(--content-border-radius) 0 0 var(--content-border-radius);
+    padding: var(--space-3x) var(--space-2x) 0 var(--space-2x);
+    box-sizing: border-box;
+  }
+
+  .drawer h2 {
+    padding: 0;
+    margin: 0;
+    font-weight: 200;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     padding-bottom: var(--space-base);
-}
+  }
 
-.empty-details {
+  .empty-details {
     height: 200px;
     display: grid;
     place-items: center center;
@@ -65,84 +81,84 @@ h2 {
     text-align: center;
     padding: var(--space-2x);
     color: var(--cool-gray-400);
-}
+  }
 
-.probe-description {
+  .probe-description {
     color: var(--subhead-gray-02);
     word-break: break-word;
-}
+  }
 
-.bug-list {
+  .bug-list {
     display: flex;
     flex-wrap: wrap;
     line-height: 1.8;
-}
+  }
 
-.bug-list a {
+  .bug-list a {
     display: block;
     margin-right: var(--space-base);
-}
+  }
 
-.spinner-and-text {
+  .spinner-and-text {
     text-align: center;
     color: var(--cool-gray-400);
-}
+  }
 
-.spinner-and-text div {
+  .spinner-and-text div {
     margin-top: var(--space-base);
-}
+  }
 
-.probe-details-overview-left {
+  .probe-details-overview-left {
     margin: 0;
-}
+  }
 
-.probe-details-overview-left > * {
+  .probe-details-overview-left > * {
     line-height: 1.2;
-}
+  }
 
-.probe-details-overview-left dt {
+  .probe-details-overview-left dt {
     text-transform: capitalize;
     color: var(--subhead-gray-01);
     font-size: var(--text-04);
     font-weight: 500;
-}
+  }
 
-.probe-details-overview-left dd {
+  .probe-details-overview-left dd {
     margin: 0;
     font-size: var(--text-015);
     color: var(--subhead-gray-01);
-}
+  }
 
-.probe-details-overview-left--padded {
+  .probe-details-overview-left--padded {
     padding: 0 calc(var(--space-base) - 1px);
-}
+  }
 
-.probe-details-overview-left--subtle {
+  .probe-details-overview-left--subtle {
     display: flex;
     justify-content: space-between;
     padding-top: 0;
     align-items: baseline;
-}
+  }
 
-.probe-details-overview-left--subtle dt {
+  .probe-details-overview-left--subtle dt {
     text-transform: none;
     font-size: var(--text-02);
-}
+  }
 
-.probe-details-overview-left--subtle dd {
+  .probe-details-overview-left--subtle dd {
     font-size: var(--text-01);
-}
+  }
 
-.probe-details-overview {
+  .probe-details-overview {
     display: flex;
     justify-content: space-between;
-}
+  }
 
-.probe-details-overview-right {
+  .probe-details-overview-right {
     padding: var(--space-2x) 0;
-}
+  }
 
-.more-info-link {
+  .more-info-link {
     display: grid;
     align-items: center;
     grid-auto-flow: column;
@@ -152,41 +168,58 @@ h2 {
     padding-right: var(--space-1h);
     margin: var(--space-2x) 0;
     font-size: var(--text-01);
-}
+  }
 
-.probe-type-link {
+  .probe-type-link {
     color: var(--subhead-gray-01);
-}
+  }
 
-/* FIXME: once @graph-paper/button supports href, use the Button component. */
-.docs-button {
-  margin:0;
-  padding: 0;
-  box-sizing: border-box;
-  background-color: transparent;
-  display: grid;
-  width: 100%;
-  color: var(--digital-blue-500);
-  border: none;
-  cursor: pointer;
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  text-decoration: none;
-  justify-content: center;
-  grid-column-gap: var(--space-base);
-  text-transform: uppercase;
-  font-size: var(--text-015);
-  font-weight: 500;
-  padding: var(--space-base);
-  transition: background-color 100ms;
-  border-radius: var(--space-1h);
-}
+  /* FIXME: once @graph-paper/button supports href, use the Button component. */
+  .docs-button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: transparent;
+    display: grid;
+    width: 100%;
+    color: var(--digital-blue-500);
+    border: none;
+    cursor: pointer;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    text-decoration: none;
+    justify-content: center;
+    grid-column-gap: var(--space-base);
+    text-transform: uppercase;
+    font-size: var(--text-015);
+    font-weight: 500;
+    padding: var(--space-base);
+    transition: background-color 100ms;
+    border-radius: var(--space-1h);
+  }
 
-.docs-button:hover {
-  background-color: var(--cool-gray-150);
-}
+  .docs-button:hover {
+    background-color: var(--cool-gray-150);
+  }
 
+  .helper-text--01 {
+    font-size: var(--text-015);
+    line-height: 1rem;
+    font-weight: 400;
+  }
+
+  .detail__heading--01 {
+    font-size: var(--text-015);
+    font-weight: 500;
+    color: var(--body-gray-02);
+  }
+
+  .drawer-section-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 </style>
 
 <div class="drawer details-drawer">

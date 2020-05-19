@@ -17,45 +17,48 @@ const COMPACT = true;
 </script>
 
 <style>
-.main-filters {
-  display:grid;
-  grid-auto-flow: column;
-  grid-column-gap:var(--space-base);
-  align-items: center;
-  justify-self: end;
-}
+  .main-filters {
+    display:grid;
+    grid-auto-flow: column;
+    grid-column-gap:var(--space-base);
+    align-items: center;
+    justify-self: end;
+  }
 
-.main-filter__label {
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  grid-column-gap: var(--space-1h);
-  font-weight: 500;
-}
+  .main-filter__label {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    grid-column-gap: var(--space-1h);
+    font-weight: 500;
+  }
 
-.pull-right-edge {
-  margin-right: calc(var(--space-1h) * -1);
-  display: grid;
-  align-items: center;
-}
+  .pull-right-edge {
+    margin-right: calc(var(--space-1h) * -1);
+    display: grid;
+    align-items: center;
+  }
 
-.main-filter__label__dimension {
-  text-transform: uppercase;
-  padding-right: var(--space-1q);
-  color: var(--digital-blue-600);
-  font-weight: 300;
-}
+  .main-filter__label__dimension {
+    text-transform: uppercase;
+    padding-right: var(--space-1q);
+    color: var(--digital-blue-600);
+    font-weight: 300;
+  }
 
-.main-filter__label__dimension:after {
-  content: " / ";
-  padding-left: var(--space-1q);
-  color: var(--cool-gray-400);
-}
+  .main-filter__label__dimension:after {
+    content: " / ";
+    padding-left: var(--space-1q);
+    color: var(--cool-gray-400);
+  }
 
+  .main-filters {
+    margin-right: var(--space-4x);
+  }
 </style>
 
 {#if $store.route.section === 'probe' && $probe}
-  <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
+  <div transition:fly={{ x: 5, duration: 200 }} class="main-filters">
     {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
       {#if dimension.values.some(
             (di) => dimension.isValidKey === undefined

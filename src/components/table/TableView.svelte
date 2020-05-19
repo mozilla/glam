@@ -39,20 +39,28 @@ $: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
 </script>
 
 <style>
-span.h {
-  font-weight: bold; 
-  color: var(--cool-gray-700); 
-  font-size: var(--text-01);
-}
+  span.h {
+    font-weight: bold;
+    color: var(--cool-gray-700);
+    font-size: var(--text-01);
+  }
 
-span.bucket {
-  font-weight: normal;
-}
+  span.bucket {
+    font-weight: normal;
+  }
+
+  .percentile-label-block {
+    display: inline-block;
+    width: var(--space-base);
+    height: var(--space-base);
+    border-radius: var(--space-1q);
+    margin-right: var(--space-1h);
+  }
 </style>
 
 <div style="border-bottom: var(--space-base) solid var(--cool-gray-100);">
   <div style="
-    margin-top: var(--space-2x); 
+    margin-top: var(--space-2x);
     margin-bottom: var(--space-2x);
     padding-left: var(--space-4x);
     padding-right: var(--space-4x);
@@ -63,7 +71,7 @@ span.bucket {
   </div>
   <DataTable overflowX={true}>
     <thead>
-      
+
       <Row header>
         <Cell colspan={2} freezeX bottomBorder={false}></Cell>
         <Cell colspan={2} align=left freezeX bottomBorder={false}>
@@ -74,7 +82,7 @@ span.bucket {
       </Row>
 
       <Row header>
-        <Cell 
+        <Cell
           backgroundColor=var(--cool-gray-subtle)
           topBorder={true}
           bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
@@ -92,8 +100,8 @@ span.bucket {
           rightBorder
           backgroundColor=var(--cool-gray-subtle)
           bottomBorderThickness=2px
-          freezeX 
-          align=left 
+          freezeX
+          align=left
           tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version' }">
           <span class=h>
             Clients
@@ -103,7 +111,7 @@ span.bucket {
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
           <Cell backgroundColor=var(--cool-gray-subtle) tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
-            <span class=percentile-label-block style="background-color: {colorMap(bucket)}"></span>
+            <span class="percentile-label-block" style="background-color: {colorMap(bucket)}"></span>
             <span class=bucket>{keyFormatter(bucket)}</span>
           </Cell>
         {/each}

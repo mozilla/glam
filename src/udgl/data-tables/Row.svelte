@@ -10,6 +10,12 @@ function setHover(tf) {
 }
 </script>
 
+<style>
+  tr > *:first-child {
+    text-align: left;
+  }
+</style>
+
 <tr on:mouseover={() => setHover(true)} on:mouseleave={() => setHover(false)}>
   <slot hovered={hovered}></slot>
 </tr>
