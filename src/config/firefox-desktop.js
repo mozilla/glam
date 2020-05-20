@@ -21,6 +21,9 @@ export default {
         { key: 'beta', label: 'Beta' },
         { key: 'release', label: 'Release' },
       ],
+      isValidKey(key, probe) {
+        return (probe.prerelease && key !== 'release') || !probe.prerelease;
+      },
     },
     aggregationLevel: {
       title: 'Aggregation Level',
@@ -52,6 +55,7 @@ export default {
   },
   setDefaultsForProbe(store, probe) {
     const state = store.getState();
+    // accommodate only valid processes.
     if (
       !isSelectedProcessValid(
         probe.record_in_processes,
@@ -61,6 +65,10 @@ export default {
       let newProcess = probe.record_in_processes[0];
       if (newProcess === 'main') newProcess = 'parent';
       store.setDimension('process', newProcess);
+    }
+    // accommodate prerelease-only probes by resetting to nightly (if needed)
+    if (state.productDimensions.channel === 'release' && probe.prerelease) {
+      store.setDimension('channel', 'nightly');
     }
   },
 };
