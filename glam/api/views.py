@@ -1,5 +1,6 @@
 from random import shuffle
 
+import orjson
 from django.core.cache import caches
 from django.db.models import Max, Q, Value
 from django.db.models.functions import Concat
@@ -9,18 +10,17 @@ from rest_framework.response import Response
 
 from glam.api import constants
 from glam.api.models import (
-    BetaAggregation,
+    DesktopBetaAggregationView,
+    DesktopNightlyAggregationView,
+    DesktopReleaseAggregationView,
     FenixAggregation,
     FirefoxCounts,
-    NightlyAggregation,
-    ReleaseAggregation,
     Probe,
 )
 
 
 def get_firefox_aggregations(request, **kwargs):
     # TODO: When glam starts sending "product", make it required.
-    # TODO: Consider combining product + channel for Firefox.
     REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
@@ -40,9 +40,9 @@ def get_firefox_aggregations(request, **kwargs):
             raise PermissionDenied()
 
     MODEL_MAP = {
-        "firefox-nightly": NightlyAggregation,
-        "firefox-beta": BetaAggregation,
-        "firefox-release": ReleaseAggregation,
+        "firefox-nightly": DesktopNightlyAggregationView,
+        "firefox-beta": DesktopBetaAggregationView,
+        "firefox-release": DesktopReleaseAggregationView,
     }
 
     try:
@@ -83,97 +83,35 @@ def get_firefox_aggregations(request, **kwargs):
         counts = _get_firefox_counts(channel, os, versions, by_build=True)
 
     if "process" in kwargs:
-        dimensions.append(Q(process=constants.PROCESS_IDS[kwargs["process"]]))
-
+        dimensions.append(Q(process=kwargs["process"]))
     result = model.objects.filter(*dimensions)
 
-    response = {}
+    response = []
 
     for row in result:
 
-        # We skip boolean percentiles.
-        if row.metric_type == "boolean":
-            if row.agg_type == constants.AGGREGATION_PERCENTILE:
-                continue
-
-        metadata = {
-            "channel": constants.CHANNEL_NAMES[row.channel],
+        data = {
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
-            "process": constants.PROCESS_NAMES[row.process],
+            "process": row.process,
             "metric": row.metric,
+            "metric_key": row.metric_key,
             "metric_type": row.metric_type,
+            "total_users": row.total_users,
+            "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
         }
-        aggs = {d["key"]: round(d["value"], 4) for d in row.data}
-
-        # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}-{process}".format(
-            **metadata
-        )
-        sub_key = "{key}-{client_agg_type}".format(
-            key=row.metric_key, client_agg_type=row.client_agg_type
-        )
-
-        record = response.get(key, {})
-        if "metadata" not in record:
-            record["metadata"] = metadata
-
-        if sub_key not in record:
-            record[sub_key] = {}
-
-        new_data = {}
-
-        if row.agg_type == constants.AGGREGATION_HISTOGRAM:
-            new_data["total_users"] = row.total_users
-            # Check for labels.
-            labels = labels_cache.get(metadata["metric"])
-            if labels is not None:
-                # Replace the numeric indexes with their labels.
-                aggs_w_labels = {}
-                for k, v in aggs.items():
-                    try:
-                        aggs_w_labels[labels[int(k)]] = v
-                    except IndexError:
-                        pass
-                aggs = aggs_w_labels
-
-            # If boolean, we add a fake client_agg_type for the front-end.
+        if row.client_agg_type:
             if row.metric_type == "boolean":
-                new_data["client_agg_type"] = "boolean-histogram"
-
-        new_data[constants.AGGREGATION_NAMES[row.agg_type]] = aggs
+                data["client_agg_type"] = "boolean-histogram"
+            else:
+                data["client_agg_type"] = row.client_agg_type
 
         # Get the total distinct client IDs for this set of dimensions.
-        new_data["total_addressable_market"] = counts.get(
-            f"{row.version}-{row.build_id}"
-        )
+        data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
-        if row.metric_key:
-            new_data["key"] = row.metric_key
-
-        if row.client_agg_type:
-            new_data["client_agg_type"] = row.client_agg_type
-
-        data = record[sub_key].get("data", {})
-        data.update(new_data)
-
-        record[sub_key]["data"] = data
-        response[key] = record
-
-    # Restructure data and remove keys only used for merging data.
-    response = [
-        {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
-        for r in response.values()
-    ]
-
-    # Check for data with one of "histogram" or "percentiles", but not both.
-    for row in response:
-        if row["metadata"]["metric_type"] == "boolean":
-            continue
-        for data in row["data"]:
-            if "histogram" not in data or "percentiles" not in data:
-                raise NotFound("Incomplete data for probe")
+        response.append(data)
 
     return response
 
@@ -391,12 +329,8 @@ def probes(request):
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
-    channel = request.data.get(
-        "channel", constants.CHANNEL_NAMES[constants.CHANNEL_NIGHTLY]
-    )
-    process = request.data.get(
-        "process", constants.PROCESS_NAMES[constants.PROCESS_CONTENT]
-    )
+    channel = request.data.get("channel", "nightly")
+    process = request.data.get("process", "parent")
     os = request.data.get("os", "Windows")
     try:
         n = int(n)
