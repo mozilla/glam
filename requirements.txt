@@ -55,7 +55,7 @@ six==1.14.0               # via cryptography, django-configurations, google-api-
 sqlparse==0.3.1           # via django
 urllib3==1.25.9           # via requests
 wcwidth==0.1.9            # via pytest
-whitenoise==5.0.1         # via -r requirements.in
+whitenoise==5.1.0         # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

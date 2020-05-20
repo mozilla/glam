@@ -9,7 +9,7 @@ gunicorn==20.0.4
 mozilla-django-oidc==1.2.3
 orjson==3.0.1     
 psycopg2-binary==2.8.5
-whitenoise==5.0.1
+whitenoise==5.1.0
 
 # For linting and testing.
 flake8
