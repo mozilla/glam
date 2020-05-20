@@ -10,9 +10,13 @@ import { getProbeData } from './api';
 
 import CONFIG from '../config/firefox-desktop';
 
-import { transformResponse, getProbeViewType } from '../utils/probe-utils';
+import {
+  transformResponse,
+  getProbeViewType,
+  isCategorical,
+} from '../utils/probe-utils';
 
-import { validate, noDuplicates, noResponse } from '../utils/data-validation';
+import { validate, noResponse } from '../utils/data-validation';
 
 // TODO: move this to the new config.js when 'product' is added.
 const DEFAULT_PROBE_PROCESS = 'content';
@@ -247,15 +251,6 @@ export function extractBucketMetadata(transformedData) {
   return etc;
 }
 
-export function isCategorical(probeType, probeKind) {
-  return (
-    (probeType === 'histogram' && probeKind === 'enumerated') ||
-    probeKind === 'categorical' ||
-    probeKind === 'flag' ||
-    probeKind === 'boolean'
-  );
-}
-
 export function fetchDataForGLAM(params) {
   return getProbeData(params, store.getState().auth.token).then((payload) => {
     // FIXME: this should not be reading from the store.
@@ -269,11 +264,7 @@ export function fetchDataForGLAM(params) {
       probe
     );
 
-    validate(
-      payload,
-      (p) => noResponse(p, probeActive)
-      // (p) => noDuplicates(p, aggregationLevel)
-    );
+    validate(payload, (p) => noResponse(p, probeActive));
     const data = transformResponse(
       payload.response,
       isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',

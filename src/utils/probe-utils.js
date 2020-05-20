@@ -45,7 +45,7 @@ function createNewError(which) {
   return error;
 }
 
-export const prepareForQuantilePlot = (probeData, key = 'version') =>
+export const transformQuantileResponse = (probeData, key = 'version') =>
   probeData.map((probe) => {
     const h = probe.histogram;
     if (!h) {
@@ -103,7 +103,7 @@ function toProportions(obj) {
 //   return flattened;
 // }
 
-export const prepareForProportionPlot = (
+export const transformProportionResponse = (
   probeData,
   key = 'version',
   prepareArgs = {}
@@ -130,14 +130,14 @@ export const prepareForProportionPlot = (
 
 export function transformResponse(
   d,
-  preparationType = 'quantile',
+  viewType = 'quantile',
   aggregationLevel = 'build_id',
   prepareArgs = {}
 ) {
   const prepareFcn =
-    preparationType === 'quantile'
-      ? prepareForQuantilePlot
-      : prepareForProportionPlot;
+    viewType === 'quantile'
+      ? transformQuantileResponse
+      : transformProportionResponse;
 
   const data = prepareFcn(
     produce(d, (di) => di),
@@ -170,6 +170,10 @@ export function getProbeViewType(probeType, probeKind) {
   return undefined;
 }
 
+export function isCategorical(probeType, probeKind) {
+  return getProbeViewType(probeType, probeKind) === 'categorical';
+}
+
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
@@ -179,12 +183,10 @@ function uniques(d, k) {
 }
 
 export function gatherProbeKeys(d) {
-  // return Object.keys(nestedData);
   return uniques(d, 'metric_key');
 }
 
 export function gatherAggregationTypes(d) {
-  // return Object.keys(Object.values(nestedData)[0]);
   return uniques(d, 'client_agg_type');
 }
 
