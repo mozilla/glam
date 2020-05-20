@@ -3,9 +3,15 @@ update_configs:
   - package_manager: 'javascript'
     directory: '/'
     update_schedule: 'live'
+    default_labels:
+      - 'frontend'
   - package_manager: 'python'
     directory: '/'
     update_schedule: 'live'
+    default_labels:
+      - 'backend'
   - package_manager: 'docker'
     directory: '/'
     update_schedule: 'daily'
+    default_labels:
+      - 'backend'
