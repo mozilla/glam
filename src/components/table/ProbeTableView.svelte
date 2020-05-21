@@ -4,31 +4,25 @@ import TableView from './TableView.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 import { formatCount, formatPercentDecimal } from '../../utils/formatters';
+import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils';
 
 export let data;
 export let probeType = 'categorical';
 export let aggregationLevel = 'build_id';
-
-
-function gatherProbeKeys(nestedData) {
-  return Object.keys(nestedData);
-}
-
-function gatherAggregationTypes(nestedData) {
-  return Object.keys(Object.values(nestedData)[0]);
-}
 
 export let aggregationTypes = gatherAggregationTypes(data);
 export let probeKeys = gatherProbeKeys(data);
 export let colorMap;
 export let visibleBuckets;
 
-// FIXME: summed-histogram must go.
-let currentAggregation = (aggregationTypes.includes('summed_histogram') ? 'summed_histogram' : aggregationTypes[0]) || undefined;
-let currentKey = probeKeys[0] || undefined;
-// aggregation
+let currentKey = probeKeys[0];
+let currentAggregation = aggregationTypes[0];
 
-// probe key
+function filterResponseData(d, agg, key) {
+  return d.filter((di) => di.client_agg_type === agg && di.metric_key === key);
+}
+
+$: selectedData = filterResponseData(data, currentAggregation, currentKey);
 
 </script>
 
@@ -44,9 +38,9 @@ let currentKey = probeKeys[0] || undefined;
 
   {#if (aggregationTypes && aggregationTypes.length > 2) || (probeKeys && probeKeys.length > 1)}
   <div style="
-      display:grid; 
-      grid-auto-flow: column; 
-      justify-content: start; 
+      display:grid;
+      grid-auto-flow: column;
+      justify-content: start;
       grid-column-gap: var(--space-4x);
       margin-top: var(--space-4x);
       margin-bottom: var(--space-4x);
@@ -56,7 +50,7 @@ let currentKey = probeKeys[0] || undefined;
       {#if aggregationTypes && aggregationTypes.length > 1}
       <div class=body-control-set>
         <label class=body-control-set--label>Metric Type</label>
-        <AggregationTypeSelector 
+        <AggregationTypeSelector
           aggregationTypes={aggregationTypes}
           bind:currentAggregation={currentAggregation}
         />
@@ -66,7 +60,7 @@ let currentKey = probeKeys[0] || undefined;
       {#if probeKeys && probeKeys.length > 1}
       <div class=body-control-set>
         <label class=body-control-set--label>Key</label>
-        <ProbeKeySelector 
+        <ProbeKeySelector
           options={probeKeys}
           bind:currentKey={currentKey}
         />
@@ -74,8 +68,8 @@ let currentKey = probeKeys[0] || undefined;
       {/if}
   </div>
   {/if}
-  <TableView 
-    data={data}
+  <TableView
+    data={selectedData}
     aggregationLevel={aggregationLevel}
     colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
     visibleBuckets={probeType === 'categorical' ? visibleBuckets : [5, 25, 50, 75, 95]}

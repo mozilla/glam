@@ -22,26 +22,22 @@ export let tooltipFormatter = () => undefined;
 export let visibleBuckets;
 export let colorMap; // bucketColorMap
 export let pageSize = 10;
-export let currentAggregation;
-export let currentKey;
 export let bucketTypeLabel = 'Categories';
 
 let totalPages = 0;
 let currentPage = 0;
-let selectedData = data[currentKey][currentAggregation];
-$: selectedData = data[currentKey][currentAggregation];
-$: if (selectedData) currentPage = 0;
-$: totalPages = Math.ceil(selectedData.length / pageSize);
+$: if (data) currentPage = 0;
+$: totalPages = Math.ceil(data.length / pageSize);
 
 let largestAudience;
-$: largestAudience = Math.max(...selectedData.map((d) => d.audienceSize));
+$: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 
 </script>
 
 <style>
 span.h {
-  font-weight: bold; 
-  color: var(--cool-gray-700); 
+  font-weight: bold;
+  color: var(--cool-gray-700);
   font-size: var(--text-01);
 }
 
@@ -52,7 +48,7 @@ span.bucket {
 
 <div style="border-bottom: var(--space-base) solid var(--cool-gray-100);">
   <div style="
-    margin-top: var(--space-2x); 
+    margin-top: var(--space-2x);
     margin-bottom: var(--space-2x);
     padding-left: var(--space-4x);
     padding-right: var(--space-4x);
@@ -63,7 +59,7 @@ span.bucket {
   </div>
   <DataTable overflowX={true}>
     <thead>
-      
+
       <Row header>
         <Cell colspan={2} freezeX bottomBorder={false}></Cell>
         <Cell colspan={2} align=left freezeX bottomBorder={false}>
@@ -74,7 +70,7 @@ span.bucket {
       </Row>
 
       <Row header>
-        <Cell 
+        <Cell
           backgroundColor=var(--cool-gray-subtle)
           topBorder={true}
           bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
@@ -92,8 +88,8 @@ span.bucket {
           rightBorder
           backgroundColor=var(--cool-gray-subtle)
           bottomBorderThickness=2px
-          freezeX 
-          align=left 
+          freezeX
+          align=left
           tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version' }">
           <span class=h>
             Clients
@@ -111,7 +107,7 @@ span.bucket {
 
     </thead>
     <tbody>
-      {#each [...backwards(selectedData)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (ymd(row.label) + timecode(row.label))}
+      {#each [...backwards(data)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (row.version + ymd(row.label) + timecode(row.label))}
         <Row>
           <Cell freezeX backgroundColor=white>
             <div class=build-version>

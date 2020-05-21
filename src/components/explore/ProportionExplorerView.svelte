@@ -13,6 +13,8 @@ import { formatPercent, formatCount, formatPercentDecimal } from '../../utils/fo
 
 import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
 
+import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils';
+
 export let aggregationLevel = 'build_id';
 export let data;
 export let probeType;
@@ -32,15 +34,6 @@ function makeSelection(type) {
   };
 }
 
-
-function gatherProbeKeys(nestedData) {
-  return Object.keys(nestedData);
-}
-
-function gatherAggregationTypes(nestedData) {
-  return Object.keys(Object.values(nestedData)[0]);
-}
-
 let aggregationTypes = gatherAggregationTypes(data);
 let probeKeys = gatherProbeKeys(data);
 let currentKey = probeKeys[0];
@@ -55,6 +48,12 @@ $: if (currentKey && reference) {
   const ref = data[currentKey][currentAggregation].find((d) => d.label.toString() === reference.label.toString());
   reference = ref;
 }
+
+function filterResponseData(d, agg, key) {
+  return d.filter((di) => di.client_agg_type === agg && di.metric_key === key);
+}
+
+$: selectedData = filterResponseData(data, currentAggregation, currentKey);
 
 </script>
 
@@ -124,9 +123,9 @@ h2 {
   </div>
 
   <div class=data-graphics>
-    {#each Object.entries(data) as [key, aggs], i (key)}
-      {#each Object.entries(aggs) as [aggType, data], i (aggType + timeHorizon + probeType + metricType)}
-        {#if key === currentKey && (Object.entries(aggs).length === 1 || aggType === currentAggregation)}
+    {#each probeKeys as key, i (key)}
+      {#each aggregationTypes as aggType, i (aggType + timeHorizon + probeType + metricType)}
+        {#if key === currentKey && (aggregationTypes.length === 1 || aggType === currentAggregation)}
           <div class='small-multiple'>
             <ProbeExplorer
               bind:reference={reference}
@@ -134,7 +133,7 @@ h2 {
               aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
               aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
               summaryLabel='cat.'
-              data={data}
+              data={selectedData}
               probeType={probeType}
               activeBins={activeBuckets}
               timeHorizon={timeHorizon}
@@ -146,7 +145,7 @@ h2 {
               yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
               summaryNumberFormatter={metricType === 'proportions' ? formatPercentDecimal : formatCount}
               yScaleType={'linear'}
-              yDomain={[0, Math.max(...data.map((d) => Object.values(d[metricType])).flat())]}
+              yDomain={[0, Math.max(...selectedData.map((d) => Object.values(d[metricType])).flat())]}
             >
 
             </ProbeExplorer>

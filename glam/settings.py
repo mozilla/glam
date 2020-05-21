@@ -113,10 +113,10 @@ class Core(Configuration):
             "glam.auth.drf.OIDCTokenAuthentication",
         ],
         "DEFAULT_PARSER_CLASSES": [
-            "rest_framework.parsers.JSONParser",
+            "drf_orjson_renderer.parsers.ORJSONParser",
         ],
         "DEFAULT_RENDERER_CLASSES": [
-            "rest_framework.renderers.JSONRenderer",
+            "drf_orjson_renderer.renderers.ORJSONRenderer",
         ],
     }
 

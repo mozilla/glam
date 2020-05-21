@@ -1,9 +1,7 @@
 export const noDuplicates = (payload, aggregationMethod = 'build_id') => {
   // go through ever data
   // look at data[...].metadata[aggregationMethod]. There should be no duplicates.
-  const allBuildIDs = payload.response.map(
-    (di) => di.metadata[aggregationMethod]
-  );
+  const allBuildIDs = payload.response.map((di) => di[aggregationMethod]);
   const uniques = new Set(allBuildIDs);
   if (allBuildIDs.length !== uniques.size) {
     throw new Error(

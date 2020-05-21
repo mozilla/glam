@@ -10,9 +10,13 @@ import { getProbeData } from './api';
 
 import CONFIG from '../config/firefox-desktop';
 
-import { byKeyAndAggregation, getProbeViewType } from '../utils/probe-utils';
+import {
+  transformGLAMAPIResponse,
+  getProbeViewType,
+  isCategorical,
+} from '../utils/probe-utils';
 
-import { validate, noDuplicates, noResponse } from '../utils/data-validation';
+import { validate, noResponse } from '../utils/data-validation';
 
 // TODO: move this to the new config.js when 'product' is added.
 const DEFAULT_PROBE_PROCESS = 'content';
@@ -217,18 +221,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-// FIXME: let's remove this function. It's almost comically redundant.
-export function responseToData(
-  data,
-  probeClass = 'quantile',
-  probeType,
-  aggregationMethod = 'build_id'
-) {
-  return byKeyAndAggregation(data, probeClass, aggregationMethod, {
-    probeType,
-  });
-}
-
 const makeSortOrder = (latest, which = 'counts') => (a, b) => {
   // get latest data point and see
   if (latest[which][a] < latest[which][b]) return 1;
@@ -237,9 +229,7 @@ const makeSortOrder = (latest, which = 'counts') => (a, b) => {
 };
 
 function latestDatapoint(tr) {
-  const series = Object.values(Object.values(tr)[0])[0];
-  // FIXME: this should be the last value, not the second to last
-  return series[series.length - 1];
+  return tr[tr.length - 1];
 }
 
 export function getBucketKeys(tr) {
@@ -248,9 +238,7 @@ export function getBucketKeys(tr) {
 
 export function extractBucketMetadata(transformedData) {
   const etc = {};
-
   const options = getBucketKeys(transformedData);
-
   const cmpBuckets = getBucketKeys(transformedData);
   const sorter = makeSortOrder(latestDatapoint(transformedData));
   cmpBuckets.sort(sorter);
@@ -261,15 +249,6 @@ export function extractBucketMetadata(transformedData) {
   etc.initialBuckets = initialBuckets;
   etc.bucketSortOrder = sorter;
   return etc;
-}
-
-export function isCategorical(probeType, probeKind) {
-  return (
-    (probeType === 'histogram' && probeKind === 'enumerated') ||
-    probeKind === 'categorical' ||
-    probeKind === 'flag' ||
-    probeKind === 'boolean'
-  );
 }
 
 export function fetchDataForGLAM(params) {
@@ -285,19 +264,18 @@ export function fetchDataForGLAM(params) {
       probe
     );
 
-    validate(
-      payload,
-      (p) => noResponse(p, probeActive),
-      (p) => noDuplicates(p, aggregationLevel)
+    validate(payload, (p) => noResponse(p, probeActive));
+    const data = transformGLAMAPIResponse(
+      payload.response,
+      isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
+      aggregationLevel,
+      {
+        probeType: `${probeType}-${probeKind}`,
+      }
     );
 
     return {
-      data: responseToData(
-        payload.response,
-        isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-        `${probeType}-${probeKind}`,
-        aggregationLevel
-      ),
+      data,
       probeType,
       probeKind,
     };

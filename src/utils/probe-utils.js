@@ -1,8 +1,6 @@
 import produce from 'immer';
-import { groupBy } from 'udgl/utils/transforms';
 import { fullBuildIDToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
-import { formatBuildIDToOnlyDate } from './formatters';
 
 export function sortByKey(key) {
   return (a, b) => {
@@ -11,14 +9,6 @@ export function sortByKey(key) {
     return 0;
   };
 }
-
-export const sortByHistogramObjectKey = (a, b) => {
-  const ai = +a;
-  const bi = +b;
-  if (ai < bi) return -1;
-  if (ai >= bi) return 1;
-  return 0;
-};
 
 export const responseHistogramToGraphicFormat = (
   histogram,
@@ -55,19 +45,20 @@ function createNewError(which) {
   return error;
 }
 
-export const prepareForQuantilePlot = (probeData, key = 'version') =>
+export const transformQuantileResponse = (probeData, key = 'version') =>
   probeData.map((probe) => {
-    const h = probe.data[0].histogram;
+    const h = probe.histogram;
     if (!h) {
       throw createNewError('MISSING_HISTOGRAM');
     }
     const histogram = responseHistogramToGraphicFormat(h);
-    const { percentiles } = probe.data[0];
+    const { percentiles } = probe;
 
     if (!percentiles) {
       throw createNewError('MISSING_PERCENTILES');
     }
 
+    // FIXME: remove need for transformedPercentiles.
     const transformedPercentiles = Object.entries(percentiles).reduce(
       (acc, [bin, value]) => {
         // eslint-disable-next-line no-param-reassign
@@ -80,15 +71,13 @@ export const prepareForQuantilePlot = (probeData, key = 'version') =>
       {}
     );
     return {
-      label:
-        key === 'version'
-          ? probe.metadata[key]
-          : fullBuildIDToDate(probe.metadata[key]),
+      ...probe,
+      label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
       histogram,
       percentiles,
       transformedPercentiles,
-      version: probe.metadata.version,
-      audienceSize: probe.data[0].total_users,
+      version: probe.version,
+      audienceSize: probe.total_users,
     };
   });
 
@@ -101,13 +90,13 @@ function toProportions(obj) {
   return proportions;
 }
 
-export const prepareForProportionPlot = (
+export const transformProportionResponse = (
   probeData,
   key = 'version',
   prepareArgs = {}
 ) =>
   probeData.map((probe) => {
-    const counts = { ...probe.data[0].histogram };
+    const counts = { ...probe.histogram };
     if (prepareArgs.probeType === 'histogram-boolean') {
       counts.no = counts['0'];
       counts.yes = counts['1'];
@@ -117,116 +106,33 @@ export const prepareForProportionPlot = (
     }
     const proportions = toProportions(counts);
     return {
-      label:
-        key === 'version'
-          ? probe.metadata[key]
-          : fullBuildIDToDate(probe.metadata[key]),
+      ...probe,
+      label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
       counts,
-      version: probe.metadata.version,
+      version: probe.version,
       proportions,
-      audienceSize: probe.data[0].total_users,
+      audienceSize: probe.total_users,
     };
   });
 
-export function isScalar(payload) {
-  return payload.every(
-    (aggregation) => aggregation.metadata.metric_type === 'scalar'
-  );
-}
-
-function sortByBuildID(a, b) {
-  if (a.metadata.build_id < b.metadata.build_id) return -1;
-  if (a.metadata.build_id >= b.metadata.build_id) return 1;
-  return 0;
-}
-
-export function zipByAggregationType(payload) {
-  // returns obj
-  // keyed by aggwregation type, valued by [{data: [datum], metadata}, ...]
-  const aggTypes = new Set([]);
-  payload.forEach((aggregation) => {
-    aggregation.data.forEach((histogram) => {
-      const aggType = histogram.client_agg_type;
-      aggTypes.add(aggType);
-    });
-  });
-
-  const out = {};
-  aggTypes.forEach((a) => {
-    out[a] = [];
-  });
-
-  payload.forEach((aggregation) => {
-    const { metadata } = aggregation;
-    aggregation.data.forEach((datum) => {
-      const aggType = datum.client_agg_type;
-      out[aggType].push({ data: datum, metadata });
-    });
-  });
-
-  aggTypes.forEach((a) => {
-    out[a].sort(sortByBuildID);
-  });
-  return out;
-}
-
-export function topKBuildsPerDay(dataset, k = 2) {
-  const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
-  const topK = Object.values(byBuildID).map((matches) => {
-    const out = matches;
-    out.sort(sortByKey('audienceSize'));
-    out.reverse();
-    return out.slice(0, k);
-  });
-  const flattened = topK.flat(2);
-  flattened.sort(sortByKey('label'));
-  return flattened;
-}
-
-export function gatherBy(payload, by) {
-  const gathered = {};
-  // get the entire set of keys.
-  payload.forEach((aggregation) => {
-    aggregation.data.forEach((entry) => {
-      const aggType = by(entry);
-      if (!(aggType in gathered)) gathered[aggType] = [];
-      gathered[aggType].push({
-        data: [entry],
-        metadata: { ...aggregation.metadata },
-      });
-    });
-  });
-  return gathered;
-}
-
-export function byKeyAndAggregation(
+export function transformGLAMAPIResponse(
   d,
-  preparationType = 'quantile',
+  viewType = 'quantile',
   aggregationLevel = 'build_id',
   prepareArgs = {}
 ) {
-  const data = produce(d, (di) => di);
   const prepareFcn =
-    preparationType === 'quantile'
-      ? prepareForQuantilePlot
-      : prepareForProportionPlot;
-  const byKey = gatherBy(data, (entry) => entry.key);
-  Object.keys(byKey).forEach((k) => {
-    byKey[k] = gatherBy(byKey[k], (entry) => entry.client_agg_type);
-    Object.keys(byKey[k]).forEach((aggKey) => {
-      byKey[k][aggKey] = produce(byKey[k][aggKey], (di) =>
-        prepareFcn(di, aggregationLevel, prepareArgs)
-      );
+    viewType === 'quantile'
+      ? transformQuantileResponse
+      : transformProportionResponse;
 
-      if (aggregationLevel === 'build_id') {
-        byKey[k][aggKey] = produce(byKey[k][aggKey], (di) =>
-          topKBuildsPerDay(di, 2)
-        );
-      }
-      byKey[k][aggKey].sort(sortByKey('label'));
-    });
-  });
-  return byKey;
+  const data = prepareFcn(
+    produce(d, (di) => di),
+    aggregationLevel,
+    prepareArgs
+  );
+  data.sort(sortByKey('label'));
+  return data;
 }
 
 function typeAndKind(probeType, probeKind) {
@@ -251,15 +157,31 @@ export function getProbeViewType(probeType, probeKind) {
   return undefined;
 }
 
+export function isCategorical(probeType, probeKind) {
+  return getProbeViewType(probeType, probeKind) === 'categorical';
+}
+
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
 
+function uniques(d, k) {
+  return Array.from(new Set(d.map((di) => di[k])));
+}
+
+export function gatherProbeKeys(d) {
+  return uniques(d, 'metric_key');
+}
+
+export function gatherAggregationTypes(d) {
+  return uniques(d, 'client_agg_type');
+}
+
 export function isSelectedProcessValid(processes, selectedProcess) {
   let process = selectedProcess;
-
-  // TODO: This is definitely bad, we should standardize that 'parent' === 'main'
-  // across the data pipeline.
+  if (process === 'all_childs') {
+    process = 'main';
+  }
   if (process === 'parent') {
     process = 'main';
   }
