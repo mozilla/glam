@@ -124,6 +124,89 @@ class FenixAggregation(models.Model):
                     "metric_key",
                     "client_agg_type",
                     "agg_type",
-                ]
+                ],
             )
         ]
+
+
+class AbstractDesktopAggregation(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # Dimensions.
+    version = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    process = models.CharField(max_length=50)
+    metric = models.CharField(max_length=200)
+    metric_key = models.CharField(max_length=200, blank=True)
+    client_agg_type = models.CharField(max_length=100, blank=True)
+    # Data.
+    metric_type = models.CharField(max_length=100)
+    total_users = models.IntegerField()
+    histogram = models.TextField(null=True, blank=True)
+    percentiles = models.TextField(null=True, blank=True)
+    # TODO: Update these fields to not allow NULLs.
+
+    class Meta:
+        abstract = True
+
+
+DESKTOP_CONSTRAINT_FIELDS = [
+    "version",
+    "os",
+    "build_id",
+    "process",
+    "metric",
+    "metric_key",
+    "client_agg_type",
+]
+
+
+class DesktopNightlyAggregation(AbstractDesktopAggregation):
+    class Meta(AbstractDesktopAggregation.Meta):
+        db_table = "glam_desktop_nightly_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="desktop_nightly_unique_dimensions",
+                fields=DESKTOP_CONSTRAINT_FIELDS,
+            )
+        ]
+
+
+class DesktopNightlyAggregationView(AbstractDesktopAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_desktop_nightly_aggregation"
+
+
+class DesktopBetaAggregation(AbstractDesktopAggregation):
+    class Meta(AbstractDesktopAggregation.Meta):
+        db_table = "glam_desktop_beta_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="desktop_beta_unique_dimensions",
+                fields=DESKTOP_CONSTRAINT_FIELDS,
+            )
+        ]
+
+
+class DesktopBetaAggregationView(AbstractDesktopAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_desktop_beta_aggregation"
+
+
+class DesktopReleaseAggregation(AbstractDesktopAggregation):
+    class Meta(AbstractDesktopAggregation.Meta):
+        db_table = "glam_desktop_release_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="desktop_release_unique_dimensions",
+                fields=DESKTOP_CONSTRAINT_FIELDS,
+            )
+        ]
+
+
+class DesktopReleaseAggregationView(AbstractDesktopAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_desktop_release_aggregation"
