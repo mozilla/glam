@@ -11,7 +11,7 @@ import { getProbeData } from './api';
 import CONFIG from '../config/firefox-desktop';
 
 import {
-  transformResponse,
+  transformGLAMAPIResponse,
   getProbeViewType,
   isCategorical,
 } from '../utils/probe-utils';
@@ -265,7 +265,7 @@ export function fetchDataForGLAM(params) {
     );
 
     validate(payload, (p) => noResponse(p, probeActive));
-    const data = transformResponse(
+    const data = transformGLAMAPIResponse(
       payload.response,
       isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
       aggregationLevel,

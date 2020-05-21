@@ -58,7 +58,7 @@ export const transformQuantileResponse = (probeData, key = 'version') =>
       throw createNewError('MISSING_PERCENTILES');
     }
 
-    // fixme: remove need for transformedPercentiles.
+    // FIXME: remove need for transformedPercentiles.
     const transformedPercentiles = Object.entries(percentiles).reduce(
       (acc, [bin, value]) => {
         // eslint-disable-next-line no-param-reassign
@@ -90,19 +90,6 @@ function toProportions(obj) {
   return proportions;
 }
 
-// export function topKBuildsPerDay(dataset, k = 2) {
-//   const byBuildID = groupBy(dataset, 'label', formatBuildIDToOnlyDate);
-//   const topK = Object.values(byBuildID).map((matches) => {
-//     const out = matches;
-//     out.sort(sortByKey('audienceSize'));
-//     out.reverse();
-//     return out.slice(0, k);
-//   });
-//   const flattened = topK.flat(2);
-//   flattened.sort(sortByKey('label'));
-//   return flattened;
-// }
-
 export const transformProportionResponse = (
   probeData,
   key = 'version',
@@ -128,7 +115,7 @@ export const transformProportionResponse = (
     };
   });
 
-export function transformResponse(
+export function transformGLAMAPIResponse(
   d,
   viewType = 'quantile',
   aggregationLevel = 'build_id',

@@ -26,7 +26,6 @@ if (metricType === 'histogram' && 'summed-histogram' in probe) {
     dist = dist[dist.length - 1];
   } else {
     dist = probe[probe.length - 1];
-    // dist = probe.histogram;
 }
 
 let totalClients = tweened(0, { duration: 1000, easing });
@@ -38,8 +37,6 @@ let xDomain = Object.keys(hist);
 let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
 $: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
-
-// $: $spr = 1;
 
 onMount(() => {
     width = container.getBoundingClientRect().width;
