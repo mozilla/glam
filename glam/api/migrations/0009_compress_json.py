@@ -13,19 +13,19 @@ def compress_json(s):
 
 def migrate_json(apps, schema_editor):
     model = apps.get_model("api", "DesktopNightlyAggregation")
-    for row in model.objects.all():
+    for row in model.objects.iterator(chunk_size=1000):
         row.histogram = compress_json(row.histogram)
         row.percentiles = compress_json(row.percentiles)
         row.save()
 
     model = apps.get_model("api", "DesktopBetaAggregation")
-    for row in model.objects.all():
+    for row in model.objects.iterator(chunk_size=1000):
         row.histogram = compress_json(row.histogram)
         row.percentiles = compress_json(row.percentiles)
         row.save()
 
     model = apps.get_model("api", "DesktopReleaseAggregation")
-    for row in model.objects.all():
+    for row in model.objects.iterator(chunk_size=1000):
         row.histogram = compress_json(row.histogram)
         row.percentiles = compress_json(row.percentiles)
         row.save()
