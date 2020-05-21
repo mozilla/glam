@@ -9,6 +9,7 @@ import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disabl
 import { getProbeData } from './api';
 
 import CONFIG from '../config/firefox-desktop';
+import { numHighlightedBuckets } from '../config/shared';
 
 import {
   transformGLAMAPIResponse,
@@ -243,7 +244,7 @@ export function extractBucketMetadata(transformedData) {
   const sorter = makeSortOrder(latestDatapoint(transformedData));
   cmpBuckets.sort(sorter);
   const cmp = createCatColorMap(cmpBuckets);
-  const initialBuckets = cmpBuckets.slice(0, 10);
+  const initialBuckets = cmpBuckets.slice(0, numHighlightedBuckets);
   etc.bucketOptions = options;
   etc.bucketColorMap = cmp;
   etc.initialBuckets = initialBuckets;

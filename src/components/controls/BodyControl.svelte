@@ -2,6 +2,7 @@
 import { createEventDispatcher } from 'svelte';
 import Button from 'udgl/Button.svelte';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
+import ColorSwatch from './ColorSwatch.svelte';
 
 export let level = 'medium';
 export let compact = true;
@@ -14,9 +15,6 @@ export let justify = 'flex-start';
 
 const dispatch = createEventDispatcher();
 
-$: if (selected && multi && sort && typeof sort === 'function') {
-  // selected.sort(sort);
-}
 // FIXME: support an on:select event as well, in case that is what people want to use here.
 function toggle(v) {
   let selection;
@@ -42,22 +40,13 @@ function toggle(v) {
 
 </script>
 
-<style>
-.label-color {
-  border-radius: var(--space-1q);
-  width: calc(var(--space-base) * 1.5);
-  height: calc(var(--space-base) * 1.5);
-  align-self: center;
-}
-</style>
-
 <ButtonGroup {justify}>
   {#each options as {label, value, labelColor, tooltip, component}, i (label)}
     <Button tooltip={tooltip} level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }
     }>
       {#if labelColor}
-        <div class='label-color' style="background-color: {labelColor};" />
+        <ColorSwatch color={labelColor} />
       {/if}
       {#if component}
         <svelte:component this={component} size={14} />
