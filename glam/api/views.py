@@ -329,43 +329,32 @@ def probes(request):
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
-    channel = request.data.get("channel", "nightly")
-    process = request.data.get("process", "parent")
-    os = request.data.get("os", "Windows")
     try:
         n = int(n)
     except ValueError:
         n = 3
 
-    probe_ids = list(
-        Probe.objects.exclude(info__kind="string")
-        .exclude(info__kind="boolean")
-        .values_list("id", flat=True)
-    )
-    if n > len(probe_ids):
-        raise ValidationError("Not enough probes to select `n` items.")
-
-    shuffle(probe_ids)
     probes = []
 
-    for id in probe_ids:
-        probe = Probe.objects.get(id=id)
-        # do not proceed if the probe is a boolean scalar
-        if not (probe.info["type"] == "scalar" and probe.info["kind"] == "boolean"):
-            try:
-                aggregations = get_firefox_aggregations(
-                    request,
-                    probe=probe.info["name"],
-                    channel=channel,
-                    os=os,
-                    process=process,
-                    aggregationLevel="version",
-                )
-            except NotFound:
-                continue
-            if aggregations:
-                probes.append({"data": aggregations, "info": probe.info})
-            if n <= len(probes):
-                break
+    # Get a random list of 9 probes from the Desktop nightly table.
+    aggs = DesktopNightlyAggregationView.objects.raw("""
+        SELECT id, metric, histogram
+        FROM view_glam_desktop_nightly_aggregation
+        WHERE
+            build_id='*'
+            AND os='*'
+            AND metric_key=''
+            AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
+            AND RANDOM() < 0.1
+        LIMIT %s
+    """, [n])
+
+    for agg in aggs:
+        try:
+            probe = Probe.objects.get(info__name=agg.metric)
+        except Probe.DoesNotExist:
+            pass
+
+        probes.append({"data": agg.histogram, "info": probe.info})
 
     return Response({"probes": probes})
