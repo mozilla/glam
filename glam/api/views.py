@@ -249,7 +249,8 @@ def aggregations(request):
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
-                "versions": ["70"],  # OR ["70", "69", "68"]
+                "process": "content"
+                "versions": ["70"],  # Optional. Defaults to last 3 versions.
                 "aggregationLevel": "version"  # OR "build_id"
             }
         }
@@ -259,32 +260,31 @@ def aggregations(request):
         {
             "response": [
                 {
-                    "data": [
-                        {
-                            "client_agg_type": "summed-histogram",
-                            "histogram": {
-                                "0": 0.0,
-                                "1": 1920.963,
-                                ...
-                            },
-                            "percentiles": {
-                                "0": 1.0,
-                                "10": 1.0259,
-                                ...
-                            },
-                            "total_users": 1604
-                        }
-                    ],
-                    "metadata": {
-                        "build_id": null,
-                        "channel": "nightly",
-                        "metric": "gc_ms",
-                        "metric_type": "histogram-exponential",
-                        "os": "Linux",
-                        "process": "any",
-                        "version": "70"
-                    }
-                }
+                    "build_id": "*",
+                    "client_agg_type": "summed_histogram",
+                    "histogram": {
+                        "0": 28599.9932,
+                        "1": 69122.1505,
+                        "2": 31748.8171,
+                        ...
+                    },
+                    "metric": "gc_ms",
+                    "metric_key": "",
+                    "metric_type": "histogram-exponential",
+                    "os": "*",
+                    "percentiles": {
+                        "5": 1,
+                        "25": 12,
+                        "50": 40,
+                        "75": 96,
+                        "95": 268
+                    },
+                    "process": "content",
+                    "total_addressable_market": 118531,
+                    "total_users": 1262515,
+                    "version": "75"
+                },
+                ...
             ]
         }
 
