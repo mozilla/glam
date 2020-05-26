@@ -1,14 +1,20 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.5.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.5.2...HEAD) (date TBD)
+
+## [2020.5.2](https://github.com/mozilla/glam/compare/2020.5.1...2020.5.2) (2020-05-26)
 
 - Select prerelease channel if current channel = release & probe only exists in
   prerelease ([#492](https://github.com/mozilla/glam/pull/492))
+- Change GLAM API response to be more tabular
+  ([#494](https://github.com/mozilla/glam/pull/494))
+- Optimized random probe API ([#531](https://github.com/mozilla/glam/pull/531))
+
+## [2020.5.1](https://github.com/mozilla/glam/compare/2020.5.0...2020.5.1) (2020-05-26)
+
 - Update database schema to use transposed histograms and percentiles resulting
   in a 15x improvement in response times in some cases.
   ([#509](https://github.com/mozilla/glam/pull/509))
-- Change GLAM API response to be more tabular
-  ([#494](https://github.com/mozilla/glam/pull/494))
 
 ## [2020.5.0](https://github.com/mozilla/glam/compare/2020.4.2...2020.5.0) (2020-05-12)
 
