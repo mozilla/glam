@@ -1,4 +1,4 @@
-from random import shuffle
+import os
 
 import orjson
 from django.core.cache import caches
@@ -336,7 +336,11 @@ def random_probes(request):
 
     probes = []
 
-    # Get a random list of 9 probes from the Desktop nightly table.
+    random_percentage = 0.1
+    if os.environ.get("DJANGO_CONFIGURATION") == "Test":
+        random_percentage = 1.0
+
+    # Get a random list of `n` probes from the Desktop nightly table.
     aggs = DesktopNightlyAggregationView.objects.raw("""
         SELECT id, metric, histogram
         FROM view_glam_desktop_nightly_aggregation
@@ -345,9 +349,9 @@ def random_probes(request):
             AND os='*'
             AND metric_key=''
             AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
-            AND RANDOM() < 0.1
+            AND RANDOM() < %s
         LIMIT %s
-    """, [n])
+    """, [random_percentage, n])
 
     for agg in aggs:
         try:
