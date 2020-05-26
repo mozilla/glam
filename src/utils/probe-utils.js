@@ -82,9 +82,9 @@ export const transformQuantileResponse = (probeData, key = 'version') =>
   });
 
 function toProportions(obj) {
-  const proportions = { ...obj };
-  const total = Object.values(proportions).reduce((a, b) => a + b, 0);
-  Object.keys(proportions).forEach((p) => {
+  const proportions = {};
+  const total = Object.values(obj).reduce((a, b) => a + b, 0);
+  Object.keys(obj).forEach((p) => {
     proportions[p] /= total;
   });
   return proportions;
