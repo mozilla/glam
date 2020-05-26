@@ -1,37 +1,22 @@
 <script>
   import { onMount } from 'svelte';
-import { tweened } from 'svelte/motion';
 import { fade } from 'svelte/transition';
-import { cubicOut as easing } from 'svelte/easing';
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 
 import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
 
-
 import { formatPercent } from '../../utils/formatters';
 
-export let probe;
+export let data;
 export let info;
-export let metricType;
 export let metricKind;
 
 let container;
 let width;
 let height = 100;
-let dist;
-if (metricType === 'histogram' && 'summed-histogram' in probe) {
-    dist = probe.filter((d) => d.client_agg_type === 'summed-histogram');
-    dist = dist[dist.length - 1];
-  } else if (metricType === 'scalar' && 'avg' in probe) {
-    dist = probe.filter((d) => d.client_agg_type === 'avg');
-    dist = dist[dist.length - 1];
-  } else {
-    dist = probe[probe.length - 1];
-}
 
 function sortEntriesByValue(a, b) {
-  // sorts
     if (a[1] > b[1]) return -1;
     if (a[1] < b[1]) return 1;
     return 0;
@@ -43,13 +28,8 @@ function kLargestBins(binObject, k = 10) {
     return bins.slice(0, k).map(([k]) => k);
 }
 
-
-let totalClients = tweened(0, { duration: 1000, easing });
-
-$: $totalClients = dist.total_users;
-let hist = dist.histogram;
-let xDomain = Object.keys(hist);
-let yDomain = [0, Math.max(...Object.values(hist)) * 1.3];
+let xDomain = Object.keys(data);
+let yDomain = [0, Math.max(...Object.values(data)) * 1.3];
 
 let tickFormatter;
 if (info.kind === 'boolean') {
@@ -58,23 +38,18 @@ if (info.kind === 'boolean') {
     tickFormatter = (t) => t;
 }
 
-const colorMap = createCatColorMap(kLargestBins(hist));
+const colorMap = createCatColorMap(kLargestBins(data));
 let tickCount = Math.min(xDomain.length, 6);
 
 function perc(k) {
-    const t = Object.values(hist).reduce((a, b) => a + b, 0);
-    return hist[k] / t;
+    const t = Object.values(data).reduce((a, b) => a + b, 0);
+    return data[k] / t;
 }
-
-// $: $spr = 1;
 
 onMount(() => {
     width = container.getBoundingClientRect().width;
 });
-// FIXME: as of svelte 3.18.1, for some reason I have to bind this
-// particular hoverValue instance, but not the same sort of one over in Quantile.svelte.
-// This is clearly a bug in Svelte. There's no reason why this should not work as I've implemented.
-// let hoverValue = {};
+
 </script>
 
 <div bind:this={container} style="min-height:{height}px">
@@ -94,12 +69,12 @@ onMount(() => {
     right={16}
   >
     <g slot=body let:xScale let:yScale let:top let:hoverValue let:bottom>
-      {#each Object.keys(hist) as key, i (key)}
+      {#each Object.keys(data) as key, i (key)}
         <rect
           x={xScale(key)}
-          y={yScale(hist[key])}
+          y={yScale(data[key])}
           width={xScale.bandwidth()}
-          height={yScale(0) - yScale(hist[key])}
+          height={yScale(0) - yScale(data[key])}
           fill={colorMap(key) || 'var(--cool-gray-200)'}
           stroke={colorMap(key) || 'var(--cool-gray-200)'}
           fill-opacity=.8

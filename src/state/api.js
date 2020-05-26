@@ -16,7 +16,14 @@ export async function getRandomProbes(numProbes, process) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ n: numProbes, process }),
-  }).then((response) => response.json());
+  })
+    .then((response) => response.json())
+    .then((d) => {
+      d.probes.forEach((di) => {
+        di.data = JSON.parse(di.data);
+      });
+      return d;
+    });
   return data;
 }
 
