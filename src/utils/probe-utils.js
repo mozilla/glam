@@ -85,7 +85,7 @@ function toProportions(obj) {
   const proportions = {};
   const total = Object.values(obj).reduce((a, b) => a + b, 0);
   Object.keys(obj).forEach((p) => {
-    proportions[p] /= total;
+    proportions[p] = obj[p] / total;
   });
   return proportions;
 }
