@@ -9,34 +9,18 @@ import Axis from 'udgl/data-graphics/guides/Axis.svelte';
 
 import { formatCount } from '../../utils/formatters';
 
-export let probe;
-export let metricType;
-
+export let data;
 export let xScaleType = 'scalePoint';
 
 let container;
 let width;
-let height = 100;
-let dist;
-if (metricType === 'histogram' && 'summed-histogram' in probe) {
-    dist = probe.filter((d) => d.client_agg_type === 'summed-histogram');
-    dist = dist[dist.length - 1];
-  } else if (metricType === 'scalar' && 'avg' in probe) {
-    dist = probe.filter((d) => d.client_agg_type === 'avg');
-    dist = dist[dist.length - 1];
-  } else {
-    dist = probe[probe.length - 1];
-}
+let height = 80;
 
-let totalClients = tweened(0, { duration: 1000, easing });
 
-$: $totalClients = dist.total_users;
-let hist = dist.histogram;
-
-let xDomain = Object.keys(hist);
+let xDomain = Object.keys(data);
 let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
-$: distSpring = Object.entries(hist).map(([k, v]) => ({ bin: k, value: v * $spr }));
+$: distSpring = Object.entries(data).map(([k, v]) => ({ bin: k, value: v * $spr }));
 
 onMount(() => {
     width = container.getBoundingClientRect().width;
@@ -59,7 +43,7 @@ onMount(() => {
   >
     <g slot=body let:bottom let:top let:yScale let:hoverValue let:xScale>
       <Violin
-        data={dist}
+        data={data}
         rawPlacement={bottom}
         showLeft={false}
         orientation=horizontal
@@ -88,7 +72,7 @@ onMount(() => {
       <g style='font-size:11px;' >
         {#if hoverValue.x}
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>{formatCount(hoverValue.x)}</text>
-          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatCount(hist[hoverValue.x])} clients</text>
+          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatCount(data[hoverValue.x])} clients</text>
         {/if}
       </g>
     </g>

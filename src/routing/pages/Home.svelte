@@ -1,6 +1,7 @@
 <script>
   import { fade } from 'svelte/transition';
 
+  import Button from 'udgl/Button.svelte';
   import MarketingBlock from '../../components/home/MarketingBlock.svelte';
   import whichSmallMultiple from '../../components/home/sm-logic';
   import QuantileSmallMultiple from '../../components/home/Quantile.svelte';
@@ -10,8 +11,11 @@
   import { getRandomProbes } from '../../state/api';
 
   // TODO: add this to the upcoming config.js
-  const NUMBER_OF_RANDOM_PROBES = 3;
-
+  const NUMBER_OF_RANDOM_PROBES = 9;
+  let randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+  function refresh() {
+    randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+  }
   $: selectedProcess = $store.productDimensions.process;
 </script>
 
@@ -86,16 +90,32 @@
   .random-probe-view {
     margin-top: var(--space-2x);
   }
+
+  h2 {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: space-between;
+    align-items: baseline;
+    grid-column-gap: var(--space-base);
+    padding-right: var(--space-2x);
+  }
+
+
+
 </style>
 
 <div class="graphic-body__content">
   <div>
     <MarketingBlock />
     <div class="random-probe-view">
-      <h2>Explore</h2>
+      <h2>Explore
+        <div>
+          <Button compact level=low on:click={refresh}>refresh</Button>
+        </div>
+        </h2>
       <!-- TODO: This won't be pulling random probes going forward.
            Hardcoding the process for now. -->
-      {#await getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent')}
+      {#await randomProbes}
         <div class="probes-overview">
           {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
@@ -109,7 +129,7 @@
             <div class="probe-overview__probe" in:fade={{ duration: 400 }}>
               <a
                 class="probe-sm"
-                href={`/firefox/probe/${data[0].metric}/explore?${$currentQuery}`}
+                href={`/firefox/probe/${info.name}/explore?${$currentQuery}`}
               >
                 <div
                   class="probe-small-multiple"
@@ -119,13 +139,13 @@
                     <QuantileSmallMultiple
                       metricType={info.type}
                       metricKind={info.kind}
-                      probe={data}
+                      {data}
                       {info} />
                   {:else if whichSmallMultiple(info.type, info.kind) === 'proportion'}
                     <ProportionSmallMultiple
                       metricType={info.type}
                       metricKind={info.kind}
-                      probe={data}
+                      {data}
                       {info} />
                   {/if}
                 </div>
@@ -136,7 +156,7 @@
                     <span>{info.kind || ''}</span>
                   </div>
                   <div class="probe-overview__title">
-                    {data[0].metric}
+                    {info.name}
                   </div>
                   <div class="probe-overview__etc">
                     Nightly {info.versions.nightly[0]}-{info.versions.nightly[1]}

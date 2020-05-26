@@ -120,10 +120,10 @@ class TestRandomProbesApi:
                 "kind": "enumerated",
             },
         )
-        _create_aggregation(data={"metric": "fee", "os": "Windows"})
-        _create_aggregation(data={"metric": "fii", "os": "Windows"})
-        _create_aggregation(data={"metric": "foo", "os": "Windows"})
-        _create_aggregation(data={"metric": "fum", "os": "Windows"})
+        _create_aggregation(data={"metric": "fee"})
+        _create_aggregation(data={"metric": "fii"})
+        _create_aggregation(data={"metric": "foo"})
+        _create_aggregation(data={"metric": "fum"})
 
         resp = client.post(self.url, content_type="application/json").json()
         assert len(resp["probes"]) == 3
@@ -153,37 +153,13 @@ class TestRandomProbesApi:
                 "kind": "enumerated",
             },
         )
-        _create_aggregation(data={"metric": "fee", "os": "Windows"})
-        _create_aggregation(data={"metric": "fii", "os": "Windows"})
+        _create_aggregation(data={"metric": "fee"})
+        _create_aggregation(data={"metric": "fii"})
 
         resp = client.post(
             self.url, data={"n": 1}, content_type="application/json"
         ).json()
         assert len(resp["probes"]) == 1
-
-    def test_n_too_large(self, client):
-        Probe.objects.create(
-            key="fee",
-            info={
-                "name": "fee",
-                "labels": None,
-                "type": "histogram",
-                "kind": "enumerated",
-            },
-        )
-        Probe.objects.create(
-            key="fii",
-            info={
-                "name": "fii",
-                "labels": None,
-                "type": "histogram",
-                "kind": "enumerated",
-            },
-        )
-
-        # We want 2, but only 1 is left after query exclusions.
-        resp = client.post(self.url, data={"n": 3}, content_type="application/json")
-        assert resp.status_code == 400
 
 
 class TestAggregationsApi:

@@ -10,4 +10,4 @@ shell:
 	docker-compose run server /bin/bash
 
 test:
-	docker-compose run server pytest -s glam/
+	docker-compose run server pytest -s --dc=Test glam/
