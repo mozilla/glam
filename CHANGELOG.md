@@ -4,8 +4,9 @@
 
 - Select prerelease channel if current channel = release & probe only exists in
   prerelease ([#492](https://github.com/mozilla/glam/pull/492))
-- Update database schema to use transposed histograms and percentiles
-  resulting in a 15x improvement in response times in some cases. ([#509](https://github.com/mozilla/glam/pull/509))
+- Update database schema to use transposed histograms and percentiles resulting
+  in a 15x improvement in response times in some cases.
+  ([#509](https://github.com/mozilla/glam/pull/509))
 - Change GLAM API response to be more tabular
   ([#494](https://github.com/mozilla/glam/pull/494))
 
