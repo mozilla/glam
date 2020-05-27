@@ -93,8 +93,9 @@ class FirefoxCounts(models.Model):
         ]
 
 
-class FenixAggregation(models.Model):
+class AbstractFenixAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
+    # Dimensions.
     channel = models.CharField(max_length=100)
     version = models.CharField(max_length=100)
     ping_type = models.CharField(max_length=100)
@@ -104,11 +105,17 @@ class FenixAggregation(models.Model):
     metric_type = models.CharField(max_length=100)
     metric_key = models.CharField(max_length=200, blank=True)
     client_agg_type = models.CharField(max_length=100, blank=True)
-    agg_type = models.CharField(max_length=100)
+    # Data.
     total_users = models.IntegerField()
-    data = JSONField()
+    histogram = models.TextField(null=True, blank=True)
+    percentiles = models.TextField(null=True, blank=True)
 
     class Meta:
+        abstract = True
+
+
+class FenixAggregation(AbstractFenixAggregation):
+    class Meta(AbstractFenixAggregation.Meta):
         db_table = "glam_fenix_aggregation"
         constraints = [
             models.UniqueConstraint(
@@ -123,10 +130,15 @@ class FenixAggregation(models.Model):
                     "metric_type",
                     "metric_key",
                     "client_agg_type",
-                    "agg_type",
                 ],
             )
         ]
+
+
+class FenixAggregationView(AbstractFenixAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_fenix_aggregation"
 
 
 class AbstractDesktopAggregation(models.Model):

@@ -96,6 +96,7 @@ class Command(BaseCommand):
             if f not in ["id", "total_users", "histogram", "percentiles"]
         ]
 
+        log("  Importing file into temp table.")
         with connection.cursor() as cursor:
             with open(fp.name, "r") as tmp_file:
                 sql = f"""

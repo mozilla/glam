@@ -13,7 +13,7 @@ from glam.api.models import (
     DesktopBetaAggregationView,
     DesktopNightlyAggregationView,
     DesktopReleaseAggregationView,
-    FenixAggregation,
+    FenixAggregationView,
     FirefoxCounts,
     Probe,
 )
@@ -149,13 +149,10 @@ def get_glean_aggregations(request, **kwargs):
         )
 
     MODEL_MAP = {
-        "fenix": FenixAggregation,
+        "fenix": FenixAggregationView,
     }
 
-    try:
-        model = MODEL_MAP[kwargs.get("product")]
-    except KeyError:
-        raise ValidationError("Product not currently supported.")
+    model = MODEL_MAP[kwargs.get("product")]
 
     # Check if a version was provided and if not, get the MAX version from our
     # data to select the last 3 versions by default.
@@ -166,74 +163,50 @@ def get_glean_aggregations(request, **kwargs):
             raise ValidationError("Query version cannot be determined")
         kwargs["versions"] = list(range(max_version, max_version - 3, -1))
 
+    probe = kwargs["probe"]
+    versions = list(map(str, kwargs["versions"]))
+    os = kwargs.get("os", "*")
+
     dimensions = [
-        Q(metric=kwargs["probe"]),
-        Q(version__in=list(map(str, kwargs["versions"]))),
-        Q(os=kwargs.get("os") or "*"),
+        Q(metric=probe),
+        Q(version__in=versions),
+        Q(os=os),
     ]
 
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
+        # counts = _get_fenix_counts(channel, os, versions, by_build=False)
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
+        # counts = _get_fenix_counts(channel, os, versions, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
-    response = {}
+    response = []
 
     for row in result:
 
-        metadata = {
+        data = {
             "channel": row.channel,
             "version": row.version,
+            "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
             "metric": row.metric,
             "metric_type": row.metric_type,
-            "ping_type": row.ping_type,
+            "metric_key": row.metric_key,
+            "client_agg_type": row.client_agg_type,
+            "total_users": row.total_users,
+            "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
         }
-        aggs = {d["key"]: round(d["value"], 4) for d in row.data}
 
-        # We use these keys to merge data dictionaries.
-        key = "{channel}-{version}-{metric}-{os}-{build_id}-{ping_type}".format(
-            **metadata
-        )
-        sub_key = "{key}-{client_agg_type}".format(
-            key=row.metric_key, client_agg_type=row.client_agg_type
-        )
+        # Get the total distinct client IDs for this set of dimensions.
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
-        record = response.get(key, {})
-        if "metadata" not in record:
-            record["metadata"] = metadata
-
-        if sub_key not in record:
-            record[sub_key] = {}
-
-        new_data = {}
-        new_data[row.agg_type] = aggs
-
-        if row.agg_type == constants.AGGREGATION_HISTOGRAM:
-            new_data["total_users"] = row.total_users
-
-        if row.metric_key:
-            new_data["key"] = row.metric_key
-
-        if row.client_agg_type:
-            new_data["client_agg_type"] = row.client_agg_type
-
-        data = record[sub_key].get("data", {})
-        data.update(new_data)
-
-        record[sub_key]["data"] = data
-        response[key] = record
-
-    # Restructure data and remove keys only used for merging data.
-    response = [
-        {"metadata": r.pop("metadata"), "data": [d["data"] for d in r.values()]}
-        for r in response.values()
-    ]
+        response.append(data)
 
     return response
 
