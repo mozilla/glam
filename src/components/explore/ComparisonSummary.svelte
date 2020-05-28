@@ -48,7 +48,6 @@ $: displayValues = createNewPercentiles(left, right, keySet);
 <style>
 .summary {
   padding-bottom: var(--space-2x);
-  max-width: 545px;
   width: 100%;
   grid-row: 1 / span 2;
   grid-column: 3;

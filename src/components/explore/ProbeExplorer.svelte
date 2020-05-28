@@ -19,7 +19,7 @@ import {
   explorerComparisonSmallMultiple,
   overTimeTitle,
   clientVolumeOverTimeDescription as clientDescription,
-  compareDescription,
+  compareDescription, aggregationsOverTimeGraph,
 } from '../../utils/constants';
 
 
@@ -312,7 +312,7 @@ $: if (hoverValue.x) {
 
 </div>
 
-<div style="padding-top: var(--space-4x);">
+<div style="padding-top: var(--space-4x); padding-left: {aggregationsOverTimeGraph.left}px;  padding-right: {aggregationsOverTimeGraph.left + 20}px;">
   <ComparisonSummary
   hovered={data.length === 2 || !!hovered.datum}
   left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
