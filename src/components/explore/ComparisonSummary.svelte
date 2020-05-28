@@ -48,7 +48,7 @@ $: displayValues = createNewPercentiles(left, right, keySet);
 <style>
 .summary {
   padding-bottom: var(--space-2x);
-  max-width: 345px;
+  max-width: 545px;
   width: 100%;
   grid-row: 1 / span 2;
   grid-column: 3;
@@ -98,8 +98,9 @@ td, th {
   transition: opacity 100ms;
 }
 
-.ref, .hov {
-  width: 50%;
+.ref, .hov, .diff {
+  /* width: 50%; */
+  min-width: 200px;
 }
 
 .hidden {
@@ -124,20 +125,20 @@ td, th {
 }
 
 .value-change {
-  min-width: calc(var(--space-6x) + var(--space-base)); 
-  width: max-content;
+  /* min-width: calc(var(--space-6x) + var(--space-base)); */
+  width: 150px;
 }
 </style>
 
 <div class=summary>
     <h3 class=data-graphic__element-title>Summary
-        <span 
+        <span
           use:tooltipAction={
             {
               text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
               location: 'top',
             }
-          } 
+          }
           class=data-graphic__element-title__icon><Help size={14} /></span></h3>
   <table>
     <thead>
@@ -157,7 +158,7 @@ td, th {
         </th>
         {/if}
         {#if showDiff}
-          <th style="width: max-content" class:hidden={!hovered}>Diff.</th>
+          <th class:hidden={!hovered}>Diff.</th>
         {/if}
       </tr>
     </thead>

@@ -165,7 +165,7 @@ $: if (hoverValue.x) {
 <style>
 .graphic-and-summary {
   display: grid;
-  grid-template-columns: max-content max-content auto;
+  grid-template-columns: max-content max-content;
   grid-row-gap: var(--space-2x);
 }
 
@@ -275,21 +275,7 @@ $: if (hoverValue.x) {
     </g>
   </AggregationComparisonGraph>
 
-  <ComparisonSummary
-    hovered={data.length === 2 || !!hovered.datum}
-    left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
-    right={reference[pointMetricType]}
-    leftLabel={data.length === 2 ? 'PREV.' : 'HOV.'}
-    rightLabel={data.length <= 2 ? 'LATEST' : 'REF.'}
-    binLabel={summaryLabel}
-    keySet={activeBins}
-    colorMap={binColorMap}
-    valueFormatter={summaryNumberFormatter}
-    keyFormatter={comparisonKeyFormatter}
-    dataVolume={data.length}
-    showLeft={data.length > 1}
-    showDiff={data.length > 1}
-  />
+
   <div style="display: {insufficientData ? 'none' : 'block'}">
     <ClientVolumeOverTimeGraph
       title={clientVolumeOverTimeTitle}
@@ -323,4 +309,23 @@ $: if (hoverValue.x) {
     />
   </div>
 
+
+</div>
+
+<div style="padding-top: var(--space-4x);">
+  <ComparisonSummary
+  hovered={data.length === 2 || !!hovered.datum}
+  left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
+  right={reference[pointMetricType]}
+  leftLabel={data.length === 2 ? 'PREV.' : 'HOV.'}
+  rightLabel={data.length <= 2 ? 'LATEST' : 'REF.'}
+  binLabel={summaryLabel}
+  keySet={activeBins}
+  colorMap={binColorMap}
+  valueFormatter={summaryNumberFormatter}
+  keyFormatter={comparisonKeyFormatter}
+  dataVolume={data.length}
+  showLeft={data.length > 1}
+  showDiff={data.length > 1}
+  />
 </div>

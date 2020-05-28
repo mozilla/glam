@@ -28,7 +28,6 @@ export async function getRandomProbes(numProbes, process) {
 }
 
 export async function getProbeData(params, token) {
-  console.log('request setn');
   const data = await fetch(dataURL, {
     method: 'POST',
     headers: {
@@ -57,16 +56,12 @@ export async function getProbeData(params, token) {
     .then((data) => {
       if (params.product === 'fenix') {
         // can we transform the data here?
-        console.log(
-          Array.from(new Set(data.response.map((di) => di.ping_type)))
-        );
+        console.log(Array.from(new Set(data.response.map((di) => di.channel))));
 
         data.response.forEach((di) => {
           di.label = Number(di.build_id);
         });
-        data.response = data.response.filter(
-          (di) => di.ping_type === 'metrics'
-        );
+        // data.response = data.response.filter((di) => di.ping_type === '*');
         data.response.sort((a, b) => {
           if (a.label > b.label) return 1;
           return -1;

@@ -44,12 +44,13 @@ tspan {
 
 <text
 bind:this={rollover}
-x={Math.min(Math.max($xScale(x), leftCorrection), rightCorrection)} 
+x={Math.min(Math.max($xScale(x), leftCorrection), rightCorrection)}
 y={topPlot - margins.buffer - 12}
 text-anchor='middle'
 font-family="var(--main-mono-font)"
 font-size='12'>
 <tspan fill="var(--cool-gray-700)" font-weight=bold>
-  {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
-  6)}-{parsedLabel.slice(6, 8)}{' '}</tspan><tspan> {parsedLabel.slice(8, 10)}:</tspan><tspan>{parsedLabel.slice(10, 12)}:</tspan><tspan>{parsedLabel.slice(12, 14)}</tspan>
+  {label}
+  <!-- {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4,
+  6)}-{parsedLabel.slice(6, 8)}{' '}</tspan><tspan> {parsedLabel.slice(8, 10)}:</tspan><tspan>{parsedLabel.slice(10, 12)}:</tspan><tspan>{parsedLabel.slice(12, 14)}</tspan> -->
 </text>

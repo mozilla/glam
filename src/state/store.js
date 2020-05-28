@@ -1,5 +1,4 @@
 import { derived, get } from 'svelte/store';
-
 import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
 import { createStore } from '../utils/create-store';
 
@@ -17,6 +16,8 @@ import {
 } from '../utils/probe-utils';
 
 import { validate, noResponse } from '../utils/data-validation';
+
+const FENIX = 'fenix';
 
 // TODO: move this to the new config.js when 'product' is added.
 const DEFAULT_PROBE_PROCESS = 'content';
@@ -76,10 +77,10 @@ const initialState = {
     isAuthenticated: false,
     token: undefined,
   },
-  product: 'fenix', // FIXME: derive this elsewhere like QS
+  product: FENIX, // FIXME: derive this elsewhere like QS
   productDimensions: {
     channel: getFromQueryStringOrDefault('channel'),
-    os: getFromQueryString('os') || '*',
+    os: getFromQueryString('os') || 'Android',
     pingType: getFromQueryString('pingType') || '*', // This refers to the UI selected process.
     aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   },
@@ -175,7 +176,7 @@ function getParamsForQueryString(obj) {
       visiblePercentiles: obj.visiblePercentiles,
     };
   }
-  if (obj.product === 'fenix') {
+  if (obj.product === FENIX) {
     return {
       channel: obj.productDimensions.channel,
       os: obj.productDimensions.os,
@@ -206,7 +207,7 @@ function getParamsForDataAPI(obj) {
     params.process = process;
     return params;
   }
-  if (obj.product === 'fenix') {
+  if (obj.product === FENIX) {
     delete params.timeHorizon;
     delete params.proportionMetricType;
     delete params.activeBuckets;

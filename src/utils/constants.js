@@ -33,7 +33,7 @@ export function percentilesOverTimeDescription(aggregationLevel) {
   return `
   Shows the percentile values for the following probe
   aggregation by ${niceAggregations[aggregationLevel]}.
-  
+
   ${exploreInstructionsDescription(aggregationLevel)}
   `;
 }
@@ -43,7 +43,7 @@ export function proportionsOverTimeDescription(
   aggregationLevel
 ) {
   return `
-  Shows the ${overTimePointMetricType} of clients that have observed the 
+  Shows the ${overTimePointMetricType} of clients that have observed the
   following category / bin for the probe for each given ${
     niceAggregations[aggregationLevel]
   }.
@@ -75,10 +75,10 @@ export function compareDescription(chartName) {
 const BG = 'var(--cool-gray-subtle)';
 
 export const aggregationsOverTimeGraph = {
-  width: 425,
+  width: 650,
   height: 325,
   right: 16,
-  left: 60,
+  left: 102,
   bottom: 24,
   top,
   borderColor: 'var(--cool-gray-400)',
@@ -102,10 +102,10 @@ export const totalClientsGraph = {
 };
 
 export const explorerComparisonSmallMultiple = {
-  width: 145,
+  width: 200,
   height: aggregationsOverTimeGraph.height,
   left: 8,
-  right: 60,
+  right: aggregationsOverTimeGraph.left,
   top,
   bottom: aggregationsOverTimeGraph.bottom,
   borderColor: aggregationsOverTimeGraph.borderColor,

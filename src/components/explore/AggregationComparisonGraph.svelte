@@ -61,7 +61,7 @@ $: if (rightPoints && yScale) dotsAndLines.setReference(rightPoints, dataVolume 
 </script>
 
 <div>
-  <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Compare
+  <h3 style='padding-left: {explorerComparisonSmallMultiple.left}px' class=data-graphic__element-title>Distributions
       <span use:tooltipAction={
         {
 text: description,
