@@ -1,3 +1,3 @@
-<div class=content-header>
-  <slot></slot>
+<div class="content-header">
+  <slot />
 </div>

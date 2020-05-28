@@ -1,154 +1,159 @@
 <script>
-import { createEventDispatcher } from 'svelte';
-import { tweened } from 'svelte/motion';
-import { cubicOut as easing } from 'svelte/easing';
+  import { createEventDispatcher } from 'svelte';
+  import { tweened } from 'svelte/motion';
+  import { cubicOut as easing } from 'svelte/easing';
 
-import ProbeExplorer from './ProbeExplorer.svelte';
-import KeySelectionControl from '../controls/KeySelectionControl.svelte';
-import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
-import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
-import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
+  import ProbeExplorer from './ProbeExplorer.svelte';
+  import KeySelectionControl from '../controls/KeySelectionControl.svelte';
+  import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
+  import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
+  import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
-import { formatPercent, formatCount, formatPercentDecimal } from '../../utils/formatters';
+  import {
+    formatPercent,
+    formatCount,
+    formatPercentDecimal,
+  } from '../../utils/formatters';
 
-import { overTimeTitle, proportionsOverTimeDescription } from '../../utils/constants';
+  import {
+    overTimeTitle,
+    proportionsOverTimeDescription,
+  } from '../../utils/constants';
 
-import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils';
+  import {
+    gatherProbeKeys,
+    gatherAggregationTypes,
+  } from '../../utils/probe-utils';
 
-export let aggregationLevel = 'build_id';
-export let data;
-export let probeType;
-export let activeBuckets;
-export let bucketColorMap;
-export let bucketOptions;
-export let timeHorizon = 'MONTH';
-export let metricType = 'proportions';
+  export let aggregationLevel = 'build_id';
+  export let data;
+  export let probeType;
+  export let activeBuckets;
+  export let bucketColorMap;
+  export let bucketOptions;
+  export let timeHorizon = 'MONTH';
+  export let metricType = 'proportions';
 
-export let bucketSortOrder = (a, b) => ((a < b) ? 1 : -1);
+  export let bucketSortOrder = (a, b) => (a < b ? 1 : -1);
 
-const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-function makeSelection(type) {
-  return function onSelection(event) {
-    dispatch('selection', { selection: event.detail.selection, type });
-  };
-}
+  function makeSelection(type) {
+    return function onSelection(event) {
+      dispatch('selection', { selection: event.detail.selection, type });
+    };
+  }
 
-let aggregationTypes = gatherAggregationTypes(data);
-let probeKeys = gatherProbeKeys(data);
-let currentKey = probeKeys[0];
-let currentAggregation = aggregationTypes[0];
+  let aggregationTypes = gatherAggregationTypes(data);
+  let probeKeys = gatherProbeKeys(data);
+  let currentKey = probeKeys[0];
+  let currentAggregation = aggregationTypes[0];
 
-// set the audience size when the reference updates.
-let reference;
-const movingAudienceSize = tweened(0, { duration: 500, easing });
-$: if (reference) movingAudienceSize.set(reference.audienceSize);
+  // set the audience size when the reference updates.
+  let reference;
+  const movingAudienceSize = tweened(0, { duration: 500, easing });
+  $: if (reference) movingAudienceSize.set(reference.audienceSize);
 
-$: if (currentKey && reference) {
-  const ref = data[currentKey][currentAggregation].find((d) => d.label.toString() === reference.label.toString());
-  reference = ref;
-}
+  $: if (currentKey && reference) {
+    const ref = data[currentKey][currentAggregation].find(
+      (d) => d.label.toString() === reference.label.toString()
+    );
+    reference = ref;
+  }
 
-function filterResponseData(d, agg, key) {
-  return d.filter((di) => di.client_agg_type === agg && di.metric_key === key);
-}
+  function filterResponseData(d, agg, key) {
+    return d.filter(
+      (di) => di.client_agg_type === agg && di.metric_key === key
+    );
+  }
 
-$: selectedData = filterResponseData(data, currentAggregation, currentKey);
-
+  $: selectedData = filterResponseData(data, currentAggregation, currentKey);
 </script>
 
 <style>
+  h2 {
+    margin: 0;
+  }
 
-h2 {
-  margin: 0;
-}
+  .body-content {
+    margin-top: var(--space-2x);
+  }
 
-.body-content {
-  margin-top: var(--space-2x);
-}
+  .data-graphics {
+    margin-top: var(--space-4x);
+  }
 
-.data-graphics {
-  margin-top: var(--space-4x);
-}
-
-.small-multiple {
-  margin-bottom: var(--space-8x);
-}
+  .small-multiple {
+    margin-bottom: var(--space-8x);
+  }
 </style>
 
+<div class="body-content">
 
-<div class=body-content>
-
-  <slot></slot>
+  <slot />
 
   <div class="body-control-row body-control-row--stretch">
-    <div class=body-control-set>
+    <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
-      <label class=body-control-set--label>Time Horizon  </label>
-      <TimeHorizonControl
-        horizon={timeHorizon}
-        on:selection={makeSelection('timeHorizon')}
-      />
+        <label class="body-control-set--label">Time Horizon</label>
+        <TimeHorizonControl
+          horizon={timeHorizon}
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
-    <div class=body-control-set>
-      <label class=body-control-set--label>Categories</label>
-        <KeySelectionControl
-          sortFunction={bucketSortOrder}
-          options={bucketOptions}
-          selections={activeBuckets}
-          on:selection={makeSelection('activeBuckets')}
-          colorMap={bucketColorMap} />
+    <div class="body-control-set">
+      <label class="body-control-set--label">Categories</label>
+      <KeySelectionControl
+        sortFunction={bucketSortOrder}
+        options={bucketOptions}
+        selections={activeBuckets}
+        on:selection={makeSelection('activeBuckets')}
+        colorMap={bucketColorMap} />
     </div>
   </div>
 
-  <div class="body-control-row  body-control-row--stretch">
-    <div class=body-control-set>
-      <label class=body-control-set--label>Metric Type</label>
+  <div class="body-control-row body-control-row--stretch">
+    <div class="body-control-set">
+      <label class="body-control-set--label">Metric Type</label>
       <ProportionMetricTypeControl
-        metricType={metricType}
-        on:selection={makeSelection('metricType')}
-      />
+        {metricType}
+        on:selection={makeSelection('metricType')} />
     </div>
     {#if probeKeys && probeKeys.length > 1}
-    <div class=body-control-set>
-      <label class=body-control-set--label>Key</label>
-        <ProbeKeySelector
-          options={probeKeys}
-          bind:currentKey={currentKey}
-        />
+      <div class="body-control-set">
+        <label class="body-control-set--label">Key</label>
+        <ProbeKeySelector options={probeKeys} bind:currentKey />
       </div>
     {/if}
   </div>
 
-  <div class=data-graphics>
+  <div class="data-graphics">
     {#each probeKeys as key, i (key)}
       {#each aggregationTypes as aggType, i (aggType + timeHorizon + probeType + metricType)}
         {#if key === currentKey && (aggregationTypes.length === 1 || aggType === currentAggregation)}
-          <div class='small-multiple'>
+          <div class="small-multiple">
             <ProbeExplorer
-              bind:reference={reference}
+              bind:reference
               title={key === 'undefined' ? '' : key}
               aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
               aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
-              summaryLabel='cat.'
+              summaryLabel="cat."
               data={selectedData}
-              probeType={probeType}
+              {probeType}
               activeBins={activeBuckets}
-              timeHorizon={timeHorizon}
+              {timeHorizon}
               binColorMap={bucketColorMap}
-              metricType={metricType}
+              {metricType}
               showViolins={false}
-              aggregationLevel={aggregationLevel}
+              {aggregationLevel}
               pointMetricType={metricType}
               yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
               summaryNumberFormatter={metricType === 'proportions' ? formatPercentDecimal : formatCount}
               yScaleType={'linear'}
-              yDomain={[0, Math.max(...selectedData.map((d) => Object.values(d[metricType])).flat())]}
-            >
-
-            </ProbeExplorer>
+              yDomain={[0, Math.max(...selectedData
+                    .map((d) => Object.values(d[metricType]))
+                    .flat())]} />
           </div>
         {/if}
       {/each}

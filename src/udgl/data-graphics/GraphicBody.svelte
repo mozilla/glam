@@ -1,9 +1,9 @@
 <script>
-import { getContext } from 'svelte';
+  import { getContext } from 'svelte';
 
-const key = getContext('key');
+  const key = getContext('key');
 </script>
 
-<g id='graphic-body-content-{key}' style="clip-path: url(#graphic-body-{key})">
-  <slot></slot>
+<g id="graphic-body-content-{key}" style="clip-path: url(#graphic-body-{key})">
+  <slot />
 </g>

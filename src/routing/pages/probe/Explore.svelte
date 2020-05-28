@@ -36,17 +36,17 @@
         bucketSortOrder={data.bucketSortOrder}
         on:selection={handleBodySelectors}
         aggregationLevel={$store.productDimensions.aggregationLevel}>
-          <ProbeTitle />
+        <ProbeTitle />
       </ProportionExplorerView>
     {:else if ['histogram', 'scalar'].includes(probeType)}
       <QuantileExplorerView
         data={data.data}
-        probeType={probeType}
+        {probeType}
         timeHorizon={$store.timeHorizon}
         percentiles={$store.visiblePercentiles}
         on:selection={handleBodySelectors}
         aggregationLevel={$store.productDimensions.aggregationLevel}>
-          <ProbeTitle />
+        <ProbeTitle />
       </QuantileExplorerView>
     {:else}
       <div class="graphic-body__content">

@@ -1,5 +1,5 @@
 <script>
-export let centered = false;
+  export let centered = false;
 </script>
 
 <!-- 
@@ -9,5 +9,5 @@ content footer
 -->
 
 <div class:content-body--centered={centered}>
-  <slot></slot>
+  <slot />
 </div>

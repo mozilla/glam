@@ -1,35 +1,32 @@
 <script>
-import { setContext } from 'svelte';
+  import { setContext } from 'svelte';
 
-export let onSelect;
+  export let onSelect;
 
-if (onSelect) {
-  setContext('onSelect', onSelect);
-}
-
+  if (onSelect) {
+    setContext('onSelect', onSelect);
+  }
 </script>
 
 <style>
-fieldset {
+  fieldset {
     border: none;
-    padding:0;
-    margin:0;
-}
+    padding: 0;
+    margin: 0;
+  }
 
-/* .options {
+  /* .options {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
 } */
-
 </style>
 
 <fieldset>
-    <!-- <legend class='label'>
+  <!-- <legend class='label'>
         <slot name='label'></slot>
     </legend> -->
-    <div class=options role=radiogroup>
-        <slot>
-        </slot>
-    </div>
+  <div class="options" role="radiogroup">
+    <slot />
+  </div>
 </fieldset>

@@ -1,3 +1,3 @@
-<footer class=content-footer>
-  <slot></slot>
+<footer class="content-footer">
+  <slot />
 </footer>

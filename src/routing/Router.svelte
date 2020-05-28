@@ -17,7 +17,6 @@
   import ProbeTable from './pages/probe/Table.svelte';
   import NotFound from './pages/NotFound.svelte';
 
-
   let visible = false;
   let component;
 
@@ -56,7 +55,9 @@
         if ($probeSet) {
           let newProbe = $probeSet.find((p) => p.name === probeName);
           if (productConfig[$store.product].transformProbeForGLAM) {
-            newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
+            newProbe = productConfig[$store.product].transformProbeForGLAM(
+              newProbe
+            );
           }
           productConfig[$store.product].setDefaultsForProbe(store, newProbe);
         }
@@ -72,8 +73,14 @@
   }
 
   page('/', useComponent(Home));
-  page('/:product/:section/:probeName/explore', useComponent(ProbeExplore, 'explore'));
-  page('/:product/:section/:probeName/table', useComponent(ProbeTable, 'table'));
+  page(
+    '/:product/:section/:probeName/explore',
+    useComponent(ProbeExplore, 'explore')
+  );
+  page(
+    '/:product/:section/:probeName/table',
+    useComponent(ProbeTable, 'table')
+  );
   page('*', useComponent(NotFound));
 
   page.start();

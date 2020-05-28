@@ -21,24 +21,24 @@
 </script>
 
 <style>
-.temporary-link-button {
-  display: grid;
-  grid-auto-flow: column;
-  align-items: center;
-  color: var(--digital-blue-200);
-  text-decoration: none;
-  font-size: var(--text-02);
-  padding: var(--space-1h) var(--space-base);
-  border-radius: var(--space-1h);
-  grid-gap: var(--space-base);
-  transition: background-color 100ms;
-  text-transform: uppercase;
-}
+  .temporary-link-button {
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
+    color: var(--digital-blue-200);
+    text-decoration: none;
+    font-size: var(--text-02);
+    padding: var(--space-1h) var(--space-base);
+    border-radius: var(--space-1h);
+    grid-gap: var(--space-base);
+    transition: background-color 100ms;
+    text-transform: uppercase;
+  }
 
-.temporary-link-button:hover {
-  text-decoration: none;
-  background-color: rgba(255,255,255,.1);
-}
+  .temporary-link-button:hover {
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 </style>
 
 <App>
@@ -46,8 +46,12 @@
     <GLAMMark />
     <Search />
     <div style="justify-self: end; padding-right: var(--space-2x)">
-      <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
-        <SlackLogo size={16} />feedback
+      <a
+        target="_blank"
+        class="temporary-link-button"
+        href="https://mozilla.slack.com/archives/CB1EQ437S">
+        <SlackLogo size={16} />
+        feedback
       </a>
     </div>
   </Toolbar>
@@ -77,7 +81,9 @@
     <p>
       This tool is still in active development so UX bugs and data issues may
       exist. Help us make it suit your needs by directing questions or feedback
-      to the <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a> Slack channel.
+      to the
+      <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a>
+      Slack channel.
     </p>
   </AlertNotice>
 </App>

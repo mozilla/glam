@@ -14,7 +14,8 @@
 
   // Intentional loose (coerced) comparison.
   // This will fail if you continually visit on the same day of the month and that's fine.
-  let alertVisible = window.localStorage.getItem(KEY_PREFIX + toggleKey) != today;
+  let alertVisible =
+    window.localStorage.getItem(KEY_PREFIX + toggleKey) != today;
 
   function dismissNotice() {
     alertVisible = false;
@@ -71,12 +72,16 @@
 </style>
 
 {#if alertVisible}
-  <div class="alert-notice" transition:fly={{ y: 10, duration: 200, easing: cubicOut }}>
+  <div
+    class="alert-notice"
+    transition:fly={{ y: 10, duration: 200, easing: cubicOut }}>
     <div class="alert-notice-content">
-      <slot></slot>
+      <slot />
     </div>
     <div class="alert-notice-action" on:click={dismissNotice}>
-      <button><Cancel size={24} /></button>
+      <button>
+        <Cancel size={24} />
+      </button>
     </div>
   </div>
 {/if}

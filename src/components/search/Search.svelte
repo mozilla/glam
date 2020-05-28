@@ -1,32 +1,28 @@
 <script>
   import { tick } from 'svelte';
-import { fly } from 'svelte/transition';
-import SearchIcon from 'udgl/icons/Search.svelte';
-import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
+  import { fly } from 'svelte/transition';
+  import SearchIcon from 'udgl/icons/Search.svelte';
+  import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import {
-    store,
-} from '../../state/store';
+  import { store } from '../../state/store';
 
+  import telemetrySearch from '../../state/telemetry-search';
 
-import telemetrySearch from '../../state/telemetry-search';
+  import TelemetrySearchResults from './SearchResults.svelte';
 
-import TelemetrySearchResults from './SearchResults.svelte';
+  let inputElement;
+  let searchContainer;
 
-
-let inputElement;
-let searchContainer;
-
-function turnOnSearch() {
+  function turnOnSearch() {
     store.setField('searchIsActive', true);
-}
+  }
 
-function unfocus() {
+  function unfocus() {
     inputElement.blur();
     store.setField('searchIsActive', false);
-}
+  }
 
-async function onKeypress(event) {
+  async function onKeypress(event) {
     if ($store.searchIsActive) {
       const { key } = event;
       if (key === 'Escape') {
@@ -34,8 +30,7 @@ async function onKeypress(event) {
         unfocus();
       }
     }
-}
-
+  }
 </script>
 
 <style>
@@ -62,7 +57,6 @@ async function onKeypress(event) {
     align-items: stretch;
     background-color: var(--input-background-color);
     border-radius: var(--space-1h);
-
   }
 
   .icon-container {
@@ -70,7 +64,6 @@ async function onKeypress(event) {
     display: grid;
     align-items: center;
     justify-items: center;
-
   }
 
   .icon {
@@ -104,44 +97,47 @@ async function onKeypress(event) {
 </style>
 
 <svelte:window on:keydown={onKeypress} />
-<svelte:body on:click={(evt) => {
-  if ($store.searchIsActive) {
-    if (evt.target !== inputElement) {
-      inputElement.blur();
-      store.setField('searchIsActive', false);
+<svelte:body
+  on:click={(evt) => {
+    if ($store.searchIsActive) {
+      if (evt.target !== inputElement) {
+        inputElement.blur();
+        store.setField('searchIsActive', false);
+      }
     }
-  }
-}}></svelte:body>
+  }} />
 
-<div class=search-container>
-  <div class=inner-container bind:this={searchContainer}
+<div class="search-container">
+  <div
+    class="inner-container"
+    bind:this={searchContainer}
     aria-expanded={!!($store.searchIsActive && $store.searchQuery.length)}
     aria-haspopup="listbox"
-    aria-owns="telemetry-search-results"
-  >
-      <div class=icon-container>
+    aria-owns="telemetry-search-results">
+    <div class="icon-container">
       {#if $telemetrySearch.loaded}
-      <div class=icon in:fly={{ y: -10, duration: 100 }}>
-        <SearchIcon  />
-      </div>
+        <div class="icon" in:fly={{ y: -10, duration: 100 }}>
+          <SearchIcon />
+        </div>
       {:else}
-        <div class=icon transition:fly={{ y: -10, duration: 100 }}>
+        <div class="icon" transition:fly={{ y: -10, duration: 100 }}>
           <LineSegSpinner />
         </div>
       {/if}
     </div>
-    <input 
+    <input
       type="search"
       aria-autocomplete="list"
-      aria-controls="telemetry-search-results" 
+      aria-controls="telemetry-search-results"
       on:focus={turnOnSearch}
       bind:this={inputElement}
       placeholder="search for a telemetry probe"
-      value={$store.searchQuery} on:input={(evt) => {
-          store.setField('searchQuery', evt.target.value);
-          store.setField('searchIsActive', true);
+      value={$store.searchQuery}
+      on:input={(evt) => {
+        store.setField('searchQuery', evt.target.value);
+        store.setField('searchIsActive', true);
       }} />
-    </div>
+  </div>
 </div>
 
 <TelemetrySearchResults parentElement={searchContainer} />

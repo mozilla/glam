@@ -3,5 +3,6 @@
 </script>
 
 <h2 class="probe-details-title">
-  {$store.route.view} / <span>{$store.probeName}</span>
+  {$store.route.view} /
+  <span>{$store.probeName}</span>
 </h2>
