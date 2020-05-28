@@ -28,6 +28,7 @@ export async function getRandomProbes(numProbes, process) {
 }
 
 export async function getProbeData(params, token) {
+  console.log('request setn');
   const data = await fetch(dataURL, {
     method: 'POST',
     headers: {
@@ -35,22 +36,30 @@ export async function getProbeData(params, token) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ query: params }),
-  }).then(async (response) => {
-    // Catch fetch error responses and show them in the UI.
-    if (response.status >= 400 && response.status < 600) {
-      const errorCode = `code${response.status}`;
-      let msg = FETCH_ERROR_MESSAGES[errorCode] || '';
-      if (!msg) {
-        msg =
-          response.status < 500
-            ? FETCH_ERROR_MESSAGES.code4xx
-            : FETCH_ERROR_MESSAGES.code5xx;
+  })
+    .then(async (response) => {
+      // Catch fetch error responses and show them in the UI.
+      if (response.status >= 400 && response.status < 600) {
+        const errorCode = `code${response.status}`;
+        let msg = FETCH_ERROR_MESSAGES[errorCode] || '';
+        if (!msg) {
+          msg =
+            response.status < 500
+              ? FETCH_ERROR_MESSAGES.code4xx
+              : FETCH_ERROR_MESSAGES.code5xx;
+        }
+        const error = new Error(msg);
+        error.statusCode = response.status;
+        throw error;
       }
-      const error = new Error(msg);
-      error.statusCode = response.status;
-      throw error;
-    }
-    return response.json();
-  });
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      return data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   return data;
 }

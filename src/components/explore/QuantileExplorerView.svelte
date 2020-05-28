@@ -15,6 +15,7 @@ import { gatherProbeKeys, gatherAggregationTypes } from '../../utils/probe-utils
 
 const dispatch = createEventDispatcher();
 
+console.log('ok we are here>');
 export let data;
 export let probeType;
 export let aggregationLevel = 'build_id';

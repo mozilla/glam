@@ -142,6 +142,10 @@ function typeAndKind(probeType, probeKind) {
 
 export function getProbeViewType(probeType, probeKind) {
   const m = typeAndKind(probeType, probeKind);
+
+  // fenix
+  if (m('counter', undefined)) return 'histogram';
+
   // histogram blocks
   if (m('histogram', 'linear')) return 'histogram';
   if (m('histogram', 'exponential')) return 'histogram';

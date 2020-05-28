@@ -8,7 +8,7 @@ import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disabl
 
 import { getProbeData } from './api';
 
-import CONFIG from '../config/firefox-desktop';
+import CONFIG from '../config/products';
 
 import {
   transformGLAMAPIResponse,
@@ -22,7 +22,7 @@ import { validate, noResponse } from '../utils/data-validation';
 const DEFAULT_PROBE_PROCESS = 'content';
 
 export function getField(fieldKey) {
-  return CONFIG.dimensions[fieldKey];
+  return CONFIG.fenix.dimensions[fieldKey];
 }
 
 export function getFieldValues(fieldKey) {
@@ -30,7 +30,7 @@ export function getFieldValues(fieldKey) {
 }
 
 export function isField(fieldKey) {
-  return Object.keys(CONFIG.dimensions).includes(fieldKey);
+  return Object.keys(CONFIG.fenix.dimensions).includes(fieldKey);
 }
 
 export function getFieldValueMetadata(fieldKey, valueKey) {
@@ -76,10 +76,10 @@ const initialState = {
     isAuthenticated: false,
     token: undefined,
   },
-  product: 'firefoxDesktop', // FIXME: derive this elsewhere like QS
+  product: 'fenix', // FIXME: derive this elsewhere like QS
   productDimensions: {
     channel: getFromQueryStringOrDefault('channel'),
-    os: getFromQueryString('os') || 'Windows',
+    os: getFromQueryString('os') || '*',
     process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
     aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   },
@@ -125,7 +125,8 @@ export const resetFilters = () => {
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
   if (!$probeSet || !$store.probeName) return undefined;
   let pr = $probeSet.find((p) => p.name === $store.probeName);
-  if (CONFIG.transformProbeForGLAM) pr = CONFIG.transformProbeForGLAM(pr);
+  if (CONFIG[$store.product].transformProbeForGLAM)
+    pr = CONFIG[$store.product].transformProbeForGLAM(pr);
   return pr;
 });
 
@@ -144,7 +145,7 @@ export const searchResults = derived(
 );
 
 export const hasDefaultControlFields = derived(store, ($store) =>
-  Object.values(CONFIG.dimensions).every(
+  Object.values(CONFIG[$store.product].dimensions).every(
     (field) =>
       !field.values ||
       field.skipValidation === true ||
@@ -168,16 +169,27 @@ function getParamsForQueryString(obj) {
       visiblePercentiles: obj.visiblePercentiles,
     };
   }
+  if (obj.product === 'fenix') {
+    return {
+      channel: obj.productDimensions.channel,
+      os: obj.productDimensions.os,
+      aggregationLevel: obj.productDimensions.aggregationLevel,
+      timeHorizon: obj.timeHorizon,
+      proportionMetricType: obj.proportionMetricType,
+      activeBuckets: obj.activeBuckets,
+      visiblePercentiles: obj.visiblePercentiles,
+    };
+  }
   throw Error('Product not recognized.');
 }
 
 function getParamsForDataAPI(obj) {
   // FIXME: turn this conditional into a function in firefox-desktop.js
+  const params = getParamsForQueryString(obj);
   if (obj.product === 'firefoxDesktop') {
     const channelValue = obj.productDimensions.channel;
     const osValue = obj.productDimensions.os;
     const { process } = obj.productDimensions;
-    const params = getParamsForQueryString(obj);
     delete params.timeHorizon;
     delete params.proportionMetricType;
     delete params.activeBuckets;
@@ -186,6 +198,15 @@ function getParamsForDataAPI(obj) {
     params.os = osValue;
     params.channel = channelValue;
     params.process = process;
+    return params;
+  }
+  if (obj.product === 'fenix') {
+    delete params.timeHorizon;
+    delete params.proportionMetricType;
+    delete params.activeBuckets;
+    delete params.visiblePercentiles;
+    params.probe = obj.probeName;
+    params.product = obj.product;
     return params;
   }
   throw Error('product not recognized.');
@@ -284,9 +305,19 @@ export function fetchDataForGLAM(params) {
 
 export function updateStoreAfterDataIsReceived({ data }) {
   const probeValue = get(probe);
+  let probeType;
+  let probeKind;
+  if (get(store).product === 'firefoxDesktop') {
+    probeType = probeValue.type;
+    probeKind = probeValue.kind;
+  } else {
+    probeType = data[0].metric_type;
+  }
+
   // THIS WILL BE FALSE BECAUSE WE HAVE NOT RECEIVED THE PROBE DATA YET.
-  const viewType = getProbeViewType(probeValue.type, probeValue.kind);
+  const viewType = getProbeViewType(probeType, probeKind);
   const isCategoricalTypeProbe = viewType === 'categorical';
+
   let etc = {};
   if (isCategoricalTypeProbe) {
     etc = extractBucketMetadata(data);
@@ -295,7 +326,11 @@ export function updateStoreAfterDataIsReceived({ data }) {
   if (isCategoricalTypeProbe) {
     store.setField('activeBuckets', etc.initialBuckets);
   }
-  store.setField('recordedInProcesses', probeValue.record_in_processes);
+  // FIXME: this should not be firefox-specific.
+  if (get(store).product === 'firefoxDesktop') {
+    store.setField('recordedInProcesses', probeValue.record_in_processes);
+  }
+
   return { data, viewType, ...etc };
 }
 
@@ -318,12 +353,11 @@ export const dataset = derived(
 
     const params = getParamsForDataAPI($store);
     const qs = toQueryString(params);
-
     // // invalid parameters, probe selected.
-    if (!paramsAreValid(params) && probeSelected($store.probeName)) {
-      const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-      return message;
-    }
+    // if (!paramsAreValid(params) && probeSelected($store.probeName)) {
+    //   const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    //   return message;
+    // }
 
     // // no probe selected.
     if (!probeSelected($store.probeName)) {

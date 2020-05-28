@@ -17,7 +17,6 @@
   import ProbeTable from './pages/probe/Table.svelte';
   import NotFound from './pages/NotFound.svelte';
 
-
   let visible = false;
   let component;
 
@@ -48,7 +47,9 @@
   function useComponent(componentToUse, view) {
     return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
-
+      if ($store.product !== product) {
+        store.setField('product', product);
+      }
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
@@ -56,7 +57,9 @@
         if ($probeSet) {
           let newProbe = $probeSet.find((p) => p.name === probeName);
           if (productConfig[$store.product].transformProbeForGLAM) {
-            newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
+            newProbe = productConfig[$store.product].transformProbeForGLAM(
+              newProbe
+            );
           }
           productConfig[$store.product].setDefaultsForProbe(store, newProbe);
         }
@@ -72,8 +75,14 @@
   }
 
   page('/', useComponent(Home));
-  page('/:product/:section/:probeName/explore', useComponent(ProbeExplore, 'explore'));
-  page('/:product/:section/:probeName/table', useComponent(ProbeTable, 'table'));
+  page(
+    '/:product/:section/:probeName/explore',
+    useComponent(ProbeExplore, 'explore')
+  );
+  page(
+    '/:product/:section/:probeName/table',
+    useComponent(ProbeTable, 'table')
+  );
   page('*', useComponent(NotFound));
 
   page.start();
@@ -81,10 +90,10 @@
 
 <Layout>
   {#if $store.auth.isAuthenticated}
-    <svelte:component this={component} />
+  <svelte:component this="{component}" />
   {:else}
-    <div class="graphic-body__content">
-      <Spinner size={48} color={'var(--cool-gray-400)'} />
-    </div>
+  <div class="graphic-body__content">
+    <Spinner size={48} color={'var(--cool-gray-400)'} />
+  </div>
   {/if}
 </Layout>
