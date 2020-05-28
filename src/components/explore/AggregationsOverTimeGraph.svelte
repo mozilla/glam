@@ -28,6 +28,7 @@ import { aggregationsOverTimeGraph } from '../../utils/constants';
 export let title;
 export let description;
 export let data;
+console.log(data);
 export let markers;
 export let metricKeys; // the active keys (eg which percentiles / categories are active)
 export let reference;
@@ -114,9 +115,9 @@ function determinePlacementOfBackgroundFill(datum) {
 }
 
 
-$: if (xScale && rightPlot) {
-  [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
-}
+// $: if (xScale && rightPlot) {
+//   [referenceWidth, refLabelPlacement] = determinePlacementOfBackgroundFill(reference);
+// }
 
 const refLabelSpring = spring(refLabelPlacement, { damping: 0.9, stiffness: 0.3 });
 $: if (refLabelPlacement) refLabelSpring.set(refLabelPlacement);

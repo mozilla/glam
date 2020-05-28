@@ -57,7 +57,7 @@ export let hoverValue = {};
   <div>
     <DataGraphic
       yType="linear"
-      xType={aggregationLevel === 'build_id' ? 'time' : 'scalePoint'}
+      xType={aggregationLevel === 'build_id' ? 'scalePoint' : 'scalePoint'}
       xDomain={xDomain}
       yDomain={yDomain}
       width={totalClientsGraph.width}

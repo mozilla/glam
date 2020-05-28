@@ -72,7 +72,7 @@ export const transformQuantileResponse = (probeData, key = 'version') =>
     );
     return {
       ...probe,
-      label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
+      // label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
       histogram,
       percentiles,
       transformedPercentiles,
@@ -107,7 +107,7 @@ export const transformProportionResponse = (
     const proportions = toProportions(counts);
     return {
       ...probe,
-      label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
+      // label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
       counts,
       version: probe.version,
       proportions,
@@ -145,7 +145,7 @@ export function getProbeViewType(probeType, probeKind) {
 
   // fenix
   if (m('counter', undefined)) return 'histogram';
-
+  if (m('timing_distribution', undefined)) return 'histogram';
   // histogram blocks
   if (m('histogram', 'linear')) return 'histogram';
   if (m('histogram', 'exponential')) return 'histogram';

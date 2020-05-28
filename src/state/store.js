@@ -80,9 +80,15 @@ const initialState = {
   productDimensions: {
     channel: getFromQueryStringOrDefault('channel'),
     os: getFromQueryString('os') || '*',
-    process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
+    pingType: getFromQueryString('pingType') || '*', // This refers to the UI selected process.
     aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
   },
+  // productDimensions: {
+  //   channel: getFromQueryStringOrDefault('channel'),
+  //   os: getFromQueryString('os') || '*',
+  //   process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
+  //   aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
+  // },
   probeName: '',
   dashboardMode: {}, // FIXME: applicationStatus or dashboardMode, not both.
   recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.

@@ -55,7 +55,24 @@ export async function getProbeData(params, token) {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
+      if (params.product === 'fenix') {
+        // can we transform the data here?
+        console.log(
+          Array.from(new Set(data.response.map((di) => di.ping_type)))
+        );
+
+        data.response.forEach((di) => {
+          di.label = Number(di.build_id);
+        });
+        data.response = data.response.filter(
+          (di) => di.ping_type === 'metrics'
+        );
+        data.response.sort((a, b) => {
+          if (a.label > b.label) return 1;
+          return -1;
+        });
+        console.log(data.response.map((di) => di.label));
+      }
       return data;
     })
     .catch((err) => {

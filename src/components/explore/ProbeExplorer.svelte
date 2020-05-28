@@ -70,28 +70,35 @@ $: insufficientData = data.length <= 2;
 $: justOne = data.length === 1;
 
 let domain = writable(aggregationLevel === 'version' ? data.map((d) => d.label) : [
-  new Date(Math.min(...data.map((d) => d.label))), new Date(Math.max(...data.map((d) => d.label))),
+  Math.min(...data.map((d) => d.label)), Math.max(...data.map((d) => d.label)),
+  // new Date(Math.min(...data.map((d) => d.label))), new Date(Math.max(...data.map((d) => d.label))),
 ]);
 
 function setDomain(str) {
   if (aggregationLevel === 'build_id') {
-    const start = str === 'ALL_TIME' ? new Date(+data[0].label) : new Date(+data[data.length - 1].label);
-    const end = new Date(+data[data.length - 1].label);
+    // const start = str === 'ALL_TIME' ? new Date(+data[0].label) : new Date(+data[data.length - 1].label);
+    // const start = data[0].label;
+    // const end = data[data.length - 1].label;
+    // console.log([start, end]);
+    // domain.set([start, end]);
+    const labels = data.map((di) => di.label);
+    domain.set(labels);
+    // const end = new Date(+data[data.length - 1].label);
 
-    let daysAgo = str === 'WEEK' ? 7 : 30;
-    if (str !== 'ALL_TIME') {
-      start.setDate(start.getDate() - daysAgo);
-    }
-    domain.set([start, end]);
-  } else {
-    const start = data[data.length - 1].label;
-    let filtered = data;
-    let daysAgo = str === 'WEEK' ? 7 : 31;
-    if (str !== 'ALL_TIME') {
-      start.setDate(start.getDate() - daysAgo);
-      filtered = data.filter((d) => d.label >= start);
-    }
-    domain.set(filtered.map((d) => d.label));
+  //   let daysAgo = str === 'WEEK' ? 7 : 30;
+  //   if (str !== 'ALL_TIME') {
+  //     start.setDate(start.getDate() - daysAgo);
+  //   }
+  //   domain.set([start, end]);
+  // } else {
+  //   const start = data[data.length - 1].label;
+  //   let filtered = data;
+  //   let daysAgo = str === 'WEEK' ? 7 : 31;
+  //   if (str !== 'ALL_TIME') {
+  //     start.setDate(start.getDate() - daysAgo);
+  //     filtered = data.filter((d) => d.label >= start);
+  //   }
+  //   domain.set(filtered.map((d) => d.label));
   }
 }
 
@@ -103,7 +110,7 @@ export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
 function leftLabelForAggComparison(d, aggLevel, x) {
   if (d.length === 2) return d[0].label;
-  if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
+  if (aggLevel === 'build_id') return x;// formatBuildIDToDateString(x);
   return x;
 }
 
@@ -193,7 +200,7 @@ $: if (hoverValue.x) {
         lineColorMap={binColorMap}
         key={key}
         yAccessor={overTimePointMetricType}
-        xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
+        xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'scalePoint'}
         yScaleType={yScaleType}
         yTickFormatter={yTickFormatter}
         metricKeys={activeBins}
