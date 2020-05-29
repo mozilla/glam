@@ -34,6 +34,14 @@
   });
 </script>
 
+<svelte:head>
+  {#if $store.route.section === 'probe'}
+    <title>{$store.probeName} | GLAM</title>
+  {:else}
+    <title>GLAM: Glean Aggregated Metrics Explorer</title>
+  {/if}
+</svelte:head>
+
 {#await $dataset}
   <div class="graphic-body__content">
     <Spinner size={48} color={'var(--cool-gray-400)'} />
