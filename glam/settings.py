@@ -120,6 +120,9 @@ class Core(Configuration):
         ],
     }
 
+    GA_TRACKING_ID = values.Value("", environ_name="GA_TRACKING_ID",
+        environ_prefix=None)
+
 
 class Base(Core):
     """Configuration that may change per-environment, some with defaults."""
