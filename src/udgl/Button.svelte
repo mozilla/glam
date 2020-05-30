@@ -1,5 +1,4 @@
 <script>
-
 import { getContext } from 'svelte';
 import { tooltip as tooltipAction } from './utils/tooltip';
 
@@ -11,7 +10,6 @@ export let toggled = false;
 
 export let size = compact ? 'compact' : 'standard';
 export let dark = getContext('appDarkMode') || false;
-
 </script>
 
 <style>
@@ -63,7 +61,7 @@ button {
 }
 
 .button--medium:active,
-.button--medium.toggled, 
+.button--medium.toggled,
 .button--low:active,
 .button--low.toggled {
     background-color: rgba(0,0,0,.1);
@@ -101,8 +99,8 @@ button {
     background-color: var(--primary-color-dark);
 }
 
-.dark.button--medium:active, 
-.dark.button--medium.toggled, 
+.dark.button--medium:active,
+.dark.button--medium.toggled,
 .dark.button--low:active,
 .dark.button--low.toggled {
     background-color: rgba(0,0,0,.1);

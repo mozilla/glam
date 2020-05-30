@@ -27,7 +27,7 @@ export let aggregationInfo = {
   min: { name: 'Minimum', description: 'Shows the distribution of the smallest scalar value per client.' },
   max: { name: 'Maximum', description: 'Shows the distribution of the largest scalar value per client.' },
   sum: { name: 'Sum', description: 'Shows the distribution of the sum of scalar values per client.' },
-  count: { name: 'Count', description: 'Shows the distribution of session counts per client.' }
+  count: { name: 'Count', description: 'Shows the distribution of session counts per client.' },
 };
 
 </script>

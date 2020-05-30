@@ -102,11 +102,6 @@ function handleSelection(event) {
   color: var(--blue-slate-600);
 }
 
-.selectors i {
-  font-weight: 100;
-  color: var(--cool-gray-500);
-}
-
 </style>
 
 
@@ -138,7 +133,7 @@ function handleSelection(event) {
     <h1 class="story__title">probe / <span class=probe-head>{probes[which].name}</span></h1>
     {#each probes as probe, i (probe.name + aggregationLevel)}
       {#if which === i}
-        <QuantileExplorerView 
+        <QuantileExplorerView
           probeType={probe.probeType}
           data={probe[aggregationLevel]}
           timeHorizon={timeHorizon}

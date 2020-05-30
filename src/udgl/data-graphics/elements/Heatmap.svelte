@@ -58,7 +58,7 @@ function getLengths(ds, sc, accessor) {
 let widths = getLengths(data, $xScale, xAccessor);
 let heights = getLengths(data, $yScale, yAccessor);
 
-let byColor = data.map((d, i) => ({
+let byColor = data.map((d) => ({
   [heatAccessor]: d[heatAccessor] === 0.0 ? 'transparent' : colorMap(scale(d[heatAccessor])),
   [xAccessor]: $xScale(d[xAccessor]),
   [yAccessor]: $yScale(d[yAccessor]) - $yScale.step() / 2,

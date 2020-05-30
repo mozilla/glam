@@ -36,9 +36,10 @@ function randomLine() {
 
 
 const L = makeLine(0, 1, size / 2 - size / 5, size / 2 - 10);
-const R = makeLine(0, 1, 10, 20);
 
-const outside = Array.from({ length: 5 }).map(() => spring(randomLine(), { damping: 0.2 + Math.random() / 5, stiffness: 0.2 + Math.random() / 5 }));
+const outside = Array.from({ length: 5 }).map(() => (
+  spring(randomLine(), { damping: 0.2 + Math.random() / 5, stiffness: 0.2 + Math.random() / 5 })
+));
 
 const allOutside = derived(outside, ($lines) => $lines.map(L));
 
@@ -74,7 +75,7 @@ setInterval(() => {
     {#each $allOutside as l, i}
     <path
       in:draw
-      transform="translate({size / 2} {size / 2})" 
+      transform="translate({size / 2} {size / 2})"
       d={l}
       stroke=black
       stroke-width=2
@@ -96,5 +97,5 @@ setInterval(() => {
     style="text-transform:uppercase"
   >loading</text>
   {/if}
-  
+
 </svg>

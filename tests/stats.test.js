@@ -1,5 +1,5 @@
 import { cumSum, weightedQuantile } from '../src/utils/stats';
-import { hist01, weightedQuantiles01 } from './data.js';
+import { hist01, weightedQuantiles01 } from './data';
 
 describe('cumSum', () => {
   it('', () => {

@@ -1,5 +1,5 @@
 <script>
-import { fly, fade } from 'svelte/transition';
+import { fly } from 'svelte/transition';
 
 import Button from 'udgl/Button.svelte';
 import ButtonGroup from 'udgl/ButtonGroup.svelte';
@@ -12,7 +12,6 @@ import LeftAxis from 'udgl/data-graphics/guides/LeftAxis.svelte';
 import BottomAxis from 'udgl/data-graphics/guides/BottomAxis.svelte';
 
 import marvel from '../data/marvel-strength-weight.json';
-// import genericPointData from '../data/four-class.json';
 
 let alignmentColors = {
   Good: 'blue',
@@ -20,32 +19,12 @@ let alignmentColors = {
   Neutral: 'black',
 };
 
-// let colors = {
-//   a: 'var(--pantone-red-600)',
-//   b: 'var(--digital-blue-500)',
-//   c: 'var(--cool-gray-700)',
-// };
-
-// const makeScatter = (n = N) => Array.from({ length: n })
-//   .map(() => ({ x: slowRandom() * 10, y: slowRandom() * 2 + 5 }));
-
-// function jitter(data, ...dimensions) {
-//   return data.map((d) => {
-//     let di = { ...d };
-//     dimensions.forEach((dim) => {
-//       di[dim] += (Math.random() - 0.5) * 0.5;
-//     });
-//     return di;
-//   });
-// }
-
 let which = ['Good', 'Bad', 'Neutral'];
 
 function toggle(value) {
   if (which.includes(value)) which = [...which].filter((w) => w !== value);
   else which = [...which, value];
 }
-
 </script>
 
 <style>
@@ -86,7 +65,7 @@ h3 {
       <label>Alignment</label>
       <ButtonGroup>
         {#each ['Good', 'Bad', 'Neutral'] as alignment, i}
-          <Button 
+          <Button
           level=medium
           toggled={which.includes(alignment) }
           on:click={() => { toggle(alignment); }}
@@ -115,23 +94,12 @@ h3 {
         <GraphicBody>
           <g in:fly={{ duration: 200, y: 5 }}>
 
-            <!-- {#each genericPointData as {x, y, color}, i (x + y + color)}
-              {#if which.includes(color)}
-              <g>
-                <Point 
-                  r={3} x={x} y={y} 
-                  fillOpacity={0.2} 
-                  fill={colors[color]}
-                  stroke={colors[color]} strokeWidth={2} strokeOpacity={0.4} />
-                </g>
-              {/if}
-            {/each} -->
           {#each marvel as {strength, weight, height, alignment, URL}, i (URL)}
             {#if which.includes(alignment)}
             <g>
-              <Point 
-                r={1 + strength / 2} x={height} y={weight} 
-                fillOpacity={0.3} 
+              <Point
+                r={1 + strength / 2} x={height} y={weight}
+                fillOpacity={0.3}
                 fill={alignmentColors[alignment]}
                 opacity={0.6}
                 stroke={alignmentColors[alignment]} strokeWidth=1 strokeOpacity={0.6} />

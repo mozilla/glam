@@ -1,5 +1,5 @@
 <script>
-import { fly, fade } from 'svelte/transition';
+import { fly } from 'svelte/transition';
 import { cubicOut as easing } from 'svelte/easing';
 
 import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
@@ -89,26 +89,26 @@ h2 { margin: 0; padding-left: 50px; font-size: var(--text-03); font-weight: norm
   {#each graphs as {key, title}}
     <div>
       <h2>{title}</h2>
-      <DataGraphic 
-        {xDomain} 
+      <DataGraphic
+        {xDomain}
         {yDomain}
         top={20}
         width={400}
         height={250}
         bottom={50}
-        yType="linear" 
+        yType="linear"
         xType="scalePoint">
         <g slot=background>
           <Axis side=left lineStyle=short showTicks={false} ticks={[0.5, 1, 1.5]} />
           <Axis side=bottom ticks={xDomain}>
-              
+
               <g slot=ticks let:ticks>
                 {#each Object.entries(byVersion) as [major, minors], i}
                   {#each minors as {minor}, j}
                     <AxisTick placement={minor} length={j > 0 ? 14 : 4} />
                   {/each}
                 {/each}
-                
+
               </g>
 
               <g slot=border>
@@ -139,7 +139,7 @@ h2 { margin: 0; padding-left: 50px; font-size: var(--text-03); font-weight: norm
         {#each Object.entries(byVersion) as [major, minors],i}
           <rect
             in:fly={{ duration: 500, y: 10 * (i % 2 === 0 ? 1 : -1) }}
-            x={xScale(minors[0].minor) - xScale.step() / 2 + 1} 
+            x={xScale(minors[0].minor) - xScale.step() / 2 + 1}
             y={top + 10}
             width={xScale(minors.slice(-1)[0].minor) - xScale(minors[0].minor) + xScale.step() - 2}
             height={bottom - top - 20}
@@ -147,7 +147,7 @@ h2 { margin: 0; padding-left: 50px; font-size: var(--text-03); font-weight: norm
             />
         {/each}
         {#each [0.5, 1, 1.5] as tick}
-          <line 
+          <line
             x1={xScale(releases[0].minor) + 1 - xScale.step() / 2}
             x2={xScale(releases[releases.length - 1].minor) + xScale.step() - 2}
             y1={yScale(tick)}

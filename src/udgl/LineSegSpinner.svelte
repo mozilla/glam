@@ -1,9 +1,8 @@
 <script>
-
 export let color = 'white';
 export let size = 24;
-
 </script>
+
 <style>
 .spin {
   --color: #fff;

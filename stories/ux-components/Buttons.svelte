@@ -1,8 +1,7 @@
 <script>
-
-import Button from 'udgl/Button.svelte';
-
+  import Button from 'udgl/Button.svelte';
 </script>
+
 <style>
 
 h2 {

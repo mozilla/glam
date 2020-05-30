@@ -25,7 +25,7 @@ function sortEntriesByValue(a, b) {
 function kLargestBins(binObject, k = 10) {
     const bins = Object.entries(binObject);
     bins.sort(sortEntriesByValue);
-    return bins.slice(0, k).map(([k]) => k);
+    return bins.slice(0, k).map(([n]) => n);
 }
 
 let xDomain = Object.keys(data);
