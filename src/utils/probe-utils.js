@@ -58,6 +58,11 @@ export const transformQuantileResponse = (probeData, key = 'version') =>
       throw createNewError('MISSING_PERCENTILES');
     }
 
+    if (histogram[0].bin === 0 && histogram[1].bin === 0) {
+      histogram.shift();
+    }
+    // console.log(h);
+
     // FIXME: remove need for transformedPercentiles.
     const transformedPercentiles = Object.entries(percentiles).reduce(
       (acc, [bin, value]) => {

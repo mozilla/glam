@@ -137,7 +137,7 @@ $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
               yScaleType={probeType === 'histogram' ? 'scalePoint' : 'linear'}
               yDomain={
                 probeType === 'histogram' ? selectedData[0].histogram.map((d) => d.bin)
-                : [1, Math.max(...selectedData.map((d) => d.percentiles[95]))]}
+                : [1, Math.max(...selectedData.map((d) => d.percentiles[95]), 10000)]}
             >
 
             </ProbeExplorer>
