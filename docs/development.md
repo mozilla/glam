@@ -71,6 +71,17 @@ Data from glean may be pulled down using the following command:
 ./manage.py import_glean_aggs <PRODUCT>
 ```
 
+## Clearing your tables
+
+```
+make shell
+./manage.py dbshell
+DELETE FROM glam_desktop_nightly_aggregation;
+DELETE FROM view_glam_desktop_nightly_aggregation;
+```
+
+Repeat these for `beta` and `release`.
+
 ## Starting the server
 
 To start the application, run:
