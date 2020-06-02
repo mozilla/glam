@@ -48,7 +48,7 @@ The last step is to populate the aggregation tables with data from desktop
 Firefox:
 
 ```bash
-./manage.py import_aggs <CHANNEL>
+./manage.py import_desktop_aggs <CHANNEL>
 ```
 
 where `CHANNEL` is one of `nightly`, `beta`, or `release`.
@@ -58,7 +58,7 @@ Remember to set the project accordingly:
 
 ```bash
 export GOOGLE_CLOUD_PROJECT=<PROJECT>
-./manage.py import_aggs release --bucket <BUCKET>
+./manage.py import_desktop_aggs release --bucket <BUCKET>
 ```
 
 You will need to have viewer permissions in the non-prod GCP project to pull
@@ -83,7 +83,7 @@ The GLAM server is now running at http://localhost:8000. You can hit API
 endpoints with `curl` like this example:
 
 ```
-curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1/data/ -d '{"query": {"channel": "nightly", "versions": ["70"], "probe": "gc_ms","aggregationLevel": "version"}}' | python -m json.tool
+curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1/data/ -d '{"query": {"channel": "nightly", "versions": ["70"], "probe": "gc_ms", "aggregationLevel": "version"}}' | python -m json.tool
 ```
 
 ## Starting the front-end
