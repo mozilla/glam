@@ -21,7 +21,6 @@ export let rightLabel;
 export let leftPoints;
 export let rightPoints;
 export let activeBins;
-$: console.log(activeBins);
 export let dataVolume = Infinity;
 export let showTopAxis = true;
 
@@ -42,7 +41,6 @@ if (dataVolume === 1) {
 }
 
 export let xDomain = labelSet;
-console.log(xDomain);
 
 let xScale;
 let yScale;
