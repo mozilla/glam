@@ -116,6 +116,30 @@ aware that Prettier and its plugins can rarely break existing code. You may want
 to double-check that everything works after running `npm run format` just in
 case.
 
+## Resetting the database
+
+Often for local development it's nice to delete all the data and perform a clean
+import. Probably the easiest way to achieve this is to delete the database
+Docker container and start over. Here are the steps.
+
+Stop the Docker processes and remove the database container. This will ask you
+to confirm.
+
+```
+docker-compose stop
+docker-compose rm db
+```
+
+Drop into the shell and run all migrations to recreate the database tables.
+
+```
+make shell
+./manage.py migrate
+```
+
+At this point you have the table schemas but no data. Run the imports, including
+the probe imports, as documented above.
+
 ## Run the tests
 
 To run the GLAM server test suite, run the following command:
