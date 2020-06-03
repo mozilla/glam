@@ -6,7 +6,10 @@
 
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
-  import { Line } from '@graph-paper/elements';
+
+  // FIXME: replace this workaround w/ @graph-paper/elements version after
+  // 0.0.0-alpha.13 is published
+  import Line from './Line.svelte';
 
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
