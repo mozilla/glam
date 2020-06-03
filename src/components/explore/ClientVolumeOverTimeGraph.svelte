@@ -1,8 +1,9 @@
 <script>
-  import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
   import { Line } from '@graph-paper/elements';
+
+  import Tweenable from '../Tweenable.svelte';
 
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 

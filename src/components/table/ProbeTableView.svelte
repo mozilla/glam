@@ -1,5 +1,5 @@
 <script>
-import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
+import { percentileLineColorMap } from '../../utils/color-maps';
 import TableView from './TableView.svelte';
 import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
 import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
