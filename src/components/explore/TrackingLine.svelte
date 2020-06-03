@@ -9,7 +9,8 @@ const top = getContext('topPlot');
 const bottom = getContext('bottomPlot');
 </script>
 
-<line 
+<line
+  shape-rendering="crispEdges"
   x1={xr || $xScale(x)}
   x2={xr || $xScale(x)}
   y1={$top}
