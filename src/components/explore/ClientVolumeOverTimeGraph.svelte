@@ -1,7 +1,7 @@
 <script>
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
-  import { Line } from '@graph-paper/elements';
+  import Line from './Line.svelte';
 
   import Tweenable from '../Tweenable.svelte';
 
@@ -58,6 +58,7 @@
   </g>
   <g slot=body>
     <Line
+      scaling={false}
       curve="curveLinear"
       {data}
       x="label"

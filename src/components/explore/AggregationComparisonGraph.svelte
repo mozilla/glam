@@ -3,9 +3,10 @@
   import { Axis } from '@graph-paper/guides';
 
   import { DataGraphic } from '@graph-paper/datagraphic';
-  import { Line } from '@graph-paper/elements';
 
   import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+
+  import Line from './Line.svelte';
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
   import ChartTitle from './ChartTitle.svelte';
@@ -141,6 +142,7 @@
           {:else}
             <!-- This is the case of only having two points. -->
             <Line
+              scaling={false}
               y={'y'}
               x={'label'}
               useYScale={false}
