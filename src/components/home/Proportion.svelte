@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
 import { fade } from 'svelte/transition';
-import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
-import Axis from 'udgl/data-graphics/guides/Axis.svelte';
+import { DataGraphic } from '@graph-paper/datagraphic';
+import { Axis } from '@graph-paper/guides';
 
 import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
 
@@ -68,7 +68,7 @@ onMount(() => {
     left={16}
     right={16}
   >
-    <g slot=body let:xScale let:yScale let:top let:hoverValue let:bottom>
+    <g slot=body let:xScale let:yScale let:top let:mousePosition let:bottom>
       {#each Object.keys(data) as key, i (key)}
         <rect
           x={xScale(key)}
@@ -80,10 +80,10 @@ onMount(() => {
           fill-opacity=.8
         />
       {/each}
-      {#if hoverValue.x}
+      {#if mousePosition.x}
         <rect
           in:fade={{ duration: 100 }}
-          x={xScale(hoverValue.x)}
+          x={xScale(mousePosition.x)}
           y={top}
           width={xScale.bandwidth()}
           height={bottom - top}
@@ -92,19 +92,19 @@ onMount(() => {
         />
       {/if}
     </g>
-    <g slot=annotation let:hoverValue let:xScale let:top let:bottom let:left let:right>
+    <g slot=annotation let:mousePosition let:xScale let:top let:bottom let:left let:right>
       {#if metricKind !== 'categorical'}
         <Axis side=bottom showBorder tickCount={tickCount} tickFormatter={tickFormatter} />
       {:else}
         <Axis side=bottom showBorder showLabels={false} showTicks={false} tickFormatter={tickFormatter} />
       {/if}
       <g style='font-size:11px;' >
-        {#if hoverValue.x}
+        {#if mousePosition.x}
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>
-            {tickFormatter(hoverValue.x)}
+            {tickFormatter(mousePosition.x)}
           </text>
           <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>
-            {formatPercent(perc(hoverValue.x))}
+            {formatPercent(perc(mousePosition.x))}
           </text>
         {/if}
       </g>
