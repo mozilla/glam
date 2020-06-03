@@ -16,7 +16,6 @@ let container;
 let width;
 let height = 100;
 
-
 let xDomain = Object.keys(data);
 let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
