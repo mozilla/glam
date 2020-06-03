@@ -4,8 +4,8 @@ import { tweened } from 'svelte/motion';
 import { fade } from 'svelte/transition';
 import { cubicOut as easing } from 'svelte/easing';
 import { DataGraphic } from '@graph-paper/datagraphic';
-import Violin from 'udgl/data-graphics/elements/Violin.svelte';
 import { Axis } from '@graph-paper/guides';
+import Violin from './Violin.svelte';
 
 import { formatCount, formatPercentDecimal } from '../../utils/formatters';
 

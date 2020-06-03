@@ -4,7 +4,7 @@ import { fade } from 'svelte/transition';
 import { DataGraphic } from '@graph-paper/datagraphic';
 import { Axis } from '@graph-paper/guides';
 
-import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
+import { createCatColorMap } from '../../utils/color-maps';
 
 import { formatPercent } from '../../utils/formatters';
 

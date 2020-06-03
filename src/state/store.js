@@ -1,6 +1,6 @@
 import { derived, get } from 'svelte/store';
 
-import { createCatColorMap } from 'udgl/data-graphics/utils/color-maps';
+import { createCatColorMap } from '../utils/color-maps';
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.

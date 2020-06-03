@@ -1,11 +1,12 @@
 <script>
   import { fly } from 'svelte/transition';
   import { cubicOut as easing } from 'svelte/easing';
-  import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
-  import Springable from 'udgl/data-graphics/motion/Springable.svelte';
 
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
+
+  import Tweenable from '../Tweenable.svelte';
+  import Springable from '../Springable.svelte';
 
   // FIXME: replace this workaround w/ @graph-paper/elements version after
   // 0.0.0-alpha.13 is published

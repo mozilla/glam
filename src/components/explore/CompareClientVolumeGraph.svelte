@@ -2,9 +2,9 @@
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
 
-  import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
-
   import { Axis } from '@graph-paper/guides';
+
+  import Tweenable from '../Tweenable.svelte';
   import ChartTitle from './ChartTitle.svelte';
   import { compareClientCountsGraph, tween } from '../../utils/constants';
   import { formatCount } from '../../utils/formatters';
