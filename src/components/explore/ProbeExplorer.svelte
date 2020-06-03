@@ -2,7 +2,7 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
-import { window1D } from 'udgl/data-graphics/utils/window-functions';
+import { window1D } from '@graph-paper/core/utils/window-functions';
 import ToplineMetrics from './ToplineMetrics.svelte';
 
 import AggregationsOverTimeGraph from './AggregationsOverTimeGraph.svelte';
