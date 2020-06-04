@@ -33,6 +33,7 @@
   export let lineColorMap = () => 'gray';
   export let hovered = {};
   export let reference = {};
+  export let yTickFormatter;
 
   export let metricKeys;
   export let yAccessor;
@@ -80,7 +81,7 @@
       on:click
     >
     <g slot=background>
-      <Axis side="left" lineStyle=short tickCount={3} />
+      <Axis side="left" lineStyle=short tickFormatter={yTickFormatter}  />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}

@@ -1,6 +1,6 @@
 <script>
 import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
-import { Help } from '@graph-paper/icons';
+import Help from 'udgl/icons/Help.svelte';
 
 export let description;
 export let left = 0;
