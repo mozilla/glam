@@ -1,5 +1,4 @@
 <script>
-
 const sizes = [
   '1q', '1h', 'base', '2x', '4x', '6x', '8x', '12x', '16x', '24x', '32x', '40x', '48x', '72x', '96x',
 ];
@@ -8,7 +7,6 @@ const getPxValue = (s) => {
   const computed = getComputedStyle(document.documentElement).getPropertyValue(`--space-${s}`);
   return computed.match(/\d{1,2}/g).map((v) => +v).reduce((a, b) => a * b, 1);
 };
-
 </script>
 
 <style>

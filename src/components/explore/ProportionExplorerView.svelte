@@ -59,10 +59,6 @@ $: selectedData = filterResponseData(data, currentAggregation, currentKey);
 
 <style>
 
-h2 {
-  margin: 0;
-}
-
 .body-content {
   margin-top: var(--space-2x);
 }

@@ -1,7 +1,6 @@
 <script>
 import { onMount } from 'svelte';
 import { spring } from 'svelte/motion';
-import { fly, fade } from 'svelte/transition';
 
 import { randomNormal } from 'd3-random';
 
@@ -12,7 +11,9 @@ const length = 100;
 const xNorm = randomNormal(width / 2, width / 4);
 const yNorm = randomNormal(height / 2, height / 8);
 
-function makeData() { return Array.from({ length: length * 2 }).map((_, i) => ({ x: xNorm(), y: yNorm() })); }
+function makeData() {
+  return Array.from({ length: length * 2 }).map(() => ({ x: xNorm(), y: yNorm() }));
+}
 
 const lines = spring(makeData(), { damping: 0.1, stiffness: 0.01 });
 
@@ -43,7 +44,7 @@ svg {
 {#if mounted}
 <svg width={width} height={height}>
   {#each $lines as line, i}
-    <line 
+    <line
       x1={line.x + line.y - height} x2={line.x - (line.y)} y1={-50} y2={height + 50} stroke=var(--line-color) opacity=.25
       stroke-width={line / width * 2}
     />

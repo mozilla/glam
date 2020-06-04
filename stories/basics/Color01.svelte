@@ -1,5 +1,4 @@
 <script>
-
 const families = [
   { color: 'blue-slate', role: 'primary', d: 'toolbar / sidebar' },
   { color: 'digital-blue', role: 'secondary', d: 'accessible buttons / links' },
@@ -10,13 +9,31 @@ const families = [
 ];
 
 const tintsAndShades = (color) => {
-  const vals = [100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900];
+  const vals = [
+    100,
+    150,
+    200,
+    250,
+    300,
+    350,
+    400,
+    450,
+    500,
+    550,
+    600,
+    650,
+    700,
+    750,
+    800,
+    850,
+    900,
+  ];
+
   return vals.map((v) => ({
     c: `${color}-${v}`,
     v,
   }));
 };
-
 </script>
 
 <style>
@@ -57,11 +74,6 @@ const tintsAndShades = (color) => {
 
 .dark {
     color: white;
-}
-
-.main {
-    font-weight: 900;
-    height: calc(var(--increment) * 1.5);
 }
 
 </style>

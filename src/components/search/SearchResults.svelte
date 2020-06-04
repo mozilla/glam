@@ -75,7 +75,6 @@ afterUpdate(() => {
 });
 
 let x;
-let y;
 let width;
 
 // update the location once parentElement is defined (that is, the parentElement's component mounts)
@@ -206,7 +205,7 @@ li {
 
 <Portal>
 {#if $store.searchIsActive && $store.searchQuery.length}
-  <div 
+  <div
   id="telemetry-search-results"
   style="left: calc({x}px + var(--space-base)); width: calc({width}px - var(--space-base));"
     transition:fly={{ duration: 20, y: -10 }}
@@ -226,14 +225,14 @@ li {
               </div>
           </div>
           {/if}
-          
+
       </div>
       {#if $searchResults.results.length}
           <ul bind:this={searchListElement}
             aria-label="probe search results"
             activedescendent={$searchResults.results[focusedItem].name}>
           {#each $searchResults.results as {id, name, type, description, versions}, i (id)}
-              <li 
+              <li
                   role="option"
                   id={name}
                   class:focused={focusedItem === i} on:click={() => {

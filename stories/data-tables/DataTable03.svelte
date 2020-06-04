@@ -105,13 +105,6 @@ function setProbeInfo(i) {
 }
 
 setProbeInfo(3);
-
-// everything below this belongs elsewhere.
-
-let pageSize = 15;
-let probeKey;
-let aggKey;
-
 </script>
 
 <div class=story>
@@ -123,9 +116,9 @@ let aggKey;
   </label>
   {/each}
   <div style="
-    display:grid; 
-    grid-auto-flow: column; 
-    justify-content: start; 
+    display:grid;
+    grid-auto-flow: column;
+    justify-content: start;
     grid-column-gap: var(--space-4x);
     margin-top: var(--space-2x);
     margin-bottom: var(--space-2x);
@@ -133,7 +126,7 @@ let aggKey;
     {#if aggregationTypes && aggregationTypes.length > 1}
     <div class=body-control-set>
       <label class=body-control-set--label>Metric Type</label>
-      <AggregationTypeSelector 
+      <AggregationTypeSelector
         aggregationTypes={aggregationTypes}
         bind:currentAggregation={currentAggregation}
       />
@@ -143,7 +136,7 @@ let aggKey;
     {#if probeKeys && probeKeys.length > 1}
     <div class=body-control-set>
       <label class=body-control-set--label>Key</label>
-      <ProbeKeySelector 
+      <ProbeKeySelector
         options={probeKeys}
         bind:currentKey={currentKey}
       />
@@ -152,7 +145,7 @@ let aggKey;
   </div>
 
   {#if probe}
-    <TableView 
+    <TableView
       data={probe.data}
       colorMap={probe.class === 'proportion' ? probe.bucketColorMap : percentileLineColorMap}
       visibleBuckets={probe.class === 'proportion' ? probe.initialBuckets : [5, 25, 50, 75, 95]}
