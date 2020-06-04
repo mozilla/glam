@@ -98,6 +98,7 @@
           y=y
           color={lineColorMap(bin)}
           curve=curveLinear
+          lineDrawAnimation={{ duration: 500 }}
         />
       {/each}
     </g>
