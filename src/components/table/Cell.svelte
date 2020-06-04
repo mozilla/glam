@@ -1,6 +1,6 @@
 <script>
 import { getContext } from 'svelte';
-import { tooltip as tooltipAction } from '../utils/tooltip';
+import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
 
 export let header = getContext('header') || false;
 export let freezeX = false;
@@ -36,14 +36,14 @@ const scrollTop = getContext('scrollTop');
 </script>
 
 {#if header}
-  <th 
+  <th
     colspan={colspan}
     class="
       data-cell
       data-cell--header
       data-cell--size-{size}
-      data-cell--align-{align}" 
-    class:data-cell--frozen={freezeX || freezeY} 
+      data-cell--align-{align}"
+    class:data-cell--frozen={freezeX || freezeY}
     class:data-cell--right-border={rightBorder}
     class:data-cell--left-border={leftBorder}
     class:data-cell--top-border={topBorder}
@@ -52,7 +52,7 @@ const scrollTop = getContext('scrollTop');
     class:data-cell--header--has-padding={padding}
     class:data-cell--header--text={text}
     use:tooltipAction={{ text: tooltip }}
-    
+
     style="
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY ? $scrollTop : 0}px);
       --bottom-border-color: {bottomBorderColor || "var(--border-color)"};
@@ -71,10 +71,10 @@ const scrollTop = getContext('scrollTop');
   <td
     colspan={colspan}
     class="
-      data-cell 
+      data-cell
       data-cell--size-{size}
       data-cell--align-{align}
-    " 
+    "
     class:data-cell--frozen={freezeX || freezeY}
     class:data-cell--right-border={rightBorder}
     class:data-cell--left-border={leftBorder}
