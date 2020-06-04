@@ -119,7 +119,7 @@
         xScale={xScale}
         yScale={yScale}
       ></slot>
-      <Axis side="right" lineStyle="long" tickColor="var(--cool-gray-200)" tickFormatter={yTickFormatter} tickCount=6 />
+      <Axis side="right" lineStyle="long" tickColor="var(--cool-gray-200)" tickFormatter={yTickFormatter} />
       {#if showTopAxis}
         <Axis side="top" ticks={xDomain}  />
       {/if}

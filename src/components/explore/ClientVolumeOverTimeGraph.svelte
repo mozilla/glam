@@ -8,11 +8,14 @@
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
+  import { formatCount } from '../../utils/formatters';
+
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
   import TrackingLine from './TrackingLine.svelte';
   import TrackingLabel from './TrackingLabel.svelte';
 
   import ChartTitle from './ChartTitle.svelte';
+
 
   export let data;
   export let title;
@@ -47,7 +50,7 @@
   on:click
 >
   <g slot=background let:yScale>
-    <Axis side="left" lineStyle=short ticks={yScale.ticks(4)} />
+    <Axis side="left" lineStyle=short ticks={yScale.ticks(4)} tickFormatter={formatCount} />
     {#if aggregationLevel === 'build_id'}
       <Axis side="bottom" />
     {:else if xDomain.length <= 5}
