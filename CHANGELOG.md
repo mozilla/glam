@@ -2,6 +2,10 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.5.2...HEAD) (date TBD)
 
+- Replace data graphic components with `@graph-paper/datagraphic`,
+  `@graph-paper/elements`, and `@graph-paper/guides` equivalents
+  ([#573](https://github.com/mozilla/glam/pull/573))
+
 ## [2020.5.2](https://github.com/mozilla/glam/compare/2020.5.1...2020.5.2) (2020-05-26)
 
 - Select prerelease channel if current channel = release & probe only exists in
