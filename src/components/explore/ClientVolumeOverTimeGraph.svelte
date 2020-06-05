@@ -1,7 +1,7 @@
 <script>
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
-  import Line from './Line.svelte';
+  import { Line } from '@graph-paper/elements';
 
   import Tweenable from '../Tweenable.svelte';
 

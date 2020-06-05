@@ -17,9 +17,8 @@ let width;
 let height = 100;
 
 let xDomain = Object.keys(data);
-let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
-$: distSpring = Object.entries(data).map(([k, v]) => ({ bin: k, value: v * $spr }));
+$: distSpring = Object.entries(data).map(([k, v]) => ({ bin: k, value: v }));
 
 onMount(() => {
     width = container.getBoundingClientRect().width;
@@ -31,8 +30,8 @@ onMount(() => {
   {#if width}
   <DataGraphic
     {xDomain}
-    yDomain={['Y']}
     xType={xScaleType}
+    yType=linear
     width={width}
     height={height}
     top={20}
