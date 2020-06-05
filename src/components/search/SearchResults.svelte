@@ -80,7 +80,6 @@ let width;
 // update the location once parentElement is defined (that is, the parentElement's component mounts)
 $: if (parentElement && windowWidth) {
   const bounds = parentElement.getBoundingClientRect();
-  y = bounds.top + bounds.height;
   x = bounds.left;
   width = bounds.width;
 }
