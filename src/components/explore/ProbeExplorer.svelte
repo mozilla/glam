@@ -228,8 +228,6 @@ $: if (hoverValue.x) {
     dataVolume={data.length}
     showTopAxis={!justOne}
   >
-    <!-- add violin plots on the quantiles -->
-
     <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
         {#if hovered.datum && (!justOne)}

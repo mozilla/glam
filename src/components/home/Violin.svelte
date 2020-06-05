@@ -73,8 +73,7 @@ $: translateX = orientation === 'vertical' ? ($placementScale(placement) || rawP
 $: translateY = orientation === 'vertical' ? 0 : ($placementScale(placement) || rawPlacement);
 $: translate = `translate(${translateX}, ${translateY})`;
 
-
-$: histogramArea(plotDensities);
+// $: histogramArea(plotDensities);
 </script>
 
 {#if mounted}

@@ -4,13 +4,11 @@
 
   import { DataGraphic } from '@graph-paper/datagraphic';
   import { Axis } from '@graph-paper/guides';
+  import { Line } from '@graph-paper/elements';
 
   import Tweenable from '../Tweenable.svelte';
   import Springable from '../Springable.svelte';
 
-  // FIXME: replace this workaround w/ @graph-paper/elements version after
-  // 0.0.0-alpha.13 is published
-  import Line from './Line.svelte';
 
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -104,10 +102,12 @@
       {/each}
     </g>
     <g slot=annotation let:xScale let:yScale>
+      {#if reference}
       <Tweenable value={xScale(reference.label)} let:tweenValue>
         <TrackingLine xr={tweenValue} key={reference.label} />
         <TrackingLabel _bugInSvelteRequiresThisSmallFix={reference.label} yOffset={16} xr={tweenValue} align=top background=white label="Ref." />
       </Tweenable>
+      {/if}
 
       {#if hovered.datum}
         <TrackingLine x={hovered.datum.label} />

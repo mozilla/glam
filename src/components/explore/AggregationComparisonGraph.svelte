@@ -6,7 +6,7 @@
 
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
-  import Line from './Line.svelte';
+  import { Line } from '@graph-paper/elements';
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
   import ChartTitle from './ChartTitle.svelte';
