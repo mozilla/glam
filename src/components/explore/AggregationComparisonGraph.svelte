@@ -4,7 +4,7 @@
 
   import { DataGraphic } from '@graph-paper/datagraphic';
 
-  import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
+  import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
   import Line from './Line.svelte';
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
