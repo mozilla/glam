@@ -81,13 +81,12 @@ export const transformQuantileResponse = (probeData, key = 'version') =>
     };
   });
 
-function toProportions(obj) {
-  const proportions = {};
-  const total = Object.values(obj).reduce((a, b) => a + b, 0);
+function toCounts(obj, total) {
+  const counts = {};
   Object.keys(obj).forEach((p) => {
-    proportions[p] = obj[p] / total;
+    counts[p] = obj[p] * total;
   });
-  return proportions;
+  return counts;
 }
 
 export const transformProportionResponse = (
@@ -96,15 +95,16 @@ export const transformProportionResponse = (
   prepareArgs = {}
 ) =>
   probeData.map((probe) => {
-    const counts = { ...probe.histogram };
+    const proportions = { ...probe.histogram };
     if (prepareArgs.probeType === 'histogram-boolean') {
-      counts.no = counts['0'];
-      counts.yes = counts['1'];
-      delete counts['0'];
-      delete counts['1'];
-      delete counts['2'];
+      proportions.no = proportions['0'];
+      proportions.yes = proportions['1'];
+      delete proportions['0'];
+      delete proportions['1'];
+      delete proportions['2'];
     }
-    const proportions = toProportions(counts);
+    const counts = toCounts(proportions, probe.total_users);
+
     return {
       ...probe,
       label: key === 'version' ? probe[key] : fullBuildIDToDate(probe[key]),
