@@ -20,7 +20,7 @@ export function createCatColorMap(options) {
   return function catColorMap(v) {
     const i = getID(v);
     if (i >= 10 || i === undefined) {
-      return 'var(--cool-gray-200)';
+      return 'var(--cool-gray-300)';
     }
     return schemeTableau10[i];
   };

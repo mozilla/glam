@@ -36,6 +36,7 @@
     "prettier": "2.0.5",
     "rollup": "1.27.13",
     "rollup-plugin-livereload": "1.0.1",
+    "rollup-plugin-postcss": "3.1.1",
     "rollup-plugin-svelte": "5.2.2",
     "rollup-plugin-terser": "5.3.0",
     "sirv-cli": "0.4.6",
@@ -45,6 +46,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "1.6.0",
     "@graph-paper/icons": "0.0.0-alpha.8",
+    "@graph-paper/optionmenu": "0.0.0-alpha.13",
     "d3-format": "1.4.4",
     "d3-scale": "3.2.1",
     "d3-scale-chromatic": "1.5.0",
