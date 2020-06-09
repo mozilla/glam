@@ -1050,7 +1050,6 @@ h2 span {
   padding: var(--space-4x);
   padding-top: var(--space-2x);
 
-  border-right: 2px solid var(--cool-gray-100);
   border-radius: 0 var(--content-border-radius) var(--content-border-radius) 0;
 }
 
