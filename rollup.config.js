@@ -19,7 +19,10 @@ export default {
   },
   plugins: [
     json(),
-    replace({ __BASE_DOMAIN__: production ? '' : 'http://localhost:8000' }),
+    replace({
+      __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
+      __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
+    }),
     svelte({
       // enable run-time checks when not in production
       dev: !production,

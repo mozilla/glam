@@ -71,6 +71,14 @@
     };
   }
 
+  // Google Analytics middleware
+  page((ctx, next) => {
+    gtag('config', '__GA_TRACKING_ID__', {
+      page_path: ctx.pathname,
+    });
+    next();
+  });
+
   page('/', useComponent(Home));
   page('/:product/:section/:probeName/explore', useComponent(ProbeExplore, 'explore'));
   page('/:product/:section/:probeName/table', useComponent(ProbeTable, 'table'));
