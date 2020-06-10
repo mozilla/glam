@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.5.2...HEAD) (date TBD)
 
+- Fix issue with categorical explorer counts
+  ([#587](https://github.com/mozilla/glam/pull/587))
+
 ## [2020.5.2](https://github.com/mozilla/glam/compare/2020.5.1...2020.5.2) (2020-05-26)
 
 - Select prerelease channel if current channel = release & probe only exists in
