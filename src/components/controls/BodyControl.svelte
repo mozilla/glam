@@ -40,13 +40,21 @@ function toggle(v) {
 
 </script>
 
+<style>
+  .body-control__color-swatch-wrapper {
+    align-self: center;
+  }
+</style>
+
 <ButtonGroup {justify}>
   {#each options as {label, value, labelColor, tooltip, component}, i (label)}
     <Button tooltip={tooltip} level={level} compact={compact} toggled={multi
     ? selected.includes(value) : selected === value} on:click={() => { toggle(value); }
     }>
       {#if labelColor}
-        <ColorSwatch color={labelColor} />
+        <div class="body-control__color-swatch-wrapper">
+          <ColorSwatch color={labelColor} />
+        </div>
       {/if}
       {#if component}
         <svelte:component this={component} size={14} />
