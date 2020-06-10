@@ -60,7 +60,10 @@ function filterResponseData(d, agg, key) {
 $: selectedData = filterResponseData(data, currentAggregation, currentKey);
 
 let showOptionMenu = false;
-let coloredBuckets;
+let coloredBuckets = [];
+let everActiveBuckets = [];
+let sortedImportantBuckets = [];
+let sortedUnimportantBuckets = [];
 
 if (bucketOptions.length > numHighlightedBuckets) {
   showOptionMenu = true;
@@ -78,32 +81,33 @@ if (bucketOptions.length > numHighlightedBuckets) {
   }).slice(-numHighlightedBuckets).map(([bucket]) => bucket);
 }
 
-let everActiveBuckets = [];
-$: everActiveBuckets = [...new Set([
-  ...activeBuckets,
-  ...everActiveBuckets,
-])];
+$: if (showOptionMenu) {
+  everActiveBuckets = [...new Set([
+    ...activeBuckets,
+    ...everActiveBuckets,
+  ])];
 
-// An important bucket is any bucket that:
-//
-//   (a) is colored
-//   (b) is currently active
-//   (c) has been active at some point in the past
-//
-// Rule (c) improves usability: if the user goes out of their way to enable a
-// bucket that we consider to be unimportant, we should consider it to be
-// important for the rest of the interaction. If we did not do this, the bucket
-// would switch between the important group and the unimportant group as it's
-// toggled, which would be annoying.
-$: sortedImportantBuckets = [...new Set([
-  ...everActiveBuckets,
-  ...coloredBuckets,
-])].sort(numericStringsSort);
+  // An important bucket is any bucket that:
+  //
+  //   (a) is colored
+  //   (b) is currently active
+  //   (c) has been active at some point in the past
+  //
+  // Rule (c) improves usability: if the user goes out of their way to enable a
+  // bucket that we consider to be unimportant, we should consider it to be
+  // important for the rest of the interaction. If we did not do this, the bucket
+  // would switch between the important group and the unimportant group as it's
+  // toggled, which would be annoying.
+  sortedImportantBuckets = [...new Set([
+    ...everActiveBuckets,
+    ...coloredBuckets,
+  ])].sort(numericStringsSort);
 
-// An unimportant bucket is any other bucket
-$: sortedUnimportantBuckets = bucketOptions.filter((bucket) => (
-  !sortedImportantBuckets.includes(bucket)
-)).sort(numericStringsSort);
+  // An unimportant bucket is any other bucket
+  sortedUnimportantBuckets = bucketOptions.filter((bucket) => (
+    !sortedImportantBuckets.includes(bucket)
+  )).sort(numericStringsSort);
+}
 </script>
 
 <style>
