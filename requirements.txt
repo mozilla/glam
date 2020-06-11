@@ -16,7 +16,7 @@ dj-database-url==0.5.0    # via -r requirements.in
 django-configurations==2.2  # via -r requirements.in
 django==3.0.7             # via -r requirements.in, djangorestframework, drf-orjson-renderer, mozilla-django-oidc
 djangorestframework==3.11.0  # via -r requirements.in, drf-orjson-renderer
-dockerflow==2019.10.0     # via -r requirements.in
+dockerflow==2020.6.0      # via -r requirements.in
 drf-orjson-renderer==1.1.3  # via -r requirements.in
 flake8==3.8.2             # via -r requirements.in
 google-api-core==1.17.0   # via google-cloud-bigquery, google-cloud-core
