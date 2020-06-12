@@ -47,7 +47,6 @@ function filterQuantileData(d, agg, key) {
 }
 
 $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
-
 </script>
 
 <style>
