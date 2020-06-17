@@ -1,31 +1,19 @@
 <script>
 import ProportionExplorerView from '../../../src/components/explore/ProportionExplorerView.svelte';
-import SSL_RESUMED_SESSION_BUILD_ID from '../../../tests/data/ssl_resumed_session_build_id.json';
-import SSL_RESUMED_SESSION_VERSION from '../../../tests/data/ssl_resumed_session_version.json';
-import SSL_HANDSHAKE_VERSION_BUILD_ID from '../../../tests/data/ssl_handshake_version_build_id.json';
-import SSL_HANDSHAKE_VERSION_VERSION from '../../../tests/data/ssl_handshake_version_version.json';
-
-import CRYPTO_BUILD_ID from '../../../tests/data/cryptominers_blocked_count_build_id.json';
-import CRYPTO_VERSION from '../../../tests/data/cryptominers_blocked_count_version.json';
-
-import GCREASON2_BUILD_ID from '../../../tests/data/gc_reason_2_build_id.json';
-import GCREASON2_VERSION from '../../../tests/data/gc_reason_2_version.json';
+import PWMGR_FORM_BUILD_ID from './pwmgr_form_autofill_result_build_id.json';
+import PWMGR_FORM_VERSION from './pwmgr_form_autofill_result_version.json';
+import SSL_RESUMED_SESSION_BUILD_ID from './ssl_resumed_session_build_id.json';
+import SSL_RESUMED_SESSION_VERSION from './ssl_resumed_session_version.json';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
+import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils'
+import { extractBucketMetadata } from '../../../src/state/store';
 
-import { responseToData, extractBucketMetadata } from '../../../src/state/store';
+const sslResumedSessionBuildID = transformGLAMAPIResponse(SSL_RESUMED_SESSION_BUILD_ID.response, 'proportion', 'build_id');
+const sslResumedSessionVersion = transformGLAMAPIResponse(SSL_RESUMED_SESSION_VERSION.response, 'proportion', 'version');
 
-// build_id -level data.
-const sslResumedSessionBuildID = responseToData(SSL_RESUMED_SESSION_BUILD_ID.response, 'proportion', 'histogram-boolean');
-const sslHandshakeVersionBuildID = responseToData(SSL_HANDSHAKE_VERSION_BUILD_ID.response, 'proportion', 'histogram-enumerated');
-const cryptominersBlockedCountBuildID = responseToData(CRYPTO_BUILD_ID.response, 'proportion', 'histogram-categorical');
-const gcReason2BuildID = responseToData(GCREASON2_BUILD_ID.response, 'proportion', 'histogram-enumerated');
-
-const sslResumedSessionVersion = responseToData(SSL_RESUMED_SESSION_VERSION.response, 'proportion', 'histogram-boolean', 'version');
-const sslHandshakeVersionVersion = responseToData(SSL_HANDSHAKE_VERSION_VERSION.response, 'proportion', 'histogram-enumerated', 'version');
-const cryptominersBlockedCountVersion = responseToData(CRYPTO_VERSION.response.slice(-1), 'proportion', 'histogram-categorical', 'version');
-const gcReason2Version = responseToData(GCREASON2_VERSION.response, 'proportion', 'histogram-enumerated', 'version');
-
+const pwmgrBuildID = transformGLAMAPIResponse(PWMGR_FORM_BUILD_ID.response, 'proportion', 'build_id');
+const pwmgrVersion = transformGLAMAPIResponse(PWMGR_FORM_VERSION.response, 'proportion', 'version');
 
 let probes = [
   {
@@ -40,43 +28,17 @@ let probes = [
     },
     probeType: 'histogram-boolean',
   },
-  {
-    name: 'SSL_HANDSHAKE_VERSION',
+    {
+    name: 'PWMGR_FORM_AUTOFILL_RESULT',
     build_id: {
-      data: sslHandshakeVersionBuildID,
-      ...extractBucketMetadata(sslHandshakeVersionBuildID),
+      data: pwmgrBuildID,
+      ...extractBucketMetadata(pwmgrBuildID),
     },
     version: {
-      data: sslHandshakeVersionVersion,
-      ...extractBucketMetadata(sslHandshakeVersionVersion),
+      data: pwmgrVersion,
+      ...extractBucketMetadata(pwmgrVersion),
     },
-    probeType: 'histogram-enumerated',
-  },
-  {
-    name: 'cryptominers_blocked_count',
-    build_id: {
-      data: cryptominersBlockedCountBuildID,
-      ...extractBucketMetadata(cryptominersBlockedCountBuildID),
-    },
-    version: {
-      data: cryptominersBlockedCountVersion,
-      ...extractBucketMetadata(cryptominersBlockedCountVersion),
-    },
-    probeType: 'histogram-categorical',
-
-  },
-  {
-    name: 'gc_reason_2',
-    build_id: {
-      data: gcReason2BuildID,
-      ...extractBucketMetadata(gcReason2BuildID),
-    },
-    version: {
-      data: gcReason2Version,
-      ...extractBucketMetadata(gcReason2Version),
-    },
-    probeType: 'histogram-enumerated',
-
+    probeType: 'histogram-boolean',
   },
 ];
 

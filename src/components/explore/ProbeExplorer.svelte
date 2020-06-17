@@ -102,7 +102,8 @@ $: if (aggregationLevel === 'build_id') {
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
 function leftLabelForAggComparison(d, aggLevel, x) {
-  if (d.length === 2) return d[0].label;
+  if (d.length === 2 && aggLevel == 'build_id') return formatBuildIDToDateString(d[0].label);
+  else if (d.length === 2 ) return d[0].label;
   if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
   return x;
 }
