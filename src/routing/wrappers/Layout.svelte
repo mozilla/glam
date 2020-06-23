@@ -41,6 +41,14 @@
 }
 </style>
 
+<svelte:head>
+  {#if $store.route.section === 'probe'}
+    <title>{$store.probeName} | GLAM</title>
+  {:else}
+    <title>GLAM: Glean Aggregated Metrics Explorer</title>
+  {/if}
+</svelte:head>
+
 <App>
   <Toolbar sticky>
     <GLAMMark />
