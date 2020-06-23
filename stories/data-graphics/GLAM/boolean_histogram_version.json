@@ -1,1 +1,46 @@
-{"response":[{"version":"5","os":"*","build_id":"*","process":"parent","metric":"Boolean Histogram (version)","metric_key":"","metric_type":"histogram-boolean","total_users":739846,"histogram":{"0":0.7663,"1":0.2337},"percentiles":{"5":0,"25":0,"50":0,"75":0,"95":1},"client_agg_type":"summed_histogram","total_addressable_market":null},{"version":"4","os":"*","build_id":"*","process":"parent","metric":"Boolean Histogram (version)","metric_key":"","metric_type":"histogram-boolean","total_users":1165007,"histogram":{"0":0.8078,"1":0.1922},"percentiles":{"5":0,"25":0,"50":0,"75":0,"95":1},"client_agg_type":"summed_histogram","total_addressable_market":null},{"version":"3","os":"*","build_id":"*","process":"parent","metric":"Boolean Histogram (version)","metric_key":"","metric_type":"histogram-boolean","total_users":1322356,"histogram":{"0":0.8082,"1":0.1918},"percentiles":{"5":0,"25":0,"50":0,"75":0,"95":1},"client_agg_type":"summed_histogram","total_addressable_market":null}]}
+{
+  "response": [
+    {
+      "version": "5",
+      "os": "*",
+      "build_id": "*",
+      "process": "parent",
+      "metric": "Boolean Histogram (version)",
+      "metric_key": "",
+      "metric_type": "histogram-boolean",
+      "total_users": 739846,
+      "histogram": { "0": 0.7663, "1": 0.2337 },
+      "percentiles": { "5": 0, "25": 0, "50": 0, "75": 0, "95": 1 },
+      "client_agg_type": "summed_histogram",
+      "total_addressable_market": null
+    },
+    {
+      "version": "4",
+      "os": "*",
+      "build_id": "*",
+      "process": "parent",
+      "metric": "Boolean Histogram (version)",
+      "metric_key": "",
+      "metric_type": "histogram-boolean",
+      "total_users": 1165007,
+      "histogram": { "0": 0.8078, "1": 0.1922 },
+      "percentiles": { "5": 0, "25": 0, "50": 0, "75": 0, "95": 1 },
+      "client_agg_type": "summed_histogram",
+      "total_addressable_market": null
+    },
+    {
+      "version": "3",
+      "os": "*",
+      "build_id": "*",
+      "process": "parent",
+      "metric": "Boolean Histogram (version)",
+      "metric_key": "",
+      "metric_type": "histogram-boolean",
+      "total_users": 1322356,
+      "histogram": { "0": 0.8082, "1": 0.1918 },
+      "percentiles": { "5": 0, "25": 0, "50": 0, "75": 0, "95": 1 },
+      "client_agg_type": "summed_histogram",
+      "total_addressable_market": null
+    }
+  ]
+}
