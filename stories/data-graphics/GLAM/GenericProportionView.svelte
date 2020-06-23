@@ -1,44 +1,44 @@
 <script>
 import ProportionExplorerView from '../../../src/components/explore/ProportionExplorerView.svelte';
-import PWMGR_FORM_BUILD_ID from './pwmgr_form_autofill_result_build_id.json';
-import PWMGR_FORM_VERSION from './pwmgr_form_autofill_result_version.json';
-import SSL_RESUMED_SESSION_BUILD_ID from './ssl_resumed_session_build_id.json';
-import SSL_RESUMED_SESSION_VERSION from './ssl_resumed_session_version.json';
+import ENUMERATED_HISTOGRAM_BUILD_ID from './enumerated_histogram_build_id.json';
+import ENUMERATED_HISTOGRAM_VERSION from './enumerated_histogram_version.json';
+import BOOLEAN_HISTOGRAM_BUILD_ID from './boolean_histogram_build_id.json';
+import BOOLEAN_HISTOGRAM_VERSION from './boolean_histogram_version.json';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils'
 import { extractBucketMetadata } from '../../../src/state/store';
 
-const sslResumedSessionBuildID = transformGLAMAPIResponse(SSL_RESUMED_SESSION_BUILD_ID.response, 'proportion', 'build_id');
-const sslResumedSessionVersion = transformGLAMAPIResponse(SSL_RESUMED_SESSION_VERSION.response, 'proportion', 'version');
+const booleanHistogramBuildID = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
+const booleanHistogramVersion = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_VERSION.response, 'proportion', 'version');
 
-const pwmgrBuildID = transformGLAMAPIResponse(PWMGR_FORM_BUILD_ID.response, 'proportion', 'build_id');
-const pwmgrVersion = transformGLAMAPIResponse(PWMGR_FORM_VERSION.response, 'proportion', 'version');
+const enumeratedHistogramBuildID = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
+const enumeratedHistogramVersion = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_VERSION.response, 'proportion', 'version');
 
 let probes = [
   {
-    name: 'SSL_RESUMED_SESSION',
+    name: 'Boolean Histogram',
     build_id: {
-      data: sslResumedSessionBuildID,
-      ...extractBucketMetadata(sslResumedSessionBuildID),
+      data: booleanHistogramBuildID,
+      ...extractBucketMetadata(booleanHistogramBuildID),
     },
     version: {
-      data: sslResumedSessionVersion,
-      ...extractBucketMetadata(sslResumedSessionVersion),
+      data: booleanHistogramVersion,
+      ...extractBucketMetadata(booleanHistogramVersion),
     },
     probeType: 'histogram-boolean',
   },
     {
-    name: 'PWMGR_FORM_AUTOFILL_RESULT',
+    name: 'Enumerated Histogram',
     build_id: {
-      data: pwmgrBuildID,
-      ...extractBucketMetadata(pwmgrBuildID),
+      data: enumeratedHistogramBuildID,
+      ...extractBucketMetadata(enumeratedHistogramBuildID),
     },
     version: {
-      data: pwmgrVersion,
-      ...extractBucketMetadata(pwmgrVersion),
+      data: enumeratedHistogramVersion,
+      ...extractBucketMetadata(enumeratedHistogramVersion),
     },
-    probeType: 'histogram-boolean',
+    probeType: 'histogram-enumerated',
   },
 ];
 

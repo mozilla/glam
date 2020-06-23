@@ -1,9 +1,9 @@
 <script>
 import QuantileExplorerView from '../../../src/components/explore/QuantileExplorerView.svelte';
-import BROWSER_STARTUP_BUILD_ID from './browser_startup_average_time_build_id.json';
-import BROWSER_STARTUP_VERSION from './browser_startup_average_time_version.json';
-import CONTENT_FRAME_TIME_BUILD_ID from './content_frame_time_build_id.json';
-import CONTENT_FRAME_TIME_VERSION from './content_frame_time_version.json';
+import SCALAR_UINT_BUILD_ID from './scalar_uint_build_id.json';
+import SCALAR_UINT_VERSION from './scalar_uint_version.json';
+import EXPONENTIAL_HISTOGRAM_BUILD_ID from './exponential_histogram_build_id.json';
+import EXPONENTIAL_HISTOGRAM_VERSION from './exponential_histogram_version.json';
 
 import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils';
 
@@ -12,35 +12,35 @@ import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 let which = 0;
 let aggregationLevel = 'build_id';
 
-let ctf_buildID01 = transformGLAMAPIResponse(CONTENT_FRAME_TIME_BUILD_ID.response.map(di=> ({...di})).slice(-1), 'quantile', 'build_id')
-let ctf_version01 = transformGLAMAPIResponse(CONTENT_FRAME_TIME_VERSION.response.map(di=> ({...di})).slice(-1), 'quantile', 'version')
+let buildID01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map(di=> ({...di})).slice(-1), 'quantile', 'build_id')
+let version01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map(di=> ({...di})).slice(-1), 'quantile', 'version')
 
-let ctf_buildID02 = transformGLAMAPIResponse(CONTENT_FRAME_TIME_BUILD_ID.response.map(di=> ({...di})).slice(-2), 'quantile', 'build_id')
-let ctf_version02 = transformGLAMAPIResponse(CONTENT_FRAME_TIME_VERSION.response.map(di=> ({...di})).slice(-2), 'quantile', 'version')
+let buildID02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map(di=> ({...di})).slice(-2), 'quantile', 'build_id')
+let version02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map(di=> ({...di})).slice(-2), 'quantile', 'version')
 
 let probes = [
   {
-    name: 'browser_startup_average_time',
-    build_id: transformGLAMAPIResponse(BROWSER_STARTUP_BUILD_ID.response, 'quantile', 'build_id'),
-    version: transformGLAMAPIResponse(BROWSER_STARTUP_VERSION.response, 'quantile', 'version'),
+    name: 'Scalar (uint)',
+    build_id: transformGLAMAPIResponse(SCALAR_UINT_BUILD_ID.response, 'quantile', 'build_id'),
+    version: transformGLAMAPIResponse(SCALAR_UINT_VERSION.response, 'quantile', 'version'),
     probeType: 'scalar',
   },
     {
-    name: 'content_frame_time',
-    build_id: transformGLAMAPIResponse(CONTENT_FRAME_TIME_BUILD_ID.response, 'quantile', 'build_id'),
-    version: transformGLAMAPIResponse(CONTENT_FRAME_TIME_VERSION.response, 'quantile', 'version'),
-    probeType: 'scalar',
+    name: 'Exponential Histogram',
+    build_id: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response, 'quantile', 'build_id'),
+    version: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response, 'quantile', 'version'),
+    probeType: 'histogram-exponential',
   },
   {
-    name: 'content_frame_time (2 pts)',
-  build_id: ctf_buildID02,
-  version: ctf_version02,
+    name: 'Exponential Histogram (2 pts)',
+  build_id: buildID02,
+  version: version02,
   probeType: 'histogram-exponential'
   },
   {
-    name: 'content_frame_time (1 pt)',
-  build_id: ctf_buildID01,
-  version: ctf_version01,
+    name: 'Exponential Histogram (1 pt)',
+  build_id: buildID01,
+  version: version01,
   probeType: 'histogram-exponential'
   }
 ];
