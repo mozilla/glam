@@ -299,12 +299,36 @@ class TestAggregationsApi:
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
-                "versions": [72],
+                "versions": 1,
                 "aggregationLevel": "version",
             }
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
+
+    def test_versions_count(self, client, monkeypatch):
+        # Max version in the test data is 72. If we pass versions=4 we should
+        # get 4 records back, even though we have 7 in the db.
+        _create_aggregation()
+        _create_aggregation({"version": 71})
+        _create_aggregation({"version": 70})
+        _create_aggregation({"version": 69})
+        _create_aggregation({"version": 68})
+        _create_aggregation({"version": 67})
+        _create_aggregation({"version": 66})
+
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["response"]) == 4
 
     def test_process_filter(self, client):
         _create_aggregation()
@@ -315,7 +339,7 @@ class TestAggregationsApi:
                 "channel": "nightly",
                 "process": "content",
                 "probe": "gc_ms",
-                "versions": [72],
+                "versions": 2,
                 "aggregationLevel": "version",
             }
         }

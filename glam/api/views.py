@@ -50,25 +50,21 @@ def get_firefox_aggregations(request, **kwargs):
     except KeyError:
         raise ValidationError("Product not currently supported.")
 
-    # Check if a version was provided and if not, get the MAX version from our
-    # data to select the last 3 versions by default.
-    if "versions" not in kwargs or not kwargs["versions"]:
-        try:
-            max_version = int(model.objects.aggregate(Max("version"))["version__max"])
-        except (ValueError, KeyError):
-            raise ValidationError("Query version cannot be determined")
-        kwargs["versions"] = list(range(max_version, max_version - 3, -1))
+    num_versions = kwargs.get("versions", 3)
+    try:
+        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+    except (ValueError, KeyError):
+        raise ValidationError("Query version cannot be determined")
+    versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
     labels_cache = caches["probe-labels"]
     if labels_cache.get("__labels__") is None:
         Probe.populate_labels_cache()
 
-    probe = kwargs["probe"]
-    versions = list(map(str, kwargs["versions"]))
     os = kwargs.get("os", "*")
 
     dimensions = [
-        Q(metric=probe),
+        Q(metric=kwargs["probe"]),
         Q(version__in=versions),
         Q(os=os),
     ]
@@ -157,18 +153,16 @@ def get_glean_aggregations(request, **kwargs):
     except KeyError:
         raise ValidationError("Product not currently supported.")
 
-    # Check if a version was provided and if not, get the MAX version from our
-    # data to select the last 3 versions by default.
-    if "versions" not in kwargs or not kwargs["versions"]:
-        try:
-            max_version = int(model.objects.aggregate(Max("version"))["version__max"])
-        except (ValueError, KeyError):
-            raise ValidationError("Query version cannot be determined")
-        kwargs["versions"] = list(range(max_version, max_version - 3, -1))
+    num_versions = kwargs.get("versions", 3)
+    try:
+        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+    except (ValueError, KeyError):
+        raise ValidationError("Query version cannot be determined")
+    versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
     dimensions = [
         Q(metric=kwargs["probe"]),
-        Q(version__in=list(map(str, kwargs["versions"]))),
+        Q(version__in=versions),
         Q(os=kwargs.get("os") or "*"),
     ]
 
@@ -250,7 +244,7 @@ def aggregations(request):
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "process": "content"
-                "versions": ["70"],  # Optional. Defaults to last 3 versions.
+                "versions": 5,  # Defaults to 3 versions.
                 "aggregationLevel": "version"  # OR "build_id"
             }
         }
