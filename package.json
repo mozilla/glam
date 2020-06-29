@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "1.6.0",
-    "@graph-paper/icons": "0.0.0-alpha.8",
+    "@graph-paper/icons": "0.0.0-alpha.13",
     "@graph-paper/optionmenu": "0.0.0-alpha.13",
     "d3-format": "1.4.4",
     "d3-scale": "3.2.1",
