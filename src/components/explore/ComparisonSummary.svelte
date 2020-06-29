@@ -162,7 +162,15 @@ td, th {
     <tbody>
           {#each displayValues as {leftValue, rightValue, percentageChange, key}, i (key)}
             <tr>
-              <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
+              <!-- FIXME: the tooltip used here causes performance lag due to completely destroy performance.
+                If a solution is found for https://github.com/graph-paper-org/graph-paper/issues/52, let's
+                bring back the tooltip.
+               -->
+              <!-- <td class="value-label" use:tooltipAction={{ text: keyFormatter(key), location: 'top' }}>
+                <span class=percentile-label-block
+                style="background-color: {colorMap(key)};"></span>{keyFormatter(key)}</td> -->
+
+              <td class="value-label">
                 <span class=percentile-label-block
                 style="background-color: {colorMap(key)};"></span>{keyFormatter(key)}</td>
 
