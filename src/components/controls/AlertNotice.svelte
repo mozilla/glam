@@ -27,11 +27,11 @@
     position: fixed;
     left: var(--space-6x);
     bottom: var(--space-6x);
-    border: 1px solid var(--bright-yellow-500);
-    background-color: var(--bright-yellow-100);
-    color: var(--bright-yellow-700);
+    border: var(--alert-notice-border);
+    background-color: var(--alert-notice-background);
+    color: var(--alert-notice-text-color);
     border-radius: var(--border-radius-base);
-    padding: var(--space-2x);
+    padding: var(--alert-notice-item-padding);
     box-shadow: var(--depth-small);
     z-index: 10;
   }

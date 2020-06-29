@@ -9,6 +9,16 @@ import postcss from 'rollup-plugin-postcss';
 
 const production = process.env.NODE_ENV === 'production';
 
+// We can provide this as another ENV var if desired (uses NODE_ENV currently).
+// FIXME: This will need other real paths. All set to dev currently.
+const SEARCH_DOMAINS = {
+  dev: 'https://dev.probe-search.nonprod.dataops.mozgcp.net',
+  stage: 'https://dev.probe-search.nonprod.dataops.mozgcp.net',
+  production: 'https://dev.probe-search.nonprod.dataops.mozgcp.net',
+};
+const SEARCH_DOMAIN =
+  SEARCH_DOMAINS[process.env.NODE_ENV] || SEARCH_DOMAINS.dev;
+
 export default {
   input: 'src/main.js',
   output: {
@@ -22,6 +32,7 @@ export default {
     replace({
       __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
+      __BASE_SEARCH_DOMAIN__: SEARCH_DOMAIN,
     }),
     svelte({
       // enable run-time checks when not in production
