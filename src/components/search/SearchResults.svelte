@@ -6,7 +6,7 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import { currentQuery } from '../../state/store';
+import { store, currentQuery } from '../../state/store';
 
 export let results = [];
 
@@ -230,18 +230,20 @@ li {
           <ul bind:this={searchListElement}
             aria-label="probe search results"
             activedescendent={results[focusedItem].name}>
-            {#each results as {name, type, definition: {description, versions}}, i (name)}
+            {#each results as searchResult, i (searchResult.name)}
               <li
                 role="option"
-                id={name}
+                id={searchResult.name}
                 class:focused={focusedItem === i}
                 on:click={() => {
                   page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
                 }}
                 on:mouseover={() => { focusedItem = i; }}>
-                  <div class="name body-text--short-01">{name}</div>
-                  <div class="probe-type label label-text--01 label--{type}">{type}</div>
-                  <div class="description body-text--short-01">{@html description}</div>
+                  <div class="name body-text--short-01">{searchResult.name}</div>
+                  <div class="probe-type label label-text--01 label--{searchResult.type}">{searchResult.type}</div>
+                  <div class="description body-text--short-01">
+                    {@html searchResult.definition.history[$store.productDimensions.channel][0].description}
+                  </div>
               </li>
             {/each}
           </ul>

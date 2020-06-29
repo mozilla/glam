@@ -16,7 +16,7 @@ let searchIsActive = false;
 let searchQuery = '';
 
 const SEARCH_THROTTLE_TIME = 500; // how often to send the PSS fetch (in ms)
-const SEARCH_RESULTS_LIMIT = 15; // maximum number of results to show
+const SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
 
 function turnOnSearch() {
   searchIsActive = true;
