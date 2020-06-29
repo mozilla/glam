@@ -9,6 +9,7 @@
   import Tweenable from '../Tweenable.svelte';
   import Springable from '../Springable.svelte';
 
+  import BuildIDRollover from './BuildIDRollover.svelte';
 
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
@@ -103,10 +104,10 @@
     </g>
     <g slot=annotation let:xScale let:yScale>
       {#if reference}
-      <Tweenable value={xScale(reference.label)} let:tweenValue>
-        <TrackingLine xr={tweenValue} key={reference.label} />
-        <TrackingLabel _bugInSvelteRequiresThisSmallFix={reference.label} yOffset={16} xr={tweenValue} align=top background=white label="Ref." />
-      </Tweenable>
+        <Tweenable value={xScale(reference.label)} let:tweenValue={tv1}>
+          <TrackingLine data-audienceSize={reference.audienceSize} xr={tv1} key={reference.label} />
+          <TrackingLabel data-audienceSize={yScale.domain()[1]} yOffset={16} xr={tv1} align=top background=white label="Ref." />
+        </Tweenable>
       {/if}
 
       {#if hovered.datum}
@@ -123,6 +124,9 @@
             />
           </Springable>
       {/each}
+      {#if aggregationLevel === 'build_id'}
+        <BuildIDRollover x={hovered.datum.label} label={hovered.datum.label} />
+      {/if}
       {/if}
 
       {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as {x, y, bin}, i (bin)}

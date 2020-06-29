@@ -1,25 +1,24 @@
 <script>
 import { getContext, onMount } from 'svelte';
+import { tweened } from 'svelte/motion';
+import { cubicOut as easing } from 'svelte/easing';
 import { formatToBuildID } from '../../utils/formatters';
 
 export let xScale = getContext('xScale');
-let margins = getContext('margins');
-let TOP = getContext('topPlot');
-let G = getContext('graphicWidth');
-let topPlot;
-let graphicWidth;
-TOP.subscribe((t) => { topPlot = t; });
-G.subscribe((w) => { graphicWidth = w; });
+let top = getContext('topPlot');
+let left = getContext('leftPlot');
+let right = getContext('rightPlot');
+
 export let x;
 export let label;
+
+let xt = tweened($xScale(x) || 0, {duration: 50, easing});
+$: $xt = $xScale(x) || 0;
 
 let parsedLabel = '';
 $: parsedLabel = formatToBuildID(label);
 
 let rollover;
-
-// xCorrection applies when the left or right side
-// of the
 let leftCorrection;
 let rightCorrection;
 let mounted = false;
@@ -30,8 +29,8 @@ onMount(() => {
 $: if (x && mounted) {
   let bounds = rollover.getBoundingClientRect();
   let w = bounds.width;
-  leftCorrection = w / 2;
-  rightCorrection = graphicWidth - w / 2;
+  leftCorrection = $left + w / 2;
+  rightCorrection = $right - w / 2;
 }
 
 </script>
@@ -44,8 +43,8 @@ tspan {
 
 <text
 bind:this={rollover}
-x={Math.min(Math.max($xScale(x), leftCorrection), rightCorrection)} 
-y={topPlot - margins.buffer - 12}
+x={Math.min(Math.max($xt, leftCorrection), rightCorrection)}
+y={$top - 16}
 text-anchor='middle'
 font-family="var(--main-mono-font)"
 font-size='12'>
