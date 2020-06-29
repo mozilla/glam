@@ -12,7 +12,7 @@ let right = getContext('rightPlot');
 export let x;
 export let label;
 
-let xt = tweened($xScale(x) || 0, {duration: 50, easing});
+let xt = tweened($xScale(x) || 0, { duration: 50, easing });
 $: $xt = $xScale(x) || 0;
 
 let parsedLabel = '';

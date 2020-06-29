@@ -12,11 +12,11 @@ import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 let which = 0;
 let aggregationLevel = 'build_id';
 
-let buildID01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map(di=> ({...di})).slice(-1), 'quantile', 'build_id')
-let version01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map(di=> ({...di})).slice(-1), 'quantile', 'version')
+let buildID01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-1), 'quantile', 'build_id');
+let version01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-1), 'quantile', 'version');
 
-let buildID02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map(di=> ({...di})).slice(-2), 'quantile', 'build_id')
-let version02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map(di=> ({...di})).slice(-2), 'quantile', 'version')
+let buildID02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-2), 'quantile', 'build_id');
+let version02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-2), 'quantile', 'version');
 
 let probes = [
   {
@@ -25,7 +25,7 @@ let probes = [
     version: transformGLAMAPIResponse(SCALAR_UINT_VERSION.response, 'quantile', 'version'),
     probeType: 'scalar',
   },
-    {
+  {
     name: 'Exponential Histogram',
     build_id: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response, 'quantile', 'build_id'),
     version: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response, 'quantile', 'version'),
@@ -33,16 +33,16 @@ let probes = [
   },
   {
     name: 'Exponential Histogram (2 pts)',
-  build_id: buildID02,
-  version: version02,
-  probeType: 'histogram-exponential'
+    build_id: buildID02,
+    version: version02,
+    probeType: 'histogram-exponential',
   },
   {
     name: 'Exponential Histogram (1 pt)',
-  build_id: buildID01,
-  version: version01,
-  probeType: 'histogram-exponential'
-  }
+    build_id: buildID01,
+    version: version01,
+    probeType: 'histogram-exponential',
+  },
 ];
 
 let timeHorizon = 'MONTH';

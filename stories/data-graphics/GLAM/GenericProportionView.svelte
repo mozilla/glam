@@ -6,7 +6,7 @@ import BOOLEAN_HISTOGRAM_BUILD_ID from './boolean_histogram_build_id.json';
 import BOOLEAN_HISTOGRAM_VERSION from './boolean_histogram_version.json';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
-import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils'
+import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils';
 import { extractBucketMetadata } from '../../../src/state/store';
 
 const booleanHistogramBuildID = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
@@ -28,7 +28,7 @@ let probes = [
     },
     probeType: 'histogram-boolean',
   },
-    {
+  {
     name: 'Enumerated Histogram',
     build_id: {
       data: enumeratedHistogramBuildID,
