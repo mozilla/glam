@@ -67,6 +67,7 @@ export default {
   getParamsforDataAPI(store) {
     /* These parameters are needed to request the data from the API itself. */
     return {
+      product: 'firefox', // FIXME: this should probably be firefoxDesktop.
       channel: store.productDimensions.channel,
       os: store.productDimensions.os,
       probe: store.probeName,
