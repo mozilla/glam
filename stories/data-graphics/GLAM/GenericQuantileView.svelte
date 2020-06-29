@@ -1,53 +1,47 @@
 <script>
 import QuantileExplorerView from '../../../src/components/explore/QuantileExplorerView.svelte';
-import NAV_URL_BUILD_ID from '../../../tests/data/browser_engagement_navigation_urlbar_build_id.json';
-import ACTIVE_TICKS_BUILD_ID from '../../../tests/data/browser_engagement_active_ticks_build_id.json';
-import GCMS_BUILD_ID from '../../../tests/data/gc_ms_build_id.json';
+import SCALAR_UINT_BUILD_ID from './scalar_uint_build_id.json';
+import SCALAR_UINT_VERSION from './scalar_uint_version.json';
+import EXPONENTIAL_HISTOGRAM_BUILD_ID from './exponential_histogram_build_id.json';
+import EXPONENTIAL_HISTOGRAM_VERSION from './exponential_histogram_version.json';
 
-import NAV_URL_VERSION from '../../../tests/data/browser_engagement_navigation_urlbar_version.json';
-import ACTIVE_TICKS_VERSION from '../../../tests/data/browser_engagement_active_ticks_version.json';
-import GCMS_VERSION from '../../../tests/data/gc_ms_version.json';
-
-import { responseToData } from '../../../src/state/store';
+import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
 
-let which = 1;
+let which = 0;
 let aggregationLevel = 'build_id';
 
-// let's double or triple GCMS_VERSION.response
-const lastResponse = GCMS_VERSION.response[GCMS_VERSION.response.length - 1];
-const gcmsVersionFaked = Array.from({ length: 10 }, (_, i) => {
-  const element = {};
-  element.data = [...lastResponse.data];
-  element.metadata = { ...lastResponse.metadata };
-  element.metadata.version = Number(lastResponse.metadata.version) - (9 - i);
-  return element;
-});
+let buildID01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-1), 'quantile', 'build_id');
+let version01 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-1), 'quantile', 'version');
+
+let buildID02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-2), 'quantile', 'build_id');
+let version02 = transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-2), 'quantile', 'version');
 
 let probes = [
   {
-    name: 'browser_engagement_active_ticks',
-    build_id: responseToData(ACTIVE_TICKS_BUILD_ID.response),
-    version: responseToData(ACTIVE_TICKS_VERSION.response, 'quantile', 'scalar-uint', 'version'),
+    name: 'Scalar (uint)',
+    build_id: transformGLAMAPIResponse(SCALAR_UINT_BUILD_ID.response, 'quantile', 'build_id'),
+    version: transformGLAMAPIResponse(SCALAR_UINT_VERSION.response, 'quantile', 'version'),
     probeType: 'scalar',
-  }, {
-    name: 'gc_ms (> 2 points)',
-    build_id: responseToData(GCMS_BUILD_ID.response),
-    version: responseToData(gcmsVersionFaked, 'quantile', 'histogram-exponential', 'version'),
-    probeType: 'histogram',
   },
   {
-    name: 'gc_ms (one point)',
-    build_id: responseToData(GCMS_BUILD_ID.response.slice(-2, -1)),
-    version: responseToData(GCMS_VERSION.response.slice(-2, -1), 'quantile', 'histogram-exponential', 'version'),
-    probeType: 'histogram',
+    name: 'Exponential Histogram',
+    build_id: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_BUILD_ID.response, 'quantile', 'build_id'),
+    version: transformGLAMAPIResponse(EXPONENTIAL_HISTOGRAM_VERSION.response, 'quantile', 'version'),
+    probeType: 'histogram-exponential',
   },
   {
-    name: 'browser_engagement_navigation_urlbar',
-    build_id: responseToData(NAV_URL_BUILD_ID.response),
-    version: responseToData(NAV_URL_VERSION.response, 'quantile', 'scalar-uint', 'version'),
-    probeType: 'scalar',
+    name: 'Exponential Histogram (2 pts)',
+    build_id: buildID02,
+    version: version02,
+    probeType: 'histogram-exponential',
+  },
+  {
+    name: 'Exponential Histogram (1 pt)',
+    build_id: buildID01,
+    version: version01,
+    probeType: 'histogram-exponential',
   },
 ];
 

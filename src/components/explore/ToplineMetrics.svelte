@@ -1,5 +1,5 @@
 <script>
-import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
+import Tweenable from '../Tweenable.svelte';
 import ToplineRow from './ToplineRow.svelte';
 
 import { toplineRefLabel } from '../../utils/constants';

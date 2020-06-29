@@ -1,82 +1,44 @@
 <script>
 import ProportionExplorerView from '../../../src/components/explore/ProportionExplorerView.svelte';
-import SSL_RESUMED_SESSION_BUILD_ID from '../../../tests/data/ssl_resumed_session_build_id.json';
-import SSL_RESUMED_SESSION_VERSION from '../../../tests/data/ssl_resumed_session_version.json';
-import SSL_HANDSHAKE_VERSION_BUILD_ID from '../../../tests/data/ssl_handshake_version_build_id.json';
-import SSL_HANDSHAKE_VERSION_VERSION from '../../../tests/data/ssl_handshake_version_version.json';
-
-import CRYPTO_BUILD_ID from '../../../tests/data/cryptominers_blocked_count_build_id.json';
-import CRYPTO_VERSION from '../../../tests/data/cryptominers_blocked_count_version.json';
-
-import GCREASON2_BUILD_ID from '../../../tests/data/gc_reason_2_build_id.json';
-import GCREASON2_VERSION from '../../../tests/data/gc_reason_2_version.json';
+import ENUMERATED_HISTOGRAM_BUILD_ID from './enumerated_histogram_build_id.json';
+import ENUMERATED_HISTOGRAM_VERSION from './enumerated_histogram_version.json';
+import BOOLEAN_HISTOGRAM_BUILD_ID from './boolean_histogram_build_id.json';
+import BOOLEAN_HISTOGRAM_VERSION from './boolean_histogram_version.json';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
+import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils';
+import { extractBucketMetadata } from '../../../src/state/store';
 
-import { responseToData, extractBucketMetadata } from '../../../src/state/store';
+const booleanHistogramBuildID = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
+const booleanHistogramVersion = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_VERSION.response, 'proportion', 'version');
 
-// build_id -level data.
-const sslResumedSessionBuildID = responseToData(SSL_RESUMED_SESSION_BUILD_ID.response, 'proportion', 'histogram-boolean');
-const sslHandshakeVersionBuildID = responseToData(SSL_HANDSHAKE_VERSION_BUILD_ID.response, 'proportion', 'histogram-enumerated');
-const cryptominersBlockedCountBuildID = responseToData(CRYPTO_BUILD_ID.response, 'proportion', 'histogram-categorical');
-const gcReason2BuildID = responseToData(GCREASON2_BUILD_ID.response, 'proportion', 'histogram-enumerated');
-
-const sslResumedSessionVersion = responseToData(SSL_RESUMED_SESSION_VERSION.response, 'proportion', 'histogram-boolean', 'version');
-const sslHandshakeVersionVersion = responseToData(SSL_HANDSHAKE_VERSION_VERSION.response, 'proportion', 'histogram-enumerated', 'version');
-const cryptominersBlockedCountVersion = responseToData(CRYPTO_VERSION.response.slice(-1), 'proportion', 'histogram-categorical', 'version');
-const gcReason2Version = responseToData(GCREASON2_VERSION.response, 'proportion', 'histogram-enumerated', 'version');
-
+const enumeratedHistogramBuildID = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
+const enumeratedHistogramVersion = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_VERSION.response, 'proportion', 'version');
 
 let probes = [
   {
-    name: 'SSL_RESUMED_SESSION',
+    name: 'Boolean Histogram',
     build_id: {
-      data: sslResumedSessionBuildID,
-      ...extractBucketMetadata(sslResumedSessionBuildID),
+      data: booleanHistogramBuildID,
+      ...extractBucketMetadata(booleanHistogramBuildID),
     },
     version: {
-      data: sslResumedSessionVersion,
-      ...extractBucketMetadata(sslResumedSessionVersion),
+      data: booleanHistogramVersion,
+      ...extractBucketMetadata(booleanHistogramVersion),
     },
     probeType: 'histogram-boolean',
   },
   {
-    name: 'SSL_HANDSHAKE_VERSION',
+    name: 'Enumerated Histogram',
     build_id: {
-      data: sslHandshakeVersionBuildID,
-      ...extractBucketMetadata(sslHandshakeVersionBuildID),
+      data: enumeratedHistogramBuildID,
+      ...extractBucketMetadata(enumeratedHistogramBuildID),
     },
     version: {
-      data: sslHandshakeVersionVersion,
-      ...extractBucketMetadata(sslHandshakeVersionVersion),
+      data: enumeratedHistogramVersion,
+      ...extractBucketMetadata(enumeratedHistogramVersion),
     },
     probeType: 'histogram-enumerated',
-  },
-  {
-    name: 'cryptominers_blocked_count',
-    build_id: {
-      data: cryptominersBlockedCountBuildID,
-      ...extractBucketMetadata(cryptominersBlockedCountBuildID),
-    },
-    version: {
-      data: cryptominersBlockedCountVersion,
-      ...extractBucketMetadata(cryptominersBlockedCountVersion),
-    },
-    probeType: 'histogram-categorical',
-
-  },
-  {
-    name: 'gc_reason_2',
-    build_id: {
-      data: gcReason2BuildID,
-      ...extractBucketMetadata(gcReason2BuildID),
-    },
-    version: {
-      data: gcReason2Version,
-      ...extractBucketMetadata(gcReason2Version),
-    },
-    probeType: 'histogram-enumerated',
-
   },
 ];
 
@@ -151,7 +113,7 @@ function handleSelection(event) {
                 </label>
               {/each}
             </div>
-  
+
             <div class='selectors'>
               {#each probes as {name, data}, i}
                 <label>
@@ -161,10 +123,10 @@ function handleSelection(event) {
               {/each}
               </div>
       </div>
-  
+
     <h1 class="story__title">probe / <span class=probe-head>{probes[which].name}</span></h1>
     {#each probes as probe, i (probe.name + probe.probeType + aggregationLevel)}
-      
+
       {#if which === i}
         <ProportionExplorerView
           probeType={probe.probeType}
@@ -173,7 +135,7 @@ function handleSelection(event) {
           metricType={metricType}
           activeBuckets={activeBuckets}
           on:selection={handleSelection}
-          markers={$firefoxVersionMarkers} 
+          markers={$firefoxVersionMarkers}
           bucketOptions={probe[aggregationLevel].bucketOptions}
           bucketColorMap={probe[aggregationLevel].bucketColorMap}
           bucketSortOrder={probe[aggregationLevel].bucketSortOrder}
@@ -181,5 +143,5 @@ function handleSelection(event) {
         />
       {/if}
     {/each}
-  </div> 
+  </div>
 </div>

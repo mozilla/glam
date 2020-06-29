@@ -1,7 +1,7 @@
 <script>
 import { setContext, createEventDispatcher } from 'svelte';
 
-import { percentileLineColorMap } from 'udgl/data-graphics/utils/color-maps';
+import { percentileLineColorMap } from '../../utils/color-maps';
 import ProbeExplorer from './ProbeExplorer.svelte';
 import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
 import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
@@ -47,7 +47,6 @@ function filterQuantileData(d, agg, key) {
 }
 
 $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
-
 </script>
 
 <style>

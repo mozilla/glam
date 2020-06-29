@@ -1,6 +1,9 @@
 <script>
-import Tweenable from 'udgl/data-graphics/motion/Tweenable.svelte';
+import { tooltip as tooltipAction } from '@graph-paper/core/actions';
+import Help from 'udgl/icons/Help.svelte';
+import Tweenable from '../Tweenable.svelte';
 
+import { formatPercentDecimal } from '../../utils/formatters';
 
 export let hovered = false;
 export let colorMap = () => 'black';
@@ -15,11 +18,6 @@ export let keyFormatter = (t) => t;
 export let showLeft = true;
 export let showRight = true;
 export let showDiff = true;
-import Help from 'udgl/icons/Help.svelte';
-
-import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
-import { formatPercentDecimal } from '../../utils/formatters';
-
 
 function percentChange(l, r) {
   return (r - l) / l;
@@ -124,20 +122,20 @@ td, th {
 }
 
 .value-change {
-  min-width: calc(var(--space-6x) + var(--space-base)); 
+  min-width: calc(var(--space-6x) + var(--space-base));
   width: max-content;
 }
 </style>
 
 <div class=summary>
     <h3 class=data-graphic__element-title>Summary
-        <span 
+        <span
           use:tooltipAction={
             {
               text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
               location: 'top',
             }
-          } 
+          }
           class=data-graphic__element-title__icon><Help size={14} /></span></h3>
   <table>
     <thead>

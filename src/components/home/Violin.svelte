@@ -14,11 +14,8 @@ export let rawPlacement;
 export let density;
 export let opacity = 1;
 export let densityAccessor = 'weight';
-export let valueAccessor = 'key';
 export let showLeft = true;
 export let showRight = true;
-export let showTop = true;
-export let showBottom = true;
 export let areaColor = 'var(--digital-blue-600)';
 export let lineColor = 'var(--digital-blue-600)';
 export let densityRange = [0, $placementScale.step() * 0.5 * 0.75];
@@ -73,8 +70,6 @@ $: translateX = orientation === 'vertical' ? ($placementScale(placement) || rawP
 $: translateY = orientation === 'vertical' ? 0 : ($placementScale(placement) || rawPlacement);
 $: translate = `translate(${translateX}, ${translateY})`;
 
-
-$: histogramArea(plotDensities);
 </script>
 
 {#if mounted}

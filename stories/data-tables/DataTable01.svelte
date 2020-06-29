@@ -1,9 +1,9 @@
 <script>
-import DataTable from 'udgl/data-tables/DataTable.svelte';
-import Row from 'udgl/data-tables/Row.svelte';
-import Cell from 'udgl/data-tables/Cell.svelte';
+import { DataGraphic } from '@graph-paper/datagraphic';
+import DataTable from '../../src/components/table/DataTable.svelte';
+import Row from '../../src/components/table/Row.svelte';
+import Cell from '../../src/components/table/Cell.svelte';
 
-import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
 
 // data from 538: https://raw.githubusercontent.com/fivethirtyeight/data/master/drug-use-by-age/drug-use-by-age.csv
 import drugUse from './drug-use-by-age.json';
@@ -30,7 +30,7 @@ let height = 15;
                 {h.split('-')[0]}
               </div>
             {/if}
-            
+
           </Cell>
         {/each}
       </Row>

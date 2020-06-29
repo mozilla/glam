@@ -2,7 +2,7 @@
 import { writable } from 'svelte/store';
 import { format } from 'd3-format';
 
-import { window1D } from 'udgl/data-graphics/utils/window-functions';
+import { window1D } from '@graph-paper/core/utils/window-functions';
 import ToplineMetrics from './ToplineMetrics.svelte';
 
 import AggregationsOverTimeGraph from './AggregationsOverTimeGraph.svelte';
@@ -102,7 +102,10 @@ $: if (aggregationLevel === 'build_id') {
 export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 
 function leftLabelForAggComparison(d, aggLevel, x) {
-  if (d.length === 2) return d[0].label;
+  if (d.length === 2) {
+    if (aggLevel === 'build_id') return formatBuildIDToDateString(d[0].label);
+    else return d[0].label;
+  }
   if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
   return x;
 }
@@ -228,8 +231,6 @@ $: if (hoverValue.x) {
     dataVolume={data.length}
     showTopAxis={!justOne}
   >
-    <!-- add violin plots on the quantiles -->
-
     <g slot='glam-body' let:top let:bottom let:left={lp} let:right={rp} let:yScale>
       {#if showViolins}
         {#if hovered.datum && (!justOne)}
@@ -240,7 +241,8 @@ $: if (hoverValue.x) {
             - explorerComparisonSmallMultiple.right) / 2 + VIOLIN_PLOT_OFFSET
           }
           direction={-1}
-          density={((data.length < 3) || !hovered.datum) ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
+          density={((data.length < 3) || !hovered.datum)
+              ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
           width={
             (explorerComparisonSmallMultiple.width
           - explorerComparisonSmallMultiple.left

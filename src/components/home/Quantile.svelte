@@ -1,26 +1,22 @@
 <script>
   import { onMount } from 'svelte';
-import { tweened } from 'svelte/motion';
 import { fade } from 'svelte/transition';
-import { cubicOut as easing } from 'svelte/easing';
-import DataGraphic from 'udgl/data-graphics/DataGraphic.svelte';
-import Violin from 'udgl/data-graphics/elements/Violin.svelte';
-import Axis from 'udgl/data-graphics/guides/Axis.svelte';
+import { DataGraphic } from '@graph-paper/datagraphic';
+import { Axis } from '@graph-paper/guides';
+import Violin from './Violin.svelte';
 
-import { formatCount } from '../../utils/formatters';
+import { formatCount, formatPercentDecimal } from '../../utils/formatters';
 
 export let data;
 export let xScaleType = 'scalePoint';
 
 let container;
 let width;
-let height = 80;
-
+let height = 100;
 
 let xDomain = Object.keys(data);
-let spr = tweened(1, { duration: 2000, delay: 1000, easing });
 let distSpring = [];
-$: distSpring = Object.entries(data).map(([k, v]) => ({ bin: k, value: v * $spr }));
+$: distSpring = Object.entries(data).map(([k, v]) => ({ bin: k, value: v }));
 
 onMount(() => {
     width = container.getBoundingClientRect().width;
@@ -32,8 +28,8 @@ onMount(() => {
   {#if width}
   <DataGraphic
     {xDomain}
-    yDomain={['Y']}
     xType={xScaleType}
+    yType=linear
     width={width}
     height={height}
     top={20}
@@ -41,7 +37,7 @@ onMount(() => {
     left={16}
     right={16}
   >
-    <g slot=body let:bottom let:top let:yScale let:hoverValue let:xScale>
+    <g slot=body let:bottom let:top let:yScale let:mousePosition let:xScale>
       <Violin
         data={data}
         rawPlacement={bottom}
@@ -53,12 +49,12 @@ onMount(() => {
         areaColor={'var(--digital-blue-400)'}
         lineColor={'var(--digital-blue-500)'}
         opacity={0.8}
-        densityRange={[0, (yScale.step() * 0.8)]}
+        densityRange={[0, (bottom - top) * 0.8]}
       />
-      {#if hoverValue.x}
+      {#if mousePosition.x}
       <rect
         in:fade={{ duration: 100 }}
-        x={xScale(hoverValue.x) - xScale.step() / 2}
+        x={xScale(mousePosition.x) - xScale.step() / 2}
         y={top}
         width={xScale.step()}
         height={bottom - top}
@@ -67,12 +63,12 @@ onMount(() => {
       />
       {/if}
     </g>
-    <g slot=annotation let:hoverValue let:xScale let:top let:bottom let:left let:right>
-      <Axis side=bottom showBorder tickFormatter={formatCount} />
+    <g slot=annotation let:mousePosition let:xScale let:top let:bottom let:left let:right>
+      <Axis side="bottom" showBorder tickFormatter={formatCount} />
       <g style='font-size:11px;' >
-        {#if hoverValue.x}
-          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>{formatCount(hoverValue.x)}</text>
-          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatCount(data[hoverValue.x])} clients</text>
+        {#if mousePosition.x}
+          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={left} text-anchor=start  y={top - 4}>{formatCount(mousePosition.x)}</text>
+          <text in:fade={{ duration: 100 }} fill=var(--cool-gray-600) x={right} text-anchor=end  y={top - 4}>{formatPercentDecimal(data[mousePosition.x])} clients</text>
         {/if}
       </g>
     </g>
