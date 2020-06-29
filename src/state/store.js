@@ -1,21 +1,15 @@
 import { derived, get } from 'svelte/store';
 
-import { createCatColorMap } from '../utils/color-maps';
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
-import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
+import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
 import { getProbeData } from './api';
 
 import CONFIG from '../config/firefox-desktop';
-import { numHighlightedBuckets } from '../config/shared';
 
-import {
-  transformGLAMAPIResponse,
-  getProbeViewType,
-  isCategorical,
-} from '../utils/probe-utils';
+import { transformGLAMAPIResponse, isCategorical } from '../utils/probe-utils';
 
 import { validate, noResponse } from '../utils/data-validation';
 
@@ -180,36 +174,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-const makeSortOrder = (latest, which = 'counts') => (a, b) => {
-  // get latest data point and see
-  if (latest[which][a] < latest[which][b]) return 1;
-  if (latest[which][a] >= latest[which][b]) return -1;
-  return 0;
-};
-
-function latestDatapoint(tr) {
-  return tr[tr.length - 1];
-}
-
-export function getBucketKeys(tr) {
-  return Object.keys(latestDatapoint(tr).counts);
-}
-
-export function extractBucketMetadata(transformedData) {
-  const etc = {};
-  const options = getBucketKeys(transformedData);
-  const cmpBuckets = getBucketKeys(transformedData);
-  const sorter = makeSortOrder(latestDatapoint(transformedData));
-  cmpBuckets.sort(sorter);
-  const cmp = createCatColorMap(cmpBuckets);
-  const initialBuckets = cmpBuckets.slice(0, numHighlightedBuckets);
-  etc.bucketOptions = options;
-  etc.bucketColorMap = cmp;
-  etc.initialBuckets = initialBuckets;
-  etc.bucketSortOrder = sorter;
-  return etc;
-}
-
 export function fetchDataForGLAM(params) {
   return getProbeData(params, store.getState().auth.token).then((payload) => {
     // FIXME: this should not be reading from the store.
@@ -239,23 +203,6 @@ export function fetchDataForGLAM(params) {
       probeKind,
     };
   });
-}
-
-export function updateStoreAfterDataIsReceived({ data }) {
-  const probeValue = get(probe);
-  // THIS WILL BE FALSE BECAUSE WE HAVE NOT RECEIVED THE PROBE DATA YET.
-  const viewType = getProbeViewType(probeValue.type, probeValue.kind);
-  const isCategoricalTypeProbe = viewType === 'categorical';
-  let etc = {};
-  if (isCategoricalTypeProbe) {
-    etc = extractBucketMetadata(data);
-  }
-
-  if (isCategoricalTypeProbe) {
-    store.setField('activeBuckets', etc.initialBuckets);
-  }
-  store.setField('recordedInProcesses', probeValue.record_in_processes);
-  return { data, viewType, ...etc };
 }
 
 const cache = {};
@@ -299,7 +246,11 @@ export const dataset = derived(
     // data set.
     if (previousQuery !== qs) {
       previousQuery = qs;
-      set(cache[qs].then(updateStoreAfterDataIsReceived));
+      set(
+        cache[qs].then(({ data }) =>
+          CONFIG.updateStoreAfterDataIsReceived(data, store, probe)
+        )
+      );
     }
   }
 );

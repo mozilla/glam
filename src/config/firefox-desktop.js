@@ -1,4 +1,6 @@
-import { isSelectedProcessValid } from '../utils/probe-utils';
+import { get } from 'svelte/store';
+import { extractBucketMetadata } from './shared';
+import { isSelectedProcessValid, getProbeViewType } from '../utils/probe-utils';
 
 export default {
   sampleRate: 0.1,
@@ -47,6 +49,9 @@ export default {
     },
   },
   getParamsForQueryString(store) {
+    /* These parameters will map to a ${key}=${value}&... in the querystring,
+      which is used to convey the view state when the GLAM url is shared with others.
+    */
     return {
       channel: store.productDimensions.channel,
       os: store.productDimensions.os,
@@ -60,6 +65,7 @@ export default {
     };
   },
   getParamsforDataAPI(store) {
+    /* These parameters are needed to request the data from the API itself. */
     return {
       channel: store.productDimensions.channel,
       os: store.productDimensions.os,
@@ -68,7 +74,30 @@ export default {
       aggregationLevel: store.productDimensions.aggregationLevel,
     };
   },
+  updateStoreAfterDataIsReceived(data, appStore, probeStore) {
+    /*
+      This function is called directly after the response has been received
+      by the frontend. It will always run, even against cached data, as a way
+      of resetting the necessary state.
+    */
+    const probeValue = get(probeStore);
+    const viewType = getProbeViewType(probeValue.type, probeValue.kind);
+    const isCategoricalTypeProbe = viewType === 'categorical';
+    let etc = {};
+    if (isCategoricalTypeProbe) {
+      etc = extractBucketMetadata(data);
+    }
+
+    if (isCategoricalTypeProbe) {
+      appStore.setField('activeBuckets', etc.initialBuckets);
+    }
+    appStore.setField('recordedInProcesses', probeValue.record_in_processes);
+    return { data, viewType, ...etc };
+  },
   transformProbeForGLAM(probe) {
+    /* This currently transforms the probe metadata into a more useful format
+      for firefox desktop. It will likely be unnecessary for other products.
+    */
     const pr = { ...probe };
     if (pr.record_in_processes[0] === 'all') {
       pr.record_in_processes = ['main', 'content', 'gpu'];
@@ -79,6 +108,10 @@ export default {
     return pr;
   },
   setDefaultsForProbe(store, probe) {
+    /* This currently updatess the store to accommodate any needed
+      bits of state for the store before fetching data. It is probably not
+      necessary for non-firefox desktop products.
+    */
     const state = store.getState();
     // accommodate only valid processes.
     if (
