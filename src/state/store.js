@@ -140,40 +140,13 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 // ///// probe querying infrastructure.
 
 function getParamsForQueryString(obj) {
-  // FIXME: turn this conditional into a function in firefox-desktop.js
-  if (obj.product === 'firefoxDesktop') {
-    return {
-      channel: obj.productDimensions.channel,
-      os: obj.productDimensions.os,
-      aggregationLevel: obj.productDimensions.aggregationLevel,
-      process: obj.productDimensions.process,
-      timeHorizon: obj.timeHorizon,
-      proportionMetricType: obj.proportionMetricType,
-      activeBuckets: obj.activeBuckets,
-      visiblePercentiles: obj.visiblePercentiles,
-    };
-  }
-  throw Error('Product not recognized.');
+  // FIXME: move toward a product-keyed version of this.
+  return CONFIG.getParamsForQueryString(obj);
 }
 
 function getParamsForDataAPI(obj) {
-  // FIXME: turn this conditional into a function in firefox-desktop.js
-  if (obj.product === 'firefoxDesktop') {
-    const channelValue = obj.productDimensions.channel;
-    const osValue = obj.productDimensions.os;
-    const { process } = obj.productDimensions;
-    const params = getParamsForQueryString(obj);
-    delete params.timeHorizon;
-    delete params.proportionMetricType;
-    delete params.activeBuckets;
-    delete params.visiblePercentiles;
-    params.probe = obj.probeName;
-    params.os = osValue;
-    params.channel = channelValue;
-    params.process = process;
-    return params;
-  }
-  throw Error('product not recognized.');
+  // FIXME: move toward a product-keyed version of this.
+  return CONFIG.getParamsforDataAPI(obj);
 }
 
 const toQueryStringPair = (k, v) => {

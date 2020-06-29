@@ -46,6 +46,27 @@ export default {
       },
     },
   },
+  getParamsForQueryString(store) {
+    return {
+      channel: store.productDimensions.channel,
+      os: store.productDimensions.os,
+      aggregationLevel: store.productDimensions.aggregationLevel,
+      process: store.productDimensions.process,
+      timeHorizon: store.timeHorizon,
+      proportionMetricType: store.proportionMetricType,
+      activeBuckets: store.activeBuckets,
+      visiblePercentiles: store.visiblePercentiles,
+    };
+  },
+  getParamsforDataAPI(store) {
+    return {
+      channel: store.productDimensions.channel,
+      os: store.productDimensions.os,
+      probe: store.probeName,
+      process: store.productDimensions.process,
+      aggregationLevel: store.productDimensions.aggregationLevel,
+    };
+  },
   transformProbeForGLAM(probe) {
     const pr = { ...probe };
     if (pr.record_in_processes[0] === 'all') {
