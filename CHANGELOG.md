@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.6.0...HEAD) (date TBD)
+- Fix probe search condition for excluding string scalars
 
 ## [2020.6.0](https://github.com/mozilla/glam/compare/2020.5.2...2020.6.0) (2020-06-30)
 

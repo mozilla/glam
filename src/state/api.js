@@ -61,7 +61,7 @@ export function getSearchResults(queryString, resultsLimit) {
     const params = new URLSearchParams();
     const queryOptions = [];
     const stringScalars =
-      '(type.eq.scalar,definition->details->>kind.eq.string)';
+      '(type.eq.scalar,definition->history->nightly->0->details->>kind.eq.string)';
 
     queryOptions.push(`name.eq.${str}`);
     queryOptions.push(`index.phfts(english).${str}`);
