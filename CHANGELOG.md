@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.5.2...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.6.0...HEAD) (date TBD)
+
+## [2020.6.0](https://github.com/mozilla/glam/compare/2020.5.2...2020.6.0) (2020-06-30)
 
 - Fix issue with categorical explorer counts
   ([#587](https://github.com/mozilla/glam/pull/587))
@@ -9,6 +11,14 @@
 - Replace data graphic components with `@graph-paper/datagraphic`,
   `@graph-paper/elements`, and `@graph-paper/guides` equivalents
   ([#573](https://github.com/mozilla/glam/pull/573))
+- Update API to accept `versions` param as integer, defaulting to 3, for
+  fetching more historical data
+  ([#678](https://github.com/mozilla/glam/issues/678))
+- Provide a category select box for probes with a large number of categories
+  ([#216](https://github.com/mozilla/glam/issues/216))
+- Add support for Google Analytics
+  ([#554](https://github.com/mozilla/glam/issues/554))
+- Various dependency updates
 
 ## [2020.5.2](https://github.com/mozilla/glam/compare/2020.5.1...2020.5.2) (2020-05-26)
 
