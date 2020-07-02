@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.6.0...HEAD) (date TBD)
 
+- update front-end for search api changes
+
 ## [2020.6.0](https://github.com/mozilla/glam/compare/2020.5.2...2020.6.0) (2020-06-30)
 
 - Fix issue with categorical explorer counts

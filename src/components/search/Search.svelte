@@ -1,6 +1,6 @@
 <script>
 import { tick } from 'svelte';
-import { fly, fade } from 'svelte/transition';
+import { fade } from 'svelte/transition';
 import SearchIcon from 'udgl/icons/Search.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 import { throttle } from 'throttle-debounce';
