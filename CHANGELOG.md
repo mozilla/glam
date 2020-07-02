@@ -1,6 +1,10 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.6.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.7.0...HEAD) (date TBD)
+
+-
+
+## [2020.7.0](https://github.com/mozilla/glam/compare/2020.6.0...2020.7.0) (2020-07-02)
 
 - update front-end for search api changes
 
