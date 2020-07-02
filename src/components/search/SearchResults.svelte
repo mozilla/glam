@@ -6,7 +6,7 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import { store, currentQuery } from '../../state/store';
+import { currentQuery } from '../../state/store';
 
 export let results = [];
 
@@ -242,7 +242,7 @@ li {
                   <div class="name body-text--short-01">{searchResult.name}</div>
                   <div class="probe-type label label-text--01 label--{searchResult.type}">{searchResult.type}</div>
                   <div class="description body-text--short-01">
-                    {@html searchResult.definition.history[$store.productDimensions.channel][0].description}
+                    {@html searchResult.description}
                   </div>
               </li>
             {/each}

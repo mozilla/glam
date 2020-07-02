@@ -58,24 +58,35 @@ export async function getProbeData(params, token) {
 export function getSearchResults(queryString, resultsLimit) {
   const getFormattedSearchURL = (str, product = 'desktop') => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
+    const strFragments = str.split(/\s+/);
+
     const params = new URLSearchParams();
     const queryOptions = [];
     const stringScalars =
-      '(type.eq.scalar,definition->details->>kind.eq.string)';
+      '(type.eq.scalar,info->calculated->latest_history->details->>kind.eq.string)';
 
     queryOptions.push(`name.eq.${str}`);
-    queryOptions.push(`index.phfts(english).${str}`);
+    queryOptions.push(`search.plfts(simple).${str}`);
     queryOptions.push(`description.phfts(english).${str}`);
-    queryOptions.push(`name.ilike.*${str}*`);
+    queryOptions.push(
+      `name.ilike.*${
+        strFragments.length ? strFragments[strFragments.length - 1] : str
+      }*`
+    );
 
     params.set('limit', resultsLimit);
-    params.set('select', 'name,definition,type');
-    params.set('product', `eq.${product}`);
+    params.set('select', 'name,description,type,info');
     params.set('type', 'neq.event');
     params.set('or', `(${queryOptions.join(',')})`);
     params.set('not.and', stringScalars);
 
-    URLResult.pathname = 'probes'; // hint: change this to test 404 error case
+    if (product === 'desktop') {
+      URLResult.pathname = 'telemetry'; // hint: change this to test 404 error case
+    } else {
+      URLResult.pathname = 'glean';
+      params.set('product', `eq.${product}`);
+    }
+
     URLResult.search = params;
 
     return URLResult;
