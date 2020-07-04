@@ -100,6 +100,7 @@ const initialState = {
   activeBuckets: getFromQueryString('activeBuckets', true) || [],
   applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
   route: {},
+  reference: getFromQueryString('reference') || '',
 };
 
 export const store = createStore(initialState);

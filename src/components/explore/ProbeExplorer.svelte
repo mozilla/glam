@@ -15,6 +15,8 @@ import ComparisonSummary from './ComparisonSummary.svelte';
 
 import AdHocViolin from './AdHocViolin.svelte';
 
+import { store } from '../../state/store';
+
 import {
   explorerComparisonSmallMultiple,
   overTimeTitle,
@@ -104,7 +106,7 @@ export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
 function leftLabelForAggComparison(d, aggLevel, x) {
   if (d.length === 2) {
     if (aggLevel === 'build_id') return formatBuildIDToDateString(d[0].label);
-    else return d[0].label;
+    return d[0].label;
   }
   if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
   return x;
@@ -116,7 +118,19 @@ function leftPointsForAggComparison(d, pmt, dt) {
   return undefined;
 }
 
-export let reference = data[data.length - 1];
+// Get the reference point from the query string if possible
+function getDefaultReferencePoint() {
+  if ($store.reference) {
+    const found = data.find((d) => d[aggregationLevel] === $store.reference);
+    if (found) return found;
+  }
+  return data[data.length - 1];
+}
+
+export let reference = getDefaultReferencePoint();
+
+// Persist the reference point to the query string
+$: store.setField('reference', aggregationLevel === 'version' ? reference.version : reference.build_id);
 
 // This will lightly animate the reference distribution part of the violin plot.
 // FIXME: for quantile plots, let's move this up a level to the view.

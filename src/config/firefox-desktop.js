@@ -56,6 +56,7 @@ export default {
       proportionMetricType: store.proportionMetricType,
       activeBuckets: store.activeBuckets,
       visiblePercentiles: store.visiblePercentiles,
+      reference: store.reference,
     };
   },
   getParamsforDataAPI(store) {
