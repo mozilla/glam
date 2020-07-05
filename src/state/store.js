@@ -134,16 +134,6 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 
 // ///// probe querying infrastructure.
 
-function getParamsForQueryString(obj) {
-  // FIXME: move toward a product-keyed version of this.
-  return CONFIG.getParamsForQueryString(obj);
-}
-
-function getParamsForDataAPI(obj) {
-  // FIXME: move toward a product-keyed version of this.
-  return CONFIG.getParamsforDataAPI(obj);
-}
-
 const toQueryStringPair = (k, v) => {
   if (Array.isArray(v)) {
     return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
@@ -174,37 +164,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-export function fetchDataForGLAM(params) {
-  return getProbeData(params, store.getState().auth.token).then((payload) => {
-    // FIXME: this should not be reading from the store.
-    // the response is kind of messed up so once the API / data is fixed
-    // the response shluld consume from payload.response[0].metric_type.
-    // until then, however, we'll have to use the store values
-    // for the probeType and probeKind, since they're more accurate than
-    // what is in payload.response[0].metric_type.
-    const { aggregationLevel } = store.getState().productDimensions;
-    const { type: probeType, kind: probeKind, active: probeActive } = get(
-      probe
-    );
-
-    validate(payload, (p) => noResponse(p, probeActive));
-    const data = transformGLAMAPIResponse(
-      payload.response,
-      isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-      aggregationLevel,
-      {
-        probeType: `${probeType}-${probeKind}`,
-      }
-    );
-
-    return {
-      data,
-      probeType,
-      probeKind,
-    };
-  });
-}
-
 const cache = {};
 let previousQuery;
 
@@ -222,7 +181,7 @@ export const dataset = derived(
     // We can't fetch anything until the user is authenticated
     if (!$store.auth.isAuthenticated) return;
 
-    const params = getParamsForDataAPI($store);
+    const params = CONFIG.getParamsForDataAPI($store);
     const qs = toQueryString(params);
 
     // // invalid parameters, probe selected.
@@ -238,7 +197,7 @@ export const dataset = derived(
     }
 
     if (!(qs in cache)) {
-      cache[qs] = fetchDataForGLAM(params);
+      cache[qs] = CONFIG.fetchData(params, store);
     }
 
     // compare the previousQuery to the current one.
@@ -256,6 +215,6 @@ export const dataset = derived(
 );
 
 export const currentQuery = derived(store, ($store) => {
-  const params = getParamsForQueryString($store);
+  const params = CONFIG.getParamsForQueryString($store);
   return toQueryString(params);
 });

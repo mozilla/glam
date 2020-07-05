@@ -20,6 +20,7 @@ export function getBucketKeys(tr) {
 export function extractBucketMetadata(transformedData) {
   const etc = {};
   const options = getBucketKeys(transformedData);
+
   const cmpBuckets = getBucketKeys(transformedData);
   const sorter = makeSortOrder(latestDatapoint(transformedData));
   cmpBuckets.sort(sorter);

@@ -1,6 +1,13 @@
 import { get } from 'svelte/store';
 import { extractBucketMetadata } from './shared';
-import { isSelectedProcessValid, getProbeViewType } from '../utils/probe-utils';
+import {
+  transformGLAMAPIResponse,
+  isCategorical,
+  isSelectedProcessValid,
+  getProbeViewType,
+} from '../utils/probe-utils';
+import { getProbeData } from '../state/api';
+import { validate, noResponse } from '../utils/data-validation';
 
 export default {
   sampleRate: 0.1,
@@ -48,32 +55,63 @@ export default {
       },
     },
   },
-  getParamsForQueryString(store) {
+  getParamsForQueryString(storeValue) {
     /* These parameters will map to a ${key}=${value}&... in the querystring,
       which is used to convey the view state when the GLAM url is shared with others.
     */
     return {
-      channel: store.productDimensions.channel,
-      os: store.productDimensions.os,
-      aggregationLevel: store.productDimensions.aggregationLevel,
-      process: store.productDimensions.process,
-      timeHorizon: store.timeHorizon,
-      proportionMetricType: store.proportionMetricType,
-      activeBuckets: store.activeBuckets,
-      visiblePercentiles: store.visiblePercentiles,
-      reference: store.reference,
+      channel: storeValue.productDimensions.channel,
+      os: storeValue.productDimensions.os,
+      aggregationLevel: storeValue.productDimensions.aggregationLevel,
+      process: storeValue.productDimensions.process,
+      timeHorizon: storeValue.timeHorizon,
+      proportionMetricType: storeValue.proportionMetricType,
+      activeBuckets: storeValue.activeBuckets,
+      visiblePercentiles: storeValue.visiblePercentiles,
+      reference: storeValue.reference,
     };
   },
-  getParamsforDataAPI(store) {
+  getParamsForDataAPI(storeValue) {
     /* These parameters are needed to request the data from the API itself. */
     return {
       product: 'firefox', // FIXME: this should probably be firefoxDesktop.
-      channel: store.productDimensions.channel,
-      os: store.productDimensions.os,
-      probe: store.probeName,
-      process: store.productDimensions.process,
-      aggregationLevel: store.productDimensions.aggregationLevel,
+      channel: storeValue.productDimensions.channel,
+      os: storeValue.productDimensions.os,
+      probe: storeValue.probeName,
+      process: storeValue.productDimensions.process,
+      aggregationLevel: storeValue.productDimensions.aggregationLevel,
     };
+  },
+  fetchData(params, appStore) {
+    return getProbeData(params, appStore.getState().auth.token).then(
+      (payload) => {
+        // FIXME: this should not be reading from the store.
+        // the response is kind of messed up so once the API / data is fixed
+        // the response shluld consume from payload.response[0].metric_type.
+        // until then, however, we'll have to use the store values
+        // for the probeType and probeKind, since they're more accurate than
+        // what is in payload.response[0].metric_type.
+        const { aggregationLevel } = appStore.getState().productDimensions;
+        const [probeType, probeKind] = payload.response[0].metric_type.split(
+          '-'
+        );
+
+        validate(payload, (p) => noResponse(p));
+        const data = transformGLAMAPIResponse(
+          payload.response,
+          isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
+          aggregationLevel,
+          {
+            probeType: `${probeType}-${probeKind}`,
+          }
+        );
+        return {
+          data,
+          probeType,
+          probeKind,
+        };
+      }
+    );
   },
   updateStoreAfterDataIsReceived(data, appStore, probeStore) {
     /*
@@ -83,6 +121,7 @@ export default {
     */
     const probeValue = get(probeStore);
     const viewType = getProbeViewType(probeValue.type, probeValue.kind);
+
     const isCategoricalTypeProbe = viewType === 'categorical';
     let etc = {};
     if (isCategoricalTypeProbe) {
