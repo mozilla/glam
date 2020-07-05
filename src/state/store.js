@@ -1,17 +1,11 @@
-import { derived, get } from 'svelte/store';
+import { derived } from 'svelte/store';
 
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
 import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
-import { getProbeData } from './api';
-
 import CONFIG from '../config/firefox-desktop';
-
-import { transformGLAMAPIResponse, isCategorical } from '../utils/probe-utils';
-
-import { validate, noResponse } from '../utils/data-validation';
 
 // TODO: move this to the new config.js when 'product' is added.
 const DEFAULT_PROBE_PROCESS = 'content';
