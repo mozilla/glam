@@ -26,6 +26,55 @@ class Probe(models.Model):
         cache.set("__labels__", True)
 
 
+class AbstractFenixAggregation(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # Dimensions.
+    channel = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
+    ping_type = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    build_date = models.DateTimeField(null=True)
+    metric = models.CharField(max_length=200)
+    metric_type = models.CharField(max_length=100)
+    metric_key = models.CharField(max_length=200, blank=True)
+    client_agg_type = models.CharField(max_length=100, blank=True)
+    # Data.
+    total_users = models.IntegerField()
+    histogram = models.TextField(null=True, blank=True)
+    percentiles = models.TextField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class FenixAggregation(AbstractFenixAggregation):
+    class Meta(AbstractFenixAggregation.Meta):
+        db_table = "glam_fenix_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="fenix_unique_dimensions",
+                fields=[
+                    "channel",
+                    "version",
+                    "ping_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_type",
+                    "metric_key",
+                    "client_agg_type",
+                ],
+            )
+        ]
+
+
+class FenixAggregationView(AbstractFenixAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_fenix_aggregation"
+
+
 class AbstractDesktopAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.
@@ -125,41 +174,5 @@ class FirefoxCounts(models.Model):
             models.UniqueConstraint(
                 name="unique_dimensions",
                 fields=["channel", "version", "build_id", "os"],
-            )
-        ]
-
-
-class FenixAggregation(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    channel = models.CharField(max_length=100)
-    version = models.CharField(max_length=100)
-    ping_type = models.CharField(max_length=100)
-    os = models.CharField(max_length=100)
-    build_id = models.CharField(max_length=100)
-    metric = models.CharField(max_length=200)
-    metric_type = models.CharField(max_length=100)
-    metric_key = models.CharField(max_length=200, blank=True)
-    client_agg_type = models.CharField(max_length=100, blank=True)
-    agg_type = models.CharField(max_length=100)
-    total_users = models.IntegerField()
-    data = JSONField()
-
-    class Meta:
-        db_table = "glam_fenix_aggregation"
-        constraints = [
-            models.UniqueConstraint(
-                name="fenix_unique_dimensions",
-                fields=[
-                    "channel",
-                    "version",
-                    "ping_type",
-                    "os",
-                    "build_id",
-                    "metric",
-                    "metric_type",
-                    "metric_key",
-                    "client_agg_type",
-                    "agg_type",
-                ],
             )
         ]
