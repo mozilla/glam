@@ -1,5 +1,6 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
+const DEFAULT_SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
 
 // We could eventually make a constants.js, this is low priority.
 const FETCH_ERROR_MESSAGES = {
@@ -55,7 +56,10 @@ export async function getProbeData(params, token) {
   return data;
 }
 
-export function getSearchResults(queryString, resultsLimit) {
+export function getSearchResults(
+  queryString,
+  resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
+) {
   const getFormattedSearchURL = (str, product = 'desktop') => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
     const strFragments = str.split(/\s+/);

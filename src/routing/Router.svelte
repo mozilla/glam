@@ -4,8 +4,7 @@
   import { onMount } from 'svelte';
 
   import productConfig from '../config/products';
-  import { store, currentQuery } from '../state/store';
-  import { probeSet } from '../state/telemetry-search';
+  import { store, currentQuery, probe } from '../state/store';
   import { codeAndStateInQuery } from '../utils/url';
 
   // Wrappers
@@ -53,8 +52,8 @@
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
         store.setField('probeName', probeName);
-        if ($probeSet) {
-          let newProbe = $probeSet.find((p) => p.name === probeName);
+        if ($probe.loaded) {
+          let newProbe = $probe;
           if (productConfig[$store.product].transformProbeForGLAM) {
             newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
           }

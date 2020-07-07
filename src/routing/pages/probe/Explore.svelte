@@ -27,7 +27,7 @@
     {#if probeType === 'categorical'}
       <ProportionExplorerView
         data={data.data}
-        probeType={`${$probe.type}-${$probe.kind}`}
+        probeType={`${$probe.type}-${$probe.info.calculated.latest_history.details.kind}`}
         metricType={$store.proportionMetricType}
         activeBuckets={[...$store.activeBuckets]}
         timeHorizon={$store.timeHorizon}

@@ -16,7 +16,6 @@ let searchIsActive = false;
 let searchQuery = '';
 
 const SEARCH_THROTTLE_TIME = 500; // how often to send the PSS fetch (in ms)
-const SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
 
 function turnOnSearch() {
   searchIsActive = true;
@@ -43,19 +42,8 @@ let query = '';
 
 const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
   query = value;
-  getSearchResults(query, SEARCH_RESULTS_LIMIT).then((r) => {
-    // sort these?
-    if (r.constructor === Array) {
-      results = r.sort((a, b) => {
-        const aHas = a.name.toLowerCase().includes(query);
-        const bHas = b.name.toLowerCase().includes(query);
-        if (aHas && !bHas) return -1;
-        if (bHas && !aHas) return 1;
-        return 0;
-      });
-    } else {
-      results = r;
-    }
+  getSearchResults(query).then((r) => {
+    results = r;
     searchWaiting = false;
   });
   searchIsActive = true;

@@ -14,6 +14,12 @@ import {
 
 const OFFSET = 10;
 const COMPACT = true;
+
+let processDimension;
+$: if ($probe.info && $probe.info.calculated.seen_in_processes) {
+  processDimension = productConfig[$store.product].dimensions.process;
+}
+
 </script>
 
 <style>
@@ -57,25 +63,43 @@ const COMPACT = true;
 {#if $store.route.section === 'probe' && $probe}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
     {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
-      {#if dimension.values.some(
-            (di) => dimension.isValidKey === undefined
-                    || dimension.isValidKey(di.key, $probe, store),
-      )}
-      <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
-        <div class=main-filter__label slot="label">
-          <span class='main-filter__label__dimension'>{dimension.title}</span>
-          {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
-        <div slot="menu">
-          <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
-              {#each dimension.values.filter((di) => dimension.isValidKey === undefined
-                || dimension.isValidKey(di.key, $probe, store)) as {key, label}, i (key)}
-                <MenuListItem  key={key} value={key}><span class='story-label
-                  first'></span>{label}</MenuListItem>
-                {/each}
-            </MenuList>
-        </div>
-      </DimensionMenu>
+      {#if dimension.key !== 'process'} <!-- This will be populated from $probe below. -->
+        {#if dimension.values.some(
+              (di) => dimension.isValidKey === undefined
+                      || dimension.isValidKey(di.key, $probe, store),
+        )}
+        <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
+          <div class=main-filter__label slot="label">
+            <span class='main-filter__label__dimension'>{dimension.title}</span>
+            {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
+          <div slot="menu">
+            <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
+                {#each dimension.values.filter((di) => dimension.isValidKey === undefined
+                  || dimension.isValidKey(di.key, $probe, store)) as {key, label}, i (key)}
+                  <MenuListItem  key={key} value={key}><span class='story-label
+                    first'></span>{label}</MenuListItem>
+                  {/each}
+              </MenuList>
+          </div>
+        </DimensionMenu>
+        {/if}
       {/if}
     {/each}
+    <!-- This is messy but ensures processes are populated from the probe store (the only source of truth for processes with data). -->
+    {#if processDimension}
+      <DimensionMenu tooltip='Select a {processDimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
+          <div class=main-filter__label slot="label">
+            <span class='main-filter__label__dimension'>{processDimension.title}</span>
+            {getFieldValueLabel(processDimension.key, $store.productDimensions[processDimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
+          <div slot="menu">
+            <MenuList on:selection={(event) => { store.setDimension(processDimension.key, event.detail.key); }}>
+                {#each $probe.info.calculated.seen_in_processes as key, i (key)}
+                  <MenuListItem key={key} value={key}><span class='story-label
+                    first'></span>{processDimension.values.filter((p) => p.key === key)[0].label}</MenuListItem>
+                  {/each}
+              </MenuList>
+          </div>
+        </DimensionMenu>
+    {/if}
   </div>
 {/if}

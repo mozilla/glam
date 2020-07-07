@@ -1,9 +1,6 @@
 import { derived } from 'svelte/store';
-
+import { getSearchResults } from './api';
 import { createStore } from '../utils/create-store';
-
-// FIXME: take care of this dependency cycle.
-import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
 import CONFIG from '../config/firefox-desktop';
 
@@ -74,7 +71,6 @@ const initialState = {
   },
   probeName: '',
   dashboardMode: {}, // FIXME: applicationStatus or dashboardMode, not both.
-  recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.
   timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
   visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [
     95,
@@ -110,12 +106,16 @@ export const resetFilters = () => {
   store.setDimension('process', getDefaultFieldValue('process'));
 };
 
-export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
-  if (!$probeSet || !$store.probeName) return undefined;
-  let pr = $probeSet.find((p) => p.name === $store.probeName);
-  if (CONFIG.transformProbeForGLAM) pr = CONFIG.transformProbeForGLAM(pr);
-  return pr;
-});
+export const probe = derived(
+  store,
+  ($store, set) => {
+    if (!$store.probeName) return undefined;
+    getSearchResults($store.probeName).then((r) => {
+      set({ ...r[0], loaded: true });
+    });
+  },
+  { loaded: false }
+);
 
 export const hasDefaultControlFields = derived(store, ($store) =>
   Object.values(CONFIG.dimensions).every(
@@ -161,52 +161,49 @@ export const datasetResponse = (level, key, data) => ({ level, key, data });
 const cache = {};
 let previousQuery;
 
-export const dataset = derived(
-  [store, probeSet],
-  ([$store, $probeSet], set) => {
-    // FIXME: we have to check for whether probeSet is loaded before
-    // moving on. This is because the data fetch does _not_ return
-    // the proper information about probe types & kinds (specifically,
-    // enumerated histograms are coded as linear in the demo data set).
-    // This should be checked again once we have verified that the bug
-    // in the demo data is fixed.
-    if (!$probeSet) return;
+export const dataset = derived([store, probe], ([$store, $probe], set) => {
+  // FIXME: investigate whether we still need to wait for the probe to be loaded
+  if (!$probe.loaded) return;
 
-    // We can't fetch anything until the user is authenticated
-    if (!$store.auth.isAuthenticated) return;
+  // We can't fetch anything until the user is authenticated
+  if (!$store.auth.isAuthenticated) return;
 
-    const params = CONFIG.getParamsForDataAPI($store);
-    const qs = toQueryString(params);
+  const params = CONFIG.getParamsForDataAPI($store);
 
-    // // invalid parameters, probe selected.
-    if (!paramsAreValid(params) && probeSelected($store.probeName)) {
-      const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-      return message;
-    }
+  // This is dirty and might needed a cleverer approach.
+  // It won't interfere with GLAM metrics though.
+  if ('process' in params)
+    params.process = $probe.info.calculated.seen_in_processes[0];
+  const qs = toQueryString(params);
 
-    // // no probe selected.
-    if (!probeSelected($store.probeName)) {
-      const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-      return message;
-    }
-
-    if (!(qs in cache)) {
-      cache[qs] = CONFIG.fetchData(params, store);
-    }
-
-    // compare the previousQuery to the current one.
-    // if the actual query params have changed, let's update the
-    // data set.
-    if (previousQuery !== qs) {
-      previousQuery = qs;
-      set(
-        cache[qs].then(({ data }) =>
-          CONFIG.updateStoreAfterDataIsReceived(data, store, probe)
-        )
-      );
-    }
+  // // invalid parameters, probe selected.
+  if (!paramsAreValid(params) && probeSelected($store.probeName)) {
+    const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    return message;
   }
-);
+
+  // // no probe selected.
+  if (!probeSelected($store.probeName)) {
+    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+    return message;
+  }
+
+  if (!(qs in cache)) {
+    cache[qs] = CONFIG.fetchData(params, store);
+  }
+
+  // compare the previousQuery to the current one.
+  // if the actual query params have changed, let's update the
+  // data set.
+  if (previousQuery !== qs) {
+    previousQuery = qs;
+    set(
+      cache[qs].then(({ data }) =>
+        CONFIG.updateStoreAfterDataIsReceived(data, store, probe)
+      )
+    );
+  }
+});
 
 export const currentQuery = derived(store, ($store) => {
   const params = CONFIG.getParamsForQueryString($store);

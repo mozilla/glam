@@ -176,15 +176,3 @@ export function gatherProbeKeys(d) {
 export function gatherAggregationTypes(d) {
   return uniques(d, 'client_agg_type');
 }
-
-export function isSelectedProcessValid(processes, selectedProcess) {
-  let process = selectedProcess;
-  if (process === 'all_childs') {
-    process = 'main';
-  }
-  if (process === 'parent') {
-    process = 'main';
-  }
-
-  return processes.includes(process);
-}

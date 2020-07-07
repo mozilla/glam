@@ -3,7 +3,6 @@ import { extractBucketMetadata } from './shared';
 import {
   transformGLAMAPIResponse,
   isCategorical,
-  isSelectedProcessValid,
   getProbeViewType,
 } from '../utils/probe-utils';
 import { getProbeData } from '../state/api';
@@ -50,9 +49,6 @@ export default {
         { key: 'content', label: 'Content' },
         { key: 'gpu', label: 'GPU' },
       ],
-      isValidKey(key, probe) {
-        return isSelectedProcessValid(probe.record_in_processes, key);
-      },
     },
   },
   getParamsForQueryString(storeValue) {
@@ -83,42 +79,43 @@ export default {
     };
   },
   fetchData(params, appStore) {
-    return getProbeData(params, appStore.getState().auth.token).then(
-      (payload) => {
-        // FIXME: this should not be reading from the store. The response is
-        // kind of messed up so once the API / data is fixed the response should
-        // consume from payload.response[0].metric_type. Until then, however,
-        // we'll have to use the store values for the probeType and probeKind,
-        // since they're more accurate than what is in
-        // payload.response[0].metric_type.
-        const { aggregationLevel } = appStore.getState().productDimensions;
-        const [probeType, probeKind] = payload.response[0].metric_type.split(
-          '-'
-        );
+    const state = appStore.getState();
 
-        validate(payload, (p) => noResponse(p));
-        const data = transformGLAMAPIResponse(
-          payload.response,
-          isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-          aggregationLevel,
-          {
-            probeType: `${probeType}-${probeKind}`,
-          }
-        );
-        return {
-          data,
-          probeType,
-          probeKind,
-        };
-      }
-    );
+    return getProbeData(params, state.auth.token).then((payload) => {
+      // FIXME: this should not be reading from the store. The response is
+      // kind of messed up so once the API / data is fixed the response should
+      // consume from payload.response[0].metric_type. Until then, however,
+      // we'll have to use the store values for the probeType and probeKind,
+      // since they're more accurate than what is in
+      // payload.response[0].metric_type.
+      const { aggregationLevel } = state.productDimensions;
+      const [probeType, probeKind] = payload.response[0].metric_type.split('-');
+
+      validate(payload, (p) => noResponse(p));
+      const data = transformGLAMAPIResponse(
+        payload.response,
+        isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
+        aggregationLevel,
+        {
+          probeType: `${probeType}-${probeKind}`,
+        }
+      );
+      return {
+        data,
+        probeType,
+        probeKind,
+      };
+    });
   },
   updateStoreAfterDataIsReceived(data, appStore, probeStore) {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const probeValue = get(probeStore);
-    const viewType = getProbeViewType(probeValue.type, probeValue.kind);
+    const viewType = getProbeViewType(
+      probeValue.type,
+      probeValue.info.calculated.latest_history.details.kind
+    );
 
     const isCategoricalTypeProbe = viewType === 'categorical';
     let etc = {};
@@ -129,20 +126,7 @@ export default {
     if (isCategoricalTypeProbe) {
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
-    appStore.setField('recordedInProcesses', probeValue.record_in_processes);
     return { data, viewType, ...etc };
-  },
-  transformProbeForGLAM(probe) {
-    // This currently transforms the probe metadata into a more useful format
-    // for Firefox desktop. It will likely be unnecessary for other products.
-    const pr = { ...probe };
-    if (pr.record_in_processes[0] === 'all') {
-      pr.record_in_processes = ['main', 'content', 'gpu'];
-    }
-    if (pr.record_in_processes[0] === 'all_childs') {
-      pr.record_in_processes = ['content', 'gpu'];
-    }
-    return pr;
   },
   setDefaultsForProbe(store, probe) {
     // This currently updates the store to accommodate any needed bits of state
@@ -150,18 +134,16 @@ export default {
     // non-Firefox desktop products.
     const state = store.getState();
     // accommodate only valid processes.
-    if (
-      !isSelectedProcessValid(
-        probe.record_in_processes,
-        state.productDimensions.process
-      )
-    ) {
-      let newProcess = probe.record_in_processes[0];
-      if (newProcess === 'main') newProcess = 'parent';
-      store.setDimension('process', newProcess);
-    }
+
+    let newProcess = probe.info.calculated.seen_in_processes[0];
+    if (newProcess === 'main') newProcess = 'parent';
+    store.setDimension('process', newProcess);
+
     // accommodate prerelease-only probes by resetting to nightly (if needed)
-    if (state.productDimensions.channel === 'release' && probe.prerelease) {
+    if (
+      state.productDimensions.channel === 'release' &&
+      probe.info.calculated.latest_history.optout
+    ) {
       store.setDimension('channel', 'nightly');
     }
   },
