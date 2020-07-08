@@ -8,7 +8,7 @@ from google.cloud import storage
 
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
-PRODUCT_MODEL_MAP = {"fenix": "api.FenixAggregation"}
+PRODUCT_MODEL_MAP = {"org_mozilla_fenix": "api.FenixAggregation"}
 
 
 def log(message):
@@ -21,7 +21,7 @@ def log(message):
 
 class Command(BaseCommand):
 
-    help = "Imports user counts"
+    help = "Imports Glean product aggregations"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
             #  Load CSV into temp table & insert data from temp table into
             #  aggregation tables, using upserts.
-            self.import_file(tmp_table, model, fp)
+            self.import_file(tmp_table, fp, model)
 
             #  Drop temp table and remove file.
             log("Dropping temp table.")
@@ -76,13 +76,22 @@ class Command(BaseCommand):
             log(f"Deleting local file: {fp.name}.")
             fp.close()
 
-    def import_file(self, tmp_table, model, fp):
+        # Once all files are loaded, refresh the materialized views.
+
+        if blobs:
+            with connection.cursor() as cursor:
+                view = f"view_{model._meta.db_table}"
+                log(f"Refreshing materialized view for {view}")
+                cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
+                log("Refresh completed.")
+
+    def import_file(self, tmp_table, fp, model):
 
         csv_columns = [f.name for f in model._meta.get_fields() if f.name not in ["id"]]
         conflict_columns = [
             f
             for f in model._meta.constraints[0].fields
-            if f not in ["id", "total_users", "data"]
+            if f not in ["id", "total_users", "histogram", "percentiles"]
         ]
 
         log("  Importing file into temp table.")
@@ -101,6 +110,7 @@ class Command(BaseCommand):
                 ON CONFLICT ({", ".join(conflict_columns)})
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
-                    data = EXCLUDED.data
+                    histogram = EXCLUDED.histogram,
+                    percentiles = EXCLUDED.percentiles
             """
             cursor.execute(sql)
