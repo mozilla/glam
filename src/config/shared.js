@@ -5,7 +5,7 @@ export const numHighlightedBuckets = 10;
 export const makeSortOrder = (latest, which = 'counts') => (a, b) => {
   // get latest data point and see
   if (latest[which][a] < latest[which][b]) return 1;
-  if (latest[which][a] >= latest[which][b]) return -1;
+  if (latest[which][a] > latest[which][b]) return -1;
   return 0;
 };
 
