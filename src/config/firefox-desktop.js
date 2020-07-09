@@ -56,9 +56,9 @@ export default {
     },
   },
   getParamsForQueryString(storeValue) {
-    /* These parameters will map to a ${key}=${value}&... in the querystring,
-      which is used to convey the view state when the GLAM url is shared with others.
-    */
+    // These parameters will map to a ${key}=${value}&... in the querystring,
+    // which is used to convey the view state when the GLAM URL is shared with
+    // others.
     return {
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
@@ -72,7 +72,7 @@ export default {
     };
   },
   getParamsForDataAPI(storeValue) {
-    /* These parameters are needed to request the data from the API itself. */
+    // These parameters are needed to request the data from the API itself
     return {
       product: 'firefox', // FIXME: this should probably be firefoxDesktop.
       channel: storeValue.productDimensions.channel,
@@ -85,12 +85,12 @@ export default {
   fetchData(params, appStore) {
     return getProbeData(params, appStore.getState().auth.token).then(
       (payload) => {
-        // FIXME: this should not be reading from the store.
-        // the response is kind of messed up so once the API / data is fixed
-        // the response shluld consume from payload.response[0].metric_type.
-        // until then, however, we'll have to use the store values
-        // for the probeType and probeKind, since they're more accurate than
-        // what is in payload.response[0].metric_type.
+        // FIXME: this should not be reading from the store. The response is
+        // kind of messed up so once the API / data is fixed the response should
+        // consume from payload.response[0].metric_type. Until then, however,
+        // we'll have to use the store values for the probeType and probeKind,
+        // since they're more accurate than what is in
+        // payload.response[0].metric_type.
         const { aggregationLevel } = appStore.getState().productDimensions;
         const [probeType, probeKind] = payload.response[0].metric_type.split(
           '-'
@@ -114,11 +114,9 @@ export default {
     );
   },
   updateStoreAfterDataIsReceived(data, appStore, probeStore) {
-    /*
-      This function is called directly after the response has been received
-      by the frontend. It will always run, even against cached data, as a way
-      of resetting the necessary state.
-    */
+    // This function is called directly after the response has been received by
+    // the frontend. It will always run, even against cached data, as a way of
+    // resetting the necessary state.
     const probeValue = get(probeStore);
     const viewType = getProbeViewType(probeValue.type, probeValue.kind);
 
@@ -135,9 +133,8 @@ export default {
     return { data, viewType, ...etc };
   },
   transformProbeForGLAM(probe) {
-    /* This currently transforms the probe metadata into a more useful format
-      for firefox desktop. It will likely be unnecessary for other products.
-    */
+    // This currently transforms the probe metadata into a more useful format
+    // for Firefox desktop. It will likely be unnecessary for other products.
     const pr = { ...probe };
     if (pr.record_in_processes[0] === 'all') {
       pr.record_in_processes = ['main', 'content', 'gpu'];
@@ -148,10 +145,9 @@ export default {
     return pr;
   },
   setDefaultsForProbe(store, probe) {
-    /* This currently updatess the store to accommodate any needed
-      bits of state for the store before fetching data. It is probably not
-      necessary for non-firefox desktop products.
-    */
+    // This currently updates the store to accommodate any needed bits of state
+    // for the store before fetching data. It is probably not necessary for
+    // non-Firefox desktop products.
     const state = store.getState();
     // accommodate only valid processes.
     if (
