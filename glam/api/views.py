@@ -136,7 +136,13 @@ def _get_firefox_counts(channel, os, versions, by_build):
 
 
 def get_glean_aggregations(request, **kwargs):
-    REQUIRED_QUERY_PARAMETERS = ["product", "probe", "aggregationLevel"]
+    REQUIRED_QUERY_PARAMETERS = [
+        "aggregationLevel",
+        "channel",
+        "ping_type",
+        "probe",
+        "product",
+    ]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         # Figure out which query parameter is missing.
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
@@ -157,11 +163,15 @@ def get_glean_aggregations(request, **kwargs):
         raise ValidationError("Query version cannot be determined")
     versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
+    channel = kwargs["channel"]
     probe = kwargs["probe"]
+    ping_type = kwargs["ping_type"]
     os = kwargs.get("os", "*")
 
     dimensions = [
+        Q(channel=channel),
         Q(metric=probe),
+        Q(ping_type=ping_type),
         Q(version__in=versions),
         Q(os=os),
     ]
@@ -308,7 +318,8 @@ def random_probes(request):
         random_percentage = 1.0
 
     # Get a random list of `n` probes from the Desktop nightly table.
-    aggs = DesktopNightlyAggregationView.objects.raw("""
+    aggs = DesktopNightlyAggregationView.objects.raw(
+        """
         SELECT id, metric, histogram
         FROM view_glam_desktop_nightly_aggregation
         WHERE
@@ -318,7 +329,9 @@ def random_probes(request):
             AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
             AND RANDOM() < %s
         LIMIT %s
-    """, [random_percentage, n])
+    """,
+        [random_percentage, n],
+    )
 
     for agg in aggs:
         try:
