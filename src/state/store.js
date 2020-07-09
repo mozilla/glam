@@ -1,23 +1,11 @@
-import { derived, get } from 'svelte/store';
+import { derived } from 'svelte/store';
 
-import { createCatColorMap } from '../utils/color-maps';
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
-import telemetrySearch, { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
-
-import { getProbeData } from './api';
+import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
 import CONFIG from '../config/firefox-desktop';
-import { numHighlightedBuckets } from '../config/shared';
-
-import {
-  transformGLAMAPIResponse,
-  getProbeViewType,
-  isCategorical,
-} from '../utils/probe-utils';
-
-import { validate, noResponse } from '../utils/data-validation';
 
 // TODO: move this to the new config.js when 'product' is added.
 const DEFAULT_PROBE_PROCESS = 'content';
@@ -140,16 +128,6 @@ export const hasDefaultControlFields = derived(store, ($store) =>
 
 // ///// probe querying infrastructure.
 
-function getParamsForQueryString(obj) {
-  // FIXME: move toward a product-keyed version of this.
-  return CONFIG.getParamsForQueryString(obj);
-}
-
-function getParamsForDataAPI(obj) {
-  // FIXME: move toward a product-keyed version of this.
-  return CONFIG.getParamsforDataAPI(obj);
-}
-
 const toQueryStringPair = (k, v) => {
   if (Array.isArray(v)) {
     return `${k}=${encodeURIComponent(JSON.stringify(v))}`;
@@ -180,84 +158,6 @@ function paramsAreValid(params) {
 
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
-const makeSortOrder = (latest, which = 'counts') => (a, b) => {
-  // get latest data point and see
-  if (latest[which][a] < latest[which][b]) return 1;
-  if (latest[which][a] >= latest[which][b]) return -1;
-  return 0;
-};
-
-function latestDatapoint(tr) {
-  return tr[tr.length - 1];
-}
-
-export function getBucketKeys(tr) {
-  return Object.keys(latestDatapoint(tr).counts);
-}
-
-export function extractBucketMetadata(transformedData) {
-  const etc = {};
-  const options = getBucketKeys(transformedData);
-  const cmpBuckets = getBucketKeys(transformedData);
-  const sorter = makeSortOrder(latestDatapoint(transformedData));
-  cmpBuckets.sort(sorter);
-  const cmp = createCatColorMap(cmpBuckets);
-  const initialBuckets = cmpBuckets.slice(0, numHighlightedBuckets);
-  etc.bucketOptions = options;
-  etc.bucketColorMap = cmp;
-  etc.initialBuckets = initialBuckets;
-  etc.bucketSortOrder = sorter;
-  return etc;
-}
-
-export function fetchDataForGLAM(params) {
-  return getProbeData(params, store.getState().auth.token).then((payload) => {
-    // FIXME: this should not be reading from the store.
-    // the response is kind of messed up so once the API / data is fixed
-    // the response shluld consume from payload.response[0].metric_type.
-    // until then, however, we'll have to use the store values
-    // for the probeType and probeKind, since they're more accurate than
-    // what is in payload.response[0].metric_type.
-    const { aggregationLevel } = store.getState().productDimensions;
-    const { type: probeType, kind: probeKind, active: probeActive } = get(
-      probe
-    );
-
-    validate(payload, (p) => noResponse(p, probeActive));
-    const data = transformGLAMAPIResponse(
-      payload.response,
-      isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-      aggregationLevel,
-      {
-        probeType: `${probeType}-${probeKind}`,
-      }
-    );
-
-    return {
-      data,
-      probeType,
-      probeKind,
-    };
-  });
-}
-
-export function updateStoreAfterDataIsReceived({ data }) {
-  const probeValue = get(probe);
-  // THIS WILL BE FALSE BECAUSE WE HAVE NOT RECEIVED THE PROBE DATA YET.
-  const viewType = getProbeViewType(probeValue.type, probeValue.kind);
-  const isCategoricalTypeProbe = viewType === 'categorical';
-  let etc = {};
-  if (isCategoricalTypeProbe) {
-    etc = extractBucketMetadata(data);
-  }
-
-  if (isCategoricalTypeProbe) {
-    store.setField('activeBuckets', etc.initialBuckets);
-  }
-  store.setField('recordedInProcesses', probeValue.record_in_processes);
-  return { data, viewType, ...etc };
-}
-
 const cache = {};
 let previousQuery;
 
@@ -275,7 +175,7 @@ export const dataset = derived(
     // We can't fetch anything until the user is authenticated
     if (!$store.auth.isAuthenticated) return;
 
-    const params = getParamsForDataAPI($store);
+    const params = CONFIG.getParamsForDataAPI($store);
     const qs = toQueryString(params);
 
     // // invalid parameters, probe selected.
@@ -291,7 +191,7 @@ export const dataset = derived(
     }
 
     if (!(qs in cache)) {
-      cache[qs] = fetchDataForGLAM(params);
+      cache[qs] = CONFIG.fetchData(params, store);
     }
 
     // compare the previousQuery to the current one.
@@ -299,12 +199,16 @@ export const dataset = derived(
     // data set.
     if (previousQuery !== qs) {
       previousQuery = qs;
-      set(cache[qs].then(updateStoreAfterDataIsReceived));
+      set(
+        cache[qs].then(({ data }) =>
+          CONFIG.updateStoreAfterDataIsReceived(data, store, probe)
+        )
+      );
     }
   }
 );
 
 export const currentQuery = derived(store, ($store) => {
-  const params = getParamsForQueryString($store);
+  const params = CONFIG.getParamsForQueryString($store);
   return toQueryString(params);
 });
