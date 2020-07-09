@@ -1,6 +1,6 @@
 import json
-import pytest
 
+import pytest
 from django.db import connection
 from django.urls import reverse
 
@@ -8,6 +8,7 @@ from glam.api import constants
 from glam.api.models import (
     DesktopNightlyAggregation,
     DesktopReleaseAggregation,
+    FenixAggregation,
     FirefoxCounts,
     Probe,
 )
@@ -56,6 +57,48 @@ def _create_aggregation(data=None, multiplier=1.0, model=None):
             os=_data["os"],
             total_users=999,
         )
+
+    with connection.cursor() as cursor:
+        view = f"view_{model._meta.db_table}"
+        cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
+
+
+def _create_glean_aggregation(model, data=None, multiplier=1.0):
+    _data = {
+        "channel": "release",
+        "version": "2",
+        "ping_type": "*",
+        "os": "*",
+        "build_id": "*",
+        "build_date": None,
+        "metric": "events_total_uri_count",
+        "metric_type": "counter",
+        "metric_key": "",
+        "client_agg_type": "avg",
+        "total_users": 111 * multiplier,
+        "histogram": json.dumps(
+            {
+                "0": round(10.00001111 * multiplier, 4),
+                "1": round(20.00002222 * multiplier, 4),
+                "2": round(30.00003333 * multiplier, 4),
+                "3": round(40.00004444 * multiplier, 4),
+            }
+        ),
+        "percentiles": json.dumps(
+            {
+                "5": 5 * multiplier,
+                "25": 25 * multiplier,
+                "50": 50 * multiplier,
+                "75": 75 * multiplier,
+                "95": 95 * multiplier,
+            }
+        ),
+    }
+    if data:
+        _data.update(data)
+    model.objects.create(**_data)
+
+    # TODO: Add data to counts table.
 
     with connection.cursor() as cursor:
         view = f"view_{model._meta.db_table}"
@@ -162,7 +205,7 @@ class TestRandomProbesApi:
         assert len(resp["probes"]) == 1
 
 
-class TestAggregationsApi:
+class TestDesktopAggregationsApi:
     @classmethod
     def setup_class(cls):
         cls.url = reverse("v1-data")
@@ -178,10 +221,13 @@ class TestAggregationsApi:
     @pytest.mark.parametrize(
         "query, missing",
         [
-            ({"channel": None, "probe": None, "versions": []}, "aggregationLevel"),
-            ({"channel": None, "versions": [], "aggregationLevel": None}, "probe"),
-            ({"probe": None, "versions": [], "aggregationLevel": None}, "channel"),
+            (
+                {"product": "firefox", "probe": None, "aggregationLevel": None},
+                "channel",
+            ),
             ({"channel": None, "probe": None}, "aggregationLevel"),
+            ({"channel": None, "aggregationLevel": None}, "probe"),
+            ({"probe": None, "aggregationLevel": None}, "channel"),
             ({"channel": None}, "aggregationLevel, probe"),
             ({}, "aggregationLevel, channel, probe"),
         ],
@@ -193,20 +239,15 @@ class TestAggregationsApi:
         assert resp.status_code == 400
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
 
-    def test_channel_required_if_firefox(self, client):
+    def test_invalid_channel_if_firefox(self, client):
         query = {
             "query": {
                 "product": "firefox",
+                "channel": "ohrora",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
             }
         }
-        resp = client.post(self.url, data=query, content_type="application/json")
-        assert resp.status_code == 400
-        assert resp.json()[0].startswith("Missing required query parameters")
-
-        # Also test an invalid channel.
-        query["query"]["channel"] = "ohrora"
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 400
         assert resp.json()[0].startswith("Product not currently supported")
@@ -292,7 +333,7 @@ class TestAggregationsApi:
         )
         assert resp.status_code == 200
 
-    def test_versions_provided(self, client, monkeypatch):
+    def test_versions_provided(self, client):
         _create_aggregation()
 
         query = {
@@ -306,7 +347,7 @@ class TestAggregationsApi:
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
 
-    def test_versions_count(self, client, monkeypatch):
+    def test_versions_count(self, client):
         # Max version in the test data is 72. If we pass versions=4 we should
         # get 4 records back, even though we have 7 in the db.
         _create_aggregation()
@@ -315,7 +356,6 @@ class TestAggregationsApi:
         _create_aggregation({"version": 69})
         _create_aggregation({"version": 68})
         _create_aggregation({"version": 67})
-        _create_aggregation({"version": 66})
 
         query = {
             "query": {
@@ -329,6 +369,8 @@ class TestAggregationsApi:
         assert resp.status_code == 200
         data = resp.json()
         assert len(data["response"]) == 4
+        versions = sorted([d["version"] for d in data["response"]])
+        assert versions == sorted(["72", "71", "70", "69"])
 
     def test_process_filter(self, client):
         _create_aggregation()
@@ -349,3 +391,92 @@ class TestAggregationsApi:
         query["query"]["process"] = "gpu"
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 404
+
+
+class TestGleanAggregationsApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-data")
+
+    @pytest.mark.parametrize(
+        # Not testing all possible combinations here, just the boundaries and
+        # spot checking.
+        "query, missing",
+        [
+            ({"channel": None, "ping_type": None, "probe": None}, "aggregationLevel"),
+            ({"aggregationLevel": None, "ping_type": None, "probe": None}, "channel"),
+            ({"aggregationLevel": None, "channel": None, "probe": None}, "ping_type"),
+            ({"aggregationLevel": None, "channel": None, "ping_type": None}, "probe"),
+            ({"channel": None}, "aggregationLevel, ping_type, probe"),
+            ({}, "aggregationLevel, channel, ping_type, probe"),
+        ],
+    )
+    def test_required_glean_params(self, client, query, missing):
+        query["product"] = "fenix"
+        resp = client.post(
+            self.url, data={"query": query}, content_type="application/json"
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0] == f"Missing required query parameters: {missing}"
+
+    def test_histogram(self, client):
+        # This test adds 2 histograms, one of which will be in the result.
+        _create_glean_aggregation(model=FenixAggregation, multiplier=10)
+        _create_glean_aggregation(
+            model=FenixAggregation, data={"os": "Android"}, multiplier=1.5
+        )
+
+        query = {
+            "query": {
+                "product": "fenix",
+                "channel": "release",
+                "probe": "events_total_uri_count",
+                "ping_type": "*",
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["response"]) == 1
+        assert data["response"][0] == {
+            "build_date": None,
+            "build_id": "*",
+            "channel": "release",
+            "client_agg_type": "avg",
+            "histogram": {"0": 100.0001, "1": 200.0002, "2": 300.0003, "3": 400.0004},
+            "metric": "events_total_uri_count",
+            "metric_key": "",
+            "metric_type": "counter",
+            "os": "*",
+            "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
+            "ping_type": "*",
+            "total_users": 1110,
+            "version": "2",
+        }
+
+    def test_versions_count(self, client):
+        # Create 6 versions, max being version=6.
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 6})
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 5})
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 4})
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 3})
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 2})
+        _create_glean_aggregation(model=FenixAggregation, data={"version": 1})
+
+        query = {
+            "query": {
+                "product": "fenix",
+                "channel": "release",
+                "ping_type": "*",
+                "probe": "events_total_uri_count",
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["response"]) == 4
+        versions = sorted([d["version"] for d in data["response"]])
+        assert versions == sorted(["6", "5", "4", "3"])
