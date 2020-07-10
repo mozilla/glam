@@ -32,3 +32,20 @@ export function extractBucketMetadata(transformedData) {
   etc.bucketSortOrder = sorter;
   return etc;
 }
+
+export default {
+  activeBuckets: {
+    isMulti: true,
+    defaultValue: [],
+  },
+  proportionMetricType: {
+    defaultValue: 'proportions',
+  },
+  timeHorizon: {
+    defaultValue: 'MONTH',
+  },
+  visiblePercentiles: {
+    isMulti: true,
+    defaultValue: [95, 75, 50, 25, 5],
+  },
+};
