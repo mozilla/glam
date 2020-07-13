@@ -1,11 +1,7 @@
 import { get } from 'svelte/store';
 import { extractBucketMetadata } from './shared';
-import {
-  transformGLAMAPIResponse,
-  isCategorical,
-  isSelectedProcessValid,
-  getProbeViewType,
-} from '../utils/probe-utils';
+import { transformAPIResponse } from '../utils/transform-data';
+import { isSelectedProcessValid } from '../utils/probe-utils';
 import { getProbeData } from '../state/api';
 import { validate, noResponse } from '../utils/data-validation';
 
@@ -59,6 +55,23 @@ export default {
       },
     },
   },
+  // the probeView object maps a probe type for this product
+  // to one of a few options: "histogram"  "scalar", and "categorical". Quantile type probes
+  // are ones whose aggregation makes some kind of histogram-like shape
+  // (such as an exponential histogram or a scalar in Firefox Desktop).
+  // Probes whose aggregation might look like a bar chart map to "proportion".
+  // FIXME: this will probably need to be changed
+  // so these histogram / scalar repsonses are actually 'linear' vs. 'log'.
+  probeView: {
+    'histogram-linear': 'histogram',
+    'histogram-exponential': 'histogram',
+    'scalar-uint': 'scalar',
+    'scalar-boolean': 'categorical',
+    'histogram-enumerated': 'categorical',
+    'histogram-flag': 'categorical',
+    'histogram-boolean': 'categorical',
+    'histogram-count': 'categorical',
+  },
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
     // which is used to convey the view state when the GLAM URL is shared with
@@ -89,30 +102,18 @@ export default {
   fetchData(params, appStore) {
     return getProbeData(params, appStore.getState().auth.token).then(
       (payload) => {
-        // FIXME: this should not be reading from the store. The response is
-        // kind of messed up so once the API / data is fixed the response should
-        // consume from payload.response[0].metric_type. Until then, however,
-        // we'll have to use the store values for the probeType and probeKind,
-        // since they're more accurate than what is in
-        // payload.response[0].metric_type.
         const { aggregationLevel } = appStore.getState().productDimensions;
-        const [probeType, probeKind] = payload.response[0].metric_type.split(
-          '-'
-        );
 
+        const metricType = payload.response[0].metric_type;
         validate(payload, (p) => noResponse(p));
-        const data = transformGLAMAPIResponse(
-          payload.response,
-          isCategorical(probeType, probeKind) ? 'proportion' : 'quantile',
-          aggregationLevel,
-          {
-            probeType: `${probeType}-${probeKind}`,
-          }
-        );
+        const data = transformAPIResponse[
+          this.probeView[metricType] === 'categorical'
+            ? 'proportion'
+            : 'quantile'
+        ](payload.response, aggregationLevel, metricType);
         return {
           data,
-          probeType,
-          probeKind,
+          probeType: this.probeView[metricType],
         };
       }
     );
@@ -122,7 +123,7 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const probeValue = get(probeStore);
-    const viewType = getProbeViewType(probeValue.type, probeValue.kind);
+    const viewType = this.probeView[data[0].metric_type];
 
     const isCategoricalTypeProbe = viewType === 'categorical';
     let etc = {};

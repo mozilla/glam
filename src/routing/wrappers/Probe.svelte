@@ -13,25 +13,6 @@
   import { probe, dataset, store } from '../../state/store';
   import { getProbeViewType, isSelectedProcessValid } from '../../utils/probe-utils';
 
-  // FIXME: for now, once we have retreived the data set, there are
-  // a few additional operations that need to be performed.
-  // to start, we will need to reset the activeBuckets in the non-
-  // initializing case.
-
-  // down the line, it would be good to figure out the right way to think
-  // about this whole pipeline. At the moment it does feel kind of weird to
-  // have the post-fetching step be in a component.
-
-  // ADDL FIXME: we should wait for the telemetry probes to load if that's what we're
-  // looking for here.
-
-  const temporaryViewTypeStore = derived(probe, ($probe) => {
-    if (!$probe) return undefined;
-    return getProbeViewType(
-      $probe.type,
-      $probe.kind,
-    );
-  });
 </script>
 
 {#await $dataset}
@@ -40,7 +21,7 @@
   </div>
 {:then data}
   {#if isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
-    <slot {data} probeType={$temporaryViewTypeStore} />
+    <slot {data} probeType={data.viewType} />
   {:else}
     <div class='graphic-body__content'>
       <ProbeTitle />
