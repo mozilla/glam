@@ -63,9 +63,9 @@ export default {
   // FIXME: this will probably need to be changed
   // so these histogram / scalar repsonses are actually 'linear' vs. 'log'.
   probeView: {
-    'histogram-linear': 'histogram',
-    'histogram-exponential': 'histogram',
-    'scalar-uint': 'scalar',
+    'histogram-linear': 'linear',
+    'histogram-exponential': 'log',
+    'scalar-uint': 'linear',
     'scalar-boolean': 'categorical',
     'histogram-enumerated': 'categorical',
     'histogram-flag': 'categorical',
@@ -106,11 +106,15 @@ export default {
 
         const metricType = payload.response[0].metric_type;
         validate(payload, (p) => noResponse(p));
-        const data = transformAPIResponse[
+        const viewType =
           this.probeView[metricType] === 'categorical'
             ? 'proportion'
-            : 'quantile'
-        ](payload.response, aggregationLevel, metricType);
+            : 'quantile';
+        const data = transformAPIResponse[viewType](
+          payload.response,
+          aggregationLevel,
+          metricType
+        );
         return {
           data,
           probeType: this.probeView[metricType],

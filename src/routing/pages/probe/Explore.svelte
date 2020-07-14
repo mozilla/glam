@@ -38,7 +38,7 @@
         aggregationLevel={$store.productDimensions.aggregationLevel}>
           <ProbeTitle />
       </ProportionExplorerView>
-    {:else if ['histogram', 'scalar'].includes(probeType)}
+    {:else if ['log', 'linear'].includes(probeType)}
       <QuantileExplorerView
         data={data.data}
         probeType={probeType}
