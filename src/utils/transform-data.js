@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { fullBuildIDToDate } from './build-id-utils';
+import { fullBuildIDToDate, buildDateStringToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
 
 export function sortByKey(key) {
@@ -45,7 +45,7 @@ export function changeBooleanHistogramResponse(point) {
   delete point.histogram['2'];
 }
 
-export function toCounts(point) {
+export function proportionsToCounts(point) {
   point.counts = {};
   Object.keys(point.proportions).forEach((p) => {
     point.counts[p] = point.proportions[p] * point.total_users;
@@ -62,9 +62,7 @@ export const makeLabel = {
   },
   build_id(pt) {
     if (pt.build_date) {
-      // FIXME: will need some additional transformation for
-      // products that return a build_date.
-      pt.label = pt.build_date;
+      pt.label = buildDateStringToDate(pt.build_date.slice(0, 18));
     } else {
       // add a build_date field here if one does not exist.
       // this should match
@@ -111,7 +109,7 @@ export function transformedPercentiles(point) {
 export const standardProportionTransformations = [
   toAudienceSize,
   addProportion,
-  toCounts,
+  proportionsToCounts,
 ];
 
 export const standardQuantileTransformations = [
