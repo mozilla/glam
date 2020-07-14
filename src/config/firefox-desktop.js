@@ -56,12 +56,10 @@ export default {
     },
   },
   // the probeView object maps a probe type for this product
-  // to one of a few options: "histogram"  "scalar", and "categorical". Quantile type probes
+  // to one of a few options: "linear"  "log", and "categorical". Quantile type probes
   // are ones whose aggregation makes some kind of histogram-like shape
   // (such as an exponential histogram or a scalar in Firefox Desktop).
   // Probes whose aggregation might look like a bar chart map to "proportion".
-  // FIXME: this will probably need to be changed
-  // so these histogram / scalar repsonses are actually 'linear' vs. 'log'.
   probeView: {
     'histogram-linear': 'linear',
     'histogram-exponential': 'log',

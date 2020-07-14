@@ -5,6 +5,9 @@ import {
   changeBooleanHistogramResponse,
   toAudienceSize,
   makeLabel,
+  checkForHistogram,
+  checkForPercentiles,
+  checkForTotalUsers,
 } from '../src/utils/transform-data';
 
 describe('transform parameters must be either a function or falsy', () => {
@@ -65,6 +68,27 @@ describe('basic transformations work as expected', () => {
   });
   it('pushes one transform to the next layer', () => {
     expect(transformedData.map((di) => di.y)).toEqual([40 / 1000, 70 / 40]);
+  });
+});
+
+describe('checks', () => {
+  it('correctly throws if checkForHistogram fails', () => {
+    const dpass = [{ histogram: { 0: 10, 1: 20 } }];
+    const dfail = [{ histogram: undefined }];
+    expect(() => transform(checkForHistogram)(dpass)).not.toThrow();
+    expect(() => transform(checkForHistogram)(dfail)).toThrow();
+  });
+  it('correctly throws if checkForPercentiles fails', () => {
+    const dpass = [{ percentiles: { 5: 10, 25: 20000 } }];
+    const dfail = [{ percentiles: undefined }];
+    expect(() => transform(checkForPercentiles)(dpass)).not.toThrow();
+    expect(() => transform(checkForPercentiles)(dfail)).toThrow();
+  });
+  it('correctly throws if checkForTotalUsers fails', () => {
+    const dpass = [{ total_users: 1000000 }];
+    const dfail = [{ total_users: undefined }];
+    expect(() => transform(checkForTotalUsers)(dpass)).not.toThrow();
+    expect(() => transform(checkForTotalUsers)(dfail)).toThrow();
   });
 });
 

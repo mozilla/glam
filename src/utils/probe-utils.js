@@ -1,15 +1,3 @@
-const errors = {
-  MISSING_PERCENTILES: {
-    message: 'This probe is missing data.',
-    moreInformation:
-      "We can't find the percentile calculations for this probe.",
-  },
-  MISSING_HISTOGRAM: {
-    message: 'This probe is missing data.',
-    moreInformation: "We can't find the histogram aggregations for this probe.",
-  },
-};
-
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }

@@ -4,7 +4,7 @@ import { getProbeData } from '../state/api';
 import { validate, noResponse } from '../utils/data-validation';
 
 export default {
-  sampleRate: 0.1,
+  sampleRate: 1,
   dimensions: {
     os: {
       title: 'OS',
@@ -37,6 +37,7 @@ export default {
       ],
     },
   },
+  // FIXME: these are guesses at the moment
   probeView: {
     boolean: 'categorical',
     custom_distribution_exponential: 'log',

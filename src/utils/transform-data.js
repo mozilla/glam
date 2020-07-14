@@ -2,6 +2,28 @@ import produce from 'immer';
 import { fullBuildIDToDate, buildDateStringToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
 
+const errors = {
+  MISSING_PERCENTILES: {
+    message: 'This probe is missing data.',
+    moreInformation:
+      "We can't find the percentile calculations for this probe.",
+  },
+  MISSING_HISTOGRAM: {
+    message: 'This probe is missing data.',
+    moreInformation: "We can't find the histogram aggregations for this probe.",
+  },
+  MISSING_TOTAL_USERS: {
+    message: 'This probe is missing data.',
+    moreInformation: "We can't find the total user counts for this probe.",
+  },
+};
+
+function createNewError(which) {
+  const error = new Error(errors[which].message);
+  error.moreInformation = errors[which].moreInformation;
+  return error;
+}
+
 export function sortByKey(key) {
   return (a, b) => {
     if (a[key] <= b[key]) return -1;
@@ -30,6 +52,26 @@ export function transform(...transforms) {
 The following functions are used in transform.
 Each of these mutates a single data point.
 */
+
+export function checkForHistogram(point) {
+  if (point.histogram === undefined) {
+    throw createNewError('MISSING_HISTOGRAM');
+  }
+}
+
+export function checkForPercentiles(point) {
+  if (point.percentiles === undefined) {
+    throw createNewError('MISSING_PERCENTILES');
+  }
+}
+
+export function checkForTotalUsers(point) {
+  if (point.total_users === undefined) {
+    throw createNewError('MISSING_TOTAL_USERS');
+  }
+}
+
+/* quantile view transform functions */
 
 export function addProportion(point) {
   // requires point.histogram.
@@ -64,15 +106,16 @@ export const makeLabel = {
     if (pt.build_date) {
       pt.label = buildDateStringToDate(pt.build_date.slice(0, 18));
     } else {
-      // add a build_date field here if one does not exist.
-      // this should match
+      // if no build_date, let's attempt to use build_id instead.
+      // This is the current flow for Firefox Desktop.
+      // Add a build_date field here if one does not exist.
       pt.label = fullBuildIDToDate(pt.build_id);
       pt.build_date = new Date(pt.label);
     }
   },
 };
 
-/// ///////
+/* quantile view transform functions */
 
 export const responseHistogramToGraphicFormat = (
   point,
@@ -107,12 +150,17 @@ export function transformedPercentiles(point) {
 }
 
 export const standardProportionTransformations = [
+  checkForHistogram,
+  checkForTotalUsers,
   toAudienceSize,
   addProportion,
   proportionsToCounts,
 ];
 
 export const standardQuantileTransformations = [
+  checkForHistogram,
+  checkForPercentiles,
+  checkForTotalUsers,
   toAudienceSize,
   responseHistogramToGraphicFormat,
   transformedPercentiles,
