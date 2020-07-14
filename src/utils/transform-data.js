@@ -1,3 +1,19 @@
+/*
+transform-data.js
+=================
+This file defines functions used for transforming the API response
+just enough to be used by GLAM. The function transform
+creates a deep copy of the API response data, and then applies
+each function in the arguments to each data point in the response. The functions
+all MUTATE the deep-copied API response using immer's produce. This is a much
+easier way to reason about what needs to be done to the data and reduces the cost
+of the transformation.
+
+A transform pipeline accepts any number of arguments, each of which must either
+be falsy or a function. If the value is falsy, transform skips it.
+Some transform functions are checks that, if they fail, throw an error.
+*/
+
 import produce from 'immer';
 import { fullBuildIDToDate, buildDateStringToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
