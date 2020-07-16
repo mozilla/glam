@@ -55,6 +55,11 @@ def get_firefox_aggregations(request, **kwargs):
         max_version = int(model.objects.aggregate(Max("version"))["version__max"])
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
+    except TypeError:
+        # This happens when `version_max` is NULL and cannot be converted to an int,
+        # suggesting that we have no data for this model.
+        raise NotFound("No data found for the provided parameters")
+
     versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
     labels_cache = caches["probe-labels"]
@@ -161,6 +166,11 @@ def get_glean_aggregations(request, **kwargs):
         max_version = int(model.objects.aggregate(Max("version"))["version__max"])
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
+    except TypeError:
+        # This happens when `version_max` is NULL and cannot be converted to an int,
+        # suggesting that we have no data for this model.
+        raise NotFound("No data found for the provided parameters")
+
     versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
     channel = kwargs["channel"]

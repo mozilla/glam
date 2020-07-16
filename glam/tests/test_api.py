@@ -218,6 +218,18 @@ class TestDesktopAggregationsApi:
         assert resp.status_code == 400
         assert resp.json()[0] == "Unexpected JSON body"
 
+    def test_empty_data(self, client):
+        # Test no data doesn't trigger a 500.
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 404
+
     @pytest.mark.parametrize(
         "query, missing",
         [
@@ -397,6 +409,18 @@ class TestGleanAggregationsApi:
     @classmethod
     def setup_class(cls):
         cls.url = reverse("v1-data")
+
+    def test_empty_data(self, client):
+        # Test no data doesn't trigger a 500.
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "aggregationLevel": "version",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 404
 
     @pytest.mark.parametrize(
         # Not testing all possible combinations here, just the boundaries and
