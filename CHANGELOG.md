@@ -2,7 +2,11 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.7.0...HEAD) (date TBD)
 
--
+- Update
+  [database](https://github.com/mozilla/glam/commit/9adef25f3e5a511a3a4b9f6ff6d54ef2d7afe942)
+  and
+  [API](https://github.com/mozilla/glam/commit/88d7980aea40b48192434ad9e10bb3e42819aad0)
+  to support Fenix aggregations
 
 ## [2020.7.0](https://github.com/mozilla/glam/compare/2020.6.0...2020.7.0) (2020-07-02)
 
