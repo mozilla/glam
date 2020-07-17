@@ -1,6 +1,7 @@
 import os
 
 import orjson
+from django.conf import settings
 from django.core.cache import caches
 from django.db.models import Max, Q, Value
 from django.db.models.functions import Concat
@@ -15,8 +16,28 @@ from glam.api.models import (
     DesktopReleaseAggregationView,
     FenixAggregationView,
     FirefoxCounts,
+    LastUpdated,
     Probe,
 )
+
+
+@api_view(["GET"])
+def updates(request):
+    product = request.GET.get("product")
+    query = LastUpdated.objects.all()
+    if product:
+        query = query.filter(product=product)
+
+    return Response(
+        {
+            "updates": {
+                row.product: row.last_updated.strftime(
+                    settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+                )
+                for row in query
+            }
+        }
+    )
 
 
 def get_firefox_aggregations(request, **kwargs):

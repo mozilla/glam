@@ -109,19 +109,15 @@ class Core(Configuration):
 
     # Django REST Framework
     REST_FRAMEWORK = {
-        "DEFAULT_AUTHENTICATION_CLASSES": [
-            "glam.auth.drf.OIDCTokenAuthentication",
-        ],
-        "DEFAULT_PARSER_CLASSES": [
-            "drf_orjson_renderer.parsers.ORJSONParser",
-        ],
-        "DEFAULT_RENDERER_CLASSES": [
-            "drf_orjson_renderer.renderers.ORJSONRenderer",
-        ],
+        "DEFAULT_AUTHENTICATION_CLASSES": ["glam.auth.drf.OIDCTokenAuthentication"],
+        "DEFAULT_PARSER_CLASSES": ["drf_orjson_renderer.parsers.ORJSONParser"],
+        "DEFAULT_RENDERER_CLASSES": ["drf_orjson_renderer.renderers.ORJSONRenderer"],
+        "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S",
     }
 
-    GA_TRACKING_ID = values.Value("", environ_name="GA_TRACKING_ID",
-        environ_prefix=None)
+    GA_TRACKING_ID = values.Value(
+        "", environ_name="GA_TRACKING_ID", environ_prefix=None
+    )
 
 
 class Base(Core):
@@ -140,13 +136,11 @@ class Base(Core):
     # If we start using the cache for anything heavy, consider using a true
     # cache instead of locmem as default cache. This is mostly a placeholder.
     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+        "probe-labels": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "probe-labels",
         },
-        'probe-labels': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'probe-labels',
-        }
     }
 
     LOGGING_USE_JSON = values.BooleanValue(False)
