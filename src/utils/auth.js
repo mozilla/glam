@@ -1,3 +1,8 @@
+/**
+ * This file is based on the following documentation:
+ * https://auth0.com/docs/quickstart/spa/vanillajs/01-login
+ */
+
 import createAuth0Client from '@auth0/auth0-spa-js';
 
 import { codeAndStateInQuery } from './url';
@@ -65,12 +70,12 @@ export function authenticate(successCallback) {
 
     const isAuthenticated = await auth0.isAuthenticated();
 
-    if (isAuthenticated) {
-      withToken(successCallback);
-    } else if (!isAuthenticated && !codeAndStateInQuery()) {
-      kickOffAuthentication();
-    } else if (!isAuthenticated && codeAndStateInQuery()) {
+    if (codeAndStateInQuery()) {
       wrapUpAuthentication();
+    } else if (!isAuthenticated) {
+      kickOffAuthentication();
+    } else {
+      withToken(successCallback);
     }
   };
 }
