@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Fail if there are too many ESLint problems. The definition of "too many" is
+# hardcoded; we can manually lower the number over time as problems are fixed to
+# force ourselves closer to zero.
+
+echo "Running..."
+echo
+
+MAX_ESLINT_PROBLEMS=52 # Lower this number over time as problems are fixed
+NUM_ESLINT_PROBLEMS=$(npm run lint 2>&1 | grep -E "[0-9]+ problems \(" | cut -f 2 -d ' ')
+
+echo "Max ESLint problems: $MAX_ESLINT_PROBLEMS"
+echo "Num ESlint problems: $NUM_ESLINT_PROBLEMS"
+echo
+
+if [[ $NUM_ESLINT_PROBLEMS -eq 0 ]]; then
+  echo "PASS: No ESLint problems!"
+  echo "NOTE: Congratulations! You don't need this script any more. Consider"
+  echo "      removing it and running \"npm run lint\" on CI instead."
+
+elif [[ $NUM_ESLINT_PROBLEMS -le $MAX_ESLINT_PROBLEMS ]]; then
+  echo "PASS: Number of ESLint problems <= max"
+
+  if [[ $NUM_ESLINT_PROBLEMS -lt $MAX_ESLINT_PROBLEMS ]]; then
+    echo "NOTE: Considering lowering MAX_ESLINT_PROBLEMS to $NUM_ESLINT_PROBLEMS"
+    echo "      in scripts/eslint-health to prevent regressions"
+  fi
+
+else
+  >&2 echo "FAIL: Number of ESLint problems > max"
+  >&2 echo "NOTE: Recent changes probably introduced new ESLint problems"
+  exit 1
+
+fi

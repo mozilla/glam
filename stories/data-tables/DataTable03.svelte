@@ -7,15 +7,23 @@ import AggregationTypeSelector from '../../src/components/controls/AggregationTy
 import { formatCount, formatPercentDecimal } from '../../src/utils/formatters';
 
 // Proportions
+//
+// This data may not be available in some environments, like on CircleCI
+/* eslint-disable import/no-unresolved */
 import SSL_RESUMED_SESSION from '../../tests/data/ssl_resumed_session_build_id.json';
 import SSL_HANDSHAKE_VERSION from '../../tests/data/ssl_handshake_version_build_id.json';
 import CRYPTO from '../../tests/data/cryptominers_blocked_count_build_id.json';
 import GCREASON2 from '../../tests/data/gc_reason_2_build_id.json';
+/* eslint-enable import/no-unresolved */
 
-// Quantiles
+// Quantiles (some environments, like CircleCI, do not have this data)
+//
+// This data may not be available in some environments, like on CircleCI
+/* eslint-disable import/no-unresolved */
 import NAV_URL from '../../tests/data/browser_engagement_navigation_urlbar_build_id.json';
 import ACTIVE_TICKS from '../../tests/data/browser_engagement_active_ticks_build_id.json';
 import GCMS from '../../tests/data/gc_ms_build_id.json';
+/* eslint-enable import/no-unresolved */
 
 import { responseToData, extractBucketMetadata } from '../../src/state/store';
 
