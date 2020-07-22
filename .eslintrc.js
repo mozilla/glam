@@ -17,7 +17,7 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-param-reassign': [
       'error',
-      { props: true, ignorePropertyModificationsFor: ['draft'] },
+      { props: true, ignorePropertyModificationsFor: ['draft', 'acc'] },
     ],
   },
   overrides: [

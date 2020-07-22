@@ -21,6 +21,7 @@ export default {
         { key: 'Mac', label: 'Mac' },
         { key: 'Linux', label: 'Linux' },
       ],
+      defaultValue: 'Windows',
     },
     channel: {
       title: 'Channel',
@@ -30,6 +31,7 @@ export default {
         { key: 'beta', label: 'Beta' },
         { key: 'release', label: 'Release' },
       ],
+      defaultValue: 'nightly',
       isValidKey(key, probe) {
         return (probe.prerelease && key !== 'release') || !probe.prerelease;
       },
@@ -41,6 +43,7 @@ export default {
         { key: 'build_id', label: 'Build ID' },
         { key: 'version', label: 'Major Version' },
       ],
+      defaultValue: 'build_id',
     },
     process: {
       title: 'Process',
@@ -50,6 +53,7 @@ export default {
         { key: 'content', label: 'Content' },
         { key: 'gpu', label: 'GPU' },
       ],
+      defaultValue: 'content',
       isValidKey(key, probe) {
         return isSelectedProcessValid(probe.record_in_processes, key);
       },

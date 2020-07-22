@@ -1,17 +1,82 @@
-import { derived } from 'svelte/store';
+import { derived, get } from 'svelte/store';
 
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
 import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
 
-import CONFIG from '../config/firefox-desktop';
+import sharedConfig from '../config/shared';
+import productConfig from '../config/products';
 
-// TODO: move this to the new config.js when 'product' is added.
-const DEFAULT_PROBE_PROCESS = 'content';
+export function getFromQueryString(fieldKey, isMulti = false) {
+  const params = new URLSearchParams(window.location.search);
+  const value = params.get(fieldKey);
+  if (isMulti) {
+    return JSON.parse(value);
+  }
+  return value;
+}
+
+function getDefaultState(
+  { basedOnQueryParams } = { basedOnQueryParams: false }
+) {
+  const state = {};
+
+  state.auth = {
+    isAuthenticated: false,
+    token: undefined,
+  };
+
+  // FIXME: applicationStatus or dashboardMode, not both.
+  state.applicationStatus = 'INITIALIZING';
+  state.dashboardMode = {};
+
+  state.product = window.location.pathname.split('/')[1] || 'firefox';
+  state.probeName = '';
+  state.recordedInProcesses = []; // Provided by the API. List of processes this probe was recording in.
+  state.reference = getFromQueryString('reference') || '';
+  state.route = {};
+
+  // Shared config
+  Object.entries(sharedConfig).forEach(([key, { isMulti, defaultValue }]) => {
+    if (basedOnQueryParams) {
+      state[key] = getFromQueryString(key, isMulti) || defaultValue;
+    } else {
+      state[key] = defaultValue;
+    }
+  });
+
+  // Product config
+  state.productDimensions = {};
+  Object.entries(productConfig[state.product].dimensions).forEach(
+    ([key, { defaultValue }]) => {
+      if (basedOnQueryParams) {
+        state.productDimensions[key] = getFromQueryString(key) || defaultValue;
+      } else {
+        state.productDimensions[key] = defaultValue;
+      }
+    }
+  );
+
+  return state;
+}
+
+export const store = createStore(getDefaultState({ basedOnQueryParams: true }));
+
+store.reset = () => {
+  store.reinitialize({
+    auth: store.getState().auth,
+    probeName: '',
+  });
+};
+
+function getActiveProductConfig() {
+  return productConfig[get(store).product];
+}
 
 export function getField(fieldKey) {
-  return CONFIG.dimensions[fieldKey];
+  const activeProductConfig = getActiveProductConfig();
+  return activeProductConfig.dimensions[fieldKey];
 }
 
 export function getFieldValues(fieldKey) {
@@ -19,7 +84,8 @@ export function getFieldValues(fieldKey) {
 }
 
 export function isField(fieldKey) {
-  return Object.keys(CONFIG.dimensions).includes(fieldKey);
+  const activeProductConfig = getActiveProductConfig();
+  return Object.keys(activeProductConfig.dimensions).includes(fieldKey);
 }
 
 export function getFieldValueMetadata(fieldKey, valueKey) {
@@ -43,15 +109,6 @@ export function getDefaultFieldValue(fieldKey) {
   return getFieldValues(fieldKey)[0].key;
 }
 
-export function getFromQueryString(fieldKey, isMulti = false) {
-  const params = new URLSearchParams(window.location.search);
-  const value = params.get(fieldKey);
-  if (isMulti) {
-    return JSON.parse(value);
-  }
-  return value;
-}
-
 export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   const value = getFromQueryString(fieldKey, isMulti);
   if (!value) {
@@ -59,46 +116,6 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   }
   return value;
 }
-
-const initialState = {
-  auth: {
-    isAuthenticated: false,
-    token: undefined,
-  },
-  product: 'firefoxDesktop', // FIXME: derive this elsewhere like QS
-  productDimensions: {
-    channel: getFromQueryStringOrDefault('channel'),
-    os: getFromQueryString('os') || 'Windows',
-    process: getFromQueryString('process') || DEFAULT_PROBE_PROCESS, // This refers to the UI selected process.
-    aggregationLevel: getFromQueryStringOrDefault('aggregationLevel'),
-  },
-  probeName: '',
-  dashboardMode: {}, // FIXME: applicationStatus or dashboardMode, not both.
-  recordedInProcesses: [], // Provided by the API. List of processes this probe was recording in.
-  timeHorizon: getFromQueryString('timeHorizon') || 'MONTH',
-  visiblePercentiles: getFromQueryString('visiblePercentiles', true) || [
-    95,
-    75,
-    50,
-    25,
-    5,
-  ],
-  proportionMetricType:
-    getFromQueryString('proportionMetricType') || 'proportions', //
-  activeBuckets: getFromQueryString('activeBuckets', true) || [],
-  applicationStatus: 'INITIALIZING', // FIXME: applicationStatus or dashboardMode, not both.
-  route: {},
-  reference: getFromQueryString('reference') || '',
-};
-
-export const store = createStore(initialState);
-
-store.reset = () => {
-  store.reinitialize({
-    auth: store.getState().auth,
-    probeName: '',
-  });
-};
 
 export const resetFilters = () => {
   store.setDimension('channel', getDefaultFieldValue('channel'));
@@ -112,19 +129,22 @@ export const resetFilters = () => {
 
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
   if (!$probeSet || !$store.probeName) return undefined;
+  const activeProductConfig = getActiveProductConfig();
   let pr = $probeSet.find((p) => p.name === $store.probeName);
-  if (CONFIG.transformProbeForGLAM) pr = CONFIG.transformProbeForGLAM(pr);
+  if (activeProductConfig.transformProbeForGLAM)
+    pr = activeProductConfig.transformProbeForGLAM(pr);
   return pr;
 });
 
-export const hasDefaultControlFields = derived(store, ($store) =>
-  Object.values(CONFIG.dimensions).every(
+export const hasDefaultControlFields = derived(store, ($store) => {
+  const activeProductConfig = getActiveProductConfig();
+  return Object.values(activeProductConfig.dimensions).every(
     (field) =>
       !field.values ||
       field.skipValidation === true ||
       field.values[0].key === $store[field.key]
-  )
-);
+  );
+});
 
 // ///// probe querying infrastructure.
 
@@ -175,7 +195,8 @@ export const dataset = derived(
     // We can't fetch anything until the user is authenticated
     if (!$store.auth.isAuthenticated) return;
 
-    const params = CONFIG.getParamsForDataAPI($store);
+    const activeProductConfig = getActiveProductConfig();
+    const params = activeProductConfig.getParamsForDataAPI($store);
     const qs = toQueryString(params);
 
     // // invalid parameters, probe selected.
@@ -191,7 +212,7 @@ export const dataset = derived(
     }
 
     if (!(qs in cache)) {
-      cache[qs] = CONFIG.fetchData(params, store);
+      cache[qs] = activeProductConfig.fetchData(params, store);
     }
 
     // compare the previousQuery to the current one.
@@ -201,7 +222,7 @@ export const dataset = derived(
       previousQuery = qs;
       set(
         cache[qs].then(({ data }) =>
-          CONFIG.updateStoreAfterDataIsReceived(data, store, probe)
+          activeProductConfig.updateStoreAfterDataIsReceived(data, store, probe)
         )
       );
     }
@@ -209,6 +230,7 @@ export const dataset = derived(
 );
 
 export const currentQuery = derived(store, ($store) => {
-  const params = CONFIG.getParamsForQueryString($store);
+  const activeProductConfig = getActiveProductConfig();
+  const params = activeProductConfig.getParamsForQueryString($store);
   return toQueryString(params);
 });
