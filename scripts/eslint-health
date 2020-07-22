@@ -29,7 +29,7 @@ elif [[ $NUM_ESLINT_PROBLEMS -le $MAX_ESLINT_PROBLEMS ]]; then
 
 else
   >&2 echo "FAIL: Number of ESLint problems > max"
-  >&2 echo "NOTE: Recent changes probably introduced new ESLint problems"
+  >&2 echo "NOTE: These changes may have introduced new ESLint problems"
   exit 1
 
 fi
