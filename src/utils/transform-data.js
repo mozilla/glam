@@ -42,7 +42,7 @@ function createNewError(which) {
 
 export function sortByKey(key) {
   return (a, b) => {
-    if (a[key] <= b[key]) return -1;
+    if (a[key] < b[key]) return -1;
     if (a[key] > b[key]) return 1;
     return 0;
   };
@@ -69,64 +69,64 @@ The following functions are used in transform.
 Each of these mutates a single data point.
 */
 
-export function checkForHistogram(point) {
-  if (point.histogram === undefined) {
+export function checkForHistogram(draft) {
+  if (draft.histogram === undefined) {
     throw createNewError('MISSING_HISTOGRAM');
   }
 }
 
-export function checkForPercentiles(point) {
-  if (point.percentiles === undefined) {
+export function checkForPercentiles(draft) {
+  if (draft.percentiles === undefined) {
     throw createNewError('MISSING_PERCENTILES');
   }
 }
 
-export function checkForTotalUsers(point) {
-  if (point.total_users === undefined) {
+export function checkForTotalUsers(draft) {
+  if (draft.total_users === undefined) {
     throw createNewError('MISSING_TOTAL_USERS');
   }
 }
 
 /* quantile view transform functions */
 
-export function addProportion(point) {
+export function addProportion(draft) {
   // requires point.histogram.
-  point.proportions = { ...point.histogram };
+  draft.proportions = { ...draft.histogram };
 }
 
-export function changeBooleanHistogramResponse(point) {
+export function changeBooleanHistogramResponse(draft) {
   // requires addProportion to be called first.
-  point.histogram.no = point.histogram['0'];
-  point.histogram.yes = point.histogram['1'];
-  delete point.histogram['0'];
-  delete point.histogram['1'];
-  delete point.histogram['2'];
+  draft.histogram.no = draft.histogram['0'];
+  draft.histogram.yes = draft.histogram['1'];
+  delete draft.histogram['0'];
+  delete draft.histogram['1'];
+  delete draft.histogram['2'];
 }
 
-export function proportionsToCounts(point) {
-  point.counts = {};
-  Object.keys(point.proportions).forEach((p) => {
-    point.counts[p] = point.proportions[p] * point.total_users;
+export function proportionsToCounts(draft) {
+  draft.counts = {};
+  Object.keys(draft.proportions).forEach((p) => {
+    draft.counts[p] = draft.proportions[p] * draft.total_users;
   });
 }
 
-export function toAudienceSize(point) {
-  point.audienceSize = point.total_users;
+export function toAudienceSize(draft) {
+  draft.audienceSize = draft.total_users;
 }
 
 export const makeLabel = {
-  version(pt) {
-    pt.label = pt.version;
+  version(draft) {
+    draft.label = draft.version;
   },
-  build_id(pt) {
-    if (pt.build_date) {
-      pt.label = buildDateStringToDate(pt.build_date.slice(0, 18));
+  build_id(draft) {
+    if (draft.build_date) {
+      draft.label = buildDateStringToDate(draft.build_date.slice(0, 18));
     } else {
       // if no build_date, let's attempt to use build_id instead.
       // This is the current flow for Firefox Desktop.
       // Add a build_date field here if one does not exist.
-      pt.label = fullBuildIDToDate(pt.build_id);
-      pt.build_date = new Date(pt.label);
+      draft.label = fullBuildIDToDate(draft.build_id);
+      draft.build_date = new Date(draft.label);
     }
   },
 };
@@ -134,30 +134,29 @@ export const makeLabel = {
 /* quantile view transform functions */
 
 export const responseHistogramToGraphicFormat = (
-  point,
+  draft,
   keyTransform = (k) => +k
 ) => {
   // turn histogram to array of objects, sorted.
-  const formatted = Object.entries(point.histogram).map(([k, v]) => ({
+  const formatted = Object.entries(draft.histogram).map(([k, v]) => ({
     bin: keyTransform(k),
     value: v,
   }));
   formatted.sort((a, b) => {
     if (a.key > b.key) return -1;
-    if (a.key <= b.key) return 1;
+    if (a.key < b.key) return 1;
     return 0;
   });
-  point.histogram = formatted;
+  draft.histogram = formatted;
 };
 
-export function transformedPercentiles(point) {
+export function transformedPercentiles(draft) {
   // requires responseHistogramToGraphicFormat to be run first
-  point.transformedPercentiles = Object.entries(point.percentiles).reduce(
+  draft.transformedPercentiles = Object.entries(draft.percentiles).reduce(
     (acc, [bin, value]) => {
-      // eslint-disable-next-line no-param-reassign
       acc[bin] = nearestBelow(
         value,
-        point.histogram.map((hi) => hi.bin)
+        draft.histogram.map((hi) => hi.bin)
       );
       return acc;
     },

@@ -1,8 +1,7 @@
-import { timeFormat, timeParse, utcParse } from 'd3-time-format';
+import { timeFormat, timeParse } from 'd3-time-format';
 
-// FIXME: this actually does the conversion. Remove others & uses
 export const fullBuildIDToDate = timeParse('%Y%m%d%H%M%S');
-export const buildDateStringToDate = timeParse('%Y-%m-%dT%H:%M:%S'); // timeParse('%Y-%m-%dT%H:%M%S+00:00');
+export const buildDateStringToDate = timeParse('%Y-%m-%dT%H:%M:%S');
 const dtFormatter = timeFormat('%Y%m%d');
 const dtParser = timeParse('%Y%m%d');
 const parse = (build) => dtParser(build.slice(0, 8));

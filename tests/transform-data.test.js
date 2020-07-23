@@ -17,8 +17,8 @@ describe('transform parameters must be either a function or falsy', () => {
   it('accepts a function', () => {
     expect(() => transform(() => {})).not.toThrow();
     expect(() =>
-      transform((point) => {
-        point.y = 10000;
+      transform((draft) => {
+        draft.y = 10000;
       })
     ).not.toThrow();
   });
@@ -33,8 +33,8 @@ describe('transform parameters must be either a function or falsy', () => {
     ]);
   });
   it('accepts both falsy values and functions', () => {
-    const t = transform(false, (v) => {
-      v.x += 1;
+    const t = transform(false, (draft) => {
+      draft.x += 1;
     });
     expect(t([{ x: 1 }, { x: 2 }, { x: 3 }, { x: 4 }])).toEqual([
       { x: 2 },
@@ -51,14 +51,14 @@ describe('basic transformations work as expected', () => {
     { x: 60, y: 40, z: 'opqrstuvwzyz' },
   ];
   const pipeline = transform(
-    (pt) => {
-      pt.x += 10;
+    (draft) => {
+      draft.x += 10;
     },
-    (pt) => {
-      pt.y = pt.x / pt.y;
+    (draft) => {
+      draft.y = draft.x / draft.y;
     },
-    (pt) => {
-      pt.z = pt.z.slice(0, 4);
+    (draft) => {
+      draft.z = draft.z.slice(0, 4);
     }
   );
   const transformedData = pipeline(data);

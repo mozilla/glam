@@ -1,17 +1,10 @@
 <script>
   import Spinner from 'udgl/LineSegSpinner.svelte';
   import { fly } from 'svelte/transition';
-
-  // FIXME: get rid of this once the API / dataset is fixed.
-  // until then, we will need to keep this, since it's our only
-  // way of reading from the probe info service, which has the
-  // accurate probe information.
-  import { derived } from 'svelte/store';
-
   import DataError from '../../components/errors/DataError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
-  import { probe, dataset, store } from '../../state/store';
-  import { getProbeViewType, isSelectedProcessValid } from '../../utils/probe-utils';
+  import { dataset, store } from '../../state/store';
+  import { isSelectedProcessValid } from '../../utils/probe-utils';
 
 </script>
 
