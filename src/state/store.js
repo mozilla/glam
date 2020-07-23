@@ -31,7 +31,16 @@ function getDefaultState(
   state.applicationStatus = 'INITIALIZING';
   state.dashboardMode = {};
 
-  state.product = window.location.pathname.split('/')[1] || 'firefox';
+  // Grab a valid product from the URL or default to "firefox". Among other
+  // things, this enables the use of Storybook. (We have little control over
+  // Storybook's URL.)
+  const firstPathComponent = window.location.pathname.split('/')[1];
+  if (Object.keys(productConfig).includes(firstPathComponent)) {
+    state.product = firstPathComponent;
+  } else {
+    state.product = 'firefox';
+  }
+
   state.probeName = '';
   state.recordedInProcesses = []; // Provided by the API. List of processes this probe was recording in.
   state.reference = getFromQueryString('reference') || '';
