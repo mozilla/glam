@@ -13,16 +13,16 @@ let which = 0;
 let aggregationLevel = 'build_id';
 
 let buildID01 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-1), 'build_id');
-let version01 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-1),  'version');
+let version01 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-1), 'version');
 
 let buildID02 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_BUILD_ID.response.map((di) => ({ ...di })).slice(-2), 'build_id');
-let version02 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-2),  'version');
+let version02 = transformAPIResponse.quantile(EXPONENTIAL_HISTOGRAM_VERSION.response.map((di) => ({ ...di })).slice(-2), 'version');
 
 let probes = [
   {
     name: 'Scalar (uint)',
     build_id: transformAPIResponse.quantile(SCALAR_UINT_BUILD_ID.response, 'build_id'),
-    version: transformAPIResponse.quantile(SCALAR_UINT_VERSION.response,  'version'),
+    version: transformAPIResponse.quantile(SCALAR_UINT_VERSION.response, 'version'),
     probeType: 'scalar',
   },
   {
