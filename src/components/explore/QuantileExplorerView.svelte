@@ -129,13 +129,13 @@ $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
               showViolins={true}
               aggregationLevel={aggregationLevel}
               binColorMap={percentileLineColorMap}
-              pointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
-              overTimePointMetricType={probeType === 'histogram' ? 'transformedPercentiles' : 'percentiles'}
+              pointMetricType={probeType === 'log' ? 'transformedPercentiles' : 'percentiles'}
+              overTimePointMetricType={probeType === 'log' ? 'transformedPercentiles' : 'percentiles'}
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}
-              yScaleType={probeType === 'histogram' ? 'scalePoint' : 'linear'}
+              yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
               yDomain={
-                probeType === 'histogram' ? selectedData[0].histogram.map((d) => d.bin)
+                probeType === 'log' ? selectedData[0].histogram.map((d) => d.bin)
                 : [1, Math.max(...selectedData.map((d) => d.percentiles[95]))]}
             >
 

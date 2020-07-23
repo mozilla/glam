@@ -6,14 +6,14 @@ import BOOLEAN_HISTOGRAM_BUILD_ID from './boolean_histogram_build_id.json';
 import BOOLEAN_HISTOGRAM_VERSION from './boolean_histogram_version.json';
 
 import { firefoxVersionMarkers } from '../../../src/state/product-versions';
-import { transformGLAMAPIResponse } from '../../../src/utils/probe-utils';
-import { extractBucketMetadata } from '../../../src/state/store';
+import { transformAPIResponse } from '../../../src/utils/transform-data';
+import { extractBucketMetadata } from '../../../src/config/shared';
 
-const booleanHistogramBuildID = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
-const booleanHistogramVersion = transformGLAMAPIResponse(BOOLEAN_HISTOGRAM_VERSION.response, 'proportion', 'version');
+const booleanHistogramBuildID = transformAPIResponse.proportion(BOOLEAN_HISTOGRAM_BUILD_ID.response, 'build_id');
+const booleanHistogramVersion = transformAPIResponse.proportion(BOOLEAN_HISTOGRAM_VERSION.response, 'version');
 
-const enumeratedHistogramBuildID = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_BUILD_ID.response, 'proportion', 'build_id');
-const enumeratedHistogramVersion = transformGLAMAPIResponse(ENUMERATED_HISTOGRAM_VERSION.response, 'proportion', 'version');
+const enumeratedHistogramBuildID = transformAPIResponse.proportion(ENUMERATED_HISTOGRAM_BUILD_ID.response, 'build_id');
+const enumeratedHistogramVersion = transformAPIResponse.proportion(ENUMERATED_HISTOGRAM_VERSION.response, 'version');
 
 let probes = [
   {
