@@ -4,7 +4,7 @@
 # hardcoded; we can manually lower the number over time as problems are fixed to
 # force ourselves closer to zero.
 
-echo "Running..."
+echo "Running johnbot..."
 echo
 
 MAX_ESLINT_PROBLEMS=52 # Lower this number over time as problems are fixed
