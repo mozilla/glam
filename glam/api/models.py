@@ -26,6 +26,11 @@ class Probe(models.Model):
         cache.set("__labels__", True)
 
 
+class LastUpdated(models.Model):
+    product = models.CharField(max_length=100)
+    last_updated = models.DateTimeField()
+
+
 class AbstractFenixAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.

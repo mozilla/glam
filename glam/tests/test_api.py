@@ -1,8 +1,10 @@
 import json
 
 import pytest
+from django.conf import settings
 from django.db import connection
 from django.urls import reverse
+from django.utils import timezone
 
 from glam.api import constants
 from glam.api.models import (
@@ -10,6 +12,7 @@ from glam.api.models import (
     DesktopReleaseAggregation,
     FenixAggregation,
     FirefoxCounts,
+    LastUpdated,
     Probe,
 )
 from glam.auth.drf import OIDCTokenAuthentication, TokenUser
@@ -504,3 +507,40 @@ class TestGleanAggregationsApi:
         assert len(data["response"]) == 4
         versions = sorted([d["version"] for d in data["response"]])
         assert versions == sorted(["6", "5", "4", "3"])
+
+
+class TestUpdatesApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-updates")
+        cls.datetime1 = timezone.datetime(year=2020, month=1, day=1)
+        cls.datetime2 = timezone.datetime(year=2020, month=2, day=2)
+
+    def _create_stamps(self):
+        LastUpdated.objects.create(product="desktop", last_updated=self.datetime1)
+        LastUpdated.objects.create(
+            product="org_mozilla_fenix", last_updated=self.datetime2
+        )
+
+    def test_no_params(self, client):
+        self._create_stamps()
+
+        resp = client.get(self.url)
+        data = resp.json()
+        assert len(data["updates"]) == 2
+        assert data["updates"]["desktop"] == self.datetime1.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )
+        assert data["updates"]["org_mozilla_fenix"] == self.datetime2.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )
+
+    def test_params(self, client):
+        self._create_stamps()
+
+        resp = client.get(self.url, data={"product": "desktop"})
+        data = resp.json()
+        assert len(data["updates"]) == 1
+        assert data["updates"]["desktop"] == self.datetime1.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )

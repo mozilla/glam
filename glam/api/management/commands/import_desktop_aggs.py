@@ -4,9 +4,11 @@ import tempfile
 from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import connection
+from django.utils import timezone
 from google.cloud import storage
 
 from glam.api import constants
+from glam.api.models import LastUpdated
 
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
@@ -86,6 +88,10 @@ class Command(BaseCommand):
                 log(f"Refreshing materialized view for {view}")
                 cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
                 log("Refresh completed.")
+
+        LastUpdated.objects.update_or_create(
+            product="desktop", defaults={"last_updated": timezone.now()}
+        )
 
     def import_file(self, tmp_table, fp, model):
 

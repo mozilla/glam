@@ -9,6 +9,8 @@
   and
   [API](https://github.com/mozilla/glam/commit/88d7980aea40b48192434ad9e10bb3e42819aad0)
   to support Fenix aggregations
+- Add last updated model and API endpoint
+  ([#743](https://github.com/mozilla/glam/pull/743))
 
 ## [2020.7.0](https://github.com/mozilla/glam/compare/2020.6.0...2020.7.0) (2020-07-02)
 
