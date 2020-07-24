@@ -16,6 +16,7 @@
   import AlertNotice from '../../components/controls/AlertNotice.svelte';
 
   import { store } from '../../state/store';
+  import routes from '../../config/routes'
 
   $: isProbeDetailsView = $store.route.section === 'probe';
 </script>
@@ -71,7 +72,11 @@
           <!-- Mark up the probe details here so that they don't re-animate when
                the user switches between the Explore page and the Table page -->
           <div class="graphic-body__details">
-            <ProbeDetails />
+            <ProbeDetails>
+              {#if $store.product}
+                <svelte:component this={routes[$store.product].details} />
+              {/if}
+            </ProbeDetails>
           </div>
         {/if}
       </div>

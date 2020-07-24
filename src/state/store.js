@@ -35,6 +35,7 @@ function getDefaultState(
   // things, this enables the use of Storybook. (We have little control over
   // Storybook's URL.)
   const firstPathComponent = window.location.pathname.split('/')[1];
+
   if (Object.keys(productConfig).includes(firstPathComponent)) {
     state.product = firstPathComponent;
   } else {
@@ -79,7 +80,7 @@ store.reset = () => {
   });
 };
 
-function getActiveProductConfig() {
+export function getActiveProductConfig() {
   return productConfig[get(store).product];
 }
 
