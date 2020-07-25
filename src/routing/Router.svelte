@@ -48,12 +48,15 @@
   function useComponent(componentToUse, view) {
     return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
-      // Issue #355: Update the probe here, whenever the path changes, to ensure
-      // that clicks to the back/forward buttons work as expected.
-      if ($store.product !== product) {
+      // if the product has changed,
+      // set it in the store and use resetFilters()
+      // to initialize.
+      if (product && $store.product !== product) {
         store.setField('product', product);
         resetFilters();
       }
+      // Issue #355: Update the probe here, whenever the path changes, to ensure
+      // that clicks to the back/forward buttons work as expected.
       if (probeName) {
         store.setField('probeName', probeName);
         if ($probeSet) {

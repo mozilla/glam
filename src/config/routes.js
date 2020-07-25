@@ -1,10 +1,11 @@
-import FirefoxLegacySidebar from '../routing/pages/probe/FirefoxLegacySidebar.svelte';
+import FirefoxLegacyDetails from '../routing/pages/probe/FirefoxLegacyDetails.svelte';
+import FenixDetails from '../routing/pages/probe/FenixDetails.svelte';
 
 export default {
   firefox: {
-    details: FirefoxLegacySidebar,
+    details: FirefoxLegacyDetails,
   },
   fenix: {
-    details: undefined,
+    details: FenixDetails,
   },
 };
