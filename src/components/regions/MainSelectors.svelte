@@ -12,8 +12,6 @@ import {
   probe,
 } from '../../state/store';
 
-$: console.log($store.product, productConfig[$store.product].dimensions)
-
 const OFFSET = 10;
 const COMPACT = true;
 </script>
