@@ -1,18 +1,17 @@
 <script>
-  import Button from 'udgl/Button.svelte';
-  import ButtonGroup from 'udgl/ButtonGroup.svelte';
-  import GlamErrorShapes from './GlamErrorShapes.svelte';
+import { Button, ButtonGroup } from '@graph-paper/button';
+import GlamErrorShapes from './GlamErrorShapes.svelte';
 
-  import productConfig from '../../config/products';
+import productConfig from '../../config/products';
 
-  import {
-    store,
-  } from '../../state/store';
+import {
+  store,
+} from '../../state/store';
 
-  const OSes = Object.values(productConfig[$store.product].dimensions.os.values);
-  const channels = Object.values(productConfig[$store.product].dimensions.channel.values);
-  const processes = Object.values(productConfig[$store.product].dimensions.process.values);
-  const aggs = Object.values(productConfig[$store.product].dimensions.aggregationLevel.values);
+const OSes = Object.values(productConfig[$store.product].dimensions.os.values);
+const channels = Object.values(productConfig[$store.product].dimensions.channel.values);
+const processes = Object.values(productConfig[$store.product].dimensions.process.values);
+const aggs = Object.values(productConfig[$store.product].dimensions.aggregationLevel.values);
 </script>
 
 <style>
