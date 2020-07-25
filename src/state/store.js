@@ -128,13 +128,19 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
 }
 
 export const resetFilters = () => {
-  store.setDimension('channel', getDefaultFieldValue('channel'));
-  store.setDimension('os', getDefaultFieldValue('os'));
-  store.setDimension(
-    'aggregationLevel',
-    getDefaultFieldValue('aggregationLevel')
-  );
-  store.setDimension('process', getDefaultFieldValue('process'));
+  //
+  const config = getActiveProductConfig();
+  Object.entries(config.dimensions).forEach(([key, { defaultValue }]) => {
+    store.setDimension(key, defaultValue);
+  });
+
+  // store.setDimension('channel', getDefaultFieldValue('channel'));
+  // store.setDimension('os', getDefaultFieldValue('os'));
+  // store.setDimension(
+  //   'aggregationLevel',
+  //   getDefaultFieldValue('aggregationLevel')
+  // );
+  // store.setDimension('process', getDefaultFieldValue('process'));
 };
 
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {

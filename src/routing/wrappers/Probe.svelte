@@ -13,7 +13,7 @@
     <Spinner size={48} color={'var(--cool-gray-400)'} />
   </div>
 {:then data}
-  {#if isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
+  {#if $store.product !== 'firefox' || isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
     <slot {data} probeType={data.viewType} />
   {:else}
     <div class='graphic-body__content'>

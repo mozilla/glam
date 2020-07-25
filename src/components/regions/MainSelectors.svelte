@@ -12,6 +12,8 @@ import {
   probe,
 } from '../../state/store';
 
+$: console.log($store.product, productConfig[$store.product].dimensions)
+
 const OFFSET = 10;
 const COMPACT = true;
 </script>
@@ -56,7 +58,7 @@ const COMPACT = true;
 
 {#if $store.route.section === 'probe' && $probe}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
-    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
+    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i ($store.product + dimension.key)}
       {#if dimension.values.some(
             (di) => dimension.isValidKey === undefined
                     || dimension.isValidKey(di.key, $probe, store),
