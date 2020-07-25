@@ -1,6 +1,4 @@
 <script>
-  import { tweened } from 'svelte/motion';
-  import { cubicOut as easing } from 'svelte/easing';
   import { Button } from '@graph-paper/button';
   import { DocumentationDark } from '@graph-paper/icons';
 </script>
