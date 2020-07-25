@@ -2,34 +2,16 @@
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
-import StatusLabel from 'udgl/StatusLabel.svelte';
-import ExternalLink from 'udgl/icons/ExternalLink.svelte';
-import Doc from '../Doc.svelte';
-import Brackets from '../Brackets.svelte';
 import telemetrySearch from '../../state/telemetry-search';
-import { store, probe, dataset } from '../../state/store';
-
-import { downloadString } from '../../utils/download';
-
+import { probe } from '../../state/store';
 
 const paneTransition = { x: 10, duration: 300 };
-const PROBE_TYPE_DOCS = {
-  histogram: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
-  scalar: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/scalars.html',
-  event: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
-  default: 'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
-};
 
 let visible = false;
 onMount(() => { visible = true; });
 
 function probeIsSelected(probeToTest) {
   return probeToTest && probeToTest.name !== null && probeToTest.name !== 'null';
-}
-
-async function exportData() {
-  const data = await $dataset;
-  downloadString(JSON.stringify(data), 'text', `${$probe.name}.json`);
 }
 
 </script>
