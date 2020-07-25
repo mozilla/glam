@@ -4,7 +4,7 @@
   import { onMount } from 'svelte';
 
   import productConfig from '../config/products';
-  import { store, currentQuery, resetFilters } from '../state/store';
+  import { store, currentQuery } from '../state/store';
   import { probeSet } from '../state/telemetry-search';
   import { codeAndStateInQuery } from '../utils/url';
 
@@ -49,11 +49,11 @@
     return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
       // if the product has changed,
-      // set it in the store and use resetFilters()
+      // set it in the store and use store.resetProductDimensions()
       // to initialize.
       if (product && $store.product !== product) {
         store.setField('product', product);
-        resetFilters();
+        store.resetProductDimensions();
       }
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.

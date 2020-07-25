@@ -84,63 +84,44 @@ export function getActiveProductConfig() {
   return productConfig[get(store).product];
 }
 
-export function getField(fieldKey) {
-  const activeProductConfig = getActiveProductConfig();
-  return activeProductConfig.dimensions[fieldKey];
-}
-
-export function getFieldValues(fieldKey) {
-  return getField(fieldKey).values;
-}
-
-export function isField(fieldKey) {
-  const activeProductConfig = getActiveProductConfig();
-  return Object.keys(activeProductConfig.dimensions).includes(fieldKey);
-}
-
-export function getFieldValueMetadata(fieldKey, valueKey) {
-  return getFieldValues(fieldKey).find((v) => v.key === valueKey);
-}
-
-export function isValidFieldValue(fieldKey, valueKey) {
-  const field = getField(fieldKey);
-  if (field.skipValidation) return true;
-  return getFieldValues(fieldKey)
-    .map((fv) => fv.key)
-    .includes(valueKey);
-}
-
-export function getFieldValueLabel(fieldKey, valueKey) {
-  const metadata = getFieldValueMetadata(fieldKey, valueKey);
-  return metadata ? metadata.label : undefined;
-}
-
-export function getDefaultFieldValue(fieldKey) {
-  return getFieldValues(fieldKey)[0].key;
-}
+// functions for selecting product dimension values
+// out of the current active product config.
+export const productConfigDimensions = {
+  dimension(dimensionKey) {
+    const activeProductConfig = getActiveProductConfig();
+    return activeProductConfig.dimensions[dimensionKey];
+  },
+  dimensionValue(dimensionKey, valueKey) {
+    return this.dimension(dimensionKey).values.find((v) => v.key === valueKey);
+  },
+  dimensionValueLabel(dimensionKey, valueKey) {
+    const value = this.dimensionValue(dimensionKey, valueKey);
+    return value ? value.label : undefined;
+  },
+  isValidDimension(dimensionKey) {
+    const activeProductConfig = getActiveProductConfig();
+    return Object.keys(activeProductConfig.dimensions).includes(dimensionKey);
+  },
+  isValidDimensionValue(dimensionKey, valueKey) {
+    const field = this.dimension(dimensionKey);
+    if (field.skipValidation) return true;
+    return field.values.map((fv) => fv.key).includes(valueKey);
+  },
+};
 
 export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   const value = getFromQueryString(fieldKey, isMulti);
   if (!value) {
-    return getDefaultFieldValue(fieldKey);
+    return productConfigDimensions.dimension(fieldKey).values[0].key;
   }
   return value;
 }
 
-export const resetFilters = () => {
-  //
+store.resetProductDimensions = () => {
   const config = getActiveProductConfig();
   Object.entries(config.dimensions).forEach(([key, { defaultValue }]) => {
     store.setDimension(key, defaultValue);
   });
-
-  // store.setDimension('channel', getDefaultFieldValue('channel'));
-  // store.setDimension('os', getDefaultFieldValue('os'));
-  // store.setDimension(
-  //   'aggregationLevel',
-  //   getDefaultFieldValue('aggregationLevel')
-  // );
-  // store.setDimension('process', getDefaultFieldValue('process'));
 };
 
 export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
@@ -186,9 +167,10 @@ function probeSelected(probeValue) {
 function paramsAreValid(params) {
   return (
     Object.entries(params)
-      .filter(([k]) => isField(k))
-      .every(([fieldKey, valueKey]) => isValidFieldValue(fieldKey, valueKey)) &&
-    probeSelected(params.probe)
+      .filter(([k]) => productConfigDimensions.isValidDimension(k))
+      .every(([fieldKey, valueKey]) =>
+        productConfigDimensions.isValidDimensionValue(fieldKey, valueKey)
+      ) && probeSelected(params.probe)
   );
 }
 
