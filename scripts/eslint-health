@@ -3,6 +3,12 @@
 # Fail if there are too many ESLint problems. The definition of "too many" is
 # hardcoded. The number can be manually lowered over time as problems are fixed
 # to prevent regressions.
+#
+# This is a copy of the following Gist:
+# https://gist.github.com/openjck/ab1a435e249580861afbc5b93465e611
+#
+# More information:
+# https://medium.com/reflections-on-building-software/gradually-reduce-the-number-of-eslint-problems-in-your-codebase-fe503d4f2716
 
 echo "Running johnbot..."
 echo
