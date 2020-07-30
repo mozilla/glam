@@ -34,6 +34,7 @@ class LastUpdated(models.Model):
 class AbstractFenixAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.
+    app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
     version = models.CharField(max_length=100)
     ping_type = models.CharField(max_length=100)
@@ -60,6 +61,7 @@ class FenixAggregation(AbstractFenixAggregation):
             models.UniqueConstraint(
                 name="fenix_unique_dimensions",
                 fields=[
+                    "app_id",
                     "channel",
                     "version",
                     "ping_type",

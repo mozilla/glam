@@ -69,6 +69,7 @@ def _create_aggregation(data=None, multiplier=1.0, model=None):
 def _create_glean_aggregation(model, data=None, multiplier=1.0):
     _data = {
         "channel": "release",
+        "app_id": "org_mozilla_fenix",
         "version": "2",
         "ping_type": "*",
         "os": "*",
@@ -417,6 +418,7 @@ class TestGleanAggregationsApi:
         # Test no data doesn't trigger a 500.
         query = {
             "query": {
+                "app_id": "org_mozilla_fenix",
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
@@ -430,12 +432,34 @@ class TestGleanAggregationsApi:
         # spot checking.
         "query, missing",
         [
-            ({"channel": None, "ping_type": None, "probe": None}, "aggregationLevel"),
-            ({"aggregationLevel": None, "ping_type": None, "probe": None}, "channel"),
-            ({"aggregationLevel": None, "channel": None, "probe": None}, "ping_type"),
-            ({"aggregationLevel": None, "channel": None, "ping_type": None}, "probe"),
-            ({"channel": None}, "aggregationLevel, ping_type, probe"),
-            ({}, "aggregationLevel, channel, ping_type, probe"),
+            (
+                {"channel": None, "ping_type": None, "probe": None},
+                "aggregationLevel, app_id",
+            ),
+            (
+                {"aggregationLevel": None, "ping_type": None, "probe": None},
+                "app_id, channel",
+            ),
+            (
+                {
+                    "aggregationLevel": None,
+                    "app_id": None,
+                    "channel": None,
+                    "probe": None,
+                },
+                "ping_type",
+            ),
+            (
+                {
+                    "aggregationLevel": None,
+                    "app_id": None,
+                    "channel": None,
+                    "ping_type": None,
+                },
+                "probe",
+            ),
+            ({"channel": None}, "aggregationLevel, app_id, ping_type, probe"),
+            ({}, "aggregationLevel, app_id, channel, ping_type, probe"),
         ],
     )
     def test_required_glean_params(self, client, query, missing):
@@ -456,6 +480,7 @@ class TestGleanAggregationsApi:
         query = {
             "query": {
                 "product": "fenix",
+                "app_id": "org_mozilla_fenix",
                 "channel": "release",
                 "probe": "events_total_uri_count",
                 "ping_type": "*",
@@ -494,6 +519,7 @@ class TestGleanAggregationsApi:
         query = {
             "query": {
                 "product": "fenix",
+                "app_id": "org_mozilla_fenix",
                 "channel": "release",
                 "ping_type": "*",
                 "probe": "events_total_uri_count",
@@ -513,8 +539,12 @@ class TestUpdatesApi:
     @classmethod
     def setup_class(cls):
         cls.url = reverse("v1-updates")
-        cls.datetime1 = timezone.datetime(year=2020, month=1, day=1)
-        cls.datetime2 = timezone.datetime(year=2020, month=2, day=2)
+        cls.datetime1 = timezone.datetime(year=2020, month=1, day=1).replace(
+            tzinfo=timezone.utc
+        )
+        cls.datetime2 = timezone.datetime(year=2020, month=2, day=2).replace(
+            tzinfo=timezone.utc
+        )
 
     def _create_stamps(self):
         LastUpdated.objects.create(product="desktop", last_updated=self.datetime1)
