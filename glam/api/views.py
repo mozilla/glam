@@ -164,6 +164,7 @@ def _get_firefox_counts(channel, os, versions, by_build):
 def get_glean_aggregations(request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = [
         "aggregationLevel",
+        "app_id",
         "channel",
         "ping_type",
         "probe",
@@ -194,12 +195,14 @@ def get_glean_aggregations(request, **kwargs):
 
     versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
+    app_id = kwargs["app_id"]
     channel = kwargs["channel"]
     probe = kwargs["probe"]
     ping_type = kwargs["ping_type"]
     os = kwargs.get("os", "*")
 
     dimensions = [
+        Q(app_id=app_id),
         Q(channel=channel),
         Q(metric=probe),
         Q(ping_type=ping_type),

@@ -1,4 +1,5 @@
 import datetime
+import re
 import tempfile
 
 from django.apps import apps
@@ -11,7 +12,11 @@ from glam.api.models import LastUpdated
 
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
-PRODUCT_MODEL_MAP = {"org_mozilla_fenix": "api.FenixAggregation"}
+APP_TO_MODEL = {
+    "org_mozilla_fenix": "api.FenixAggregation",  # nightly
+    "org_mozilla_firefox_beta": "api.FenixAggregation",  # beta
+    "org_mozilla_firefox": "api.FenixAggregation",  # release
+}
 
 
 def log(message):
@@ -24,44 +29,43 @@ def log(message):
 
 class Command(BaseCommand):
 
-    help = "Imports Glean product aggregations"
+    help = "Imports Glean aggregations"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "product", help="The Glean product we are importing data for."
+            "app_id",
+            choices=APP_TO_MODEL.keys(),
+            help="The Glean app_id we are importing data for.",
         )
         parser.add_argument(
             "--bucket",
-            help="The bucket location for the exported aggregates",
             default=GCS_BUCKET,
+            help="The bucket location for the exported aggregates",
         )
 
-    def handle(self, product, bucket, *args, **options):
-
-        csv_prefix = f"glam-extract-{product}"
-        model = apps.get_model(PRODUCT_MODEL_MAP[product])
+    def handle(self, app_id, bucket, *args, **options):
 
         self.gcs_client = storage.Client()
+        model = apps.get_model(APP_TO_MODEL[app_id])
 
+        # Find all files in bucket that match the pattern with provided app_id.
+        pattern = re.compile(f"glam-extract-{app_id}-\\d+.csv")
         blobs = self.gcs_client.list_blobs(bucket)
-        blobs = list(
-            filter(
-                lambda b: b.name.startswith(csv_prefix)
-                and not b.name.endswith("counts.csv"),
-                blobs,
-            )
-        )
+        blobs = [blob for blob in blobs if pattern.fullmatch(blob.name)]
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = "tmp_import_{}".format(csv_prefix.replace("-", "_"))
+            tmp_table = "tmp_import_{}".format(app_id.replace("-", "_"))
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
                 cursor.execute(
                     f"CREATE TABLE {tmp_table} (LIKE {model._meta.db_table})"
                 )
-                cursor.execute(f"ALTER TABLE {tmp_table} DROP COLUMN id")
+                # The incoming CSV files don't have an `id` or `app_id`.
+                cursor.execute(
+                    f"ALTER TABLE {tmp_table} DROP COLUMN id, DROP COLUMN app_id"
+                )
 
             # Download CSV file to local filesystem.
             fp = tempfile.NamedTemporaryFile()
@@ -70,7 +74,7 @@ class Command(BaseCommand):
 
             #  Load CSV into temp table & insert data from temp table into
             #  aggregation tables, using upserts.
-            self.import_file(tmp_table, fp, model)
+            self.import_file(tmp_table, fp, app_id)
 
             #  Drop temp table and remove file.
             log("Dropping temp table.")
@@ -89,17 +93,17 @@ class Command(BaseCommand):
                 log("Refresh completed.")
 
         LastUpdated.objects.update_or_create(
-            product=product, defaults={"last_updated": timezone.now()}
+            product=app_id, defaults={"last_updated": timezone.now()}
         )
 
-    def import_file(self, tmp_table, fp, model):
+    def import_file(self, tmp_table, fp, app_id):
 
-        csv_columns = [f.name for f in model._meta.get_fields() if f.name not in ["id"]]
-        conflict_columns = [
-            f
-            for f in model._meta.constraints[0].fields
-            if f not in ["id", "total_users", "histogram", "percentiles"]
+        model = apps.get_model(APP_TO_MODEL[app_id])
+
+        csv_columns = [
+            f.name for f in model._meta.get_fields() if f.name not in ["id", "app_id"]
         ]
+        conflict_columns = model._meta.constraints[0].fields
 
         log("  Importing file into temp table.")
         with connection.cursor() as cursor:
@@ -112,8 +116,8 @@ class Command(BaseCommand):
         log("  Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = f"""
-                INSERT INTO {model._meta.db_table} ({", ".join(csv_columns)})
-                SELECT * from {tmp_table}
+                INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})
+                SELECT '{app_id}', * from {tmp_table}
                 ON CONFLICT ({", ".join(conflict_columns)})
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
