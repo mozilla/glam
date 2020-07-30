@@ -9,6 +9,8 @@
   and
   [API](https://github.com/mozilla/glam/commit/88d7980aea40b48192434ad9e10bb3e42819aad0)
   to support Fenix aggregations
+- Update to support multiple apps per Glean product
+  [f11e979](https://github.com/mozilla/glam/commit/f11e9793b4725d2bfc6ebd222d481555918b1c24)
 - Add last updated model and API endpoint
   ([#743](https://github.com/mozilla/glam/pull/743))
 
