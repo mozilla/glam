@@ -80,7 +80,7 @@ store.reset = () => {
   });
 };
 
-export function getActiveProductConfig() {
+function getActiveProductConfig() {
   return productConfig[get(store).product];
 }
 
