@@ -3,7 +3,7 @@ import { derived, get } from 'svelte/store';
 import { createStore } from '../utils/create-store';
 
 // FIXME: take care of this dependency cycle.
-import { probeSet } from './telemetry-search'; // eslint-disable-line import/no-cycle
+import probeSet from './probeset'; // eslint-disable-line import/no-cycle
 
 import sharedConfig from '../config/shared';
 import productConfig from '../config/products';
@@ -47,6 +47,11 @@ function getDefaultState(
   state.reference = getFromQueryString('reference') || '';
   state.route = {};
 
+  state.probe = {
+    name: '',
+    loaded: false,
+  };
+
   // Shared config
   Object.entries(sharedConfig).forEach(([key, { isMulti, defaultValue }]) => {
     if (basedOnQueryParams) {
@@ -77,6 +82,10 @@ store.reset = () => {
   store.reinitialize({
     auth: store.getState().auth,
     probeName: '',
+    probe: {
+      name: '',
+      loaded: false
+    }
   });
 };
 
@@ -220,7 +229,7 @@ export const dataset = derived(
       previousQuery = qs;
       set(
         cache[qs].then(({ data }) =>
-          activeProductConfig.updateStoreAfterDataIsReceived(data, store, probe)
+          activeProductConfig.updateStoreAfterDataIsReceived(data, store)
         )
       );
     }

@@ -17,10 +17,7 @@ export function gatherAggregationTypes(d) {
 export function isSelectedProcessValid(processes, selectedProcess) {
   let process = selectedProcess;
   if (process === 'all_childs') {
-    process = 'main';
-  }
-  if (process === 'parent') {
-    process = 'main';
+    process = 'parent';
   }
 
   return processes.includes(process);

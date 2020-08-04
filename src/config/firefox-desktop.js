@@ -51,7 +51,7 @@ export default {
       ],
       defaultValue: 'content',
       isValidKey(key, probe) {
-        return isSelectedProcessValid(probe.record_in_processes, key);
+        return isSelectedProcessValid(probe.info.calculated.seen_in_processes, key);
       },
     },
   },
@@ -120,11 +120,11 @@ export default {
       }
     );
   },
-  updateStoreAfterDataIsReceived(data, appStore, probeStore) {
+  updateStoreAfterDataIsReceived(data, appStore) {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
-    const probeValue = get(probeStore);
+    const probeValue = get(appStore).probe;
     const viewType = this.probeView[data[0].metric_type];
 
     const isCategoricalTypeProbe = viewType === 'categorical';
@@ -139,34 +139,23 @@ export default {
     appStore.setField('recordedInProcesses', probeValue.record_in_processes);
     return { data, viewType, ...etc };
   },
-  transformProbeForGLAM(probe) {
-    // This currently transforms the probe metadata into a more useful format
-    // for Firefox desktop. It will likely be unnecessary for other products.
-    const pr = { ...probe };
-    if (pr.record_in_processes[0] === 'all') {
-      pr.record_in_processes = ['main', 'content', 'gpu'];
-    }
-    if (pr.record_in_processes[0] === 'all_childs') {
-      pr.record_in_processes = ['content', 'gpu'];
-    }
-    return pr;
-  },
-  setDefaultsForProbe(store, probe) {
+  setDefaultsForProbe(store) {
     // This currently updates the store to accommodate any needed bits of state
     // for the store before fetching data. It is probably not necessary for
     // non-Firefox desktop products.
     const state = store.getState();
+    const probe = state.probe;
     // accommodate only valid processes.
     if (
       !isSelectedProcessValid(
-        probe.record_in_processes,
+        probe.info.calculated.seen_in_processes,
         state.productDimensions.process
       )
     ) {
-      let newProcess = probe.record_in_processes[0];
-      if (newProcess === 'main') newProcess = 'parent';
+      let newProcess = probe.info.calculated.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
+
     // accommodate prerelease-only probes by resetting to nightly (if needed)
     if (state.productDimensions.channel === 'release' && probe.prerelease) {
       store.setDimension('channel', 'nightly');

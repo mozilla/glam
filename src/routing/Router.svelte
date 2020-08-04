@@ -5,7 +5,8 @@
 
   import productConfig from '../config/products';
   import { store, currentQuery } from '../state/store';
-  import { probeSet } from '../state/telemetry-search';
+  import { getSearchResults } from '../state/api';
+  import probeSet from '../state/probeset';
   import { codeAndStateInQuery } from '../utils/url';
 
   // Wrappers
@@ -58,14 +59,20 @@
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
-        store.setField('probeName', probeName);
-        if ($probeSet) {
-          let newProbe = $probeSet.find((p) => p.name === probeName);
+        let newProbe;
+
+        // The canonical probe info fetch. (PSS)
+        getSearchResults(probeName).then((r) => {
+          newProbe = { ...r[0], loaded: true };
+          store.setField('probe', newProbe);
+          store.setField('probeName', probeName); // This is temporary: use store.probe.name
+
           if (productConfig[$store.product].transformProbeForGLAM) {
             newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
           }
           productConfig[$store.product].setDefaultsForProbe(store, newProbe);
-        }
+        });
+
       }
 
       store.setField('route', {

@@ -9,6 +9,8 @@ const FETCH_ERROR_MESSAGES = {
   code405: '405: Method not allowed.',
 };
 
+const DEFAULT_SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
+
 export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
     method: 'POST',
@@ -55,7 +57,10 @@ export async function getProbeData(params, token) {
   return data;
 }
 
-export function getSearchResults(queryString, resultsLimit) {
+export function getSearchResults(
+  queryString,
+  resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
+) {
   const getFormattedSearchURL = (str, product = 'desktop') => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
     const strFragments = str.split(/\s+/);
