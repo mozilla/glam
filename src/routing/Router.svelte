@@ -48,7 +48,13 @@
   function useComponent(componentToUse, view) {
     return function handle({ params: { product, section, probeName } }) {
       component = componentToUse;
-
+      // if the product has changed,
+      // set it in the store and use store.resetProductDimensions()
+      // to initialize.
+      if (product && $store.product !== product) {
+        store.setField('product', product);
+        store.resetProductDimensions();
+      }
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {

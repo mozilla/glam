@@ -8,7 +8,7 @@ import productConfig from '../../config/products';
 
 import {
   store,
-  getFieldValueLabel,
+  productConfigDimensions,
   probe,
 } from '../../state/store';
 
@@ -56,7 +56,7 @@ const COMPACT = true;
 
 {#if $store.route.section === 'probe' && $probe}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
-    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i (dimension.key)}
+    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i ($store.product + dimension.key)}
       {#if dimension.values.some(
             (di) => dimension.isValidKey === undefined
                     || dimension.isValidKey(di.key, $probe, store),
@@ -64,7 +64,7 @@ const COMPACT = true;
       <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
           <span class='main-filter__label__dimension'>{dimension.title}</span>
-          {getFieldValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
+          {productConfigDimensions.dimensionValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
         <div slot="menu">
           <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined

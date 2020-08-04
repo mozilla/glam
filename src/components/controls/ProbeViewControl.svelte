@@ -8,7 +8,6 @@ import { store, currentQuery } from '../../state/store';
 
 import BodyControl from './BodyControl.svelte';
 
-export let selections;
 let options = [
   {
     value: 'explore', label: 'Explore', component: Chart, tooltip: "explore this probe's aggregated values over time",
@@ -18,10 +17,6 @@ let options = [
   },
 ];
 
-export let colorMap = () => 'black';
-export let transformed = options.map((opt) => ({
-  label: opt, value: opt,
-}));
 </script>
 
 {#if $store.route.section === 'probe'}

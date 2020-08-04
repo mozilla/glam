@@ -10,6 +10,7 @@ export default {
       title: 'OS',
       key: 'os',
       values: [{ key: 'Android', label: 'Android' }],
+      defaultValue: 'Android',
     },
     channel: {
       title: 'Channel',
@@ -18,8 +19,9 @@ export default {
         { key: 'fenixProduction', label: 'Firefox Preview' },
         { key: 'release', label: 'Fenix' },
       ],
+      defaultValue: 'fenixProduction',
     },
-    pingType: {
+    ping_type: {
       title: 'Ping Type',
       key: 'ping_type',
       values: [
@@ -27,6 +29,7 @@ export default {
         { key: 'metrics', label: 'Metrics' },
         { key: 'baseline', label: 'Baseline' },
       ],
+      defaultValue: 'metrics',
     },
     aggregationLevel: {
       title: 'Aggregation Level',
@@ -35,6 +38,7 @@ export default {
         { key: 'build_id', label: 'Build ID' },
         { key: 'version', label: 'Major Version' },
       ],
+      defaultValue: 'build_id',
     },
   },
   // FIXME: these are guesses at the moment
@@ -54,7 +58,7 @@ export default {
     return {
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      pingType: storeValue.productDimensions.pingType,
+      ping_type: storeValue.productDimensions.ping_type,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       timeHorizon: storeValue.timeHorizon,
       proportionMetricType: storeValue.proportionMetricType,
@@ -69,7 +73,7 @@ export default {
       product: 'fenix',
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      pingType: storeValue.productDimensions.pingType,
+      ping_type: storeValue.productDimensions.ping_type,
       probe: storeValue.probeName,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
     };
@@ -92,8 +96,18 @@ export default {
           aggregationLevel,
           metricType
         );
+        // delete old (bad) builds?
+        const transformedData =
+          params.aggregationLevel === 'version'
+            ? data
+            : data.filter((di, i) => {
+                // get di.build_date;
+                if (i > 0 && di.label - data[i - 1].label < 1000 * 60 * 60 * 24)
+                  return false;
+                return true;
+              });
         return {
-          data,
+          data: transformedData,
           probeType: this.probeView[metricType],
         };
       }

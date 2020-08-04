@@ -6,7 +6,7 @@ export let reason;
 export let moreInformation;
 export let statusCode;
 </script>
-
+<!-- FIXME: this is firefox-specific. -->
 {#if statusCode === 404}
   <TempDataForProcessMissingError />
 {:else}
