@@ -9,7 +9,7 @@ google-cloud-storage==1.30.0
 gunicorn==20.0.4
 mozilla-django-oidc==1.2.3
 psycopg2-binary==2.8.5
-whitenoise==5.1.0
+whitenoise==5.2.0
 
 # For linting and testing.
 flake8
