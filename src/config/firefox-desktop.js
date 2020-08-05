@@ -139,7 +139,6 @@ export default {
     if (isCategoricalTypeProbe) {
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
-    appStore.setField('recordedInProcesses', probeValue.record_in_processes);
     return { data, viewType, ...etc };
   },
   setDefaultsForProbe(store) {
@@ -159,7 +158,10 @@ export default {
     }
 
     // accommodate prerelease-only probes by resetting to nightly (if needed)
-    if (state.productDimensions.channel === 'release' && probe.prerelease) {
+    if (
+      state.productDimensions.channel === 'release' &&
+      !probe.info.history.release[0].optout
+    ) {
       store.setDimension('channel', 'nightly');
     }
   },

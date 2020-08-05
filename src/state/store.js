@@ -40,7 +40,6 @@ function getDefaultState(
   }
 
   state.probeName = '';
-  state.recordedInProcesses = []; // Provided by the API. List of processes this probe was recording in.
   state.reference = getFromQueryString('reference') || '';
   state.route = {};
 

@@ -35,7 +35,6 @@ function probeIsSelected(probeToTest) {
     color: var(--cool-gray-400);
 }
 
-
 .spinner-and-text {
     text-align: center;
     color: var(--cool-gray-400);

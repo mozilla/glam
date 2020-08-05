@@ -14,13 +14,15 @@
     event:
       'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
     default:
-      'https://firefox-source-docs.mozi,l,la.org/toolkit/components/telemetry/collection/in,dex.html',
+      'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
   };
 
   async function exportData() {
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
+  console.log('probe:', $store.probe);
+  const isProbeActive = $store.probe.info.calculated.active;
 </script>
 
 <style>
@@ -160,31 +162,31 @@
             <a
               class="probe-type-link"
               href={PROBE_TYPE_DOCS[$store.probe.type] || PROBE_TYPE_DOCS.default}>
-              {$store.probe.type}
+              {$store.probe.info.type}
             </a>
           </dt>
-          {#if $store.probe.kind}
-            <dd>{$store.probe.kind}</dd>
+          {#if $store.probe.info.calculated.latest_history.details.kind}
+            <dd>{$store.probe.info.calculated.latest_history.details.kind}</dd>
           {/if}
         </dl>
       {/if}
-      {#if $store.probe.active !== undefined}
+      {#if isProbeActive !== undefined}
         <div class="probe-details-overview-right">
           <StatusLabel
-            tooltip={$store.probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
-            level={$store.probe.active ? 'success' : 'info'}>
-            {$store.probe.active ? 'active' : 'inactive'}
+            tooltip={isProbeActive ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
+            level={isProbeActive ? 'success' : 'info'}>
+            {isProbeActive ? 'active' : 'inactive'}
           </StatusLabel>
         </div>
       {/if}
     </div>
-    {#if $store.versions && $store.versions.length}
+    {#if $store.probe.info.history[$store.productDimensions.channel][0].versions}
       <dl
         class="drawer-section probe-details-overview-left
         probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
-          {$store.probe.versions[$store.productDimensions.channel][0]} &ndash; {$store.probe.versions[$store.productDimensions.channel][1]}
+          {$store.probe.info.history[$store.productDimensions.channel][0].versions.first} &ndash; {$store.probe.info.history[$store.productDimensions.channel][0].versions.last}
         </dd>
       </dl>
     {/if}
@@ -195,7 +197,7 @@
           {@html $store.probe.description}
           <a
             class="more-info-link"
-            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.apiName}`}
+            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.info.type}/${$store.probe.info.name}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
@@ -203,11 +205,11 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.bugs && $store.probe.bugs.length}
+    {#if $store.probe.info.calculated.latest_history.bug_numbers && $store.probe.info.calculated.latest_history.bug_numbers.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
-          {#each $store.probe.bugs as bugID, i (bugID)}
+          {#each $store.probe.info.calculated.latest_history.bug_numbers as bugID, i (bugID)}
             <a
               href="https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}"
               target="_blank">
