@@ -60,11 +60,12 @@
       // that clicks to the back/forward buttons work as expected.
 
       if (probeName) {
+        store.setField('probeName', probeName);
+
         // The canonical probe info fetch. (PSS)
         getSearchResults(probeName).then((r) => {
           let newProbe = { ...r[0], loaded: true };
           store.setField('probe', newProbe);
-          store.setField('probeName', probeName); // This is temporary: use store.probe.name
 
           if (productConfig[product].transformProbeForGLAM) {
             newProbe = productConfig[product].transformProbeForGLAM(newProbe);

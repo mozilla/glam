@@ -21,8 +21,6 @@
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
-  // eslint-disable-next-line no-console
-  console.log('exposing PSS probe:', $store.probe);
   const isProbeActive = $store.probe.info.calculated.active;
 </script>
 
