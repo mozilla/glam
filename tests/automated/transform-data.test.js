@@ -8,7 +8,7 @@ import {
   checkForHistogram,
   checkForPercentiles,
   checkForTotalUsers,
-} from '../src/utils/transform-data';
+} from '../../src/utils/transform-data';
 
 describe('transform parameters must be either a function or falsy', () => {
   it('rejects non-functions / falsy values', () => {

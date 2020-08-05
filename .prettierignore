@@ -1,3 +1,4 @@
-public/static/bundle.js
-public/static/bundle.css
-tests/data/
+/public/static/bundle.js
+/public/static/bundle.css
+/**/private-data/
+/tests/data/

@@ -1,3 +1,14 @@
+# Private data
+#
+# Private data should be saved to directories named "private-data" for clarity.
+# The uniqueness of the name also allows us to ignore any directories with that
+# name throughout the entire repo, as we do below. That said, private data was
+# saved to a directory named "tests/data" in the past, so we should continue to
+# ignore that directory in perpetuity just in case some developers haven't moved
+# their data yet.
+/**/private-data/
+/tests/data/
+
 # Logs
 logs
 *.log
@@ -60,9 +71,6 @@ node_modules/
 
 # public bundles
 public/static/bundle.*
-
-# storybook data
-tests/data
 
 # editors
 .vscode/

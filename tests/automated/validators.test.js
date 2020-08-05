@@ -1,4 +1,4 @@
-import { noResponse } from '../src/utils/data-validation';
+import { noResponse } from '../../src/utils/data-validation';
 import { noResponseExamples } from './examples/validators';
 
 describe('noResponse', () => {

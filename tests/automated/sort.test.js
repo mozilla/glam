@@ -1,4 +1,4 @@
-import { numericStringsSort } from '../src/utils/sort';
+import { numericStringsSort } from '../../src/utils/sort';
 
 describe('utils/sort.js', () => {
   it('someNumericalStringsSort', () => {
