@@ -190,12 +190,14 @@ export const dataset = derived([store], ([$store], set) => {
   // // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probeName)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    // eslint-disable-next-line consistent-return
     return message;
   }
 
   // // no probe selected.
   if (!probeSelected($store.probeName)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+    // eslint-disable-next-line consistent-return
     return message;
   }
 

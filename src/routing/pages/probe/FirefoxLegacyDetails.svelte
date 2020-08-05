@@ -21,7 +21,8 @@
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
-  console.log('probe:', $store.probe);
+  // eslint-disable-next-line no-console
+  console.log('exposing PSS probe:', $store.probe);
   const isProbeActive = $store.probe.info.calculated.active;
 </script>
 
@@ -205,7 +206,8 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.info.calculated.latest_history.bug_numbers && $store.probe.info.calculated.latest_history.bug_numbers.length}
+    {#if $store.probe.info.calculated.latest_history.bug_numbers &&
+         $store.probe.info.calculated.latest_history.bug_numbers.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">

@@ -1,4 +1,3 @@
-import { get } from 'svelte/store';
 import { extractBucketMetadata } from './shared';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
@@ -127,7 +126,6 @@ export default {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
-    const probeValue = get(appStore).probe;
     const viewType = this.probeView[data[0].metric_type];
 
     const isCategoricalTypeProbe = viewType === 'categorical';
