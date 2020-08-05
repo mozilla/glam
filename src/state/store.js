@@ -2,9 +2,6 @@ import { derived, get } from 'svelte/store';
 
 import { createStore } from '../utils/create-store';
 
-// FIXME: take care of this dependency cycle.
-import probeSet from './probeset'; // eslint-disable-line import/no-cycle
-
 import sharedConfig from '../config/shared';
 import productConfig from '../config/products';
 
@@ -84,8 +81,8 @@ store.reset = () => {
     probeName: '',
     probe: {
       name: '',
-      loaded: false
-    }
+      loaded: false,
+    },
   });
 };
 
@@ -133,15 +130,6 @@ store.resetProductDimensions = () => {
   });
 };
 
-export const probe = derived([probeSet, store], ([$probeSet, $store]) => {
-  if (!$probeSet || !$store.probeName) return undefined;
-  const activeProductConfig = getActiveProductConfig();
-  let pr = $probeSet.find((p) => p.name === $store.probeName);
-  if (activeProductConfig.transformProbeForGLAM)
-    pr = activeProductConfig.transformProbeForGLAM(pr);
-  return pr;
-});
-
 export const hasDefaultControlFields = derived(store, ($store) => {
   const activeProductConfig = getActiveProductConfig();
   return Object.values(activeProductConfig.dimensions).every(
@@ -188,53 +176,46 @@ export const datasetResponse = (level, key, data) => ({ level, key, data });
 const cache = {};
 let previousQuery;
 
-export const dataset = derived(
-  [store, probeSet],
-  ([$store, $probeSet], set) => {
-    // FIXME: we have to check for whether probeSet is loaded before
-    // moving on. This is because the data fetch does _not_ return
-    // the proper information about probe types & kinds (specifically,
-    // enumerated histograms are coded as linear in the demo data set).
-    // This should be checked again once we have verified that the bug
-    // in the demo data is fixed.
-    if (!$probeSet) return;
-
-    // We can't fetch anything until the user is authenticated
-    if (!$store.auth.isAuthenticated) return;
-
-    const activeProductConfig = getActiveProductConfig();
-    const params = activeProductConfig.getParamsForDataAPI($store);
-    const qs = toQueryString(params);
-
-    // // invalid parameters, probe selected.
-    if (!paramsAreValid(params) && probeSelected($store.probeName)) {
-      const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-      return message;
-    }
-
-    // // no probe selected.
-    if (!probeSelected($store.probeName)) {
-      const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-      return message;
-    }
-
-    if (!(qs in cache)) {
-      cache[qs] = activeProductConfig.fetchData(params, store);
-    }
-
-    // compare the previousQuery to the current one.
-    // if the actual query params have changed, let's update the
-    // data set.
-    if (previousQuery !== qs) {
-      previousQuery = qs;
-      set(
-        cache[qs].then(({ data }) =>
-          activeProductConfig.updateStoreAfterDataIsReceived(data, store)
-        )
-      );
-    }
+export const dataset = derived([store], ([$store], set) => {
+  if ($store.probeName === '' || $store.probeName === undefined) {
+    return;
   }
-);
+
+  // We can't fetch anything until the user is authenticated
+  if (!$store.auth.isAuthenticated) return;
+
+  const activeProductConfig = getActiveProductConfig();
+  const params = activeProductConfig.getParamsForDataAPI($store);
+  const qs = toQueryString(params);
+
+  // // invalid parameters, probe selected.
+  if (!paramsAreValid(params) && probeSelected($store.probeName)) {
+    const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    return message;
+  }
+
+  // // no probe selected.
+  if (!probeSelected($store.probeName)) {
+    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+    return message;
+  }
+
+  if (!(qs in cache)) {
+    cache[qs] = activeProductConfig.fetchData(params, store);
+  }
+
+  // compare the previousQuery to the current one.
+  // if the actual query params have changed, let's update the
+  // data set.
+  if (previousQuery !== qs) {
+    previousQuery = qs;
+    set(
+      cache[qs].then(({ data }) =>
+        activeProductConfig.updateStoreAfterDataIsReceived(data, store)
+      )
+    );
+  }
+});
 
 export const currentQuery = derived(store, ($store) => {
   const activeProductConfig = getActiveProductConfig();

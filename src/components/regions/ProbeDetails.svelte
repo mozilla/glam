@@ -2,7 +2,7 @@
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
-import { probe, store } from '../../state/store';
+import { store } from '../../state/store';
 
 const paneTransition = { x: 10, duration: 300 };
 
@@ -57,7 +57,7 @@ function probeIsSelected(probeToTest) {
         </div>
     </div>
     {/if}
-{:else if probeIsSelected($probe)}
+{:else if probeIsSelected($store.probe)}
 <div in:fly={paneTransition} class="drawer-section-container probe-details">
   <slot></slot>
 </div>

@@ -113,8 +113,6 @@
           <Button compact level=low on:click={refresh}>refresh</Button>
         </div>
         </h2>
-      <!-- TODO: This won't be pulling random probes going forward.
-           Hardcoding the process for now. -->
       {#await randomProbes}
         <div class="probes-overview">
           {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}

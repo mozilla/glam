@@ -15,8 +15,8 @@ setContext('scrollLeft', scrollLeft);
 setContext('scrollTop', scrollTop);
 
 function updateScroll() {
-  $scrollLeft = container.scrollLeft;
-  $scrollTop = container.scrollTop;
+  scrollLeft.set(container.scrollLeft);
+  scrollTop.set(container.scrollTop);
 }
 onMount(() => {
   container.addEventListener('scroll', updateScroll);
@@ -25,7 +25,7 @@ onDestroy(() => { container.removeEventListener('scroll', updateScroll); });
 
 </script>
 
-<div 
+<div
   bind:this={container}
   style="
     overflow-x: {overflowX ? 'auto' : 'visible'};

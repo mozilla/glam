@@ -3,7 +3,7 @@
   import { fly } from 'svelte/transition';
   import DataError from '../../components/errors/DataError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
-  import { dataset, store, probe } from '../../state/store';
+  import { dataset, store } from '../../state/store';
   import { isSelectedProcessValid } from '../../utils/probe-utils';
 
 </script>

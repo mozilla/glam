@@ -51,7 +51,10 @@ export default {
       ],
       defaultValue: 'content',
       isValidKey(key, probe) {
-        return isSelectedProcessValid(probe.info.calculated.seen_in_processes, key);
+        return isSelectedProcessValid(
+          probe.info.calculated.seen_in_processes,
+          key
+        );
       },
     },
   },
@@ -144,15 +147,14 @@ export default {
     // for the store before fetching data. It is probably not necessary for
     // non-Firefox desktop products.
     const state = store.getState();
-    const probe = state.probe;
-    // accommodate only valid processes.
+    const { probe } = state; // accommodate only valid processes.
     if (
       !isSelectedProcessValid(
         probe.info.calculated.seen_in_processes,
         state.productDimensions.process
       )
     ) {
-      let newProcess = probe.info.calculated.seen_in_processes[0];
+      const newProcess = probe.info.calculated.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
 

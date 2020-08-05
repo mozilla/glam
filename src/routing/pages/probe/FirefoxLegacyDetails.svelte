@@ -3,7 +3,7 @@
   import StatusLabel from 'udgl/StatusLabel.svelte';
   import Doc from '../../../components/Doc.svelte';
   import Brackets from '../../../components/Brackets.svelte';
-  import { store, probe, dataset } from '../../../state/store';
+  import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
 
   const PROBE_TYPE_DOCS = {
@@ -14,12 +14,12 @@
     event:
       'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
     default:
-      'https://firefox-source-docs.mozi,l,la.org/toolkit/components/telemetry/collection/in,dex.html'
+      'https://firefox-source-docs.mozi,l,la.org/toolkit/components/telemetry/collection/in,dex.html',
   };
 
   async function exportData() {
     const data = await $dataset;
-    downloadString(JSON.stringify(data), 'text', `${$probe.name}.json`);
+    downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
 </script>
 
@@ -151,29 +151,29 @@
 </style>
 
 <!-- probe-details-content -->
-{#if $probe}
+{#if $store.probe}
   <div class="probe-details-content">
     <div class="probe-details-overview">
-      {#if $probe.type}
+      {#if $store.probe.type}
         <dl class="drawer-section probe-details-overview-left">
           <dt>
             <a
               class="probe-type-link"
-              href={PROBE_TYPE_DOCS[$probe.type] || PROBE_TYPE_DOCS.default}>
-              {$probe.type}
+              href={PROBE_TYPE_DOCS[$store.probe.type] || PROBE_TYPE_DOCS.default}>
+              {$store.probe.type}
             </a>
           </dt>
-          {#if $probe.kind}
-            <dd>{$probe.kind}</dd>
+          {#if $store.probe.kind}
+            <dd>{$store.probe.kind}</dd>
           {/if}
         </dl>
       {/if}
-      {#if $probe.active !== undefined}
+      {#if $store.probe.active !== undefined}
         <div class="probe-details-overview-right">
           <StatusLabel
-            tooltip={$probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
-            level={$probe.active ? 'success' : 'info'}>
-            {$probe.active ? 'active' : 'inactive'}
+            tooltip={$store.probe.active ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
+            level={$store.probe.active ? 'success' : 'info'}>
+            {$store.probe.active ? 'active' : 'inactive'}
           </StatusLabel>
         </div>
       {/if}
@@ -184,18 +184,18 @@
         probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
-          {$probe.versions[$store.productDimensions.channel][0]} &ndash; {$probe.versions[$store.productDimensions.channel][1]}
+          {$store.probe.versions[$store.productDimensions.channel][0]} &ndash; {$store.probe.versions[$store.productDimensions.channel][1]}
         </dd>
       </dl>
     {/if}
     <div class="drawer-section">
-      {#if $probe.description}
+      {#if $store.probe.description}
         <h2 class="detail__heading--01">description</h2>
         <div class="probe-description helper-text--01">
-          {@html $probe.description}
+          {@html $store.probe.description}
           <a
             class="more-info-link"
-            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$probe.apiName}`}
+            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.apiName}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
@@ -203,11 +203,11 @@
         </div>
       {/if}
     </div>
-    {#if $probe.bugs && $probe.bugs.length}
+    {#if $store.probe.bugs && $store.probe.bugs.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
-          {#each $probe.bugs as bugID, i (bugID)}
+          {#each $store.probe.bugs as bugID, i (bugID)}
             <a
               href="https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}"
               target="_blank">
@@ -218,13 +218,9 @@
       </div>
     {/if}
   </div>
-  <!-- /probe-details-content -->
-
-  <!-- probe-details-download -->
   <div class="probe-details-download">
 
     <div class="drawer-section drawer-section--end">
-      <!-- FIXME: once @graph-paper/button supports href, use that instead. -->
       <button on:click={exportData} class="docs-button">
         <Brackets size={16} />
         Export to JSON
@@ -238,5 +234,4 @@
       </a>
     </div>
   </div>
-  <!-- /probe-details-download -->
 {/if}
