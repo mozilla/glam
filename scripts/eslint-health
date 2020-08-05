@@ -7,7 +7,7 @@
 echo "Running johnbot..."
 echo
 
-MAX_ESLINT_PROBLEMS=22 # Lower this number over time as problems are fixed
+MAX_ESLINT_PROBLEMS=20 # Lower this number over time as problems are fixed
 NUM_ESLINT_PROBLEMS=$(npm run lint 2>&1 | grep -E "[0-9]+ problems \(" | cut -f 2 -d ' ')
 
 echo "Max ESLint problems: $MAX_ESLINT_PROBLEMS"

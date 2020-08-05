@@ -18,7 +18,6 @@
   import { store } from '../../state/store';
   import routes from '../../config/routes';
 
-
   $: isProbeDetailsView = $store.route.section === 'probe';
 </script>
 

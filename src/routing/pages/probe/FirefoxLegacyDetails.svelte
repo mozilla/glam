@@ -206,8 +206,8 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.info.calculated.latest_history.bug_numbers &&
-         $store.probe.info.calculated.latest_history.bug_numbers.length}
+    {#if $store.probe.info.calculated.latest_history.bug_numbers
+         && $store.probe.info.calculated.latest_history.bug_numbers.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
