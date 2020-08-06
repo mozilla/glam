@@ -9,6 +9,8 @@ const FETCH_ERROR_MESSAGES = {
   code405: '405: Method not allowed.',
 };
 
+const DEFAULT_SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
+
 export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
     method: 'POST',
@@ -55,7 +57,11 @@ export async function getProbeData(params, token) {
   return data;
 }
 
-export function getSearchResults(queryString, resultsLimit) {
+export function getSearchResults(
+  queryString,
+  exactSearch = false,
+  resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
+) {
   const getFormattedSearchURL = (str, product = 'desktop') => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
     const strFragments = str.split(/\s+/);
@@ -66,13 +72,15 @@ export function getSearchResults(queryString, resultsLimit) {
       '(type.eq.scalar,info->calculated->latest_history->details->>kind.eq.string)';
 
     queryOptions.push(`name.eq.${str}`);
-    queryOptions.push(`search.plfts(simple).${str}`);
-    queryOptions.push(`description.phfts(english).${str}`);
-    queryOptions.push(
-      `name.ilike.*${
-        strFragments.length ? strFragments[strFragments.length - 1] : str
-      }*`
-    );
+    if (!exactSearch) {
+      queryOptions.push(`search.plfts(simple).${str}`);
+      queryOptions.push(`description.phfts(english).${str}`);
+      queryOptions.push(
+        `name.ilike.*${
+          strFragments.length ? strFragments[strFragments.length - 1] : str
+        }*`
+      );
+    }
 
     params.set('limit', resultsLimit);
     params.set('select', 'name,description,type,info');

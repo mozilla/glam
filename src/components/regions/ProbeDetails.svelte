@@ -2,8 +2,7 @@
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
-import telemetrySearch from '../../state/telemetry-search';
-import { probe } from '../../state/store';
+import { store } from '../../state/store';
 
 const paneTransition = { x: 10, duration: 300 };
 
@@ -36,7 +35,6 @@ function probeIsSelected(probeToTest) {
     color: var(--cool-gray-400);
 }
 
-
 .spinner-and-text {
     text-align: center;
     color: var(--cool-gray-400);
@@ -49,7 +47,7 @@ function probeIsSelected(probeToTest) {
 </style>
 
 <div class="drawer details-drawer">
-{#if !$telemetrySearch.loaded}
+{#if !$store.probe.loaded}
     {#if visible}
     <div in:fly={paneTransition} class="drawer-section">
         <div class="spinner-and-text">
@@ -58,7 +56,7 @@ function probeIsSelected(probeToTest) {
         </div>
     </div>
     {/if}
-{:else if probeIsSelected($probe)}
+{:else if probeIsSelected($store.probe)}
 <div in:fly={paneTransition} class="drawer-section-container probe-details">
   <slot></slot>
 </div>

@@ -2,10 +2,10 @@
   import page from 'page';
   import Spinner from 'udgl/LineSegSpinner.svelte';
   import { onMount } from 'svelte';
-
+  import { get } from 'svelte/store';
   import productConfig from '../config/products';
   import { store, currentQuery } from '../state/store';
-  import { probeSet } from '../state/telemetry-search';
+  import { getSearchResults } from '../state/api';
   import { codeAndStateInQuery } from '../utils/url';
 
   // Wrappers
@@ -47,25 +47,31 @@
 
   function useComponent(componentToUse, view) {
     return function handle({ params: { product, section, probeName } }) {
+      const storeValue = get(store);
       component = componentToUse;
       // if the product has changed,
       // set it in the store and use store.resetProductDimensions()
       // to initialize.
-      if (product && $store.product !== product) {
+      if (product && storeValue.product !== product) {
         store.setField('product', product);
         store.resetProductDimensions();
       }
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
+
       if (probeName) {
         store.setField('probeName', probeName);
-        if ($probeSet) {
-          let newProbe = $probeSet.find((p) => p.name === probeName);
-          if (productConfig[$store.product].transformProbeForGLAM) {
-            newProbe = productConfig[$store.product].transformProbeForGLAM(newProbe);
+
+        // The canonical probe info fetch. (PSS)
+        getSearchResults(probeName, true).then((r) => {
+          let newProbe = { ...r[0], loaded: true };
+          store.setField('probe', newProbe);
+
+          if (productConfig[product].transformProbeForGLAM) {
+            newProbe = productConfig[product].transformProbeForGLAM(newProbe);
           }
-          productConfig[$store.product].setDefaultsForProbe(store, newProbe);
-        }
+          productConfig[storeValue.product].setDefaultsForProbe(store, newProbe);
+        });
       }
 
       store.setField('route', {

@@ -8,26 +8,28 @@
 
 </script>
 
-{#await $dataset}
-  <div class="graphic-body__content">
-    <Spinner size={48} color={'var(--cool-gray-400)'} />
-  </div>
-{:then data}
-  {#if $store.product !== 'firefox' || isSelectedProcessValid($store.recordedInProcesses, $store.productDimensions.process)}
-    <slot {data} probeType={data.viewType} />
-  {:else}
-    <div class='graphic-body__content'>
+{#if $store.probe.loaded}
+  {#await $dataset}
+    <div class="graphic-body__content">
+      <Spinner size={48} color={'var(--cool-gray-400)'} />
+    </div>
+  {:then data}
+    {#if $store.product !== 'firefox' || isSelectedProcessValid($store.probe.info.calculated.seen_in_processes, $store.productDimensions.process)}
+      <slot {data} probeType={data.viewType} />
+    {:else}
+      <div class='graphic-body__content'>
+        <ProbeTitle />
+        <div in:fly={{ duration: 400, y: 10 }}>
+          <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+        </div>
+      </div>
+    {/if}
+  {:catch err}
+    <div class="graphic-body__content">
       <ProbeTitle />
       <div in:fly={{ duration: 400, y: 10 }}>
-        <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+        <DataError reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
       </div>
     </div>
-  {/if}
-{:catch err}
-  <div class="graphic-body__content">
-    <ProbeTitle />
-    <div in:fly={{ duration: 400, y: 10 }}>
-      <DataError reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
-    </div>
-  </div>
-{/await}
+  {/await}
+{/if}

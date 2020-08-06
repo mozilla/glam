@@ -9,7 +9,6 @@ import productConfig from '../../config/products';
 import {
   store,
   productConfigDimensions,
-  probe,
 } from '../../state/store';
 
 const OFFSET = 10;
@@ -54,12 +53,12 @@ const COMPACT = true;
 
 </style>
 
-{#if $store.route.section === 'probe' && $probe}
+{#if $store.route.section === 'probe' && $store.probe.loaded}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
     {#each Object.values(productConfig[$store.product].dimensions) as dimension, i ($store.product + dimension.key)}
       {#if dimension.values.some(
             (di) => dimension.isValidKey === undefined
-                    || dimension.isValidKey(di.key, $probe, store),
+                    || dimension.isValidKey(di.key, $store.probe, store),
       )}
       <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
@@ -68,7 +67,7 @@ const COMPACT = true;
         <div slot="menu">
           <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined
-                || dimension.isValidKey(di.key, $probe, store)) as {key, label}, i (key)}
+                || dimension.isValidKey(di.key, $store.probe, store)) as {key, label}, i (key)}
                 <MenuListItem  key={key} value={key}><span class='story-label
                   first'></span>{label}</MenuListItem>
                 {/each}
