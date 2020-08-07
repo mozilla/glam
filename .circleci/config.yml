@@ -44,7 +44,7 @@ jobs:
             - ./node_modules
       - run: npm run build
       - run: npm run format:check
-      - run: scripts/eslint-health
+      - run: node scripts/eslint-health.js
       # - run: npm test # don't run this until design library is gone
 
 workflows:

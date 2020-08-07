@@ -68,7 +68,7 @@
     "start:dev": "sirv public --single --dev",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint --ext .js,.svelte .",
+    "lint": "eslint .",
     "storybook": "start-storybook --static-dir ./public --port 6006",
     "build-storybook": "build-storybook --static-dir ./public --config-dir .storybook",
     "test:jest": "jest test --no-cache",
