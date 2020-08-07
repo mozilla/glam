@@ -63,7 +63,7 @@
         store.setField('probeName', probeName);
 
         // The canonical probe info fetch. (PSS)
-        getSearchResults(probeName, true).then((r) => {
+        getSearchResults(probeName, true, $store.searchProduct).then((r) => {
           let newProbe = { ...r[0], loaded: true };
           store.setField('probe', newProbe);
 

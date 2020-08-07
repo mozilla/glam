@@ -58,7 +58,8 @@ export default {
     return {
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      ping_type: storeValue.productDimensions.ping_type,
+      //ping_type: storeValue.productDimensions.ping_type,
+      ping_type: 'metrics',
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       timeHorizon: storeValue.timeHorizon,
       proportionMetricType: storeValue.proportionMetricType,
@@ -119,6 +120,7 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const viewType = this.probeView[data[0].metric_type];
+    console.log('viewType:', viewType);
 
     const isCategoricalTypeProbe = viewType === 'categorical';
 

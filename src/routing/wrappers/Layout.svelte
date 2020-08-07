@@ -14,9 +14,11 @@
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
   import SlackLogo from '../../components/SlackLogo.svelte';
   import AlertNotice from '../../components/controls/AlertNotice.svelte';
+  import ProductSelector from '../../components/controls/ProductSelector.svelte';
 
   import { store } from '../../state/store';
   import routes from '../../config/routes';
+
 
   $: isProbeDetailsView = $store.route.section === 'probe';
 </script>
@@ -54,6 +56,7 @@
   <Toolbar sticky>
     <GLAMMark />
     <Search />
+    <ProductSelector />
     <div style="justify-self: end; padding-right: var(--space-2x)">
       <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
         <SlackLogo size={16} />feedback

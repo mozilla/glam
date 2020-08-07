@@ -42,6 +42,7 @@ function getDefaultState(
   state.probeName = '';
   state.reference = getFromQueryString('reference') || '';
   state.route = {};
+  state.searchProduct = state.product;
 
   state.probe = {
     name: '',
@@ -184,12 +185,14 @@ export const dataset = derived([store], ([$store], set) => {
   if (!$store.auth.isAuthenticated) return;
 
   const activeProductConfig = getActiveProductConfig();
+  console.log('activeProductConfig:', activeProductConfig);
   const params = activeProductConfig.getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
   // // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probeName)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+    console.log('bailed');
     // eslint-disable-next-line consistent-return
     return message;
   }
@@ -208,7 +211,8 @@ export const dataset = derived([store], ([$store], set) => {
   // compare the previousQuery to the current one.
   // if the actual query params have changed, let's update the
   // data set.
-  if (previousQuery !== qs) {
+  if (true) {
+    console.log('yo');
     previousQuery = qs;
     set(
       cache[qs].then(({ data }) =>

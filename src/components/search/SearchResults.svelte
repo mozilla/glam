@@ -6,7 +6,7 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import { currentQuery } from '../../state/store';
+import { currentQuery, store } from '../../state/store';
 
 export let results = [];
 
@@ -52,7 +52,7 @@ const handleKeypress = (event) => {
     if (key === 'Enter') {
       searchIsActive = false;
 
-      page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
+      page.show(`/${$store.searchProduct}/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
       focusedItem = 0; // reset focused element
     }
     if (key === 'Escape') {
@@ -236,7 +236,8 @@ li {
                 id={searchResult.name}
                 class:focused={focusedItem === i}
                 on:click={() => {
-                  page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
+                  store.setField('product', $store.searchProduct);
+                  page.show(`/${$store.searchProduct}/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
                 }}
                 on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{searchResult.name}</div>

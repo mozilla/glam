@@ -60,9 +60,10 @@ export async function getProbeData(params, token) {
 export function getSearchResults(
   queryString,
   exactSearch = false,
+  product,
   resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
 ) {
-  const getFormattedSearchURL = (str, product = 'desktop') => {
+  const getFormattedSearchURL = (str) => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
     const strFragments = str.split(/\s+/);
 
@@ -88,7 +89,7 @@ export function getSearchResults(
     params.set('or', `(${queryOptions.join(',')})`);
     params.set('not.and', stringScalars);
 
-    if (product === 'desktop') {
+    if (product === 'firefox') {
       URLResult.pathname = 'telemetry'; // hint: change this to test 404 error case
     } else {
       URLResult.pathname = 'glean';
