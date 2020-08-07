@@ -70,13 +70,7 @@ function getDefaultState(
 export const store = createStore(getDefaultState({ basedOnQueryParams: true }));
 
 store.reset = () => {
-  store.reinitialize({
-    probeName: '',
-    probe: {
-      name: '',
-      loaded: false,
-    },
-  });
+  store.reinitialize();
 };
 
 function getActiveProductConfig() {
