@@ -4,15 +4,10 @@
   import DownCarat from 'udgl/icons/DownCarat.svelte';
   import MenuList from 'udgl/menu/MenuList.svelte';
   import MenuListItem from 'udgl/menu/MenuListItem.svelte';
+  import { productKeys } from '../../config/products';
 
   const COMPACT = true;
   const OFFSET = 10;
-
-  // FIXME: this belongs in a config.
-  const products = [
-    {label: 'Firefox', apiKey: 'firefox'},
-    {label: 'Fenix', apiKey: 'fenix'},
-  ];
 </script>
 
 <style>
@@ -39,13 +34,13 @@
 <div class="product-selector">
   <DimensionMenu tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
     <div class="main-filter__label" slot="label">
-      {products.filter(p => p.apiKey === $store.searchProduct)[0].label}
+      {productKeys.filter(p => p.key === $store.searchProduct)[0].label}
       <div class="pull-right-edge"><DownCarat size=14 /></div>
     </div>
     <div slot="menu">
       <MenuList on:selection={(event) => { store.setField('searchProduct', event.detail.key); }}>
-        {#each products as {label, apiKey}, i (apiKey)}
-          <MenuListItem key={apiKey} value={apiKey}>
+        {#each productKeys as {label, key}, i (key)}
+          <MenuListItem {key} value={key}>
             <span class="story-label first"></span>{label}
           </MenuListItem>
         {/each}

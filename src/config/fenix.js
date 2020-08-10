@@ -4,6 +4,8 @@ import { getProbeData } from '../state/api';
 import { validate, noResponse } from '../utils/data-validation';
 
 export default {
+  label: 'Fenix',
+  key: 'fenix',
   sampleRate: 1,
   dimensions: {
     os: {
@@ -119,7 +121,6 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const viewType = this.probeView[data[0].metric_type];
-    console.log('viewType:', viewType);
 
     const isCategoricalTypeProbe = viewType === 'categorical';
 

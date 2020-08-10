@@ -77,7 +77,7 @@
           <div class="graphic-body__details">
             <ProbeDetails>
               {#if $store.product}
-                <svelte:component this={routes[$store.product].details} />
+                <svelte:component this={routes[$store.product].details} bla={$store.product} />
               {/if}
             </ProbeDetails>
           </div>
