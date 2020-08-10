@@ -58,8 +58,7 @@ export default {
     return {
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      //ping_type: storeValue.productDimensions.ping_type,
-      ping_type: 'metrics',
+      ping_type: storeValue.productDimensions.ping_type,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       timeHorizon: storeValue.timeHorizon,
       proportionMetricType: storeValue.proportionMetricType,
