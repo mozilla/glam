@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.core.cache import caches
 from django.db import models
 
@@ -8,7 +7,7 @@ from glam.api import constants
 class Probe(models.Model):
     id = models.AutoField(primary_key=True)
     key = models.CharField(max_length=100)
-    info = JSONField()
+    info = models.JSONField()
 
     class Meta:
         db_table = "glam_probe"

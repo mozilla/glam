@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-asgiref==3.2.7            # via django
+asgiref==3.2.10           # via django
 attrs==19.3.0             # via pytest
 cachetools==4.1.0         # via google-auth
 certifi==2020.4.5.1       # via requests
@@ -14,7 +14,7 @@ coverage==5.1             # via pytest-cov
 cryptography==2.9.2       # via josepy, mozilla-django-oidc, pyopenssl
 dj-database-url==0.5.0    # via -r requirements.in
 django-configurations==2.2  # via -r requirements.in
-django==3.0.9             # via -r requirements.in, djangorestframework, drf-orjson-renderer, mozilla-django-oidc
+django==3.1               # via -r requirements.in, djangorestframework, drf-orjson-renderer, mozilla-django-oidc
 djangorestframework==3.11.1  # via -r requirements.in, drf-orjson-renderer
 dockerflow==2020.6.0      # via -r requirements.in
 drf-orjson-renderer==1.1.4  # via -r requirements.in
