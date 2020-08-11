@@ -127,7 +127,7 @@
             <div class="probe-overview__probe" in:fade={{ duration: 400 }}>
               <a
                 class="probe-sm"
-                href={`/firefox/probe/${info.name}/explore?${$currentQuery}`}
+                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}
               >
                 <div
                   class="probe-small-multiple"

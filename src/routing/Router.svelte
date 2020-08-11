@@ -23,7 +23,7 @@
 
   function updateQueryString(query) {
     if (window.history.replaceState) {
-      const newURL = `${window.location.origin}${window.location.pathname}?${query}`;
+      const newURL = `${window.location.origin}${window.location.pathname}${query}`;
       window.history.replaceState(null, null, newURL);
     }
   }
@@ -53,12 +53,12 @@
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
       if (probeName) {
+        store.setField('probe', { loaded: false });
+        store.setField('probeName', probeName);
 
-        store.setField('probe', {loaded: false});
         // The canonical probe info fetch. (PSS)
         getSearchResults(probeName, true, $store.searchProduct).then((r) => {
           let newProbe = { ...r[0], loaded: true };
-
 
           // if the product has changed,
           // set it in the store and use store.resetProductDimensions()
@@ -67,7 +67,6 @@
             store.setProduct(product);
           }
           store.setField('probe', newProbe);
-          store.setField('probeName', probeName);
 
           if (productConfig[product].transformProbeForGLAM) {
             newProbe = productConfig[product].transformProbeForGLAM(newProbe);

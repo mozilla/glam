@@ -27,7 +27,7 @@ let options = [
     multi={false}
     level="medium"
     on:selection={(evt) => {
-      page.show(`/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}?${$currentQuery}`);
+      page.show(`/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}${$currentQuery}`);
     }}
   />
 </div>

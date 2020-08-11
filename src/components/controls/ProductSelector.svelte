@@ -1,9 +1,9 @@
 <script>
-  import DimensionMenu from './DimensionMenu.svelte';
-  import { store } from '../../state/store';
   import DownCarat from 'udgl/icons/DownCarat.svelte';
   import MenuList from 'udgl/menu/MenuList.svelte';
   import MenuListItem from 'udgl/menu/MenuListItem.svelte';
+  import { store } from '../../state/store';
+  import DimensionMenu from './DimensionMenu.svelte';
   import { productKeys } from '../../config/products';
 
   const COMPACT = true;
@@ -34,7 +34,7 @@
 <div class="product-selector">
   <DimensionMenu tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
     <div class="main-filter__label" slot="label">
-      {productKeys.filter(p => p.key === $store.searchProduct)[0].label}
+      {productKeys.filter((p) => p.key === $store.searchProduct)[0].label}
       <div class="pull-right-edge"><DownCarat size=14 /></div>
     </div>
     <div slot="menu">

@@ -5,7 +5,6 @@ import { createStore } from '../utils/create-store';
 import sharedConfig from '../config/shared';
 import productConfig from '../config/products';
 
-
 export function getFromQueryString(fieldKey, isMulti = false) {
   const params = new URLSearchParams(window.location.search);
   const value = params.get(fieldKey);
@@ -65,7 +64,8 @@ function getDefaultState(
     Object.entries(productConfig[state.product].dimensions).forEach(
       ([key, { defaultValue }]) => {
         if (basedOnQueryParams) {
-          state.productDimensions[key] = getFromQueryString(key) || defaultValue;
+          state.productDimensions[key] =
+            getFromQueryString(key) || defaultValue;
         } else {
           state.productDimensions[key] = defaultValue;
         }
@@ -134,7 +134,7 @@ store.setProduct = (product) => {
   Object.entries(config.dimensions).forEach(([key, { defaultValue }]) => {
     store.setDimension(key, defaultValue);
   });
-}
+};
 
 export const hasDefaultControlFields = derived(store, ($store) => {
   const activeProductConfig = getActiveProductConfig();
@@ -158,7 +158,7 @@ const toQueryStringPair = (k, v) => {
 function toQueryString(params) {
   const keys = Object.keys(params);
   keys.sort();
-  return keys.map((k) => toQueryStringPair(k, params[k])).join('&');
+  return `?${keys.map((k) => toQueryStringPair(k, params[k])).join('&')}`;
 }
 
 function probeSelected(probeValue) {
@@ -183,7 +183,11 @@ const cache = {};
 let previousQuery;
 
 export const dataset = derived([store], ([$store], set) => {
-  if ($store.probeName === '' || $store.probeName === undefined || !$store.product) {
+  if (
+    $store.probeName === '' ||
+    $store.probeName === undefined ||
+    !$store.product
+  ) {
     return;
   }
 

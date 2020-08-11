@@ -15,7 +15,7 @@ a {
 }
 </style>
 
-<a href={`/?${$currentQuery}`} on:click={store.reset}>
+<a href={`/${$currentQuery}`} on:click={store.reset}>
   <h1>
     <Logo />
     <div use:tooltip={{
