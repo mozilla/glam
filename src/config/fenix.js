@@ -18,10 +18,11 @@ export default {
       title: 'Channel',
       key: 'channel',
       values: [
-        { key: 'fenixProduction', label: 'Firefox Preview' },
-        { key: 'release', label: 'Fenix' },
+        { key: 'nightly', label: 'Fenix (nightly)' },
+        { key: 'beta', label: 'Fenix (beta)' },
+        { key: 'release', label: 'Fenix (release)' },
       ],
-      defaultValue: 'fenixProduction',
+      defaultValue: 'nightly',
     },
     ping_type: {
       title: 'Ping Type',
@@ -81,6 +82,10 @@ export default {
     };
   },
   fetchData(params, appStore) {
+    // Replace 'channel' with 'app_id'.
+    Object.defineProperty(params, 'app_id', Object.getOwnPropertyDescriptor(params, 'channel'));
+    delete params['channel'];
+
     // FIXME: this is (so far) identical to firefox-desktop.
     // should we just make this something in shared.js?
     return getProbeData(params, appStore.getState().auth.token).then(
