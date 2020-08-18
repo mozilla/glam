@@ -165,7 +165,6 @@ def get_glean_aggregations(request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = [
         "aggregationLevel",
         "app_id",
-        "channel",
         "ping_type",
         "probe",
         "product",
@@ -196,14 +195,12 @@ def get_glean_aggregations(request, **kwargs):
     versions = list(map(str, range(max_version, max_version - num_versions, -1)))
 
     app_id = kwargs["app_id"]
-    channel = kwargs["channel"]
     probe = kwargs["probe"]
     ping_type = kwargs["ping_type"]
     os = kwargs.get("os", "*")
 
     dimensions = [
         Q(app_id=app_id),
-        Q(channel=channel),
         Q(metric=probe),
         Q(ping_type=ping_type),
         Q(version__in=versions),
@@ -226,7 +223,6 @@ def get_glean_aggregations(request, **kwargs):
     for row in result:
 
         data = {
-            "channel": row.channel,
             "version": row.version,
             "ping_type": row.ping_type,
             "os": row.os,
@@ -371,7 +367,7 @@ def random_probes(request):
         try:
             probe = Probe.objects.get(info__name=agg.metric)
         except Probe.DoesNotExist:
-            pass
+            continue
 
         probes.append({"data": agg.histogram, "info": probe.info})
 
