@@ -7,7 +7,7 @@ drf-orjson-renderer==1.1.4
 google-cloud-bigquery==1.26.1
 google-cloud-storage==1.30.0
 gunicorn==20.0.4
-mozilla-django-oidc==1.2.3
+mozilla-django-oidc==1.2.4
 psycopg2-binary==2.8.5
 whitenoise==5.2.0
 
