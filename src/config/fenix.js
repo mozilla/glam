@@ -14,9 +14,9 @@ export default {
       values: [{ key: 'Android', label: 'Android' }],
       defaultValue: 'Android',
     },
-    channel: {
-      title: 'Channel',
-      key: 'channel',
+    app_id: {
+      title: 'App',
+      key: 'app_id',
       values: [
         { key: 'nightly', label: 'Fenix (nightly)' },
         { key: 'beta', label: 'Fenix (beta)' },
@@ -59,7 +59,7 @@ export default {
     // which is used to convey the view state when the GLAM URL is shared with
     // others.
     return {
-      channel: storeValue.productDimensions.channel,
+      app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
       ping_type: storeValue.productDimensions.ping_type,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
@@ -74,7 +74,7 @@ export default {
     // These parameters are needed to request the data from the API itself
     return {
       product: 'fenix',
-      channel: storeValue.productDimensions.channel,
+      app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
       ping_type: storeValue.productDimensions.ping_type,
       probe: storeValue.probeName,
@@ -82,10 +82,6 @@ export default {
     };
   },
   fetchData(params, appStore) {
-    // Replace 'channel' with 'app_id'.
-    Object.defineProperty(params, 'app_id', Object.getOwnPropertyDescriptor(params, 'channel'));
-    delete params['channel'];
-
     // FIXME: this is (so far) identical to firefox-desktop.
     // should we just make this something in shared.js?
     return getProbeData(params, appStore.getState().auth.token).then(
