@@ -24,7 +24,7 @@
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "8.1.0",
     "@rollup/plugin-replace": "2.3.3",
-    "@storybook/svelte": "5.3.19",
+    "@storybook/svelte": "6.0.18",
     "babel-jest": "26.1.0",
     "babel-loader": "8.1.0",
     "eslint": "7.3.1",
