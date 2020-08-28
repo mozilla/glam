@@ -91,7 +91,7 @@ $: if (parentElement && windowWidth) {
 
 /* FIXME: move toward BEM */
 .telemetry-results {
-  --header-bg-color: var(--cool-gray-200);
+  --header-bg-color: white;
   --list-border-color: gainsboro;
   --list-border: 1px solid var(--list-border-color);
   max-height: calc(100vh - var(--header-height) * 3);
@@ -109,7 +109,7 @@ $: if (parentElement && windowWidth) {
 }
 
 .header-container {
-  background-color: var(--cool-gray-250);
+  background-color: var(--cool-gray-100);
   --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
   font-size: .8em;
   color: var(--body-gray-01);
