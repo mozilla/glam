@@ -11,7 +11,6 @@
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
-  // const isProbeActive = $store.probe.info.calculated.active;
 
   const parseYMD = timeParse('%Y-%m-%d');
   const mdY = timeFormat('%b %d, %Y');

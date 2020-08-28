@@ -1,10 +1,6 @@
 <script>
   import App from '../../components/regions/App.svelte';
   import Toolbar from '../../components/regions/Toolbar.svelte';
-  import Content from '../../components/regions/Content.svelte';
-  import ContentHeader from '../../components/regions/ContentHeader.svelte';
-  import ContentBody from '../../components/regions/ContentBody.svelte';
-  import ContentFooter from '../../components/regions/ContentFooter.svelte';
 
   import MainSelectors from '../../components/regions/MainSelectors.svelte';
   import GLAMMark from '../../components/regions/GLAMMark.svelte';
@@ -63,12 +59,13 @@
       </a>
     </div>
   </Toolbar>
-  <Content centered>
-    <ContentHeader>
+  <div class="content content--centered-body">
+    <!-- FIXME: make a header -->
+    <div class=content-header>
       <ProbeViewControl />
       <MainSelectors />
-    </ContentHeader>
-    <ContentBody>
+    </div>
+    <main class=content-content>
       <div class="graphic-body" class:graphic-body-home={!isProbeDetailsView}>
         <slot />
         {#if isProbeDetailsView}
@@ -83,11 +80,11 @@
           </div>
         {/if}
       </div>
-    </ContentBody>
-    <ContentFooter>
+    </main>
+    <footer class=content-footer>
       <Footer />
-    </ContentFooter>
-  </Content>
+    </footer>
+  </div>
   <AlertNotice toggleKey="dataErrorsWarning">
     <p>Thank you for testing the GLAM prototype!</p>
     <p>
