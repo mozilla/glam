@@ -100,6 +100,7 @@ export default {
           metricType
         );
         // delete old (bad) builds?
+
         const transformedData =
           params.aggregationLevel === 'version'
             ? data
@@ -109,6 +110,7 @@ export default {
                   return false;
                 return true;
               });
+
         return {
           data: transformedData,
           probeType: this.probeView[metricType],

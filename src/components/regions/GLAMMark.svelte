@@ -1,12 +1,16 @@
 <script>
 import { tooltip } from 'udgl/utils/tooltip';
-import Logo from 'udgl/icons/GLAM.svelte';
+import Logo from './GLAMLogo.svelte';
+import Text from './GLAMText.svelte';
 import { store, currentQuery } from '../../state/store';
 </script>
 
 <style>
 h1 {
     cursor: pointer;
+    display: grid;
+    grid-auto-flow: column;
+    align-items: center;
 }
 
 a {
@@ -16,13 +20,11 @@ a {
 </style>
 
 <a href={`/${$currentQuery}`} on:click={store.reset}>
-  <h1>
-    <Logo />
-    <div use:tooltip={{
+  <h1 use:tooltip={{
       text: 'The Glean Aggregated Metrics Dashboard',
       distance: 16,
     }}>
-      GLAM
-    </div>
+    <Logo />
+      <Text />
   </h1>
 </a>

@@ -12,7 +12,7 @@ setContext('_layout', layout);
 
 </script>
 
-<div 
+<div
   class=app-layout
   class:app-layout--vertical={orientation === 'vertical'}
   class:app-layout--horizontal={orientation === 'horizontal'}

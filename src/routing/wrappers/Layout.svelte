@@ -1,10 +1,10 @@
 <script>
-  import App from 'udgl/layout/App.svelte';
-  import Toolbar from 'udgl/layout/Toolbar.svelte';
-  import Content from 'udgl/layout/Content.svelte';
-  import ContentHeader from 'udgl/layout/ContentHeader.svelte';
-  import ContentBody from 'udgl/layout/ContentBody.svelte';
-  import ContentFooter from 'udgl/layout/ContentFooter.svelte';
+  import App from '../../components/regions/App.svelte';
+  import Toolbar from '../../components/regions/Toolbar.svelte';
+  import Content from '../../components/regions/Content.svelte';
+  import ContentHeader from '../../components/regions/ContentHeader.svelte';
+  import ContentBody from '../../components/regions/ContentBody.svelte';
+  import ContentFooter from '../../components/regions/ContentFooter.svelte';
 
   import MainSelectors from '../../components/regions/MainSelectors.svelte';
   import GLAMMark from '../../components/regions/GLAMMark.svelte';

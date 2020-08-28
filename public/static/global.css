@@ -392,7 +392,8 @@ button:focus {
 }
 
 .toolbar--vertical {
-  grid-auto-flow: column;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
+  justify-items: start;
   grid-column-gap: var(--space-2x);
 }
 

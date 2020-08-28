@@ -6,7 +6,7 @@
   import DimensionMenu from './DimensionMenu.svelte';
   import { productKeys } from '../../config/products';
 
-  const COMPACT = true;
+  const COMPACT = false;
   const OFFSET = 10;
 </script>
 
@@ -26,13 +26,14 @@
   }
 
   .product-selector {
-    position: relative;
-    left: -90px; /* FIXME: this is a bad approach */
+    align-self: stretch;
+    display: grid;
+    align-items: stretch;
   }
 </style>
 
 <div class="product-selector">
-  <DimensionMenu tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
+  <DimensionMenu size=large variant=dark tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
     <div class="main-filter__label" slot="label">
       {productKeys.filter((p) => p.key === $store.searchProduct)[0].label}
       <div class="pull-right-edge"><DownCarat size=14 /></div>
