@@ -12,10 +12,6 @@ setContext('_layout', layout);
 
 </script>
 
-<div
-  class=app-layout
-  class:app-layout--vertical={orientation === 'vertical'}
-  class:app-layout--horizontal={orientation === 'horizontal'}
->
+<div class="app-layout app-layout--vertical">
   <slot></slot>
 </div>

@@ -1,7 +1,4 @@
 <script>
-  import App from '../../components/regions/App.svelte';
-  import Toolbar from '../../components/regions/Toolbar.svelte';
-
   import MainSelectors from '../../components/regions/MainSelectors.svelte';
   import GLAMMark from '../../components/regions/GLAMMark.svelte';
   import Footer from '../../components/regions/Footer.svelte';
@@ -14,7 +11,6 @@
 
   import { store } from '../../state/store';
   import routes from '../../config/routes';
-
 
   $: isProbeDetailsView = $store.route.section === 'probe';
 </script>
@@ -48,8 +44,8 @@
   {/if}
 </svelte:head>
 
-<App>
-  <Toolbar sticky>
+<div class="app-layout app-layout--vertical">
+  <header class="toolbar toolbar--sticky toolbar--vertical">
     <GLAMMark />
     <Search />
     <ProductSelector />
@@ -58,7 +54,7 @@
         <SlackLogo size={16} />feedback
       </a>
     </div>
-  </Toolbar>
+  </header>
   <div class="content content--centered-body">
     <!-- FIXME: make a header -->
     <div class=content-header>
@@ -93,4 +89,4 @@
       to the <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a> Slack channel.
     </p>
   </AlertNotice>
-</App>
+</div>
