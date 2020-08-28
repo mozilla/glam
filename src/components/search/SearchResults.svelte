@@ -207,7 +207,7 @@ li {
   {#if searchIsActive && query.length}
     <div
       id="telemetry-search-results"
-      style="left: calc(var(--space-2x) + 4px + {x}px); width: {width}px;"
+      style="left: {x}px; width: {width}px;"
       transition:fly={{ duration: 20, y: -10 }}
       class="telemetry-results">
 
