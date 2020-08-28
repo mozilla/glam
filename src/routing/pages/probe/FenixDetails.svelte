@@ -7,17 +7,6 @@
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
 
-  const PROBE_TYPE_DOCS = {
-    histogram:
-      'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
-    scalar:
-      'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/scalars.html',
-    event:
-      'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/events.html',
-    default:
-      'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/index.html',
-  };
-
   async function exportData() {
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
@@ -42,6 +31,10 @@
     grid-row-gap: var(--space-base);
   }
 
+  .probe-type-link {
+    color: var(--subhead-gray-01);
+  }
+
   h2 {
     padding-bottom: var(--space-base);
   }
@@ -51,16 +44,6 @@
     word-break: break-word;
   }
 
-  .bug-list {
-    display: flex;
-    flex-wrap: wrap;
-    line-height: 1.8;
-  }
-
-  .bug-list a {
-    display: block;
-    margin-right: var(--space-base);
-  }
   .probe-details-overview-left {
     margin: 0;
   }
@@ -74,32 +57,6 @@
     color: var(--subhead-gray-01);
     font-size: var(--text-04);
     font-weight: 500;
-  }
-
-  .probe-details-overview-left dd {
-    margin: 0;
-    font-size: var(--text-015);
-    color: var(--subhead-gray-01);
-  }
-
-  .probe-details-overview-left--padded {
-    padding: 0 calc(var(--space-base) - 1px);
-  }
-
-  .probe-details-overview-left--subtle {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 0;
-    align-items: baseline;
-  }
-
-  .probe-details-overview-left--subtle dt {
-    text-transform: none;
-    font-size: var(--text-02);
-  }
-
-  .probe-details-overview-left--subtle dd {
-    font-size: var(--text-01);
   }
 
   .probe-details-overview {
@@ -121,10 +78,6 @@
     padding-right: var(--space-1h);
     margin: var(--space-2x) 0;
     font-size: var(--text-01);
-  }
-
-  .probe-type-link {
-    color: var(--subhead-gray-01);
   }
 
   /* FIXME: once @graph-paper/button supports href, use the Button component. */
@@ -156,10 +109,6 @@
     background-color: var(--cool-gray-150);
   }
 
-  dl {
-
-  }
-
   dt, .detail-title {
     font-size: var(--text-015);
     text-transform: uppercase;
@@ -177,6 +126,7 @@
   .tiled {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    justify-content: space-between;
 
   }
 </style>
@@ -187,7 +137,7 @@
       {#if $store.probe.type}
         <dl class="drawer-section probe-details-overview-left">
           <dt>
-              {$store.probe.info.type}
+            <a class="probe-type-link" href='https://mozilla.github.io/glean/book/user/metrics/index.html'>{$store.probe.info.type}</a>
           </dt>
         </dl>
       {/if}
