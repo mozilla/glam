@@ -15,14 +15,14 @@ import MozillaLogo from 'udgl/icons/MozillaLogo.svelte';
   list-style: none;
   display: grid;
   font-size: var(--text-015);
-  font-weight: 500;
+  font-weight: 400;
   grid-gap: var(--space-2x);
   grid-template-columns: auto auto auto;
   padding: 0 var(--space-4x);
   margin: 0;
 }
 .project-links a {
-  color: var(--cool-gray-800);
+  color: var(--cool-gray-700);
 }
 .mozilla-logo {
   color: #000;

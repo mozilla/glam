@@ -44,8 +44,8 @@
   {/if}
 </svelte:head>
 
-<div class="app-layout app-layout--vertical">
-  <header class="toolbar toolbar--sticky toolbar--vertical">
+<div class="app">
+  <header class="app--toolbar">
     <GLAMMark />
     <Search />
     <ProductSelector />
@@ -55,13 +55,12 @@
       </a>
     </div>
   </header>
-  <div class="content content--centered-body">
-    <!-- FIXME: make a header -->
-    <div class=content-header>
+  <div class="content">
+    <header class="content--header">
       <ProbeViewControl />
       <MainSelectors />
-    </div>
-    <main class=content-content>
+    </header>
+    <main class="content--body">
       <div class="graphic-body" class:graphic-body-home={!isProbeDetailsView}>
         <slot />
         {#if isProbeDetailsView}
@@ -77,7 +76,7 @@
         {/if}
       </div>
     </main>
-    <footer class=content-footer>
+    <footer class="content--footer">
       <Footer />
     </footer>
   </div>

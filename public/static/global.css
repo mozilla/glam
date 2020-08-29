@@ -354,50 +354,35 @@ button:focus {
 
 /* APP LAYOUT STYLES */
 
-.app-layout {
+.app {
   display: grid;
   min-height: 100vh;
-  /* align-items: stretch; */
-  /* grid-template-rows: max-content max-content; */
-}
-
-.app-layout--vertical {
   grid-template-rows: max-content auto;
 }
 
-.app-layout--horizontal {
-  grid-template-columns: var(--drawer-width) auto;
-}
-
-.toolbar {
-  align-self: start;
+.app--toolbar {
+  min-width: var(--space-24x);
   width: 100%;
-  height: 100%;
+  height: var(--header-height);
+  background-color: var(--blue-slate-700);
+  box-sizing: border-box;
+  color: var(--primary-text);
+
   min-height: var(--header-height);
-  display: grid;
   z-index: 100;
   background-color: var(--toolbar-background-color);
   color: var(--toolbar-text-color);
-}
 
-.toolbar--horizontal {
-  box-sizing: border-box;
-  align-content: start;
-  padding-top: var(--space-2x);
-  padding-bottom: var(--space-2x);
-  align-items: start;
-  justify-items: end;
-  grid-auto-flow: row;
-  grid-row-gap: var(--space-2x);
-}
-
-.toolbar--vertical {
+  /* grid layout */
+  display: grid;
   grid-template-columns: 2fr 2fr 1fr 1fr;
   justify-items: start;
+  align-content: center;
+  align-items: center;
+  align-self: start;
   grid-column-gap: var(--space-2x);
-}
 
-.toolbar--sticky {
+  /* make the toolbar sticky */
   position: sticky;
   top: 0;
 }
@@ -412,32 +397,18 @@ button:focus {
   align-items: start;
   height: 100%;
   grid-template-columns:
-    [left] minmax(0px, max-content)
-    [body-content] auto
-    [right] minmax(0px, max-content);
+    [left] auto
+    [left-gutter] minmax(0px, 80px)
+    [body-content] var(--body-width)
+    [right-gutter] minmax(0px, 80px)
+    [right] auto;
   grid-template-rows:
     [body-header] var(--header-size)
     [body-content] auto
     [body-footer] var(--footer-size);
 }
 
-.content--no-header {
-  --header-size: 0px;
-}
-.content--no-footer {
-  --header-size: 0px;
-}
-
-.content--centered-body {
-  grid-template-columns:
-    [left] auto
-    [left-gutter] minmax(0px, 80px)
-    [body-content] var(--body-width)
-    [right-gutter] minmax(0px, 80px)
-    [right] auto;
-}
-
-.content-header {
+.content--header {
   grid-column: body-content;
   grid-row: body-header;
   display: grid;
@@ -447,12 +418,13 @@ button:focus {
   align-items: center;
   justify-items: start;
 }
-.content-content {
+.content--body {
   grid-column: body-content;
   grid-row: body-content;
   align-self: stretch;
 }
-.content-footer {
+
+.content--footer {
   grid-column: body-content;
   grid-row: body-footer;
   display: grid;
@@ -460,80 +432,7 @@ button:focus {
   height: 100%;
 }
 
-/* surfaces are the main thing */
-/* needs depth and roundedness as the main concerns */
-
-.surface {
-  background-color: white;
-}
-.surface--depth--none {
-  box-shadow: none;
-}
-.surface--depth--tiny {
-  box-shadow: var(--depth-tiny);
-}
-.surface--depth--small {
-  box-shadow: var(--depth-small);
-}
-.surface--depth--medium {
-  box-shadow: var(--depth-medium);
-}
-.surface--depth--large {
-  box-shadow: var(--depth-large);
-}
-.surface--depth--jumbo {
-  box-shadow: var(--depth-jumbo);
-}
-
-.surface--border-radius--1q {
-  border-radius: var(--space-1q);
-}
-.surface--border-radius--1h {
-  border-radius: var(--space-1h);
-}
-.surface--border-radius--1 {
-  border-radius: var(--space-base);
-}
-
-.content-block {
-  padding: var(--space-2x);
-}
-.content-block--padding--1q {
-  padding: var(--space-1q);
-}
-.content-block--padding--1h {
-  padding: var(--space-1h);
-}
-.content-block--padding--1 {
-  padding: var(--space-1);
-}
-.content-block--padding--2 {
-  padding: var(--space-2x);
-}
-.content-block--padding--4 {
-  padding: var(--space-4x);
-}
-.content-block--padding--8 {
-  padding: var(--space-8x);
-}
-
-/*  START OF USER DASHBOARD STUFF */
-
-header {
-  min-width: var(--space-24x);
-  width: 100%;
-  height: var(--header-height);
-  background-color: var(--blue-slate-700);
-  box-sizing: border-box;
-  color: var(--primary-text);
-  display: grid;
-  /* grid-template-columns: var(--column-grid); */
-  /* align-content: center; */
-  align-content: center;
-  align-items: center;
-}
-
-header h1 {
+.app--toolbar h1 {
   font-family: var(--brand-font);
   padding: 0;
   margin: 0;
@@ -550,7 +449,7 @@ header h1 {
   grid-auto-flow: column;
 }
 
-header h1 div span {
+.app--toolbar h1 div span {
   opacity: 0.8;
   margin: 0;
   padding: 0;
@@ -760,11 +659,9 @@ main .details {
 .body-control-row {
   display: grid;
   width: 100%;
-  /* grid-template-columns: auto auto; */
   grid-auto-flow: column;
   grid-column-gap: var(--space-4x);
   justify-content: start;
-
   justify-items: start;
   margin-top: var(--space-base);
   margin-bottom: var(--space-base);
