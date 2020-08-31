@@ -16,10 +16,10 @@
   function refresh() {
     randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
   }
-
+  // FIXME: the search product must be set to firefox for now, since
+  // the random probes don't quite work with non-firefox probes.
+  // If $store.searchProduct !== 'firefox' things will simply break.
   function resetSearchProduct() {
-    // FIXME: the search product must be set to firefox for now, since
-    // the random probes don't quite work with non-firefox probes.
     store.setField('searchProduct', 'firefox');
   }
 

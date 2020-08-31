@@ -22,12 +22,11 @@
   align-items: center;
   color: var(--digital-blue-200);
   text-decoration: none;
-  font-size: var(--text-02);
+  font-size: var(--text-015);
   padding: var(--space-1h) var(--space-base);
   border-radius: var(--space-1h);
-  grid-gap: var(--space-base);
+  grid-gap: var(--space-1h);
   transition: background-color 100ms;
-  text-transform: uppercase;
 }
 
 .temporary-link-button:hover {
@@ -51,7 +50,7 @@
     <ProductSelector />
     <div style="justify-self: end; padding-right: var(--space-2x)">
       <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
-        <SlackLogo size={16} />feedback
+        <SlackLogo size=1em />feedback
       </a>
     </div>
   </header>

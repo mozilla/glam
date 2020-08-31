@@ -156,7 +156,6 @@ export default {
       const newProcess = probe.info.calculated.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
-
     // accommodate prerelease-only probes by resetting to nightly (if needed)
     if (
       state.productDimensions.channel === 'release' &&
