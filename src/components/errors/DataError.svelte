@@ -5,9 +5,8 @@ import DataErrorGeneric from './DataErrorGeneric.svelte';
 export let reason;
 export let moreInformation;
 export let statusCode;
-export let product = 'firefox';
+export let product;
 </script>
-<!-- FIXME: this is firefox-specific. -->
 {#if statusCode === 404 && product === 'firefox'}
   <TempDataForProcessMissingError />
 {:else}
