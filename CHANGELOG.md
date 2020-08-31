@@ -13,7 +13,7 @@
   [f11e979](https://github.com/mozilla/glam/commit/f11e9793b4725d2bfc6ebd222d481555918b1c24)
 - Add last updated model and API endpoint
   ([#743](https://github.com/mozilla/glam/pull/743))
-- Add `/docs/adr/` (a directory of Architectural Decision Records)
+- Add `/docs/adr/` (a directory of Architectural Decision Records) ([#854](https://github.com/mozilla/glam/pull/854/))
 
 ## [2020.7.0](https://github.com/mozilla/glam/compare/2020.6.0...2020.7.0) (2020-07-02)
 
