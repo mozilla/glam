@@ -4,6 +4,8 @@ import { getProbeData } from '../state/api';
 import { validate, noResponse } from '../utils/data-validation';
 
 export default {
+  label: 'Fenix',
+  key: 'fenix',
   sampleRate: 1,
   dimensions: {
     os: {
@@ -12,14 +14,15 @@ export default {
       values: [{ key: 'Android', label: 'Android' }],
       defaultValue: 'Android',
     },
-    channel: {
-      title: 'Channel',
-      key: 'channel',
+    app_id: {
+      title: 'App',
+      key: 'app_id',
       values: [
-        { key: 'fenixProduction', label: 'Firefox Preview' },
-        { key: 'release', label: 'Fenix' },
+        { key: 'nightly', label: 'Fenix (nightly)' },
+        { key: 'beta', label: 'Fenix (beta)' },
+        { key: 'release', label: 'Fenix (release)' },
       ],
-      defaultValue: 'fenixProduction',
+      defaultValue: 'nightly',
     },
     ping_type: {
       title: 'Ping Type',
@@ -56,7 +59,7 @@ export default {
     // which is used to convey the view state when the GLAM URL is shared with
     // others.
     return {
-      channel: storeValue.productDimensions.channel,
+      app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
       ping_type: storeValue.productDimensions.ping_type,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
@@ -71,7 +74,7 @@ export default {
     // These parameters are needed to request the data from the API itself
     return {
       product: 'fenix',
-      channel: storeValue.productDimensions.channel,
+      app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
       ping_type: storeValue.productDimensions.ping_type,
       probe: storeValue.probeName,
@@ -97,6 +100,7 @@ export default {
           metricType
         );
         // delete old (bad) builds?
+
         const transformedData =
           params.aggregationLevel === 'version'
             ? data
@@ -106,6 +110,7 @@ export default {
                   return false;
                 return true;
               });
+
         return {
           data: transformedData,
           probeType: this.probeView[metricType],

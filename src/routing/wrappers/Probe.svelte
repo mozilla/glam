@@ -20,7 +20,7 @@
       <div class='graphic-body__content'>
         <ProbeTitle />
         <div in:fly={{ duration: 400, y: 10 }}>
-          <DataError reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+          <DataError product={$store.product} reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
         </div>
       </div>
     {/if}
@@ -28,7 +28,7 @@
     <div class="graphic-body__content">
       <ProbeTitle />
       <div in:fly={{ duration: 400, y: 10 }}>
-        <DataError reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
+        <DataError product={$store.product} reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
       </div>
     </div>
   {/await}

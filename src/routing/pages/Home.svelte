@@ -16,6 +16,13 @@
   function refresh() {
     randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
   }
+  // FIXME: the search product must be set to firefox for now, since
+  // the random probes don't quite work with non-firefox probes.
+  // If $store.searchProduct !== 'firefox' things will simply break.
+  function resetSearchProduct() {
+    store.setField('searchProduct', 'firefox');
+  }
+
   $: selectedProcess = $store.productDimensions.process;
 </script>
 
@@ -127,7 +134,8 @@
             <div class="probe-overview__probe" in:fade={{ duration: 400 }}>
               <a
                 class="probe-sm"
-                href={`/firefox/probe/${info.name}/explore?${$currentQuery}`}
+                on:click={resetSearchProduct}
+                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}
               >
                 <div
                   class="probe-small-multiple"

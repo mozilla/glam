@@ -55,7 +55,7 @@ const COMPACT = true;
 
 {#if $store.route.section === 'probe' && $store.probe.loaded}
   <div transition:fly={{ x: 5, duration: 200 }} class='main-filters'>
-    {#each Object.values(productConfig[$store.product].dimensions) as dimension, i ($store.product + dimension.key)}
+    {#each Object.values(productConfig[$store.product].dimensions) as dimension}
       {#if dimension.values.some(
             (di) => dimension.isValidKey === undefined
                     || dimension.isValidKey(di.key, $store.probe, store),

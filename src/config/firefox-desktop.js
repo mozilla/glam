@@ -5,6 +5,8 @@ import { getProbeData } from '../state/api';
 import { validate, noResponse } from '../utils/data-validation';
 
 export default {
+  label: 'Firefox',
+  key: 'firefox',
   sampleRate: 0.1,
   dimensions: {
     os: {
@@ -154,7 +156,6 @@ export default {
       const newProcess = probe.info.calculated.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
-
     // accommodate prerelease-only probes by resetting to nightly (if needed)
     if (
       state.productDimensions.channel === 'release' &&

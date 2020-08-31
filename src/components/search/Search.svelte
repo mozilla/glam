@@ -7,6 +7,7 @@ import { throttle } from 'throttle-debounce';
 
 import { getSearchResults } from '../../state/api';
 import TelemetrySearchResults from './SearchResults.svelte';
+import { store } from '../../state/store';
 
 
 let inputElement;
@@ -42,7 +43,7 @@ let query = '';
 
 const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
   query = value;
-  getSearchResults(query).then((r) => {
+  getSearchResults(query, false, $store.searchProduct).then((r) => {
     // sort these?
     if (r.constructor === Array) {
       results = r.sort((a, b) => {

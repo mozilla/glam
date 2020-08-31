@@ -6,7 +6,7 @@ import { afterUpdate } from 'svelte';
 import Portal from 'udgl/Portal.svelte';
 import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 
-import { currentQuery } from '../../state/store';
+import { currentQuery, store } from '../../state/store';
 
 export let results = [];
 
@@ -52,7 +52,7 @@ const handleKeypress = (event) => {
     if (key === 'Enter') {
       searchIsActive = false;
 
-      page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
+      page.show(`/${$store.searchProduct}/probe/${results[focusedItem].name.toLowerCase()}/explore${$currentQuery}`);
       focusedItem = 0; // reset focused element
     }
     if (key === 'Escape') {
@@ -91,7 +91,7 @@ $: if (parentElement && windowWidth) {
 
 /* FIXME: move toward BEM */
 .telemetry-results {
-  --header-bg-color: var(--cool-gray-200);
+  --header-bg-color: white;
   --list-border-color: gainsboro;
   --list-border: 1px solid var(--list-border-color);
   max-height: calc(100vh - var(--header-height) * 3);
@@ -109,7 +109,7 @@ $: if (parentElement && windowWidth) {
 }
 
 .header-container {
-  background-color: var(--cool-gray-250);
+  background-color: var(--cool-gray-100);
   --height: calc(var(--space-base) * 3 + var(--space-base) * 2);
   font-size: .8em;
   color: var(--body-gray-01);
@@ -207,7 +207,7 @@ li {
   {#if searchIsActive && query.length}
     <div
       id="telemetry-search-results"
-      style="left: calc(var(--space-2x) + 4px + {x}px); width: {width}px;"
+      style="left: {x}px; width: {width}px;"
       transition:fly={{ duration: 20, y: -10 }}
       class="telemetry-results">
 
@@ -236,7 +236,7 @@ li {
                 id={searchResult.name}
                 class:focused={focusedItem === i}
                 on:click={() => {
-                  page.show(`/firefox/probe/${results[focusedItem].name.toLowerCase()}/explore?${$currentQuery}`);
+                  page.show(`/${$store.searchProduct}/probe/${results[focusedItem].name.toLowerCase()}/explore${$currentQuery}`);
                 }}
                 on:mouseover={() => { focusedItem = i; }}>
                   <div class="name body-text--short-01">{searchResult.name}</div>

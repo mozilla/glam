@@ -7,6 +7,8 @@ const dispatch = createEventDispatcher();
 
 export let active = false;
 export let location = 'bottom';
+export let variant;
+export let size;
 export let alignment = 'left';
 export let offset = 0;
 export let tooltip;
@@ -26,6 +28,11 @@ let button;
 <style>
 .menu-button {
   width: max-content;
+}
+
+.menu-button.large {
+  display: grid;
+  align-items: stretch;
 }
 
 .activating-button {
@@ -49,11 +56,32 @@ let button;
   color: var(--digital-blue-900);
   box-shadow: 0px 2px 2px rgba(0,0,0,.1);
 }
+.activating-button.dark {
+  background-color: transparent;
+  border: 2px solid transparent;
+  color: var(--digital-blue-200);
+}
+
+.activating-button.dark:hover {
+  background-color: var(--blue-slate-600);
+  color: var(--digital-blue-300);
+  box-shadow: 0px 2px 0px rgba(255,255,255,.1);
+}
+
+.activating-button.large {
+  font-size: var(--text-03);
+  border-radius: 0px;
+  border-top: none;
+  border-bottom: none;
+  align-self: stretch;
+  padding-left: var(--space-2x);
+  padding-right: var(--space-2x);
+}
 
 </style>
 
-<div class=menu-button bind:this={button}>
-<button use:tooltipAction={{ text: tooltip }} class=activating-button on:click={toggle}>
+<div class="menu-button  {size || ''}" bind:this={button}>
+<button use:tooltipAction={{ text: !active ? tooltip : undefined }} class="activating-button {variant || ''} {size || ''}" on:click={toggle}>
     <slot name='label'></slot>
 </button>
 </div>

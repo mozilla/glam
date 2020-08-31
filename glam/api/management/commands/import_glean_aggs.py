@@ -13,9 +13,9 @@ from glam.api.models import LastUpdated
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 APP_TO_MODEL = {
-    "org_mozilla_fenix": "api.FenixAggregation",  # nightly
-    "org_mozilla_firefox_beta": "api.FenixAggregation",  # beta
-    "org_mozilla_firefox": "api.FenixAggregation",  # release
+    "nightly": "api.FenixAggregation",  # nightly
+    "beta": "api.FenixAggregation",  # beta
+    "release": "api.FenixAggregation",  # release
 }
 
 
@@ -49,13 +49,13 @@ class Command(BaseCommand):
         model = apps.get_model(APP_TO_MODEL[app_id])
 
         # Find all files in bucket that match the pattern with provided app_id.
-        pattern = re.compile(f"glam-extract-{app_id}-\\d+.csv")
+        pattern = re.compile(f"glam-extract-org_mozilla_fenix_glam_{app_id}-\\d+.csv")
         blobs = self.gcs_client.list_blobs(bucket)
         blobs = [blob for blob in blobs if pattern.fullmatch(blob.name)]
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = "tmp_import_{}".format(app_id.replace("-", "_"))
+            tmp_table = "tmp_import_{}".format(app_id)
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
@@ -93,7 +93,7 @@ class Command(BaseCommand):
                 log("Refresh completed.")
 
         LastUpdated.objects.update_or_create(
-            product=app_id, defaults={"last_updated": timezone.now()}
+            product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
         )
 
     def import_file(self, tmp_table, fp, app_id):

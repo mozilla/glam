@@ -36,12 +36,13 @@ function getDefaultState(
   if (Object.keys(productConfig).includes(firstPathComponent)) {
     state.product = firstPathComponent;
   } else {
-    state.product = 'firefox';
+    state.product = undefined;
   }
 
   state.probeName = '';
   state.reference = getFromQueryString('reference') || '';
   state.route = {};
+  state.searchProduct = state.product || 'firefox';
 
   state.probe = {
     name: '',
@@ -59,15 +60,18 @@ function getDefaultState(
 
   // Product config
   state.productDimensions = {};
-  Object.entries(productConfig[state.product].dimensions).forEach(
-    ([key, { defaultValue }]) => {
-      if (basedOnQueryParams) {
-        state.productDimensions[key] = getFromQueryString(key) || defaultValue;
-      } else {
-        state.productDimensions[key] = defaultValue;
+  if (state.product) {
+    Object.entries(productConfig[state.product].dimensions).forEach(
+      ([key, { defaultValue }]) => {
+        if (basedOnQueryParams) {
+          state.productDimensions[key] =
+            getFromQueryString(key) || defaultValue;
+        } else {
+          state.productDimensions[key] = defaultValue;
+        }
       }
-    }
-  );
+    );
+  }
 
   return state;
 }
@@ -122,7 +126,10 @@ export function getFromQueryStringOrDefault(fieldKey, isMulti = false) {
   return value;
 }
 
-store.resetProductDimensions = () => {
+store.setProduct = (product) => {
+  store.setField('product', product);
+  store.setField('productDimensions', {});
+
   const config = getActiveProductConfig();
   Object.entries(config.dimensions).forEach(([key, { defaultValue }]) => {
     store.setDimension(key, defaultValue);
@@ -151,7 +158,7 @@ const toQueryStringPair = (k, v) => {
 function toQueryString(params) {
   const keys = Object.keys(params);
   keys.sort();
-  return keys.map((k) => toQueryStringPair(k, params[k])).join('&');
+  return `?${keys.map((k) => toQueryStringPair(k, params[k])).join('&')}`;
 }
 
 function probeSelected(probeValue) {
@@ -176,7 +183,11 @@ const cache = {};
 let previousQuery;
 
 export const dataset = derived([store], ([$store], set) => {
-  if ($store.probeName === '' || $store.probeName === undefined) {
+  if (
+    $store.probeName === '' ||
+    $store.probeName === undefined ||
+    !$store.product
+  ) {
     return;
   }
 
@@ -187,7 +198,7 @@ export const dataset = derived([store], ([$store], set) => {
   const params = activeProductConfig.getParamsForDataAPI($store);
   const qs = toQueryString(params);
 
-  // // invalid parameters, probe selected.
+  // invalid parameters, probe selected.
   if (!paramsAreValid(params) && probeSelected($store.probeName)) {
     const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
     // eslint-disable-next-line consistent-return
@@ -220,6 +231,7 @@ export const dataset = derived([store], ([$store], set) => {
 
 export const currentQuery = derived(store, ($store) => {
   const activeProductConfig = getActiveProductConfig();
+  if (!activeProductConfig) return '';
   const params = activeProductConfig.getParamsForQueryString($store);
   return toQueryString(params);
 });

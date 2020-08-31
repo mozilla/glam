@@ -1,11 +1,4 @@
 <script>
-  import App from 'udgl/layout/App.svelte';
-  import Toolbar from 'udgl/layout/Toolbar.svelte';
-  import Content from 'udgl/layout/Content.svelte';
-  import ContentHeader from 'udgl/layout/ContentHeader.svelte';
-  import ContentBody from 'udgl/layout/ContentBody.svelte';
-  import ContentFooter from 'udgl/layout/ContentFooter.svelte';
-
   import MainSelectors from '../../components/regions/MainSelectors.svelte';
   import GLAMMark from '../../components/regions/GLAMMark.svelte';
   import Footer from '../../components/regions/Footer.svelte';
@@ -14,6 +7,7 @@
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
   import SlackLogo from '../../components/SlackLogo.svelte';
   import AlertNotice from '../../components/controls/AlertNotice.svelte';
+  import ProductSelector from '../../components/controls/ProductSelector.svelte';
 
   import { store } from '../../state/store';
   import routes from '../../config/routes';
@@ -28,12 +22,11 @@
   align-items: center;
   color: var(--digital-blue-200);
   text-decoration: none;
-  font-size: var(--text-02);
+  font-size: var(--text-015);
   padding: var(--space-1h) var(--space-base);
   border-radius: var(--space-1h);
-  grid-gap: var(--space-base);
+  grid-gap: var(--space-1h);
   transition: background-color 100ms;
-  text-transform: uppercase;
 }
 
 .temporary-link-button:hover {
@@ -50,22 +43,23 @@
   {/if}
 </svelte:head>
 
-<App>
-  <Toolbar sticky>
+<div class="app">
+  <header class="app--toolbar">
     <GLAMMark />
     <Search />
+    <ProductSelector />
     <div style="justify-self: end; padding-right: var(--space-2x)">
       <a target='_blank' class="temporary-link-button" href='https://mozilla.slack.com/archives/CB1EQ437S'>
-        <SlackLogo size={16} />feedback
+        <SlackLogo size=1em />feedback
       </a>
     </div>
-  </Toolbar>
-  <Content centered>
-    <ContentHeader>
+  </header>
+  <div class="content">
+    <header class="content--header">
       <ProbeViewControl />
       <MainSelectors />
-    </ContentHeader>
-    <ContentBody>
+    </header>
+    <main class="content--body">
       <div class="graphic-body" class:graphic-body-home={!isProbeDetailsView}>
         <slot />
         {#if isProbeDetailsView}
@@ -74,17 +68,17 @@
           <div class="graphic-body__details">
             <ProbeDetails>
               {#if $store.product}
-                <svelte:component this={routes[$store.product].details} />
+                <svelte:component this={routes[$store.product].details} bla={$store.product} />
               {/if}
             </ProbeDetails>
           </div>
         {/if}
       </div>
-    </ContentBody>
-    <ContentFooter>
+    </main>
+    <footer class="content--footer">
       <Footer />
-    </ContentFooter>
-  </Content>
+    </footer>
+  </div>
   <AlertNotice toggleKey="dataErrorsWarning">
     <p>Thank you for testing the GLAM prototype!</p>
     <p>
@@ -93,4 +87,4 @@
       to the <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a> Slack channel.
     </p>
   </AlertNotice>
-</App>
+</div>
