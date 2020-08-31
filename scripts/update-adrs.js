@@ -4,8 +4,6 @@ and creates a list of adrs + links in index.md.
 */
 
 const fs = require('fs');
-const path = require('path');
-const { template } = require('@babel/core');
 
 const adrPattern = new RegExp(/\d{4}-[\S]*.md/);
 const adrs = fs
