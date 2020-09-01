@@ -13,6 +13,7 @@ ADR,
 3. once done, run node scripts/update-adrs to generate a new index.
 4. file a PR with these changes as a branch in the GLAM repository.
 
-## accepted ADRs
+## Accepted ADRs
 
 - [0000-use-madr.md](/docs/adr/0000-use-madr.md)
+- [0001-auth.md](/docs/adr/0001-auth.md)
