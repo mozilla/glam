@@ -12,7 +12,7 @@ const adrs = fs
   .map((file) => `- [${file}](/docs/adr/${file})`)
   .join('\n');
 
-const indexMD = `# GLAM Architectural Decision Records (ADRs)
+const README = `# GLAM Architectural Decision Records (ADRs)
 
 We use ADRs to capture important engineering decisions made.
 For more information, see [this ADR explanation](https://adr.github.io/).
@@ -33,6 +33,6 @@ ${adrs}
 
 `;
 
-// write indexMD to a new file
+// write README to a new file
 
-fs.writeFileSync('../docs/adr/index.md', indexMD);
+fs.writeFileSync('../docs/adr/README.md', README);
