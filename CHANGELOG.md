@@ -15,6 +15,8 @@
   ([#743](https://github.com/mozilla/glam/pull/743))
 - Add `/docs/adr/` (a directory of Architectural Decision Records)
   ([#854](https://github.com/mozilla/glam/pull/854/))
+- Reset reference point when switching between probes
+  ([#850](https://github.com/mozilla/glam/issues/850))
 
 ## [2020.7.0](https://github.com/mozilla/glam/compare/2020.6.0...2020.7.0) (2020-07-02)
 
