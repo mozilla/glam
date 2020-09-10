@@ -1,11 +1,6 @@
 <script>
-  import { tweened } from 'svelte/motion';
-  import { cubicOut as easing } from 'svelte/easing';
-  import Button from 'udgl/Button.svelte';
+  import { Button } from '@graph-paper/button';
   import { DocumentationDark } from '@graph-paper/icons';
-
-  const t = tweened(0, { duration: 500, easing });
-  $: $t = 1;
 </script>
 
 <style>

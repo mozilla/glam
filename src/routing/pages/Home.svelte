@@ -1,7 +1,7 @@
 <script>
   import { fade } from 'svelte/transition';
 
-  import Button from 'udgl/Button.svelte';
+  import { Button } from '@graph-paper/button';
   import MarketingBlock from '../../components/home/MarketingBlock.svelte';
   import whichSmallMultiple from '../../components/home/sm-logic';
   import QuantileSmallMultiple from '../../components/home/Quantile.svelte';
