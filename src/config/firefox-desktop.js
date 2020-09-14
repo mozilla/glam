@@ -65,14 +65,15 @@ export default {
   // (such as an exponential histogram or a scalar in Firefox Desktop).
   // Probes whose aggregation might look like a bar chart map to "proportion".
   probeView: {
-    'histogram-linear': 'linear',
-    'histogram-exponential': 'log',
-    'scalar-uint': 'linear',
-    'scalar-boolean': 'categorical',
-    'histogram-enumerated': 'categorical',
-    'histogram-flag': 'categorical',
     'histogram-boolean': 'categorical',
+    'histogram-categorical': 'categorical',
     'histogram-count': 'categorical',
+    'histogram-enumerated': 'categorical',
+    'histogram-exponential': 'log',
+    'histogram-flag': 'categorical',
+    'histogram-linear': 'linear',
+    'scalar-boolean': 'categorical',
+    'scalar-uint': 'linear',
   },
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
