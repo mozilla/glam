@@ -29,12 +29,11 @@ export async function getRandomProbes(numProbes, process) {
   return data;
 }
 
-export async function getProbeData(params, token) {
+export async function getProbeData(params) {
   const data = await fetch(dataURL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ query: params }),
   }).then(async (response) => {

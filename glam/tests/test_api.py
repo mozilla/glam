@@ -9,13 +9,11 @@ from django.utils import timezone
 from glam.api import constants
 from glam.api.models import (
     DesktopNightlyAggregation,
-    DesktopReleaseAggregation,
     FenixAggregation,
     FirefoxCounts,
     LastUpdated,
     Probe,
 )
-from glam.auth.drf import OIDCTokenAuthentication, TokenUser
 
 
 def _create_aggregation(data=None, multiplier=1.0, model=None):
@@ -313,41 +311,6 @@ class TestDesktopAggregationsApi:
             "total_users": 1110,
             "version": "72",
         }
-
-    def test_release_denied(self, client):
-        query = {
-            "query": {
-                "channel": "release",
-                "probe": "gc_ms",
-                "aggregationLevel": "version",
-            }
-        }
-        resp = client.post(self.url, data=query, content_type="application/json")
-        assert resp.status_code == 403
-
-    def test_release_allowed(self, client, monkeypatch):
-        monkeypatch.setattr(
-            OIDCTokenAuthentication,
-            "authenticate",
-            lambda self, request: (TokenUser(), {"scope": "read:foo"}),
-        )
-
-        _create_aggregation(model=DesktopReleaseAggregation)
-
-        query = {
-            "query": {
-                "channel": "release",
-                "probe": "gc_ms",
-                "aggregationLevel": "version",
-            }
-        }
-        resp = client.post(
-            self.url,
-            data=query,
-            content_type="application/json",
-            HTTP_AUTHORIZATION="Bearer token",
-        )
-        assert resp.status_code == 200
 
     def test_versions_provided(self, client):
         _create_aggregation()

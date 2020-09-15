@@ -1,12 +1,10 @@
 <script>
   import page from 'page';
-  import Spinner from 'udgl/LineSegSpinner.svelte';
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
   import productConfig from '../config/products';
   import { store, currentQuery } from '../state/store';
   import { getSearchResults } from '../state/api';
-  import { codeAndStateInQuery } from '../utils/url';
 
   // Wrappers
   import Layout from './wrappers/Layout.svelte';
@@ -33,11 +31,7 @@
   // with no arguments and use $currentQuery in the implementation of
   // updateQueryString(), this block would never run and the query string would
   // therefore never update in response to the user activity.
-  //
-  // We also need to avoid running this block whenever the code= and state= keys
-  // are in the query, otherwise we would clobber them. Auth0 needs to read them
-  // to authenticate the user.
-  $: if (visible && !codeAndStateInQuery()) {
+  $: if (visible) {
     updateQueryString($currentQuery);
   }
 
@@ -105,11 +99,5 @@
 </script>
 
 <Layout>
-  {#if $store.auth.isAuthenticated}
-    <svelte:component this={component} />
-  {:else}
-    <div class="graphic-body__content">
-      <Spinner size={48} color={'var(--cool-gray-400)'} />
-    </div>
-  {/if}
+  <svelte:component this={component} />
 </Layout>

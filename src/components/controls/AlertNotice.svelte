@@ -14,6 +14,7 @@
 
   // Intentional loose (coerced) comparison.
   // This will fail if you continually visit on the same day of the month and that's fine.
+  // eslint-disable-next-line eqeqeq
   let alertVisible = window.localStorage.getItem(KEY_PREFIX + toggleKey) != today;
 
   function dismissNotice() {

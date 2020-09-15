@@ -102,27 +102,25 @@ export default {
     };
   },
   fetchData(params, appStore) {
-    return getProbeData(params, appStore.getState().auth.token).then(
-      (payload) => {
-        const { aggregationLevel } = appStore.getState().productDimensions;
+    return getProbeData(params).then((payload) => {
+      const { aggregationLevel } = appStore.getState().productDimensions;
 
-        const metricType = payload.response[0].metric_type;
-        validate(payload, (p) => noResponse(p));
-        const viewType =
-          this.probeView[metricType] === 'categorical'
-            ? 'proportion'
-            : 'quantile';
-        const data = transformAPIResponse[viewType](
-          payload.response,
-          aggregationLevel,
-          metricType
-        );
-        return {
-          data,
-          probeType: this.probeView[metricType],
-        };
-      }
-    );
+      const metricType = payload.response[0].metric_type;
+      validate(payload, (p) => noResponse(p));
+      const viewType =
+        this.probeView[metricType] === 'categorical'
+          ? 'proportion'
+          : 'quantile';
+      const data = transformAPIResponse[viewType](
+        payload.response,
+        aggregationLevel,
+        metricType
+      );
+      return {
+        data,
+        probeType: this.probeView[metricType],
+      };
+    });
   },
   updateStoreAfterDataIsReceived(data, appStore) {
     // This function is called directly after the response has been received by

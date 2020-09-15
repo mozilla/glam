@@ -84,39 +84,37 @@ export default {
   fetchData(params, appStore) {
     // FIXME: this is (so far) identical to firefox-desktop.
     // should we just make this something in shared.js?
-    return getProbeData(params, appStore.getState().auth.token).then(
-      (payload) => {
-        const { aggregationLevel } = appStore.getState().productDimensions;
+    return getProbeData(params).then((payload) => {
+      const { aggregationLevel } = appStore.getState().productDimensions;
 
-        const metricType = payload.response[0].metric_type;
-        validate(payload, (p) => noResponse(p));
-        const viewType =
-          this.probeView[metricType] === 'categorical'
-            ? 'proportion'
-            : 'quantile';
-        const data = transformAPIResponse[viewType](
-          payload.response,
-          aggregationLevel,
-          metricType
-        );
-        // delete old (bad) builds?
+      const metricType = payload.response[0].metric_type;
+      validate(payload, (p) => noResponse(p));
+      const viewType =
+        this.probeView[metricType] === 'categorical'
+          ? 'proportion'
+          : 'quantile';
+      const data = transformAPIResponse[viewType](
+        payload.response,
+        aggregationLevel,
+        metricType
+      );
+      // delete old (bad) builds?
 
-        const transformedData =
-          params.aggregationLevel === 'version'
-            ? data
-            : data.filter((di, i) => {
-                // get di.build_date;
-                if (i > 0 && di.label - data[i - 1].label < 1000 * 60 * 60 * 24)
-                  return false;
-                return true;
-              });
+      const transformedData =
+        params.aggregationLevel === 'version'
+          ? data
+          : data.filter((di, i) => {
+              // get di.build_date;
+              if (i > 0 && di.label - data[i - 1].label < 1000 * 60 * 60 * 24)
+                return false;
+              return true;
+            });
 
-        return {
-          data: transformedData,
-          probeType: this.probeView[metricType],
-        };
-      }
-    );
+      return {
+        data: transformedData,
+        probeType: this.probeView[metricType],
+      };
+    });
   },
 
   updateStoreAfterDataIsReceived(data, appStore) {

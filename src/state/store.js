@@ -19,11 +19,6 @@ function getDefaultState(
 ) {
   const state = {};
 
-  state.auth = {
-    isAuthenticated: false,
-    token: undefined,
-  };
-
   // FIXME: applicationStatus or dashboardMode, not both.
   state.applicationStatus = 'INITIALIZING';
   state.dashboardMode = {};
@@ -80,7 +75,6 @@ export const store = createStore(getDefaultState({ basedOnQueryParams: true }));
 
 store.reset = () => {
   store.reinitialize({
-    auth: store.getState().auth,
     probeName: '',
     probe: {
       name: '',
@@ -191,9 +185,6 @@ export const dataset = derived([store], ([$store], set) => {
     return;
   }
 
-  // We can't fetch anything until the user is authenticated
-  if (!$store.auth.isAuthenticated) return;
-
   const activeProductConfig = getActiveProductConfig();
   const params = activeProductConfig.getParamsForDataAPI($store);
   const qs = toQueryString(params);
@@ -205,7 +196,7 @@ export const dataset = derived([store], ([$store], set) => {
     return message;
   }
 
-  // // no probe selected.
+  // no probe selected.
   if (!probeSelected($store.probeName)) {
     const message = datasetResponse('INFO', 'DEFAULT_VIEW');
     // eslint-disable-next-line consistent-return
