@@ -30,13 +30,13 @@ class Command(BaseCommand):
         blobs = self.gcs_client.list_blobs(GCS_BUCKET)
         blobs = list(
             filter(
-                lambda b: b.name.startswith(f"glam-extract-firefox-counts"), blobs
+                lambda b: b.name.startswith("glam-extract-firefox-counts"), blobs
             )
         )
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = f"tmp_import_counts"
+            tmp_table = "tmp_import_desktop_counts"
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")

@@ -15,6 +15,7 @@ from glam.api.models import (
     DesktopNightlyAggregationView,
     DesktopReleaseAggregationView,
     FenixAggregationView,
+    FenixCounts,
     FirefoxCounts,
     LastUpdated,
     Probe,
@@ -211,10 +212,10 @@ def get_glean_aggregations(request, **kwargs):
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
-        # counts = _get_fenix_counts(channel, os, versions, by_build=False)
+        counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
-        # counts = _get_fenix_counts(channel, os, versions, by_build=True)
+        counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
@@ -238,11 +239,34 @@ def get_glean_aggregations(request, **kwargs):
         }
 
         # Get the total distinct client IDs for this set of dimensions.
-        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
     return response
+
+
+def _get_fenix_counts(app_id, versions, ping_type, os, by_build):
+    """
+    Helper method to gather the `FenixCounts` data in a single query.
+
+    Returns the data as a Python dict keyed by "{version}-{build_id}" for
+    quick lookup.
+
+    """
+    query = FenixCounts.objects.filter(
+        app_id=app_id, version__in=versions, ping_type=ping_type, os=os
+    )
+    if by_build:
+        query = query.exclude(build_id="*")
+    else:
+        query = query.filter(build_id="*")
+    query = query.annotate(key=Concat("version", Value("-"), "build_id"))
+    data = {
+        row["key"]: row["total_users"] for row in query.values("key", "total_users")
+    }
+
+    return data
 
 
 @api_view(["POST"])

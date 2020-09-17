@@ -11,6 +11,7 @@ from glam.api.models import (
     DesktopNightlyAggregation,
     DesktopReleaseAggregation,
     FenixAggregation,
+    FenixCounts,
     FirefoxCounts,
     LastUpdated,
     Probe,
@@ -102,7 +103,15 @@ def _create_glean_aggregation(model, data=None, multiplier=1.0):
         _data.update(data)
     model.objects.create(**_data)
 
-    # TODO: Add data to counts table.
+    for app_id in ["nightly", "beta", "release"]:
+        FenixCounts.objects.get_or_create(
+            app_id=app_id,
+            version=_data["version"],
+            ping_type=_data["ping_type"],
+            build_id=_data["build_id"],
+            os=_data["os"],
+            total_users=888,
+        )
 
     with connection.cursor() as cursor:
         view = f"view_{model._meta.db_table}"
@@ -481,6 +490,7 @@ class TestGleanAggregationsApi:
             "ping_type": "*",
             "total_users": 1110,
             "version": "2",
+            "total_addressable_market": 888,
         }
 
     def test_versions_count(self, client):
