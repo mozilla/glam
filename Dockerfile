@@ -36,7 +36,6 @@ FROM node:lts-slim AS frontend
 WORKDIR /app
 
 COPY package*.json /app/
-COPY /src/udgl/ /app/src/udgl/
 RUN npm install
 COPY . /app/
 RUN npm run build
