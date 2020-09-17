@@ -13,9 +13,9 @@ from glam.api.models import LastUpdated
 
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 APP_TO_MODEL = {
-    "nightly": "api.FenixAggregation",  # nightly
-    "beta": "api.FenixAggregation",  # beta
-    "release": "api.FenixAggregation",  # release
+    "nightly": "api.FenixAggregation",
+    "beta": "api.FenixAggregation",
+    "release": "api.FenixAggregation",
 }
 
 
