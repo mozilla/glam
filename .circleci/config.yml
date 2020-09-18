@@ -45,7 +45,7 @@ jobs:
       - run: npm run build
       - run: npm run format:check
       - run: node scripts/eslint-health.js
-      # - run: npm test # don't run this until design library is gone
+      - run: npm run test:jest
 
 workflows:
   version: 2
