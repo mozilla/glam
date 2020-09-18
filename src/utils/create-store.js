@@ -50,9 +50,17 @@ export function createStore(initialStore) {
     return (...args) => dispatch(func(...args));
   }
 
-  function reinitialize(include = {}) {
-    const nextState = { ...initialStore, ...include };
-    INTERNAL_STORE.set(nextState);
+  function reinitialize(options = {}) {
+    let stateToKeep = {};
+    if (options.exceptions) {
+      const currentState = getState();
+      stateToKeep = options.exceptions.reduce((acc, field) => {
+        acc[field] = currentState[field];
+        return acc;
+      }, {});
+    }
+
+    INTERNAL_STORE.set({ ...initialStore, ...stateToKeep });
   }
 
   return {

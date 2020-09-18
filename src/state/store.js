@@ -19,10 +19,6 @@ function getDefaultState(
 ) {
   const state = {};
 
-  // FIXME: applicationStatus or dashboardMode, not both.
-  state.applicationStatus = 'INITIALIZING';
-  state.dashboardMode = {};
-
   // Grab a valid product from the URL or default to "firefox". Among other
   // things, this enables the use of Storybook. (We have little control over
   // Storybook's URL.)
@@ -74,13 +70,7 @@ function getDefaultState(
 export const store = createStore(getDefaultState({ basedOnQueryParams: true }));
 
 store.reset = () => {
-  store.reinitialize({
-    probeName: '',
-    probe: {
-      name: '',
-      loaded: false,
-    },
-  });
+  store.reinitialize();
 };
 
 function getActiveProductConfig() {
