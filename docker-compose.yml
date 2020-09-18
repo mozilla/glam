@@ -18,6 +18,17 @@ services:
       - db
     command: python manage.py runserver 0.0.0.0:8000
 
+  proxy:
+    build: dockerfiles/proxy
+    env_file:
+      - .env
+    ports:
+      - '5000:80'
+    depends_on:
+      - server
+    links:
+      - server
+
   db:
     image: postgres:11
     environment:

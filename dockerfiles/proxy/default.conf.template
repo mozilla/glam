@@ -1,0 +1,98 @@
+log_format main escape=json
+'{'
+    '"time":"$time_local",'
+    '"remote_addr":"$remote_addr",'
+    '"remote_user":"$remote_user",'
+    '"request":"$request",'
+    '"status": "$status",'
+    '"bytes_sent": $body_bytes_sent,'
+    '"request_time": $request_time,'
+    '"referrer":"$http_referer",'
+    '"user_agent":"$http_user_agent",'
+    '"x_forwarded_for":"$http_x_forwarded_for",'
+    '"x_forwarded_proto":"$http_x_forwarded_proto",'
+    '"trace":"$http_x_cloud_trace_context",'
+    '"host":"$host"'
+'}';
+
+access_log logs/access.log main;
+error_log logs/error.log warn;
+
+gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_disable "msie6";
+gzip_min_length 1100;
+gzip_types
+    application/javascript
+    application/json
+    image/svg+xml
+    text/css
+    text/plain
+    text/xml;
+
+upstream upstream_docker {
+    server ${APP_LISTEN};
+}
+
+server {
+    lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+    lua_ssl_verify_depth 3;
+
+    resolver 8.8.8.8 ipv6=off;
+
+    listen ${NGINX_LISTEN};
+
+    client_max_body_size 2g;
+
+    # Health checks don't send an x-forwarded-proto header and we need to make
+    # sure they don't get infinite redirects
+    if ($http_x_forwarded_proto = "http") {
+        return 302 ${APP_BASE_URL}$request_uri;
+    }
+
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    location / {
+        set $session_cookie_lifetime 86400;
+        set $session_check_ssi off;
+        set $session_secret "${NGINX_SESSION_SECRET}";
+        set $oidc_client_id "${OIDC_CLIENT_ID}";
+        set $oidc_redirect_uri "${OIDC_REDIRECT_URI}";
+        set $oidc_logout_path "${OIDC_LOGOUT_PATH}";
+        set $oidc_use_pkce true;
+
+        access_by_lua_file "../site/lualib/resty/access_by_openidc.lua";
+
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header Host $http_host;
+        more_clear_input_headers "X-Forwarded-Host";
+        proxy_redirect off;
+
+        proxy_pass http://upstream_docker;
+    }
+
+    location ~ ^/__(?:(?:lb)?heartbeat|version)__/? {
+        # set proxy options
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header Host $http_host;
+        more_clear_input_headers "X-Forwarded-Host";
+        proxy_redirect off;
+
+        proxy_pass http://upstream_docker;
+    }
+
+    location = /__nginxheartbeat__ {
+        more_set_headers "Content-Type: text/plain";
+        return 200 "Healthy";
+    }
+
+    location = /nginx_status {
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+    }
+}

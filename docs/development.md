@@ -15,15 +15,16 @@ documentation changes.
 
 To set the application up, please copy the `.env-dist` file to one named `.env`.
 
-Set the `DJANGO_SECRET_KEY` variable using the output of the following command
-after logging into the Docker container with `make shell`:
+Set the `DJANGO_SECRET_KEY` and `NGINX_SESSION_SECRET` variables using the
+output of running the following command twice, after logging into the Docker
+container with `make shell`:
 
 ```
 python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
-Reach out to someone on the #glam Slack channel for the values of
-`GOOGLE_CLOUD_PROJECT` and `AUTH0_*` variables.
+Reach out to someone on the #glam Slack channel for the values of the
+`GOOGLE_CLOUD_PROJECT` and `OIDC_CLIENT_ID` variables.
 
 ## Initial Setup
 
@@ -79,23 +80,24 @@ To start the application, run:
 make up
 ```
 
-The GLAM server is now running at http://localhost:8000. You can hit API
-endpoints with `curl` like this example:
+The GLAM server is now running at http://localhost:5000, or without
+authentication at http://localhost:8000. You can hit API endpoints with `curl`
+like this example:
 
 ```
 curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1/data/ -d '{"query": {"channel": "nightly", "versions": ["70"], "probe": "gc_ms", "aggregationLevel": "version"}}' | python -m json.tool
 ```
 
-## Starting the front-end
+## Building the front-end
 
-To build and run the front-end, run the following command on your computer (not
-in the docker container) at the root of the repository:
+To build the front-end, run the following command on your computer (not in the
+docker container) at the root of the repository:
 
 ```
-npm run dev
+npm run autobuild
 ```
 
-Once finished open the website at http://localhost:5000 to start browsing.
+This will autobuild / livereload changes as they're made.
 
 ## Code quality
 
