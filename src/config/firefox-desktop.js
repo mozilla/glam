@@ -9,17 +9,6 @@ export default {
   key: 'firefox',
   sampleRate: 0.1,
   dimensions: {
-    os: {
-      title: 'OS',
-      key: 'os',
-      values: [
-        { key: '*', label: 'All OSes' },
-        { key: 'Windows', label: 'Windows' },
-        { key: 'Mac', label: 'Mac' },
-        { key: 'Linux', label: 'Linux' },
-      ],
-      defaultValue: 'Windows',
-    },
     channel: {
       title: 'Channel',
       key: 'channel',
@@ -33,14 +22,16 @@ export default {
         return (probe.prerelease && key !== 'release') || !probe.prerelease;
       },
     },
-    aggregationLevel: {
-      title: 'Aggregation Level',
-      key: 'aggregationLevel',
+    os: {
+      title: 'OS',
+      key: 'os',
       values: [
-        { key: 'build_id', label: 'Build ID' },
-        { key: 'version', label: 'Major Version' },
+        { key: '*', label: 'All OSes' },
+        { key: 'Windows', label: 'Windows' },
+        { key: 'Mac', label: 'Mac' },
+        { key: 'Linux', label: 'Linux' },
       ],
-      defaultValue: 'build_id',
+      defaultValue: '*',
     },
     process: {
       title: 'Process',
@@ -57,6 +48,15 @@ export default {
           key
         );
       },
+    },
+    aggregationLevel: {
+      title: 'Aggregation Level',
+      key: 'aggregationLevel',
+      values: [
+        { key: 'build_id', label: 'Build ID' },
+        { key: 'version', label: 'Major Version' },
+      ],
+      defaultValue: 'build_id',
     },
   },
   // the probeView object maps a probe type for this product
