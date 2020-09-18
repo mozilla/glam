@@ -1,6 +1,6 @@
 <script>
 import { tooltip as tooltipAction } from '@graph-paper/core/actions';
-import Help from 'udgl/icons/Help.svelte';
+import Help from '../../udgl/icons/Help.svelte';
 import Tweenable from '../Tweenable.svelte';
 
 import { formatPercentDecimal } from '../../utils/formatters';

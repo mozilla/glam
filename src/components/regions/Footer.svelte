@@ -1,5 +1,5 @@
 <script>
-import MozillaLogo from 'udgl/icons/MozillaLogo.svelte';
+import MozillaLogo from '../../udgl/icons/MozillaLogo.svelte';
 </script>
 
 <style>

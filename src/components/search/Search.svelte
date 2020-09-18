@@ -1,9 +1,9 @@
 <script>
 import { tick } from 'svelte';
 import { fade } from 'svelte/transition';
-import SearchIcon from 'udgl/icons/Search.svelte';
-import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
 import { throttle } from 'throttle-debounce';
+import SearchIcon from '../../udgl/icons/Search.svelte';
+import LineSegSpinner from '../../udgl/LineSegSpinner.svelte';
 
 import { getSearchResults } from '../../state/api';
 import TelemetrySearchResults from './SearchResults.svelte';

@@ -1,5 +1,3 @@
-import path from 'path';
-import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import livereload from 'rollup-plugin-livereload';
@@ -20,7 +18,6 @@ const SEARCH_DOMAINS = {
 };
 const SEARCH_DOMAIN =
   SEARCH_DOMAINS[process.env.NODE_ENV] || SEARCH_DOMAINS.dev;
-const projectRootDir = path.resolve(__dirname);
 
 export default {
   input: 'src/main.js',
@@ -32,12 +29,6 @@ export default {
   },
   plugins: [
     json(),
-    alias({
-      resolve: ['.svelte', '.js'],
-      entries: [
-        { find: 'udgl', replacement: path.resolve(projectRootDir, 'src/udgl') },
-      ],
-    }),
     replace({
       __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,

@@ -20,13 +20,6 @@ module.exports = {
       { props: true, ignorePropertyModificationsFor: ['draft', 'acc'] },
     ],
   },
-  settings: {
-    'import/resolver': {
-      alias: {
-        map: [['udgl', './src/udgl']],
-      },
-    },
-  },
   overrides: [
     {
       files: ['**/*.js'],

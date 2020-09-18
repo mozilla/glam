@@ -1,7 +1,7 @@
 <script>
 import { onMount } from 'svelte';
 import { fly, fade } from 'svelte/transition';
-import LineSegSpinner from 'udgl/LineSegSpinner.svelte';
+import LineSegSpinner from '../../udgl/LineSegSpinner.svelte';
 import { store } from '../../state/store';
 
 const paneTransition = { x: 10, duration: 300 };

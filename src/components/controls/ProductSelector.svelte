@@ -1,7 +1,7 @@
 <script>
-  import DownCarat from 'udgl/icons/DownCarat.svelte';
-  import MenuList from 'udgl/menu/MenuList.svelte';
-  import MenuListItem from 'udgl/menu/MenuListItem.svelte';
+  import DownCarat from '../../udgl/icons/DownCarat.svelte';
+  import MenuList from '../../udgl/menu/MenuList.svelte';
+  import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
   import { store } from '../../state/store';
   import DimensionMenu from './DimensionMenu.svelte';
   import { productKeys } from '../../config/products';

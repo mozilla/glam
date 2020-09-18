@@ -1,5 +1,4 @@
 <script>
-  import Spinner from 'udgl/LineSegSpinner.svelte';
   import { fade } from 'svelte/transition';
 
   import Probe from '../../wrappers/Probe.svelte';
@@ -7,6 +6,7 @@
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
   import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
   import { store } from '../../../state/store';
+  import Spinner from '../../../udgl/LineSegSpinner.svelte';
 
   function handleBodySelectors(event) {
     const { selection, type } = event.detail;

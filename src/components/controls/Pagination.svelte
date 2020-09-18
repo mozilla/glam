@@ -1,8 +1,8 @@
 <script>
 import { createEventDispatcher } from 'svelte';
 import { Button, ButtonGroup } from '@graph-paper/button';
-import LeftCarat from 'udgl/icons/LeftCarat.svelte';
-import RightCarat from 'udgl/icons/RightCarat.svelte';
+import LeftCarat from '../../udgl/icons/LeftCarat.svelte';
+import RightCarat from '../../udgl/icons/RightCarat.svelte';
 
 export let totalPages;
 export let currentPage;

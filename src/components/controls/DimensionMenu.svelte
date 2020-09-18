@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
-import FloatingMenu from 'udgl/menu/FloatingMenu.svelte';
+import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
+import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
 
 const dispatch = createEventDispatcher();
 

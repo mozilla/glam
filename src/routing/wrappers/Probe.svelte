@@ -1,9 +1,9 @@
 <script>
-  import Spinner from 'udgl/LineSegSpinner.svelte';
   import { fly } from 'svelte/transition';
   import DataError from '../../components/errors/DataError.svelte';
   import ProbeTitle from '../../components/regions/ProbeTitle.svelte';
   import { dataset, store } from '../../state/store';
+  import Spinner from '../../udgl/LineSegSpinner.svelte';
   import { isSelectedProcessValid } from '../../utils/probe-utils';
 
 </script>
