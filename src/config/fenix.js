@@ -8,12 +8,6 @@ export default {
   key: 'fenix',
   sampleRate: 1,
   dimensions: {
-    os: {
-      title: 'OS',
-      key: 'os',
-      values: [{ key: 'Android', label: 'Android' }],
-      defaultValue: 'Android',
-    },
     app_id: {
       title: 'App',
       key: 'app_id',
@@ -23,6 +17,12 @@ export default {
         { key: 'release', label: 'Fenix (release)' },
       ],
       defaultValue: 'nightly',
+    },
+    os: {
+      title: 'OS',
+      key: 'os',
+      values: [{ key: 'Android', label: 'Android' }],
+      defaultValue: 'Android',
     },
     ping_type: {
       title: 'Ping Type',
