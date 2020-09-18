@@ -34,7 +34,7 @@
     "eslint-config-prettier": "6.11.0",
     "eslint-import-resolver-alias": "1.1.2",
     "eslint-plugin-import": "2.22.0",
-    "eslint-plugin-jest": "23.17.1",
+    "eslint-plugin-jest": "24.0.1",
     "eslint-plugin-prettier": "3.1.4",
     "eslint-plugin-svelte3": "2.7.3",
     "immer": "3.2.0",
