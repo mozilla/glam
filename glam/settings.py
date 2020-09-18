@@ -58,10 +58,6 @@ class Core(Configuration):
 
     DEFAULT_FROM_EMAIL = "telemetry-alerts@mozilla.com"
 
-    AUTHENTICATION_BACKENDS = [
-        "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
-    ]
-
     # Internationalization
     # https://docs.djangoproject.com/en/1.9/topics/i18n/
     LANGUAGE_CODE = "en-us"
@@ -103,13 +99,8 @@ class Core(Configuration):
         }
     ]
 
-    # Auth0
-    OIDC_RP_SIGN_ALGO = "RS256"
-    OIDC_OP_JWKS_ENDPOINT = "https://auth.mozilla.auth0.com/.well-known/jwks.json"
-
     # Django REST Framework
     REST_FRAMEWORK = {
-        "DEFAULT_AUTHENTICATION_CLASSES": ["glam.auth.drf.OIDCTokenAuthentication"],
         "DEFAULT_PARSER_CLASSES": ["drf_orjson_renderer.parsers.ORJSONParser"],
         "DEFAULT_RENDERER_CLASSES": ["drf_orjson_renderer.renderers.ORJSONRenderer"],
         "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S",

@@ -6,7 +6,7 @@ from django.core.cache import caches
 from django.db.models import Max, Q, Value
 from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 
 from glam.api import constants
@@ -55,11 +55,6 @@ def get_firefox_aggregations(request, **kwargs):
     product = "firefox"
     channel = kwargs.get("channel")
     model_key = f"{product}-{channel}"
-
-    # If release channel, make sure the user is authenticated.
-    if channel == constants.CHANNEL_NAMES[constants.CHANNEL_RELEASE]:
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
 
     MODEL_MAP = {
         "firefox-nightly": DesktopNightlyAggregationView,
