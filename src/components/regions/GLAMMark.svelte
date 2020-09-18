@@ -1,5 +1,5 @@
 <script>
-import { tooltip } from 'udgl/utils/tooltip';
+import { tooltip } from '../../udgl/utils/tooltip';
 import Logo from './GLAMLogo.svelte';
 import Text from './GLAMText.svelte';
 import { store, currentQuery } from '../../state/store';

@@ -1,10 +1,10 @@
 <script>
-  import ExternalLink from 'udgl/icons/ExternalLink.svelte';
-  import StatusLabel from 'udgl/StatusLabel.svelte';
   import Doc from '../../../components/Doc.svelte';
   import Brackets from '../../../components/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
+  import ExternalLink from '../../../udgl/icons/ExternalLink.svelte';
+  import StatusLabel from '../../../udgl/StatusLabel.svelte';
 
   const PROBE_TYPE_DOCS = {
     histogram:

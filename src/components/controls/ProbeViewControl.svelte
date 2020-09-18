@@ -1,8 +1,8 @@
 <script>
 import page from 'page';
 import { fly } from 'svelte/transition';
-import Chart from 'udgl/icons/Chart.svelte';
-import Table from 'udgl/icons/Table.svelte';
+import Chart from '../../udgl/icons/Chart.svelte';
+import Table from '../../udgl/icons/Table.svelte';
 import { store, currentQuery } from '../../state/store';
 
 

@@ -1,8 +1,8 @@
 <script>
 import { fly } from 'svelte/transition';
-import MenuList from 'udgl/menu/MenuList.svelte';
-import MenuListItem from 'udgl/menu/MenuListItem.svelte';
-import DownCarat from 'udgl/icons/DownCarat.svelte';
+import MenuList from '../../udgl/menu/MenuList.svelte';
+import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
+import DownCarat from '../../udgl/icons/DownCarat.svelte';
 import DimensionMenu from '../controls/DimensionMenu.svelte';
 import productConfig from '../../config/products';
 

@@ -1,7 +1,7 @@
 <script>
 import { tweened } from 'svelte/motion';
-import { tooltip as tooltipAction } from 'udgl/utils/tooltip';
-import Help from 'udgl/icons/Help.svelte';
+import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
+import Help from '../../udgl/icons/Help.svelte';
 import { formatToBuildID } from '../../utils/formatters';
 
 export let value;
