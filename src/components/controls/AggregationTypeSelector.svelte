@@ -1,7 +1,7 @@
 <script>
 import { CaretDown } from '@graph-paper/icons';
 import { FloatingMenu, MenuList, MenuListItem } from '@graph-paper/menu';
-import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
+import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
 export let aggregationTypes;
 export let currentAggregation;

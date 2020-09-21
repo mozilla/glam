@@ -1,7 +1,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
 import { FloatingMenu } from '@graph-paper/menu';
-import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
+import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
 const dispatch = createEventDispatcher();
 

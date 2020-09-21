@@ -1,5 +1,5 @@
 <script>
-  import { tooltip as tooltipAction } from './utils/tooltip';
+  import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
   export let level = 'info';
   export let tooltip;
