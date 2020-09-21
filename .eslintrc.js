@@ -32,10 +32,15 @@ module.exports = {
     {
       files: ['**/*.svelte'],
       processor: 'svelte3/svelte3',
+      extends: ['prettier'],
       rules: {
-        'import/first': 'off',
-        'import/no-mutable-exports': 'off',
         'prefer-const': 'off',
+        // Disable rules that don't work correctly with Svelte
+        // https://github.com/sveltejs/eslint-plugin-svelte3/blob/master/OTHER_PLUGINS.md
+        'import/first': 'off',
+        'import/no-duplicates': 'off',
+        'import/no-mutable-exports': 'off',
+        'import/no-unresolved': 'off',
 
         // Temporarily work around a bug in eslint-plugin-svelte3.
         //
