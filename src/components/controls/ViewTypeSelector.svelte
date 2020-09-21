@@ -1,8 +1,6 @@
 <script>
-import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
-import MenuList from '../../udgl/menu/MenuList.svelte';
-import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
 import { CaretDown } from '@graph-paper/icons';
+import { FloatingMenu, MenuList, MenuListItem } from '@graph-paper/menu';
 
 // export let aggregationTypes;
 export let currentView;
@@ -76,10 +74,9 @@ div {
     bind:width={width} 
     offset={1} 
     on:cancel={() => { active = false; }} 
-    position='bottom-left' 
     parent={button}
   >
-    <MenuList  on:selection={setValue}>
+    <MenuList on:selection={setValue}>
       {#each Object.entries(viewInfo) as [k, v], i}
         <MenuListItem  key={k} value={k}>
           <div class=menu-list-item__title>{v.name}</div>

@@ -1,8 +1,6 @@
 <script>
   import { CaretDown } from '@graph-paper/icons';
-  import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
-  import MenuList from '../../udgl/menu/MenuList.svelte';
-  import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
+  import { FloatingMenu, MenuList, MenuListItem } from '@graph-paper/menu';
   import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
 
   export let options;
@@ -72,10 +70,9 @@
       bind:width={width} 
       offset={1} 
       on:cancel={() => { active = false; }} 
-      position='bottom-left' 
       parent={button}
     >
-      <MenuList  on:selection={setValue}>
+      <MenuList on:selection={setValue}>
         {#each options as key, i}
           <MenuListItem key={key} value={key}>
             <div class=menu-list-item__title>{key}</div>
