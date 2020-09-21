@@ -5,8 +5,8 @@
   import ProportionExplorerView from '../../../components/explore/ProportionExplorerView.svelte';
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
   import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
+  import Spinner from '../../../components/LineSegSpinner.svelte';
   import { store } from '../../../state/store';
-  import Spinner from '../../../udgl/LineSegSpinner.svelte';
 
   function handleBodySelectors(event) {
     const { selection, type } = event.detail;
