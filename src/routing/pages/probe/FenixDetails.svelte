@@ -5,7 +5,7 @@
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
-  import StatusLabel from '../../../udgl/StatusLabel.svelte';
+  import StatusLabel from '../../../components/StatusLabel.svelte';
 
   async function exportData() {
     const data = await $dataset;
