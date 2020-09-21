@@ -1,7 +1,7 @@
 <script>
   import { timeParse, timeFormat } from 'd3-time-format';
   import { DocumentationDark } from '@graph-paper/icons';
-  import Brackets from '../../../components/Brackets.svelte';
+  import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
