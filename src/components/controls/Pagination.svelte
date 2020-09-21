@@ -1,8 +1,7 @@
 <script>
 import { createEventDispatcher } from 'svelte';
 import { Button, ButtonGroup } from '@graph-paper/button';
-import LeftCarat from '../../udgl/icons/LeftCarat.svelte';
-import RightCarat from '../../udgl/icons/RightCarat.svelte';
+import { CaretLeft, CaretRight } from '@graph-paper/icons';
 
 export let totalPages;
 export let currentPage;
@@ -40,8 +39,8 @@ div:hover {
 
 <div>
   <ButtonGroup>
-    <Button tooltip="move back a page" on:click={() => changePage(currentPage - 1)} level=medium compact><LeftCarat size={10} /></Button>
-    <Button tooltip="move forward a page" on:click={() => changePage(currentPage + 1)} level=medium compact><RightCarat size={10} /></Button>
+    <Button tooltip="move back a page" on:click={() => changePage(currentPage - 1)} level=medium compact><CaretLeft size={10} /></Button>
+    <Button tooltip="move forward a page" on:click={() => changePage(currentPage + 1)} level=medium compact><CaretRight size={10} /></Button>
   </ButtonGroup>
   page {currentPage < 9 ? '0' : ''}{currentPage + 1} of {totalPages < 9 ? '0' : ''}{totalPages}
 

@@ -1,10 +1,10 @@
 <script>
-  import DownCarat from '../../udgl/icons/DownCarat.svelte';
-  import MenuList from '../../udgl/menu/MenuList.svelte';
-  import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
+  import { CaretDown } from '@graph-paper/icons';
   import { store } from '../../state/store';
   import DimensionMenu from './DimensionMenu.svelte';
   import { productKeys } from '../../config/products';
+  import MenuList from '../../udgl/menu/MenuList.svelte';
+  import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
 
   const COMPACT = false;
   const OFFSET = 10;
@@ -36,7 +36,7 @@
   <DimensionMenu size=large variant=dark tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
     <div class="main-filter__label" slot="label">
       {productKeys.filter((p) => p.key === $store.searchProduct)[0].label}
-      <div class="pull-right-edge"><DownCarat size=14 /></div>
+      <div class="pull-right-edge"><CaretDown size=14 /></div>
     </div>
     <div slot="menu">
       <MenuList on:selection={(event) => { store.setField('searchProduct', event.detail.key); }}>

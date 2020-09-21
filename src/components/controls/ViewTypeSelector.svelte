@@ -2,7 +2,7 @@
 import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
 import MenuList from '../../udgl/menu/MenuList.svelte';
 import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
-import DownCarat from '../../udgl/icons/DownCarat.svelte';
+import { CaretDown } from '@graph-paper/icons';
 
 // export let aggregationTypes;
 export let currentView;
@@ -67,7 +67,7 @@ div {
 
 <div class=menu-button bind:this={button}>
   <button class=activating-button on:click={toggle} class:active>
-      <div>{viewInfo[currentView].name}</div> <DownCarat size=16 />
+      <div>{viewInfo[currentView].name}</div> <CaretDown size=16 />
   </button>
 </div>
 

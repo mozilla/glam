@@ -1,15 +1,11 @@
 <script>
 import { fly } from 'svelte/transition';
-import MenuList from '../../udgl/menu/MenuList.svelte';
-import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
-import DownCarat from '../../udgl/icons/DownCarat.svelte';
+import { CaretDown } from '@graph-paper/icons';
 import DimensionMenu from '../controls/DimensionMenu.svelte';
 import productConfig from '../../config/products';
-
-import {
-  store,
-  productConfigDimensions,
-} from '../../state/store';
+import { store, productConfigDimensions } from '../../state/store';
+import MenuList from '../../udgl/menu/MenuList.svelte';
+import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
 
 const OFFSET = 10;
 const COMPACT = true;
@@ -63,7 +59,7 @@ const COMPACT = true;
       <DimensionMenu tooltip='Select a {dimension.title}' compact={COMPACT} offset={OFFSET} location='bottom' alignment='right'>
         <div class=main-filter__label slot="label">
           <span class='main-filter__label__dimension'>{dimension.title}</span>
-          {productConfigDimensions.dimensionValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><DownCarat size=14 /></div></div>
+          {productConfigDimensions.dimensionValueLabel(dimension.key, $store.productDimensions[dimension.key])} <div class=pull-right-edge><CaretDown size=14 /></div></div>
         <div slot="menu">
           <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined

@@ -1,8 +1,8 @@
 <script>
+import { CaretDown } from '@graph-paper/icons';
 import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
 import MenuList from '../../udgl/menu/MenuList.svelte';
 import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
-import DownCarat from '../../udgl/icons/DownCarat.svelte';
 import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
 
 export let aggregationTypes;
@@ -69,7 +69,7 @@ export let aggregationInfo = {
 
 <div class=menu-button bind:this={button} use:tooltipAction={{ text: 'this probe has multiple aggregation methods – select one from this menu' }}>
   <button class=activating-button on:click={toggle} class:active>
-      <div>{aggregationInfo[currentAggregation].name}</div> <DownCarat size=16 />
+      <div>{aggregationInfo[currentAggregation].name}</div> <CaretDown size=16 />
   </button>
 </div>
 

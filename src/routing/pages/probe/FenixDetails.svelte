@@ -1,8 +1,6 @@
 <script>
   import { timeParse, timeFormat } from 'd3-time-format';
-  import ExternalLink from '../../../udgl/icons/ExternalLink.svelte';
-  import StatusLabel from '../../../udgl/StatusLabel.svelte';
-  import Doc from '../../../components/Doc.svelte';
+  import { DocumentationDark } from '@graph-paper/icons';
   import Brackets from '../../../components/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
