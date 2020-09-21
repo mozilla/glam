@@ -3,7 +3,7 @@ import page from 'page';
 import { fly } from 'svelte/transition';
 import { afterUpdate } from 'svelte';
 
-import Portal from '../../udgl/Portal.svelte';
+import { Portal } from '@graph-paper/portal';
 import LineSegSpinner from '../../udgl/LineSegSpinner.svelte';
 
 import { currentQuery, store } from '../../state/store';

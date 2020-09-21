@@ -4,8 +4,7 @@ import { CaretDown } from '@graph-paper/icons';
 import DimensionMenu from '../controls/DimensionMenu.svelte';
 import productConfig from '../../config/products';
 import { store, productConfigDimensions } from '../../state/store';
-import MenuList from '../../udgl/menu/MenuList.svelte';
-import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
+import { MenuList, MenuListItem } from '@graph-paper/menu';
 
 const OFFSET = 10;
 const COMPACT = true;
@@ -64,7 +63,7 @@ const COMPACT = true;
           <MenuList on:selection={(event) => { store.setDimension(dimension.key, event.detail.key); }}>
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined
                 || dimension.isValidKey(di.key, $store.probe, store)) as {key, label}, i (key)}
-                <MenuListItem  key={key} value={key}><span class='story-label
+                <MenuListItem key={key} value={key}><span class='story-label
                   first'></span>{label}</MenuListItem>
                 {/each}
             </MenuList>

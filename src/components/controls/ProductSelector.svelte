@@ -3,8 +3,7 @@
   import { store } from '../../state/store';
   import DimensionMenu from './DimensionMenu.svelte';
   import { productKeys } from '../../config/products';
-  import MenuList from '../../udgl/menu/MenuList.svelte';
-  import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
+  import { MenuList, MenuListItem } from '@graph-paper/menu';
 
   const COMPACT = false;
   const OFFSET = 10;
