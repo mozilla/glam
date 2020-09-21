@@ -1,5 +1,5 @@
 <script>
-  import Doc from '../../../components/Doc.svelte';
+  import { DocumentationDark } from '@graph-paper/icons';
   import Brackets from '../../../components/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';

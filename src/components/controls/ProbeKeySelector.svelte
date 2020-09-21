@@ -1,8 +1,8 @@
 <script>
+  import { CaretDown } from '@graph-paper/icons';
   import FloatingMenu from '../../udgl/menu/FloatingMenu.svelte';
   import MenuList from '../../udgl/menu/MenuList.svelte';
   import MenuListItem from '../../udgl/menu/MenuListItem.svelte';
-  import DownCarat from '../../udgl/icons/DownCarat.svelte';
   import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
 
   export let options;
@@ -63,7 +63,7 @@
           ">{opt}</div>
           {/each}
         </div> 
-        <DownCarat size=16 />
+        <CaretDown size=16 />
     </button>
   </div>
   

@@ -1,8 +1,8 @@
 <script>
 import { tweened } from 'svelte/motion';
-import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
-import Help from '../../udgl/icons/Help.svelte';
+import { Help } from '@graph-paper/icons';
 import { formatToBuildID } from '../../utils/formatters';
+import { tooltip as tooltipAction } from '../../udgl/utils/tooltip';
 
 export let value;
 export let compare;
