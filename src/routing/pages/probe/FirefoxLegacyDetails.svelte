@@ -4,7 +4,7 @@
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
-  import StatusLabel from '../../../udgl/StatusLabel.svelte';
+  import StatusLabel from '../../../components/StatusLabel.svelte';
 
   const PROBE_TYPE_DOCS = {
     histogram:

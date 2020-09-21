@@ -3,8 +3,8 @@ import { tick } from 'svelte';
 import { fade } from 'svelte/transition';
 import { throttle } from 'throttle-debounce';
 import { Search as SearchIcon } from '@graph-paper/icons';
-import LineSegSpinner from '../../udgl/LineSegSpinner.svelte';
 
+import LineSegSpinner from '../LineSegSpinner.svelte';
 import { getSearchResults } from '../../state/api';
 import TelemetrySearchResults from './SearchResults.svelte';
 import { store } from '../../state/store';
