@@ -5,7 +5,7 @@
   import Search from '../../components/search/Search.svelte';
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
-  import SlackLogo from '../../components/SlackLogo.svelte';
+  import SlackLogo from '../../components/icons/SlackLogo.svelte';
   import AlertNotice from '../../components/controls/AlertNotice.svelte';
   import ProductSelector from '../../components/controls/ProductSelector.svelte';
 
