@@ -1,5 +1,5 @@
 <script>
-import { tooltip } from '../../udgl/utils/tooltip';
+import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 import Logo from '../icons/GLAMLogo.svelte';
 import Text from '../icons/GLAMText.svelte';
 import { store, currentQuery } from '../../state/store';
@@ -20,7 +20,7 @@ a {
 </style>
 
 <a href={`/${$currentQuery}`} on:click={store.reset}>
-  <h1 use:tooltip={{
+  <h1 use:tooltipAction={{
       text: 'The Glean Aggregated Metrics Dashboard',
       distance: 16,
     }}>
