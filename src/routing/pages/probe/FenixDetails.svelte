@@ -4,6 +4,8 @@
   import Brackets from '../../../components/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
+  import ExternalLink from '../../../components/icons/ExternalLink.svelte';
+  import StatusLabel from '../../../udgl/StatusLabel.svelte';
 
   async function exportData() {
     const data = await $dataset;
@@ -243,7 +245,7 @@
         class="docs-button"
         href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview"
         target="_blank">
-        <Doc size={16} />
+        <DocumentationDark size={16} />
         Documentation
       </a>
     </div>
