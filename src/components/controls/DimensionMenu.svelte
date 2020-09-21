@@ -16,8 +16,8 @@ export let tooltip;
 let width;
 
 function onParentSelect(kvPair) {
-    active = false;
-    dispatch('selection', kvPair);
+  active = false;
+  dispatch('selection', kvPair);
 }
 
 function toggle() { active = !active; }

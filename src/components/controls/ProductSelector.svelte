@@ -1,9 +1,9 @@
 <script>
   import { CaretDown } from '@graph-paper/icons';
-  import { store } from '../../state/store';
-  import DimensionMenu from './DimensionMenu.svelte';
-  import { productKeys } from '../../config/products';
   import { MenuList, MenuListItem } from '@graph-paper/menu';
+  import DimensionMenu from './DimensionMenu.svelte';
+  import { store } from '../../state/store';
+  import { productKeys } from '../../config/products';
 
   const COMPACT = false;
   const OFFSET = 10;

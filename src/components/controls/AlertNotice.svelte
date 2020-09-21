@@ -3,7 +3,6 @@
   import { cubicOut } from 'svelte/easing';
   import { Cancel } from '@graph-paper/icons';
 
-  export let dismissText = 'dismiss'; // Label of 'dismiss' button.
   // Required: Which localStorage key to check whether this notice has been dismissed.
   export let toggleKey = '';
 

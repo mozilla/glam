@@ -1,8 +1,8 @@
 <script>
 import { tweened } from 'svelte/motion';
 import { Help } from '@graph-paper/icons';
-import { formatToBuildID } from '../../utils/formatters';
 import { tooltip as tooltipAction } from '@graph-paper/core/actions';
+import { formatToBuildID } from '../../utils/formatters';
 
 export let value;
 export let compare;
