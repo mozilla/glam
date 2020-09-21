@@ -3,7 +3,7 @@
   import Brackets from '../../../components/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
-  import ExternalLink from '../../../udgl/icons/ExternalLink.svelte';
+  import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../udgl/StatusLabel.svelte';
 
   const PROBE_TYPE_DOCS = {
@@ -231,7 +231,7 @@
         class="docs-button"
         href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview"
         target="_blank">
-        <Doc size={16} />
+        <DocumentationDark size={16} />
         Documentation
       </a>
     </div>
