@@ -87,7 +87,7 @@ export function checkForTotalUsers(draft) {
   }
 }
 
-/* quantile view transform functions */
+/* proportion view transform functions */
 
 export function addProportion(draft) {
   // requires point.histogram.
@@ -101,6 +101,21 @@ export function changeBooleanHistogramResponse(draft) {
   delete draft.histogram['0'];
   delete draft.histogram['1'];
   delete draft.histogram['2'];
+}
+
+export function attachHistogramLabels(draft) {
+  // TODO: Get labels from:
+  //   { ...appStore.getState().probe.info.calculated.latest_history.details.labels };
+  const labels = {0: 'restart', 1: 'available', 2: 'manual', 3: 'unsupported'};
+  draft.histogram = Object.entries(draft.histogram).reduce(
+    (acc, [bin, value]) => {
+      if (bin in labels) {
+        acc[labels[bin]] = value;
+      }
+      return acc;
+    },
+    {}
+  );
 }
 
 export function proportionsToCounts(draft) {
@@ -195,6 +210,7 @@ export const transformAPIResponse = {
     const tr = transform(
       // remove unused fields for histogram-boolean probe types (firefox desktop)
       probeType === 'histogram-boolean' && changeBooleanHistogramResponse,
+      probeType === 'histogram-categorical' && attachHistogramLabels,
       ...standardProportionTransformations,
       makeLabel[aggregationLevel]
     );
