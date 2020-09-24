@@ -1,3 +1,4 @@
+import produce from 'immer';
 import { extractBucketMetadata } from './shared';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
@@ -112,11 +113,34 @@ export default {
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
           : 'quantile';
-      const data = transformAPIResponse[viewType](
-        payload.response,
-        aggregationLevel,
-        metricType
-      );
+      let data = payload.response;
+
+      // Attach labels to histogram if appropriate type.
+      if (metricType === 'histogram-categorical') {
+        const labels = {
+          ...appStore.getState().probe.info.calculated.latest_history.details
+            .labels,
+        };
+        data = produce(data, (draft) => {
+          return draft.map((point) => {
+            return {
+              ...point,
+              histogram: Object.entries(point.histogram).reduce(
+                (acc, [bin, value]) => {
+                  if (bin in labels) {
+                    acc[labels[bin]] = value;
+                  }
+                  return acc;
+                },
+                {}
+              ),
+            };
+          });
+        });
+      }
+
+      data = transformAPIResponse[viewType](data, aggregationLevel, metricType);
+
       return {
         data,
         probeType: this.probeView[metricType],
@@ -133,9 +157,6 @@ export default {
     let etc = {};
     if (isCategoricalTypeProbe) {
       etc = extractBucketMetadata(data);
-    }
-
-    if (isCategoricalTypeProbe) {
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
     return { data, viewType, ...etc };
