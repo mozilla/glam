@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.7.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.9.0...HEAD) (date TBD)
+
+## [2020.9.0](https://github.com/mozilla/glam/compare/2020.7.0...2020.9.0) (2020-09-24)
 
 - Update
   [database](https://github.com/mozilla/glam/commit/9adef25f3e5a511a3a4b9f6ff6d54ef2d7afe942)
