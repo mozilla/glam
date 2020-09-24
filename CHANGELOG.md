@@ -2,15 +2,26 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.7.0...HEAD) (date TBD)
 
-- Refactor store initialization
-  ([#687](https://github.com/mozilla/glam/issues/687))
 - Update
   [database](https://github.com/mozilla/glam/commit/9adef25f3e5a511a3a4b9f6ff6d54ef2d7afe942)
   and
   [API](https://github.com/mozilla/glam/commit/88d7980aea40b48192434ad9e10bb3e42819aad0)
   to support Fenix aggregations
+- Update front-end to use probe-search in
+  [6530682](https://github.com/mozilla/glam/commit/6530682dbb546c411d7b1082175507df40452c44)
+  and
+  [18041c5](https://github.com/mozilla/glam/commit/18041c59d7f911764bc0942264a0ac1e553c0592)
+- Replace in-app auth0 implementation with nginx proxy auth0 in
+  [#887](https://github.com/mozilla/glam/pull/887) and
+  [#889](https://github.com/mozilla/glam/pull/889)
+- Remove udgl and replace components with graph-paper
+  [#902](https://github.com/mozilla/glam/pull/902)
 - Update to support multiple apps per Glean product
   [f11e979](https://github.com/mozilla/glam/commit/f11e9793b4725d2bfc6ebd222d481555918b1c24)
+- Refactor store initialization
+  ([#687](https://github.com/mozilla/glam/issues/687))
+- Attach labels to categorical histograms
+  [#907](https://github.com/mozilla/glam/pull/907)
 - Add last updated model and API endpoint
   ([#743](https://github.com/mozilla/glam/pull/743))
 - Add `/docs/adr/` (a directory of Architectural Decision Records)
