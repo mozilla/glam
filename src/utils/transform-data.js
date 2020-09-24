@@ -87,7 +87,7 @@ export function checkForTotalUsers(draft) {
   }
 }
 
-/* quantile view transform functions */
+/* proportion view transform functions */
 
 export function addProportion(draft) {
   // requires point.histogram.
