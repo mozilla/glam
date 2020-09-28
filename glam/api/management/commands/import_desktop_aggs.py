@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = f"tmp_import_{channel}"
+            tmp_table = f"tmp_import_desktop_{channel}"
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")

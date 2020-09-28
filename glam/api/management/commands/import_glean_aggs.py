@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         for blob in blobs:
             # Create temp table for data.
-            tmp_table = "tmp_import_{}".format(app_id)
+            tmp_table = "tmp_import_glean_{}".format(app_id)
             log(f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
