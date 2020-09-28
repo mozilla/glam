@@ -42,7 +42,7 @@ const { ESLint } = require('eslint');
 const path = require('path');
 
 const config = {
-  maxProblems: 10,
+  maxProblems: 5,
   runFrom: path.join(__dirname, '..'),
   targets: ['.'],
 };
