@@ -1,30 +1,32 @@
 <script>
-import { onMount } from 'svelte';
-import { fly, fade } from 'svelte/transition';
-import LineSegSpinner from '../LineSegSpinner.svelte';
-import { store } from '../../state/store';
+  import { onMount } from 'svelte';
+  import { fly, fade } from 'svelte/transition';
+  import LineSegSpinner from '../LineSegSpinner.svelte';
+  import { store } from '../../state/store';
 
-const paneTransition = { x: 10, duration: 300 };
+  const paneTransition = { x: 10, duration: 300 };
 
-let visible = false;
-onMount(() => { visible = true; });
+  let visible = false;
+  onMount(() => {
+    visible = true;
+  });
 
-function probeIsSelected(probeToTest) {
-  return probeToTest && probeToTest.name !== null && probeToTest.name !== 'null';
-}
-
+  function probeIsSelected(probeToTest) {
+    return (
+      probeToTest && probeToTest.name !== null && probeToTest.name !== 'null'
+    );
+  }
 </script>
 
 <style>
-
-.drawer-section {
+  .drawer-section {
     padding: var(--space-2x) 0;
-}
+  }
 
-.probe-details {
+  .probe-details {
     height: 100%;
-}
-.empty-details {
+  }
+  .empty-details {
     height: 200px;
     display: grid;
     place-items: center center;
@@ -33,38 +35,37 @@ function probeIsSelected(probeToTest) {
     text-align: center;
     padding: var(--space-2x);
     color: var(--cool-gray-400);
-}
+  }
 
-.spinner-and-text {
+  .spinner-and-text {
     text-align: center;
     color: var(--cool-gray-400);
-}
+  }
 
-.spinner-and-text div {
+  .spinner-and-text div {
     margin-top: var(--space-base);
-}
-
+  }
 </style>
 
 <div class="drawer details-drawer">
-{#if !$store.probe.loaded}
+  {#if !$store.probe.loaded}
     {#if visible}
-    <div in:fly={paneTransition} class="drawer-section">
+      <div in:fly={paneTransition} class="drawer-section">
         <div class="spinner-and-text">
-            <LineSegSpinner size={48} color={'var(--cool-gray-400)'} />
-            <div in:fade={{ duration: paneTransition.duration * 2 }}>Loading Probes</div>
+          <LineSegSpinner size={48} color={'var(--cool-gray-400)'} />
+          <div in:fade={{ duration: paneTransition.duration * 2 }}>
+            Loading Probes
+          </div>
         </div>
-    </div>
+      </div>
     {/if}
-{:else if probeIsSelected($store.probe)}
-<div in:fly={paneTransition} class="drawer-section-container probe-details">
-  <slot></slot>
-</div>
-{:else}
-    <div class="drawer-section">
-        <div class="empty-details">
-            search for a telemetry probe above
-        </div>
+  {:else if probeIsSelected($store.probe)}
+    <div in:fly={paneTransition} class="drawer-section-container probe-details">
+      <slot />
     </div>
-{/if}
+  {:else}
+    <div class="drawer-section">
+      <div class="empty-details">search for a telemetry probe above</div>
+    </div>
+  {/if}
 </div>

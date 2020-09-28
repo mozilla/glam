@@ -106,23 +106,23 @@
     grid-column-gap: var(--space-base);
     padding-right: var(--space-2x);
   }
-
-
-
 </style>
 
 <div class="graphic-body__content">
   <div>
     <MarketingBlock />
     <div class="random-probe-view">
-      <h2>Explore
+      <h2>
+        Explore
         <div>
-          <Button compact level=low on:click={refresh}>refresh</Button>
+          <Button compact level="low" on:click={refresh}>refresh</Button>
         </div>
-        </h2>
+      </h2>
       {#await randomProbes}
         <div class="probes-overview">
-          {#each Array.from({ length: NUMBER_OF_RANDOM_PROBES }).fill(null) as _, i}
+          {#each Array.from({
+            length: NUMBER_OF_RANDOM_PROBES,
+          }).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
               <RandomProbePlaceholder />
             </div>
@@ -135,8 +135,7 @@
               <a
                 class="probe-sm"
                 on:click={resetSearchProduct}
-                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}
-              >
+                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}>
                 <div
                   class="probe-small-multiple"
                   class:probe-small-multiple--proportion={whichSmallMultiple(info.type, info.kind) === 'proportion'}
@@ -161,11 +160,10 @@
                     {#if info.kind}•{/if}
                     <span>{info.kind || ''}</span>
                   </div>
-                  <div class="probe-overview__title">
-                    {info.name}
-                  </div>
+                  <div class="probe-overview__title">{info.name}</div>
                   <div class="probe-overview__etc">
-                    Nightly {info.versions.nightly[0]}-{info.versions.nightly[1]}
+                    Nightly
+                    {info.versions.nightly[0]}-{info.versions.nightly[1]}
                   </div>
                 </div>
               </a>

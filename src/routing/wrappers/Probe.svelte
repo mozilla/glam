@@ -5,7 +5,6 @@
   import Spinner from '../../components/LineSegSpinner.svelte';
   import { dataset, store } from '../../state/store';
   import { isSelectedProcessValid } from '../../utils/probe-utils';
-
 </script>
 
 {#if $store.probe.loaded}
@@ -17,10 +16,12 @@
     {#if $store.product !== 'firefox' || isSelectedProcessValid($store.probe.info.calculated.seen_in_processes, $store.productDimensions.process)}
       <slot {data} probeType={data.viewType} />
     {:else}
-      <div class='graphic-body__content'>
+      <div class="graphic-body__content">
         <ProbeTitle />
         <div in:fly={{ duration: 400, y: 10 }}>
-          <DataError product={$store.product} reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
+          <DataError
+            product={$store.product}
+            reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
         </div>
       </div>
     {/if}
@@ -28,7 +29,11 @@
     <div class="graphic-body__content">
       <ProbeTitle />
       <div in:fly={{ duration: 400, y: 10 }}>
-        <DataError product={$store.product} reason={err.message} moreInformation={err.moreInformation} statusCode={err.statusCode} />
+        <DataError
+          product={$store.product}
+          reason={err.message}
+          moreInformation={err.moreInformation}
+          statusCode={err.statusCode} />
       </div>
     </div>
   {/await}

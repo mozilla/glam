@@ -1,65 +1,68 @@
 <script>
-import { tick } from 'svelte';
-import { fade } from 'svelte/transition';
-import { throttle } from 'throttle-debounce';
-import { Search as SearchIcon } from '@graph-paper/icons';
+  import { tick } from 'svelte';
+  import { fade } from 'svelte/transition';
+  import { throttle } from 'throttle-debounce';
+  import { Search as SearchIcon } from '@graph-paper/icons';
 
-import LineSegSpinner from '../LineSegSpinner.svelte';
-import { getSearchResults } from '../../state/api';
-import TelemetrySearchResults from './SearchResults.svelte';
-import { store } from '../../state/store';
+  import LineSegSpinner from '../LineSegSpinner.svelte';
+  import { getSearchResults } from '../../state/api';
+  import TelemetrySearchResults from './SearchResults.svelte';
+  import { store } from '../../state/store';
 
+  let inputElement;
+  let searchContainer;
+  let results = [];
+  let searchIsActive = false;
+  let searchQuery = '';
 
-let inputElement;
-let searchContainer;
-let results = [];
-let searchIsActive = false;
-let searchQuery = '';
+  const SEARCH_THROTTLE_TIME = 500; // how often to send the PSS fetch (in ms)
 
-const SEARCH_THROTTLE_TIME = 500; // how often to send the PSS fetch (in ms)
+  function turnOnSearch() {
+    searchIsActive = true;
+  }
 
-function turnOnSearch() {
-  searchIsActive = true;
-}
+  function unfocus() {
+    inputElement.blur();
+    searchIsActive = false;
+  }
 
-function unfocus() {
-  inputElement.blur();
-  searchIsActive = false;
-}
-
-async function onKeypress({ key }) {
-  if (searchIsActive) {
-    if (key === 'Escape') {
-      await tick();
-      unfocus();
+  async function onKeypress({ key }) {
+    if (searchIsActive) {
+      if (key === 'Escape') {
+        await tick();
+        unfocus();
+      }
     }
   }
-}
 
-// Toggles spinner in search box during search throttle.
-let searchWaiting = false;
+  // Toggles spinner in search box during search throttle.
+  let searchWaiting = false;
 
-let query = '';
+  let query = '';
 
-const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
-  query = value;
-  getSearchResults(query, false, $store.searchProduct).then((r) => {
-    // sort these?
-    if (r.constructor === Array) {
-      results = r.sort((a, b) => {
-        const aHas = a.name.toLowerCase().includes(query);
-        const bHas = b.name.toLowerCase().includes(query);
-        if (aHas && !bHas) return -1;
-        if (bHas && !aHas) return 1;
-        return 0;
+  const handleSearchInput = throttle(
+    SEARCH_THROTTLE_TIME,
+    (value) => {
+      query = value;
+      getSearchResults(query, false, $store.searchProduct).then((r) => {
+        // sort these?
+        if (r.constructor === Array) {
+          results = r.sort((a, b) => {
+            const aHas = a.name.toLowerCase().includes(query);
+            const bHas = b.name.toLowerCase().includes(query);
+            if (aHas && !bHas) return -1;
+            if (bHas && !aHas) return 1;
+            return 0;
+          });
+        } else {
+          results = r;
+        }
+        searchWaiting = false;
       });
-    } else {
-      results = r;
-    }
-    searchWaiting = false;
-  });
-  searchIsActive = true;
-}, false);
+      searchIsActive = true;
+    },
+    false
+  );
 </script>
 
 <style>
@@ -126,21 +129,23 @@ const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
 </style>
 
 <svelte:window on:keydown={onKeypress} />
-<svelte:body on:click={(evt) => {
-  if (searchIsActive) {
-    if (evt.target !== inputElement) {
-      inputElement.blur();
-      searchIsActive = false;
+<svelte:body
+  on:click={(evt) => {
+    if (searchIsActive) {
+      if (evt.target !== inputElement) {
+        inputElement.blur();
+        searchIsActive = false;
+      }
     }
-  }
-}}></svelte:body>
+  }} />
 
 <div class="search-container">
-  <div class="inner-container" bind:this={searchContainer}
+  <div
+    class="inner-container"
+    bind:this={searchContainer}
     aria-expanded={searchIsActive && searchQuery.length}
     aria-haspopup="listbox"
-    aria-owns="telemetry-search-results"
-  >
+    aria-owns="telemetry-search-results">
     <div class="icon-container">
       {#if !searchWaiting}
         <div class="icon" in:fade>
@@ -163,8 +168,7 @@ const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
       on:input={(evt) => {
         searchWaiting = true;
         handleSearchInput(evt.target.value);
-      }}
-    />
+      }} />
   </div>
 </div>
 
@@ -173,8 +177,5 @@ const handleSearchInput = throttle(SEARCH_THROTTLE_TIME, (value) => {
     {query}
     {results}
     bind:searchIsActive
-    parentElement={searchContainer}
-  />
+    parentElement={searchContainer} />
 {/if}
-
-

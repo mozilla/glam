@@ -1,101 +1,99 @@
 <script>
-import DataTable from './DataTable.svelte';
-import Row from './Row.svelte';
-import Cell from './Cell.svelte';
+  import DataTable from './DataTable.svelte';
+  import Row from './Row.svelte';
+  import Cell from './Cell.svelte';
 
-import ProportionSM from './ProportionSM.svelte';
+  import ProportionSM from './ProportionSM.svelte';
 
-import Pagination from '../controls/Pagination.svelte';
+  import Pagination from '../controls/Pagination.svelte';
 
-import {
-  formatCount, formatPercentDecimal, ymd, timecode,
-} from '../../utils/formatters';
+  import {
+    formatCount,
+    formatPercentDecimal,
+    ymd,
+    timecode,
+  } from '../../utils/formatters';
 
-import { backwards } from '../../utils/iterables';
+  import { backwards } from '../../utils/iterables';
 
-export let data; // nested as key, aggregation_type
-export let aggregationLevel = 'build_id';
-export let key = 'proportions';
-export let keyFormatter = (v) => v;
-export let valueFormatter = formatPercentDecimal;
-export let tooltipFormatter = () => undefined;
-export let visibleBuckets;
-export let colorMap; // bucketColorMap
-export let pageSize = 10;
-export let bucketTypeLabel = 'Categories';
+  export let data; // nested as key, aggregation_type
+  export let aggregationLevel = 'build_id';
+  export let key = 'proportions';
+  export let keyFormatter = (v) => v;
+  export let valueFormatter = formatPercentDecimal;
+  export let tooltipFormatter = () => undefined;
+  export let visibleBuckets;
+  export let colorMap; // bucketColorMap
+  export let pageSize = 10;
+  export let bucketTypeLabel = 'Categories';
 
-let totalPages = 0;
-let currentPage = 0;
-$: if (data) currentPage = 0;
-$: totalPages = Math.ceil(data.length / pageSize);
+  let totalPages = 0;
+  let currentPage = 0;
+  $: if (data) currentPage = 0;
+  $: totalPages = Math.ceil(data.length / pageSize);
 
-let largestAudience;
-$: largestAudience = Math.max(...data.map((d) => d.audienceSize));
-
+  let largestAudience;
+  $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 </script>
 
 <style>
-span.h {
-  font-weight: bold;
-  color: var(--cool-gray-700);
-  font-size: var(--text-01);
-}
+  span.h {
+    font-weight: bold;
+    color: var(--cool-gray-700);
+    font-size: var(--text-01);
+  }
 
-span.bucket {
-  font-weight: normal;
-}
+  span.bucket {
+    font-weight: normal;
+  }
 </style>
 
 <div style="border-bottom: var(--space-base) solid var(--cool-gray-100);">
-  <div style="
+  <div
+    style="
     margin-top: var(--space-2x);
     margin-bottom: var(--space-2x);
     padding-left: var(--space-4x);
     padding-right: var(--space-4x);
   ">
-    <Pagination on:page={(evt) => {
+    <Pagination
+      on:page={(evt) => {
         currentPage = evt.detail.page;
-      }} {totalPages} currentPage={currentPage} />
+      }}
+      {totalPages}
+      {currentPage} />
   </div>
   <DataTable overflowX={true}>
     <thead>
-
       <Row header>
-        <Cell colspan={2} freezeX bottomBorder={false}></Cell>
-        <Cell colspan={2} align=left freezeX bottomBorder={false}>
-          <span class='h'>
-            {bucketTypeLabel}
-          </span>
+        <Cell colspan={2} freezeX bottomBorder={false} />
+        <Cell colspan={2} align="left" freezeX bottomBorder={false}>
+          <span class="h"> {bucketTypeLabel} </span>
         </Cell>
       </Row>
 
       <Row header>
         <Cell
-          backgroundColor=var(--cool-gray-subtle)
+          backgroundColor="var(--cool-gray-subtle)"
           topBorder={true}
-          bottomBorderThickness=2px freezeX size=max tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version' } associated with this row">
-          <span class=h>
-
-          {#if aggregationLevel === 'build_id'}
-            Build ID
-          {:else}
-            Version
-          {/if}
+          bottomBorderThickness="2px"
+          freezeX
+          size="max"
+          tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version'} associated with this row">
+          <span class="h">
+            {#if aggregationLevel === 'build_id'}Build ID{:else}Version{/if}
           </span>
         </Cell>
         <Cell
           topBorder
           rightBorder
-          backgroundColor=var(--cool-gray-subtle)
-          bottomBorderThickness=2px
+          backgroundColor="var(--cool-gray-subtle)"
+          bottomBorderThickness="2px"
           freezeX
-          align=left
-          tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version' }">
-          <span class=h>
-            Clients
-          </span>
-        </Cell
-        >
+          align="left"
+          tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version'}">
+          <span class="h"> Clients </span>
+        </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
           <Cell backgroundColor=var(--cool-gray-subtle) tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
@@ -104,22 +102,23 @@ span.bucket {
           </Cell>
         {/each}
       </Row>
-
     </thead>
     <tbody>
       {#each [...backwards(data)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (row.version + ymd(row.label) + timecode(row.label))}
         <Row>
-          <Cell freezeX backgroundColor=white>
-            <div class=build-version>
+          <Cell freezeX backgroundColor="white">
+            <div class="build-version">
               {#if aggregationLevel === 'build_id'}
-                <div style="font-weight: bold; color: var(--cool-gray-550);">{ymd(row.label)}</div>
+                <div style="font-weight: bold; color: var(--cool-gray-550);">
+                  {ymd(row.label)}
+                </div>
                 <div>{timecode(row.label)}</div>
               {:else}
                 <div>{row.version}</div>
               {/if}
             </div>
           </Cell>
-          <Cell  rightBorder freezeX>
+          <Cell rightBorder freezeX>
             <div style="padding: var(--space-base);">
               {formatCount(row.audienceSize)}
               <ProportionSM value={row.audienceSize / largestAudience} />

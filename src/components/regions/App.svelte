@@ -1,17 +1,16 @@
 <script>
-import { setContext } from 'svelte';
-import { writable } from 'svelte/store';
+  import { setContext } from 'svelte';
+  import { writable } from 'svelte/store';
 
-export let orientation = 'vertical';
+  export let orientation = 'vertical';
 
-const layout = writable({});
+  const layout = writable({});
 
-$layout.orientation = orientation;
+  $layout.orientation = orientation;
 
-setContext('_layout', layout);
-
+  setContext('_layout', layout);
 </script>
 
 <div class="app-layout app-layout--vertical">
-  <slot></slot>
+  <slot />
 </div>
