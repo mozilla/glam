@@ -32,16 +32,28 @@
 </style>
 
 <div class="product-selector">
-  <DimensionMenu size=large variant=dark tooltip="Select a product" compact={COMPACT} offset={OFFSET} location="bottom" alignment="center">
+  <DimensionMenu
+    size="large"
+    variant="dark"
+    tooltip="Select a product"
+    compact={COMPACT}
+    offset={OFFSET}
+    location="bottom"
+    alignment="center">
     <div class="main-filter__label" slot="label">
       {productKeys.filter((p) => p.key === $store.searchProduct)[0].label}
-      <div class="pull-right-edge"><CaretDown size=14 /></div>
+      <div class="pull-right-edge">
+        <CaretDown size="14" />
+      </div>
     </div>
     <div slot="menu">
-      <MenuList on:selection={(event) => { store.setField('searchProduct', event.detail.key); }}>
-        {#each productKeys as {label, key}, i (key)}
+      <MenuList
+        on:selection={(event) => {
+          store.setField('searchProduct', event.detail.key);
+        }}>
+        {#each productKeys as { label, key }, i (key)}
           <MenuListItem {key} value={key}>
-            <span class="story-label first"></span>{label}
+            <span class="story-label first" />{label}
           </MenuListItem>
         {/each}
       </MenuList>

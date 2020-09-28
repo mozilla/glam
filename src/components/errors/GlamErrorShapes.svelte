@@ -1,60 +1,89 @@
 <script>
-import { fly } from 'svelte/transition';
-import { spring } from 'svelte/motion';
+  import { fly } from 'svelte/transition';
+  import { spring } from 'svelte/motion';
 
-const q = spring(80, { stiffness: 0.05, damping: 0.05 });
+  const q = spring(80, { stiffness: 0.05, damping: 0.05 });
 
-const flyParams = { duration: 500, y: 60, x: -60 };
-const inc = 100;
+  const flyParams = { duration: 500, y: 60, x: -60 };
+  const inc = 100;
 
-setTimeout(() => {
-  q.set(0);
-}, inc * 3);
+  setTimeout(() => {
+    q.set(0);
+  }, inc * 3);
 </script>
 
 <style>
-svg {
+  svg {
     --dark: var(--cool-gray-400);
     --med: var(--cool-gray-300);
     --light: var(--cool-gray-200);
     --op-fill: var(--cool-gray-500);
     --op-stroke: var(--cool-gray-050);
-    --op: .6;
+    --op: 0.6;
     --q-fill: white;
-    opacity: .6;
-
-}
+    opacity: 0.6;
+  }
 </style>
 
-<svg width="100%" height="100%" viewBox="0 0 776 640" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" shape-rendering=geometricPrecision style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
-    <g transform="matrix(1,0,0,1,-3055.34,-924)">
-        <g transform="matrix(-1,-6.14092e-16,-6.14092e-16,1,4551.83,28)">
-            <g  transform="matrix(1,0,0,1,-221.703,-128)">
-                <g in:fly={{ ...flyParams, delay: 6 * inc }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--med);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--dark);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120" style="fill:var(--light);"/>
-                </g>
-            </g>
-            <g transform="matrix(1,0,0,1,-110.851,-64)">
-                <g in:fly={{ ...flyParams, delay: 5 * inc }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--med);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--dark);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120" style="fill:var(--light);"/>
-                </g>
-            </g>
-            <g>
-                <g in:fly={{ ...flyParams, delay: 4 * inc }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--med);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--dark);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120" style="fill:var(--light);"/>
-                </g>
-            </g>
+<svg
+  width="100%"
+  height="100%"
+  viewBox="0 0 776 640"
+  version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xml:space="preserve"
+  xmlns:serif="http://www.serif.com/"
+  shape-rendering="geometricPrecision"
+  style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <g transform="matrix(1,0,0,1,-3055.34,-924)">
+    <g transform="matrix(-1,-6.14092e-16,-6.14092e-16,1,4551.83,28)">
+      <g transform="matrix(1,0,0,1,-221.703,-128)">
+        <g in:fly={{ ...flyParams, delay: 6 * inc }}>
+          <path
+            d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+            style="fill:var(--med);" />
+          <path
+            d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+            style="fill:var(--dark);" />
+          <path
+            d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+            style="fill:var(--light);" />
         </g>
-        <g transform="matrix(-1,-6.14092e-16,-6.14092e-16,1,4219.28,220)">
-            <g opacity=1 transform="matrix(1,-9.86076e-32,9.86076e-32,1,-221.703,-248)">
-                <!-- <g in:fly={{ duration: 1200, y: 80, delay: 3 * inc }}> -->
-                <g in:fly={{ duration: 1200, y: 10, delay: 3 * inc }}>
+      </g>
+      <g transform="matrix(1,0,0,1,-110.851,-64)">
+        <g in:fly={{ ...flyParams, delay: 5 * inc }}>
+          <path
+            d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+            style="fill:var(--med);" />
+          <path
+            d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+            style="fill:var(--dark);" />
+          <path
+            d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+            style="fill:var(--light);" />
+        </g>
+      </g>
+      <g>
+        <g in:fly={{ ...flyParams, delay: 4 * inc }}>
+          <path
+            d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+            style="fill:var(--med);" />
+          <path
+            d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+            style="fill:var(--dark);" />
+          <path
+            d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+            style="fill:var(--light);" />
+        </g>
+      </g>
+    </g>
+    <g transform="matrix(-1,-6.14092e-16,-6.14092e-16,1,4219.28,220)">
+      <g
+        opacity="1"
+        transform="matrix(1,-9.86076e-32,9.86076e-32,1,-221.703,-248)">
+        <!-- <g in:fly={{ duration: 1200, y: 80, delay: 3 * inc }}> -->
+        <g in:fly={{ duration: 1200, y: 10, delay: 3 * inc }}>
                     <g style="transform: translateY({$q}px)">
                         <g style="transform: translateY(40px)">
                         <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--op-fill);fill-opacity:var(--op);stroke:var(--op-stroke);stroke-width:3px;stroke-dasharray:9,9,0,0;"/>
@@ -75,21 +104,33 @@ svg {
                         </g>
                     </g>
                 </g>
-            </g>
-            <g transform="matrix(1,0,0,1,-110.851,-64)">
-                <g in:fly={{ ...flyParams, delay: 2 * inc }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--med);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--dark);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120" style="fill:var(--light);"/>
-                </g>
-            </g>
-            <g>
-                <g in:fly={{ ...flyParams, delay: 1 * inc }}>
-                    <path d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z" style="fill:var(--med);"/>
-                    <path d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152" style="fill:var(--dark);"/>
-                    <path d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120" style="fill:var(--light);"/>
-                </g>
-            </g>
+      </g>
+      <g transform="matrix(1,0,0,1,-110.851,-64)">
+        <g in:fly={{ ...flyParams, delay: 2 * inc }}>
+          <path
+            d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+            style="fill:var(--med);" />
+          <path
+            d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+            style="fill:var(--dark);" />
+          <path
+            d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+            style="fill:var(--light);" />
         </g>
+      </g>
+      <g>
+        <g in:fly={{ ...flyParams, delay: 1 * inc }}>
+          <path
+            d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
+            style="fill:var(--med);" />
+          <path
+            d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
+            style="fill:var(--dark);" />
+          <path
+            d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
+            style="fill:var(--light);" />
+        </g>
+      </g>
     </g>
+  </g>
 </svg>

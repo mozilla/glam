@@ -15,7 +15,6 @@
   const parseYMD = timeParse('%Y-%m-%d');
   const mdY = timeFormat('%b %d, %Y');
   const toNiceDate = (dt) => mdY(parseYMD(dt));
-
 </script>
 
 <style>
@@ -108,7 +107,8 @@
     background-color: var(--cool-gray-150);
   }
 
-  dt, .detail-title {
+  dt,
+  .detail-title {
     font-size: var(--text-015);
     text-transform: uppercase;
     font-weight: 300;
@@ -117,8 +117,8 @@
 
   dd {
     font-size: var(--text-02);
-    margin:0px;
-    padding:0px;
+    margin: 0px;
+    padding: 0px;
     color: var(--cool-gray-700);
   }
 
@@ -126,7 +126,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: space-between;
-
   }
 </style>
 
@@ -136,17 +135,19 @@
       {#if $store.probe.type}
         <dl class="drawer-section probe-details-overview-left">
           <dt>
-            <a class="probe-type-link" href='https://mozilla.github.io/glean/book/user/metrics/index.html'>{$store.probe.info.type}</a>
+            <a
+              class="probe-type-link"
+              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.info.type}</a>
           </dt>
         </dl>
       {/if}
-        <div class="probe-details-overview-right">
-          <StatusLabel
-            tooltip={!$store.probe.info.disabled ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
-            level={!$store.probe.info.disabled ? 'success' : 'info'}>
-            {!$store.probe.info.disabled ? 'active' : 'inactive'}
-          </StatusLabel>
-        </div>
+      <div class="probe-details-overview-right">
+        <StatusLabel
+          tooltip={!$store.probe.info.disabled ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
+          level={!$store.probe.info.disabled ? 'success' : 'info'}>
+          {!$store.probe.info.disabled ? 'active' : 'inactive'}
+        </StatusLabel>
+      </div>
     </div>
 
     <div class="drawer-section">
@@ -164,24 +165,20 @@
         </div>
       {/if}
     </div>
-    <div class=tiled>
-    {#if $store.probe.info.send_in_pings}
-    <dl>
-      <dt>unit</dt>
-      <dd>
-        {$store.probe.info.unit}
-      </dd>
-    </dl>
-      <dl>
-        <dt>Pings</dt>
-        <dd>
-          {#each $store.probe.info.send_in_pings as ping}
-              {ping}
-          {/each}
-        </dd>
-      </dl>
-    {/if}
-    <!-- {#if $store.probe.info.dates.first}
+    <div class="tiled">
+      {#if $store.probe.info.send_in_pings}
+        <dl>
+          <dt>unit</dt>
+          <dd>{$store.probe.info.unit}</dd>
+        </dl>
+        <dl>
+          <dt>Pings</dt>
+          <dd>
+            {#each $store.probe.info.send_in_pings as ping}{ping}{/each}
+          </dd>
+        </dl>
+      {/if}
+      <!-- {#if $store.probe.info.dates.first}
       <dl>
         <dt>First Seen</dt>
         <dd>
@@ -189,7 +186,7 @@
         </dd>
       </dl>
     {/if} -->
-    {#if $store.probe.info.expires}
+      {#if $store.probe.info.expires}
 
       <dl>
         <dt>Expires</dt>
@@ -199,31 +196,27 @@
       </dl>
     {/if}
     </div>
-    <div class=tiled>
-    {#if $store.probe.info.bugs}
-      <dl>
-        <dt>bugs</dt>
-        <dd>
-          {#each $store.probe.info.bugs as bug}
-            <a href={bug}>
-              {bug.split('?id=')[1]}
-            </a>
-          {/each}
-        </dd>
-      </dl>
-    {/if}
-    {#if $store.probe.info.data_reviews}
-      <dl>
-        <dt>data reviews</dt>
-        <dd>
-          {#each $store.probe.info.data_reviews as bug}
-            <a href={bug}>
-              {bug.split('?id=')[1]}
-            </a>
-          {/each}
-        </dd>
-      </dl>
-    {/if}
+    <div class="tiled">
+      {#if $store.probe.info.bugs}
+        <dl>
+          <dt>bugs</dt>
+          <dd>
+            {#each $store.probe.info.bugs as bug}
+              <a href={bug}> {bug.split('?id=')[1]} </a>
+            {/each}
+          </dd>
+        </dl>
+      {/if}
+      {#if $store.probe.info.data_reviews}
+        <dl>
+          <dt>data reviews</dt>
+          <dd>
+            {#each $store.probe.info.data_reviews as bug}
+              <a href={bug}> {bug.split('?id=')[1]} </a>
+            {/each}
+          </dd>
+        </dl>
+      {/if}
     </div>
     <dl>
       <dt>Notify</dt>
@@ -235,7 +228,6 @@
     </dl>
   </div>
   <div class="probe-details-download">
-
     <div class="drawer-section drawer-section--end">
       <button on:click={exportData} class="docs-button">
         <Brackets size={16} />

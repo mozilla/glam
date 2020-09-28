@@ -49,11 +49,12 @@
       <a
         class="button-link"
         target="_blank"
-        href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview"
-      >
+        href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview">
         <Button>
-          <div style='display: grid; grid-auto-flow: column; align-items: center; grid-column-gap: var(--space-base);'>
-            <DocumentationDark size={14} /> Documentation
+          <div
+            style="display: grid; grid-auto-flow: column; align-items: center; grid-column-gap: var(--space-base);">
+            <DocumentationDark size={14} />
+            Documentation
           </div>
         </Button>
       </a>
