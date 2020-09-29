@@ -2,6 +2,11 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.9.0...HEAD) (date TBD)
 
+## [2020.9.1](https://github.com/mozilla/glam/compare/2020.9.0...2020.9.1) (2020-09-29)
+
+- Fix for import clashes when running parallel imports in production
+  ([bdea458](https://github.com/mozilla/glam/commit/bdea458f1217cd33866f5f296924d31d8caa266c))
+
 ## [2020.9.0](https://github.com/mozilla/glam/compare/2020.7.0...2020.9.0) (2020-09-24)
 
 - Update
@@ -17,13 +22,13 @@
   [#887](https://github.com/mozilla/glam/pull/887) and
   [#889](https://github.com/mozilla/glam/pull/889)
 - Remove udgl and replace components with graph-paper
-  [#902](https://github.com/mozilla/glam/pull/902)
+  ([#902](https://github.com/mozilla/glam/pull/902))
 - Update to support multiple apps per Glean product
-  [f11e979](https://github.com/mozilla/glam/commit/f11e9793b4725d2bfc6ebd222d481555918b1c24)
+  ([f11e979](https://github.com/mozilla/glam/commit/f11e9793b4725d2bfc6ebd222d481555918b1c24))
 - Refactor store initialization
   ([#687](https://github.com/mozilla/glam/issues/687))
 - Attach labels to categorical histograms
-  [#907](https://github.com/mozilla/glam/pull/907)
+  ([#907](https://github.com/mozilla/glam/pull/907))
 - Add last updated model and API endpoint
   ([#743](https://github.com/mozilla/glam/pull/743))
 - Add `/docs/adr/` (a directory of Architectural Decision Records)
