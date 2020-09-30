@@ -73,6 +73,7 @@ export default {
     'histogram-exponential': 'log',
     'histogram-flag': 'categorical',
     'histogram-linear': 'linear',
+    'keyed-scalar': 'linear',
     'scalar-boolean': 'categorical',
     'scalar-uint': 'linear',
   },
