@@ -102,6 +102,7 @@ export default {
       probe: storeValue.probeName,
       process: storeValue.productDimensions.process,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
+      versions: 10,
     };
   },
   fetchData(params, appStore) {

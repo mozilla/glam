@@ -71,41 +71,31 @@
   $: insufficientData = data.length <= 2;
   $: justOne = data.length === 1;
 
-  let domain = writable(
-    aggregationLevel === 'version'
-      ? data.map((d) => d.label)
-      : [
-          new Date(Math.min(...data.map((d) => d.label))),
-          new Date(Math.max(...data.map((d) => d.label))),
-        ]
-  );
+  let domain = writable([]);
+  const horizonToDays = {
+    WEEK: 7,
+    MONTH: 30,
+    QUARTER: 90,
+  };
 
   function setDomain(str) {
     if (aggregationLevel === 'build_id') {
       const start =
-        str === 'ALL_TIME'
+        str === 'ALL'
           ? new Date(+data[0].label)
           : new Date(+data[data.length - 1].label);
+      if (str !== 'ALL') {
+        start.setDate(start.getDate() - horizonToDays[str]);
+      }
       const end = new Date(+data[data.length - 1].label);
-
-      let daysAgo = str === 'WEEK' ? 7 : 30;
-      if (str !== 'ALL_TIME') {
-        start.setDate(start.getDate() - daysAgo);
-      }
       domain.set([start, end]);
-    } else {
-      const start = data[data.length - 1].label;
-      let filtered = data;
-      let daysAgo = str === 'WEEK' ? 7 : 31;
-      if (str !== 'ALL_TIME') {
-        start.setDate(start.getDate() - daysAgo);
-        filtered = data.filter((d) => d.label >= start);
-      }
-      domain.set(filtered.map((d) => d.label));
+    } else if (aggregationLevel === 'version') {
+      domain.set(data.map((d) => d.label));
     }
   }
 
-  $: if (aggregationLevel === 'build_id') {
+  // Trigger `setDomain` to run any time this changes.
+  $: if (aggregationLevel) {
     setDomain(timeHorizon);
   }
 
