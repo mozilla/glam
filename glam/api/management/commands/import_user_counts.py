@@ -1,4 +1,5 @@
 import datetime
+import os
 import tempfile
 
 from django.core.management.base import BaseCommand
@@ -8,15 +9,13 @@ from google.cloud import storage
 from glam.api.models import FirefoxCounts
 
 
+# For logging
+FILENAME = os.path.basename(__file__).split(".")[0]
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 
 
 def log(message):
-    print(
-        "{stamp} - {message}".format(
-            stamp=datetime.datetime.now().strftime("%x %X"), message=message
-        )
-    )
+    print(f"{datetime.datetime.now().strftime('%x %X')} - {FILENAME} - {message}")
 
 
 class Command(BaseCommand):
@@ -76,7 +75,6 @@ class Command(BaseCommand):
                 sql = "COPY {tmp_table} ({columns}) FROM STDIN WITH CSV".format(
                     tmp_table=tmp_table, columns=", ".join(csv_columns)
                 )
-                print(sql)
                 cursor.copy_expert(sql, tmp_file)
 
         log("  Inserting data from temp table into aggregation tables.")
@@ -92,5 +90,4 @@ class Command(BaseCommand):
                 tmp_table=tmp_table,
                 conflict_columns=", ".join(conflict_columns),
             )
-            print(sql)
             cursor.execute(sql)

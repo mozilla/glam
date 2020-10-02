@@ -1,4 +1,5 @@
 import datetime
+import os
 import re
 import tempfile
 
@@ -11,6 +12,8 @@ from google.cloud import storage
 from glam.api.models import LastUpdated
 
 
+# For logging
+FILENAME = os.path.basename(__file__).split(".")[0]
 GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 APP_TO_MODEL = {
     "nightly": "api.FenixAggregation",
@@ -19,11 +22,10 @@ APP_TO_MODEL = {
 }
 
 
-def log(message):
+def log(app_id, message):
     print(
-        "{stamp} - {message}".format(
-            stamp=datetime.datetime.now().strftime("%x %X"), message=message
-        )
+        f"{datetime.datetime.now().strftime('%x %X')} - "
+        f"{FILENAME} - {app_id} - {message}"
     )
 
 
@@ -56,7 +58,7 @@ class Command(BaseCommand):
         for blob in blobs:
             # Create temp table for data.
             tmp_table = "tmp_import_glean_{}".format(app_id)
-            log(f"Creating temp table for import: {tmp_table}.")
+            log(app_id, f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
                 cursor.execute(
@@ -69,7 +71,7 @@ class Command(BaseCommand):
 
             # Download CSV file to local filesystem.
             fp = tempfile.NamedTemporaryFile()
-            log(f"Copying GCS file {blob.name} to local file {fp.name}.")
+            log(app_id, f"Copying GCS file {blob.name} to local file {fp.name}.")
             blob.download_to_filename(fp.name)
 
             #  Load CSV into temp table & insert data from temp table into
@@ -77,10 +79,10 @@ class Command(BaseCommand):
             self.import_file(tmp_table, fp, app_id)
 
             #  Drop temp table and remove file.
-            log("Dropping temp table.")
+            log(app_id, "Dropping temp table.")
             with connection.cursor() as cursor:
                 cursor.execute(f"DROP TABLE {tmp_table}")
-            log(f"Deleting local file: {fp.name}.")
+            log(app_id, f"Deleting local file: {fp.name}.")
             fp.close()
 
         # Once all files are loaded, refresh the materialized views.
@@ -88,9 +90,9 @@ class Command(BaseCommand):
         if blobs:
             with connection.cursor() as cursor:
                 view = f"view_{model._meta.db_table}"
-                log(f"Refreshing materialized view for {view}")
+                log(app_id, f"Refreshing materialized view for {view}")
                 cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
-                log("Refresh completed.")
+                log(app_id, "Refresh completed.")
 
         LastUpdated.objects.update_or_create(
             product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
@@ -105,7 +107,7 @@ class Command(BaseCommand):
         ]
         conflict_columns = model._meta.constraints[0].fields
 
-        log("  Importing file into temp table.")
+        log(app_id, "  Importing file into temp table.")
         with connection.cursor() as cursor:
             with open(fp.name, "r") as tmp_file:
                 sql = f"""
@@ -113,7 +115,7 @@ class Command(BaseCommand):
                 """
                 cursor.copy_expert(sql, tmp_file)
 
-        log("  Inserting data from temp table into aggregation tables.")
+        log(app_id, "  Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = f"""
                 INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})
