@@ -16,20 +16,29 @@ export const firefoxReleases = derived(productDetails, ($pd) => {
     .filter(
       ([key, { category }]) => category === 'major' && key.includes('firefox')
     )
-    .sort(([_a, { date: ad }], [_b, { date: bd }]) => {
-      if (ad > bd) return 1;
-      if (ad < bd) return -1;
-      return 0;
-    })
-    .map(([_, i]) => {
-      const info = { ...i };
-      info.str = info.date;
-      info.date = new Date(info.date);
-      let version = parseInt(info.version, 10);
-      if (version >= 4) version = ~~version; // eslint-disable-line
-      info.label = version;
-      return info;
-    })
+    .sort(
+      (
+        [_a, { date: ad }], // eslint-disable-line no-unused-vars
+        [_b, { date: bd }] // eslint-disable-line no-unused-vars
+      ) => {
+        if (ad > bd) return 1;
+        if (ad < bd) return -1;
+        return 0;
+      }
+    )
+    .map(
+      (
+        [_, i] // eslint-disable-line no-unused-vars
+      ) => {
+        const info = { ...i };
+        info.str = info.date;
+        info.date = new Date(info.date);
+        let version = parseInt(info.version, 10);
+        if (version >= 4) version = ~~version; // eslint-disable-line no-bitwise
+        info.label = version;
+        return info;
+      }
+    )
     .filter((info) => info.str > '2016-06-01');
 
   return releases;

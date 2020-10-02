@@ -22,7 +22,7 @@ export async function getRandomProbes(numProbes, process) {
     .then((response) => response.json())
     .then((d) => {
       d.probes.forEach((di) => {
-        di.data = JSON.parse(di.data);
+        di.data = JSON.parse(di.data); // eslint-disable-line no-param-reassign
       });
       return d;
     });

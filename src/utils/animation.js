@@ -49,7 +49,7 @@ export function twoPointSpring(
       const rightY = $right[k];
       const leftY = $left[k];
       const color = colorMap(k);
-      acc[k] = { leftY, rightY, color }; // eslint-disable-line
+      acc[k] = { leftY, rightY, color };
       return acc;
     }, {});
     return dal;
