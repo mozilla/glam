@@ -43,9 +43,7 @@ jobs:
           paths:
             - ./node_modules
       - run: npm run build
-      - run: npm run format:check
-      - run: node scripts/eslint-health.js
-      - run: npm run test:jest
+      - run: npm run test
 
 workflows:
   version: 2
