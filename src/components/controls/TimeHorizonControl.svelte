@@ -2,10 +2,29 @@
   import BodyControl from './BodyControl.svelte';
 
   export let horizon = 'MONTH';
+
+  const options = [
+    {
+      label: 'week',
+      value: 'WEEK',
+      tooltip: 'show the last week of build ids',
+    },
+    {
+      label: 'month',
+      value: 'MONTH',
+      tooltip: 'show the last month of build ids',
+    },
+    {
+      label: 'quarter',
+      value: 'QUARTER',
+      tooltip: 'show the last 3 months of build ids',
+    },
+    {
+      label: 'all',
+      value: 'ALL',
+      tooltip: 'show all available data',
+    },
+  ];
 </script>
 
-<BodyControl
-  options={[{ label: 'last week', value: 'WEEK', tooltip: 'show the last week of build ids' }, { label: 'last month', value: 'MONTH', tooltip: 'show the last month of build ids' }, { label: 'all time', value: 'ALL_TIME', tooltip: 'show all build ids available for this probe' }]}
-  selected={horizon}
-  level="medium"
-  on:selection />
+<BodyControl {options} selected={horizon} level="medium" on:selection />

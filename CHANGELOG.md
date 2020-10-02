@@ -2,10 +2,13 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.10.0...HEAD) (date TBD)
 
+- Update time horizon to be able to view more data
+  ([#928](https://github.com/mozilla/glam/pull/928))
+
 ## [2020.10.0](https://github.com/mozilla/glam/compare/2020.9.0...2020.10.0) (2020-10-01)
 
 - Add `keyed-scalar` to list of probe types
-  ((b876a80)[https://github.com/mozilla/glam/commit/b876a80f9b627ecd9409781164e52f93b70d273e])
+  ([b876a80](https://github.com/mozilla/glam/commit/b876a80f9b627ecd9409781164e52f93b70d273e))
 
 ## [2020.9.1](https://github.com/mozilla/glam/compare/2020.9.0...2020.9.1) (2020-09-29)
 
