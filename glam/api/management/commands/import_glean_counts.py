@@ -1,4 +1,5 @@
 import datetime
+import os
 import tempfile
 
 from django.apps import apps
@@ -7,6 +8,8 @@ from django.db import connection
 from google.cloud import storage
 
 
+# For logging
+FILENAME = os.path.basename(__file__).split(".")[0]
 GCS_BUCKET = "glam-fenix-dev"
 MAPPING = {
     "fenix": {"model": "api.FenixCounts", "apps": ["nightly", "beta", "release"]}
@@ -14,11 +17,7 @@ MAPPING = {
 
 
 def log(message):
-    print(
-        "{stamp} - {message}".format(
-            stamp=datetime.datetime.now().strftime("%x %X"), message=message
-        )
-    )
+    print(f"{datetime.datetime.now().strftime('%x %X')} - {FILENAME} - {message}")
 
 
 class Command(BaseCommand):
