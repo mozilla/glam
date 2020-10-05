@@ -13,6 +13,12 @@
   import routes from '../../config/routes';
 
   $: isProbeDetailsView = $store.route.section === 'probe';
+
+  const defaultTitle = 'GLAM: Glean Aggregated Metrics Explorer';
+  $: title =
+    $store.route.section === 'probe'
+      ? `${$store.probeName} | GLAM`
+      : defaultTitle;
 </script>
 
 <style>
@@ -36,11 +42,7 @@
 </style>
 
 <svelte:head>
-  {#if $store.route.section === 'probe'}
-    <title>{$store.probeName} | GLAM</title>
-  {:else}
-    <title>GLAM: Glean Aggregated Metrics Explorer</title>
-  {/if}
+  <title>{title}</title>
 </svelte:head>
 
 <div class="app">
