@@ -20,7 +20,7 @@ django==3.1.2             # via -r requirements.in, djangorestframework, drf-orj
 djangorestframework==3.12.1  # via -r requirements.in, drf-orjson-renderer
 dockerflow==2020.6.0      # via -r requirements.in
 drf-orjson-renderer==1.1.4  # via -r requirements.in
-flake8==3.8.3             # via -r requirements.in
+flake8==3.8.4             # via -r requirements.in
 google-api-core[grpc]==1.22.2  # via google-cloud-bigquery, google-cloud-core
 google-auth==1.22.0       # via google-api-core, google-cloud-storage
 google-cloud-bigquery==2.0.0  # via -r requirements.in
