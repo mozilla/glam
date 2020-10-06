@@ -13,27 +13,30 @@
       <Spinner size={48} color={'var(--cool-gray-400)'} />
     </div>
   {:then data}
-    {#if $store.product !== 'firefox' || isSelectedProcessValid($store.probe.info.calculated.seen_in_processes, $store.productDimensions.process)}
-      <slot {data} probeType={data.viewType} />
-    {:else}
+    {#if $store.product === 'firefox' && $store.probe.info.calculated.active === false}
       <div class="graphic-body__content">
         <ProbeTitle />
         <div in:fly={{ duration: 400, y: 10 }}>
           <DataError
-            product={$store.product}
+            reason={'This probe is inactive and is no longer collecting data.'} />
+        </div>
+      </div>
+    {:else if $store.product === 'firefox' && !isSelectedProcessValid($store.probe.info.calculated.seen_in_processes, $store.productDimensions.process)}
+      <div class="graphic-body__content">
+        <ProbeTitle />
+        <div in:fly={{ duration: 400, y: 10 }}>
+          <DataError
             reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
         </div>
       </div>
+    {:else}
+      <slot {data} probeType={data.viewType} />
     {/if}
   {:catch err}
     <div class="graphic-body__content">
       <ProbeTitle />
       <div in:fly={{ duration: 400, y: 10 }}>
-        <DataError
-          product={$store.product}
-          reason={err.message}
-          moreInformation={err.moreInformation}
-          statusCode={err.statusCode} />
+        <DataError reason={err.message} moreInformation={err.moreInformation} />
       </div>
     </div>
   {/await}
