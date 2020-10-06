@@ -57,10 +57,12 @@
   $: if (reference) movingAudienceSize.set(reference.audienceSize);
 
   $: if (currentKey && reference) {
-    const ref = data[currentKey][currentAggregation].find(
-      (d) => d.label.toString() === reference.label.toString()
-    );
-    reference = ref;
+    if (data[currentKey] !== undefined) {
+      const ref = data[currentKey][currentAggregation].find(
+        (d) => d.label.toString() === reference.label.toString()
+      );
+      reference = ref;
+    }
   }
 
   function filterResponseData(d, agg, key) {
