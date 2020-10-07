@@ -10,7 +10,6 @@
   export let valueScale = getContext(
     orientation === 'vertical' ? 'yScale' : 'xScale'
   );
-  export let key;
   export let placement;
   export let rawPlacement;
   export let density;
@@ -27,7 +26,7 @@
   let mounted = false;
 
   let plotDensities = density;
-  $: if (placement || key) {
+  $: if (placement) {
     plotDensities = [...density.map((obj) => ({ ...obj }))];
   }
 

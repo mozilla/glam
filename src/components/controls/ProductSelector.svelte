@@ -5,7 +5,6 @@
   import { store } from '../../state/store';
   import { productKeys } from '../../config/products';
 
-  const COMPACT = false;
   const OFFSET = 10;
 </script>
 
@@ -36,7 +35,6 @@
     size="large"
     variant="dark"
     tooltip="Select a product"
-    compact={COMPACT}
     offset={OFFSET}
     location="bottom"
     alignment="center">

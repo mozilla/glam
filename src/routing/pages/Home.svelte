@@ -141,14 +141,9 @@
                   class:probe-small-multiple--proportion={whichSmallMultiple(info.type, info.kind) === 'proportion'}
                   style="min-height:100px;">
                   {#if whichSmallMultiple(info.type, info.kind) === 'quantile'}
-                    <QuantileSmallMultiple
-                      metricType={info.type}
-                      metricKind={info.kind}
-                      {data}
-                      {info} />
+                    <QuantileSmallMultiple {data} />
                   {:else if whichSmallMultiple(info.type, info.kind) === 'proportion'}
                     <ProportionSmallMultiple
-                      metricType={info.type}
                       metricKind={info.kind}
                       {data}
                       {info} />

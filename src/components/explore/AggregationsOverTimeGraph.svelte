@@ -103,12 +103,8 @@
     <g slot="annotation" let:xScale let:yScale>
       {#if reference}
         <Tweenable value={xScale(reference.label)} let:tweenValue={tv1}>
-          <TrackingLine
-            data-audienceSize={reference.audienceSize}
-            xr={tv1}
-            key={reference.label} />
+          <TrackingLine xr={tv1} />
           <TrackingLabel
-            data-audienceSize={yScale.domain()[1]}
             yOffset={16}
             xr={tv1}
             align="top"

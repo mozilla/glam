@@ -31,7 +31,6 @@
   import { histogramSpring } from '../../utils/animation';
 
   export let data;
-  export let markers;
   export let key;
   export let timeHorizon;
   export let aggregationLevel;
@@ -213,7 +212,6 @@
       {data}
       xDomain={$domain}
       {yDomain}
-      {timeHorizon}
       lineColorMap={binColorMap}
       {key}
       yAccessor={overTimePointMetricType}
@@ -224,9 +222,7 @@
       {reference}
       {hovered}
       bind:hoverValue
-      {markers}
       {aggregationLevel}
-      {hoverActive}
       {insufficientData}
       on:click={() => {
         if (hovered.datum) {
@@ -294,7 +290,6 @@
     colorMap={binColorMap}
     valueFormatter={summaryNumberFormatter}
     keyFormatter={comparisonKeyFormatter}
-    dataVolume={data.length}
     showLeft={data.length > 1}
     showDiff={data.length > 1} />
   <div style="display: {insufficientData ? 'none' : 'block'}">
@@ -304,15 +299,10 @@
       data={clientCountsData}
       xDomain={$domain}
       yDomain={yClientsDomain}
-      {timeHorizon}
       {aggregationLevel}
-      {key}
-      {yScaleType}
-      metricKeys={activeBins}
       {hovered}
       {reference}
       bind:hoverValue
-      {markers}
       on:click={() => {
         if (hovered.datum) {
           reference = hovered.datum;
@@ -321,7 +311,6 @@
   </div>
   <div style="display: {insufficientData ? 'none' : 'block'}">
     <CompareClientVolumeGraph
-      data={clientCountsData}
       description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}
       hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}

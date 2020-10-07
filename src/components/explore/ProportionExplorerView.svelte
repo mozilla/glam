@@ -219,16 +219,13 @@
           <div class="small-multiple">
             <ProbeExplorer
               bind:reference
-              title={key === 'undefined' ? '' : key}
               aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
               aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
               summaryLabel="cat."
               data={selectedData}
-              {probeType}
               activeBins={activeBuckets}
               {timeHorizon}
               binColorMap={bucketColorMap}
-              {metricType}
               showViolins={false}
               {aggregationLevel}
               pointMetricType={metricType}
