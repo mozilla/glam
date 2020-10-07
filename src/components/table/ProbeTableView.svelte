@@ -74,8 +74,6 @@
     keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
     valueFormatter={probeType === 'categorical' ? formatPercentDecimal : formatCount}
     key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
-    {currentKey}
-    {currentAggregation}
     tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
     bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'} />
 </div>

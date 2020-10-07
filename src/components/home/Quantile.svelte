@@ -37,12 +37,10 @@
       right={16}>
       <g slot="body" let:bottom let:top let:yScale let:mousePosition let:xScale>
         <Violin
-          {data}
           rawPlacement={bottom}
           showLeft={false}
           orientation="horizontal"
           density={distSpring}
-          valueAccessor="bin"
           densityAccessor="value"
           areaColor={'var(--digital-blue-400)'}
           lineColor={'var(--digital-blue-500)'}
@@ -67,7 +65,7 @@
         let:bottom
         let:left
         let:right>
-        <Axis side="bottom" showBorder tickFormatter={formatCount} />
+        <Axis side="bottom" tickFormatter={formatCount} />
         <g style="font-size:11px;">
           {#if mousePosition.x}
             <text

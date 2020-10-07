@@ -117,13 +117,10 @@
         {#if key === currentKey && aggType === currentAggregation}
           <div class="small-multiple">
             <ProbeExplorer
-              title={key === 'undefined' ? '' : key}
               aggregationsOverTimeTitle={overTimeTitle('percentiles', aggregationLevel)}
               aggregationsOverTimeDescription={percentilesOverTimeDescription(aggregationLevel)}
-              probeFamily="Percentile"
               summaryLabel="perc."
               data={selectedData}
-              {probeType}
               activeBins={percentiles}
               {timeHorizon}
               markers={$firefoxVersionMarkers}

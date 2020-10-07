@@ -7,7 +7,6 @@
   import { store, productConfigDimensions } from '../../state/store';
 
   const OFFSET = 10;
-  const COMPACT = true;
 </script>
 
 <style>
@@ -53,7 +52,6 @@
       {#if dimension.values.some((di) => dimension.isValidKey === undefined || dimension.isValidKey(di.key, $store.probe, store))}
         <DimensionMenu
           tooltip="Select a {dimension.title}"
-          compact={COMPACT}
           offset={OFFSET}
           location="bottom"
           alignment="right">

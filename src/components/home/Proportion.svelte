@@ -39,7 +39,6 @@
   }
 
   const colorMap = createCatColorMap(kLargestBins(data));
-  let tickCount = Math.min(xDomain.length, 6);
 
   function perc(k) {
     const t = Object.values(data).reduce((a, b) => a + b, 0);
@@ -97,11 +96,10 @@
         let:left
         let:right>
         {#if metricKind !== 'categorical'}
-          <Axis side="bottom" showBorder {tickCount} {tickFormatter} />
+          <Axis side="bottom" {tickFormatter} />
         {:else}
           <Axis
             side="bottom"
-            showBorder
             showLabels={false}
             showTicks={false}
             {tickFormatter} />

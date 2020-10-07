@@ -84,9 +84,7 @@
           params={tween}
           value={{ location: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize }}
           let:tweenValue={tv1}>
-          <TrackingLine
-            xr={tv1.location}
-            data-audienceSize={reference.audienceSize} />
+          <TrackingLine xr={tv1.location} />
         </Tweenable>
       {/if}
       {#if hovered && hovered.datum}
@@ -116,8 +114,7 @@
             align="bottom"
             label="Ref."
             xr={tweenValue.x}
-            background={bottom - tweenValue.y < 10 ? 'var(--cool-gray-100)' : 'var(--cool-gray-200)'}
-            _svelteBugWorkaround={reference.label} />
+            background={bottom - tweenValue.y < 10 ? 'var(--cool-gray-100)' : 'var(--cool-gray-200)'} />
         </Tweenable>
       {/if}
     </g>
