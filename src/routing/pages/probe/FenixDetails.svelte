@@ -4,7 +4,7 @@
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
-  import ExternalLink from '../../../components/icons/ExternalLink.svelte';
+  // import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
 
   async function exportData() {
@@ -66,6 +66,7 @@
     padding: var(--space-2x) 0;
   }
 
+  /*
   .more-info-link {
     display: grid;
     align-items: center;
@@ -77,6 +78,7 @@
     margin: var(--space-2x) 0;
     font-size: var(--text-01);
   }
+*/
 
   /* FIXME: once @graph-paper/button supports href, use the Button component. */
   .docs-button {
@@ -137,13 +139,13 @@
           <dt>
             <a
               class="probe-type-link"
-              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.info.type}</a>
+              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.type}</a>
           </dt>
         </dl>
       {/if}
       <div class="probe-details-overview-right">
         <StatusLabel
-          tooltip={!$store.probe.info.disabled ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
+          tooltip={!$store.probe.info.disabled ? 'this metric is currently active and collecting data' : 'this metric is inactive and is thus not collecting data'}
           level={!$store.probe.info.disabled ? 'success' : 'info'}>
           {!$store.probe.info.disabled ? 'active' : 'inactive'}
         </StatusLabel>
@@ -155,13 +157,15 @@
         <h2 class="detail-title">description</h2>
         <div class="probe-description helper-text--01">
           {@html $store.probe.info.description}
+          <!-- TODO: Send to correct link for glean probes dictionary.
           <a
             class="more-info-link"
-            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.info.type}/${$store.probe.info.name}`}
+            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.type}/${$store.probe.name}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
           </a>
+          -->
         </div>
       {/if}
     </div>
@@ -169,7 +173,7 @@
       {#if $store.probe.info.send_in_pings}
         <dl>
           <dt>unit</dt>
-          <dd>{$store.probe.info.unit}</dd>
+          <dd>{$store.probe.info.time_unit || $store.probe.info.unit}</dd>
         </dl>
         <dl>
           <dt>Pings</dt>
@@ -178,23 +182,14 @@
           </dd>
         </dl>
       {/if}
-      <!-- {#if $store.probe.info.dates.first}
-      <dl>
-        <dt>First Seen</dt>
-        <dd>
-          {toNiceDate($store.probe.info.dates.first.slice(0, 11))}
-        </dd>
-      </dl>
-    {/if} -->
       {#if $store.probe.info.expires}
-
-      <dl>
-        <dt>Expires</dt>
-        <dd>
-          {toNiceDate($store.probe.info.expires)}
-        </dd>
-      </dl>
-    {/if}
+        <dl>
+          <dt>Expires</dt>
+          <dd>
+            {$store.probe.info.expires === 'never' ? 'never' : toNiceDate($store.probe.info.expires)}
+          </dd>
+        </dl>
+      {/if}
     </div>
     <div class="tiled">
       {#if $store.probe.info.bugs}
@@ -212,7 +207,7 @@
           <dt>data reviews</dt>
           <dd>
             {#each $store.probe.info.data_reviews as bug}
-              <a href={bug}> {bug.split('?id=')[1]} </a>
+              <a href={bug}> {bug.split('?id=')[1]}</a>
             {/each}
           </dd>
         </dl>
