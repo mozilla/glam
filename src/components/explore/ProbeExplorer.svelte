@@ -1,6 +1,5 @@
 <script>
   import { writable } from 'svelte/store';
-  import { format } from 'd3-format';
 
   import { window1D } from '@graph-paper/core/utils/window-functions';
   import ToplineMetrics from './ToplineMetrics.svelte';
@@ -24,7 +23,12 @@
     compareDescription,
   } from '../../utils/constants';
 
-  import { formatBuildIDToDateString } from '../../utils/formatters';
+  import {
+    formatBuildIDToDateString,
+    formatCount,
+    formatFromNanoseconds,
+    formatMemory,
+  } from '../../utils/formatters';
 
   import { clientCounts } from '../../utils/probe-utils';
 
@@ -42,7 +46,12 @@
   export let yScaleType;
   export let yDomain;
   export let densityMetricType;
-  export let yTickFormatter = format(',d');
+  export let yTickFormatter = formatCount;
+  if (data[0].metric_type === 'timing_distribution') {
+    yTickFormatter = formatFromNanoseconds;
+  } else if (data[0].metric_type === 'memory_distribution') {
+    yTickFormatter = formatMemory($store.probe.info.memory_unit);
+  }
   export let summaryNumberFormatter = yTickFormatter;
   export let comparisonKeyFormatter = (v) => v;
   export let summaryLabel = 'perc.';

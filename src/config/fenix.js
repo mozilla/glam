@@ -47,12 +47,13 @@ export default {
   // FIXME: these are guesses at the moment
   probeView: {
     boolean: 'categorical',
+    counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'log',
-    counter: 'linear',
-    timing_distribution: 'linear',
     labeled_counter: 'categorical',
+    memory_distribution: 'linear',
     quantity: 'linear',
+    timing_distribution: 'linear',
   },
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
