@@ -169,7 +169,9 @@
       {#if $store.probe.info.send_in_pings}
         <dl>
           <dt>unit</dt>
-          <dd>{$store.probe.info.time_unit || $store.probe.info.unit}</dd>
+          <dd>
+            {$store.probe.info.time_unit || $store.probe.info.memory_unit || $store.probe.info.unit}
+          </dd>
         </dl>
         <dl>
           <dt>Pings</dt>
@@ -193,7 +195,7 @@
           <dt>bugs</dt>
           <dd>
             {#each $store.probe.info.bugs as bug}
-              <a href={bug}> {bug.split('?id=')[1]} </a>
+              <a href={bug}> {bug.split('?id=')[1]}</a>
             {/each}
           </dd>
         </dl>
