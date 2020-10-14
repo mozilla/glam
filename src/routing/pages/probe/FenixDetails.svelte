@@ -4,7 +4,7 @@
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
-  // import ExternalLink from '../../../components/icons/ExternalLink.svelte';
+  import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
 
   async function exportData() {
@@ -66,7 +66,6 @@
     padding: var(--space-2x) 0;
   }
 
-  /*
   .more-info-link {
     display: grid;
     align-items: center;
@@ -78,7 +77,6 @@
     margin: var(--space-2x) 0;
     font-size: var(--text-01);
   }
-*/
 
   /* FIXME: once @graph-paper/button supports href, use the Button component. */
   .docs-button {
@@ -157,15 +155,13 @@
         <h2 class="detail-title">description</h2>
         <div class="probe-description helper-text--01">
           {@html $store.probe.info.description}
-          <!-- TODO: Send to correct link for glean probes dictionary.
           <a
             class="more-info-link"
-            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.type}/${$store.probe.name}`}
+            href={`https://glean-dictionary.netlify.app/?metric=${$store.probe.name}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
           </a>
-          -->
         </div>
       {/if}
     </div>
