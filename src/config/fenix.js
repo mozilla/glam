@@ -33,6 +33,9 @@ export default {
         { key: 'baseline', label: 'Baseline' },
       ],
       defaultValue: 'metrics',
+      isValidKey(key, probe) {
+        return key === '*' ? true : probe.info.send_in_pings.includes(key);
+      },
     },
     aggregationLevel: {
       title: 'Aggregation Level',
@@ -141,5 +144,13 @@ export default {
     const pr = { ...probe };
     return pr;
   },
-  setDefaultsForProbe() {},
+  setDefaultsForProbe(store) {
+    const state = store.getState();
+    const { probe } = state;
+    if (!probe.info.send_in_pings.includes(state.productDimensions.ping_type)) {
+      // Try not to pick the 'All' option.
+      const index = probe.info.send_in_pings.length > 1 ? 1 : 0;
+      store.setDimension('ping_type', probe.info.send_in_pings[index]);
+    }
+  },
 };
