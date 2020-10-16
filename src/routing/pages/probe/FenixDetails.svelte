@@ -4,6 +4,7 @@
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
+  import { extractBugId } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
 
@@ -19,7 +20,7 @@
 
 <style>
   .drawer-section {
-    padding: var(--space-2x) 0;
+    padding: var(--space-base) 0;
   }
   .drawer-section--end {
     align-self: end;
@@ -137,7 +138,7 @@
           <dt>
             <a
               class="probe-type-link"
-              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.type}</a>
+              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.type.replace('_', ' ')}</a>
           </dt>
         </dl>
       {/if}
@@ -170,13 +171,7 @@
         <dl>
           <dt>unit</dt>
           <dd>
-            {$store.probe.info.time_unit || $store.probe.info.memory_unit || $store.probe.info.unit}
-          </dd>
-        </dl>
-        <dl>
-          <dt>Pings</dt>
-          <dd>
-            {#each $store.probe.info.send_in_pings as ping}{ping}{/each}
+            {$store.probe.info.time_unit || $store.probe.info.memory_unit || $store.probe.info.unit || 'n/a'}
           </dd>
         </dl>
       {/if}
@@ -189,23 +184,35 @@
         </dl>
       {/if}
     </div>
-    <div class="tiled">
+    <div class="drawer-section">
+      <dl>
+        <dt>Send in Pings</dt>
+        <dd>
+          {#each $store.probe.info.send_in_pings as ping}
+            <div>{ping}</div>
+          {/each}
+        </dd>
+      </dl>
+    </div>
+    <div class="drawer-section">
       {#if $store.probe.info.bugs}
         <dl>
           <dt>bugs</dt>
           <dd>
             {#each $store.probe.info.bugs as bug}
-              <a href={bug}> {bug.split('?id=')[1]}</a>
+              <div><a href={bug}>{extractBugId(bug)}</a></div>
             {/each}
           </dd>
         </dl>
       {/if}
+    </div>
+    <div class="drawer-section">
       {#if $store.probe.info.data_reviews}
         <dl>
           <dt>data reviews</dt>
           <dd>
             {#each $store.probe.info.data_reviews as bug}
-              <a href={bug}> {bug.split('?id=')[1]}</a>
+              <div><a href={bug}>{extractBugId(bug)}</a></div>
             {/each}
           </dd>
         </dl>
