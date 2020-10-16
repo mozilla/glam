@@ -4,6 +4,16 @@
 
 - Update time horizon to be able to view more data
   ([#928](https://github.com/mozilla/glam/pull/928))
+- Fix title not updating after selecting searched probe
+  ([#926](https://github.com/mozilla/glam/issues/926))
+- Display alternate error if probe is inactive
+  ([#937](https://github.com/mozilla/glam/issues/937))
+- Prefix units to avoid very large numbers
+  ([#960](https://github.com/mozilla/glam/pull/960))
+- Attach metric data to ping type selector
+  ([#967](https://github.com/mozilla/glam/pull/967))
+- Make extracting bug IDs more robust
+  ([#966](https://github.com/mozilla/glam/pull/966))
 
 ## [2020.10.0](https://github.com/mozilla/glam/compare/2020.9.0...2020.10.0) (2020-10-01)
 
