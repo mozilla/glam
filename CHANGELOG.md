@@ -2,6 +2,12 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.10.1...HEAD) (date TBD)
 
+## [2020.10.2](https://github.com/mozilla/glam/compare/2020.10.1...2020.10.2) (2020-10-19)
+
+- Fix non-moving reference markers
+  ([#977](https://github.com/mozilla/glam/issues/977))
+- Tame the comparison graph ([#979](https://github.com/mozilla/glam/pull/979))
+
 ## [2020.10.1](https://github.com/mozilla/glam/compare/2020.10.0...2020.10.1) (2020-10-19)
 
 - Update time horizon to be able to view more data
