@@ -1,7 +1,7 @@
 <script>
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import { Help } from '@graph-paper/icons';
-  import Tweenable from '../Tweenable.svelte';
+  import Springable from '../Springable.svelte';
 
   import { formatPercentDecimal } from '../../utils/formatters';
 
@@ -183,9 +183,9 @@
           {#if showRight}
             <td class="value-right">
               {#if rightValue !== undefined}
-                <Tweenable value={rightValue} let:tweenValue>
+                <Springable value={rightValue} let:tweenValue>
                   {valueFormatter(tweenValue)}
-                </Tweenable>
+                </Springable>
               {:else}{' '}{/if}
             </td>
           {/if}
