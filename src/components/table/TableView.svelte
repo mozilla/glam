@@ -96,9 +96,17 @@
         </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#each visibleBuckets as bucket, i}
-          <Cell backgroundColor=var(--cool-gray-subtle) tooltip={tooltipFormatter(bucket)} size=small text topBorder={true} bottomBorderThickness=2px>
-            <span class=percentile-label-block style="background-color: {colorMap(bucket)}"></span>
-            <span class=bucket>{keyFormatter(bucket)}</span>
+          <Cell
+            backgroundColor="var(--cool-gray-subtle)"
+            tooltip={tooltipFormatter(bucket)}
+            size="small"
+            text
+            topBorder={true}
+            bottomBorderThickness="2px">
+            <span
+              class="percentile-label-block"
+              style="background-color: {colorMap(bucket)}" />
+            <span class="bucket">{keyFormatter(bucket)}</span>
           </Cell>
         {/each}
       </Row>
@@ -127,9 +135,10 @@
           <!-- <Cell freezeX rightBorder>
           </Cell> -->
           {#each visibleBuckets as bucket, j}
-            <Cell size=tiny>
+            <Cell size="tiny">
               <!-- <ProportionSM value={row.proportions[bucket]} /> -->
-              <span style="color:{formatPercentDecimal(row[key][bucket]) !== "0.00%" ? 'var(--cool-gray-700)' : 'var(--cool-gray-200)'}">
+              <span
+                style="color:{formatPercentDecimal(row[key][bucket]) !== '0.00%' ? 'var(--cool-gray-700)' : 'var(--cool-gray-200)'}">
                 {valueFormatter(row[key][bucket])}
               </span>
             </Cell>

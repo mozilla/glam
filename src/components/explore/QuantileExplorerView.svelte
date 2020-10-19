@@ -94,14 +94,13 @@
   <div class="body-control-row">
     <!-- FIXME: this is a workaround because there is a summed_histogram and a summed-histogram -->
     {#if totalAggs > 1 && currentAggregation !== 'summed_histogram' && currentAggregation !== 'summed-histogram'}
-    <div class=body-control-set>
-      <label class=body-control-set--label>aggregation</label>
-      <AggregationTypeSelector
-        bind:aggregationInfo={aggregationInfo}
-        bind:currentAggregation={currentAggregation}
-        aggregationTypes={aggregationTypes}
-        />
-    </div>
+      <div class="body-control-set">
+        <label class="body-control-set--label">aggregation</label>
+        <AggregationTypeSelector
+          bind:aggregationInfo
+          bind:currentAggregation
+          {aggregationTypes} />
+      </div>
     {/if}
     {#if probeKeys && probeKeys.length > 1}
       <div class="body-control-set">

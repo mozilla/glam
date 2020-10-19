@@ -145,18 +145,7 @@
               useYScale={false}
               curve={'curveStep'}
               color={$dotsAndLines[bin].color}
-              data={[
-                {
-                  y: $dotsAndLines[bin].leftY,
-                  label: leftLabel,
-                },
-                {
-                  y: $dotsAndLines[bin].rightY,
-                  label: rightLabel,
-
-              },
-              ]}
-            />
+              data={[{ y: $dotsAndLines[bin].leftY, label: leftLabel }, { y: $dotsAndLines[bin].rightY, label: rightLabel }]} />
           {/if}
           <circle
             cx={dataVolume === 2 ? xScale(leftLabel) : left}

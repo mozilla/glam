@@ -223,7 +223,9 @@
             <div>your search produced 0 results</div>
           {:else if results.status}
             <!-- FIXME: This should be pretty. -->
-            <div>hmm ... having trouble reaching the search service ({results.status}).</div>
+            <div>
+              hmm ... having trouble reaching the search service ({results.status}).
+            </div>
           {:else}
             <div>
               <LineSegSpinner color={'var(--subhead-gray-02)'} />

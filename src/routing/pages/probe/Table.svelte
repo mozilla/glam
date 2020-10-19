@@ -14,11 +14,11 @@
       {#if $store.probe.loaded}
         <ProbeTableView
           data={data.data}
-          probeType={probeType}
+          {probeType}
           colorMap={data.bucketColorMap}
           visibleBuckets={[...$store.activeBuckets]}
           aggregationLevel={$store.productDimensions.aggregationLevel}>
-            <ProbeTitle />
+          <ProbeTitle />
         </ProbeTableView>
       {/if}
     </div>

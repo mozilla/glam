@@ -195,21 +195,30 @@
   </div>
 
   <div class="font-section story__section inter-section">
-    <h2 class='font-title inter' style='font-weight: 900; color: var(--pantone-red-500);'>Inter</h2>
-    <div class=story__description>
-      Inter is the primary font for all other UX and copy. Use it for almost all other text in the app that isn't the main title
-      element or something that should be expressed in a monospace font (such as
-      a SQL query or code snippet).
+    <h2
+      class="font-title inter"
+      style="font-weight: 900; color: var(--pantone-red-500);">
+      Inter
+    </h2>
+    <div class="story__description">
+      Inter is the primary font for all other UX and copy. Use it for almost all
+      other text in the app that isn't the main title element or something that
+      should be expressed in a monospace font (such as a SQL query or code
+      snippet).
     </div>
     <div class="inter inter01">
       <h3>HOW TO USE IT</h3>
       Telemetry probes, histograms, time series, download links.
       <br />
-      <span style='text-transform: uppercase;'>Overline Elements</span>,
-      <i>Italic text.</i> Occasionally <b>Bold Text</b> as well.
-      <br/>
+      <span style="text-transform: uppercase;">Overline Elements</span>,
+      <i>Italic text.</i>
+      Occasionally
+      <b>Bold Text</b>
+      as well.
+      <br />
       You can also use variable font settings here,
-      <br/>but maybe don't <span class=variable>animate it</span>.
+      <br />but maybe don't
+      <span class="variable">animate it</span>.
     </div>
   </div>
 

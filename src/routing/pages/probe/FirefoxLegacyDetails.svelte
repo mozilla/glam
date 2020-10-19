@@ -185,7 +185,9 @@
         probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
-          {$store.probe.info.history[$store.productDimensions.channel][0].versions.first} &ndash; {$store.probe.info.history[$store.productDimensions.channel][0].versions.last}
+          {$store.probe.info.history[$store.productDimensions.channel][0].versions.first}
+          &ndash;
+          {$store.probe.info.history[$store.productDimensions.channel][0].versions.last}
         </dd>
       </dl>
     {/if}
@@ -204,8 +206,7 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.info.calculated.latest_history.bug_numbers
-         && $store.probe.info.calculated.latest_history.bug_numbers.length}
+    {#if $store.probe.info.calculated.latest_history.bug_numbers && $store.probe.info.calculated.latest_history.bug_numbers.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
@@ -221,7 +222,6 @@
     {/if}
   </div>
   <div class="probe-details-download">
-
     <div class="drawer-section drawer-section--end">
       <button on:click={exportData} class="docs-button">
         <Brackets size={16} />
