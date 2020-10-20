@@ -357,7 +357,21 @@ button:focus {
 .app {
   display: grid;
   min-height: 100vh;
+  max-width: 1024px;
   grid-template-rows: max-content auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1280px) {
+  .app {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1600px) {
+  .app {
+    max-width: 1600px;
+  }
 }
 
 .app--toolbar {
@@ -391,16 +405,14 @@ button:focus {
   align-self: stretch;
   --header-size: minmax(var(--increment), max-content);
   --footer-size: minmax(var(--increment), max-content);
-  --body-width: var(--main-content-width);
+  --body-width: 100%;
 
   display: grid;
   align-items: start;
   height: 100%;
   grid-template-columns:
     [left] auto
-    [left-gutter] minmax(0px, 80px)
     [body-content] var(--body-width)
-    [right-gutter] minmax(0px, 80px)
     [right] auto;
   grid-template-rows:
     [body-header] var(--header-size)
@@ -422,12 +434,12 @@ button:focus {
   grid-column: body-content;
   grid-row: body-content;
   align-self: stretch;
+  width: 100%;
 }
 
 .content--footer {
   grid-column: body-content;
   grid-row: body-footer;
-  display: grid;
   align-items: center;
   height: 100%;
 }
@@ -969,7 +981,7 @@ h2 span {
   height: 100%;
   display: grid;
   grid-template-areas: 'left content-body';
-  grid-template-columns: auto calc(var(--space-base) * 120);
+  grid-template-columns: 240px minmax(0, 1fr);
   border-radius: var(--content-border-radius);
   box-shadow: var(--depth-large);
 }
@@ -979,9 +991,9 @@ h2 span {
 }
 
 .graphic-body > div:only-child {
+  grid-column: 1 / span 2;
   border-right: 0;
   border-radius: var(--content-border-radius);
-  width: var(--main-content-width);
 }
 
 .probe-details-title {

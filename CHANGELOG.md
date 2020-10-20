@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.10.1...HEAD) (date TBD)
 
+- Expand widths of main content for larger displays
+  ([#980](https://github.com/mozilla/glam/pull/980))
+
 ## [2020.10.2](https://github.com/mozilla/glam/compare/2020.10.1...2020.10.2) (2020-10-19)
 
 - Fix non-moving reference markers

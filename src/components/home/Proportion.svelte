@@ -59,7 +59,6 @@
       xType="scaleBand"
       xInnerPadding={0.2}
       xOuterPadding={0}
-      {width}
       {height}
       top={20}
       bottom={28}
