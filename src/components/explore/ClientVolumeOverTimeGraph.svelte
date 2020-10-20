@@ -40,7 +40,6 @@
     xType={aggregationLevel === 'build_id' ? 'time' : 'scalePoint'}
     {xDomain}
     {yDomain}
-    width={totalClientsGraph.width}
     height={totalClientsGraph.height}
     top={totalClientsGraph.top}
     left={totalClientsGraph.left}

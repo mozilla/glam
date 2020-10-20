@@ -29,7 +29,7 @@
 <style>
   .probes-overview {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-column-gap: var(--space-2x);
     grid-row-gap: var(--space-2x);
   }

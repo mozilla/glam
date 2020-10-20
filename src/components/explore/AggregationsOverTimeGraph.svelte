@@ -69,7 +69,6 @@
     {yDomain}
     yType={yScaleType}
     xType={xScaleType}
-    width={aggregationsOverTimeGraph.width - (insufficientData ? aggregationsOverTimeGraph.insufficientDataAdjustment : 0)}
     height={aggregationsOverTimeGraph.height}
     bottom={aggregationsOverTimeGraph.bottom}
     top={aggregationsOverTimeGraph.top}

@@ -4,10 +4,10 @@
 
 <style>
   .glam-footer {
-    grid-column: main;
+    grid-column: body-content;
     display: flex;
     justify-content: space-between;
-    width: var(--main-content-width);
+    width: 100%;
     margin: var(--space-2x) auto;
     align-items: center;
   }

@@ -187,7 +187,7 @@
 <style>
   .graphic-and-summary {
     display: grid;
-    grid-template-columns: max-content max-content auto;
+    grid-template-columns: minmax(0, 1fr) min-content auto;
     grid-row-gap: var(--space-2x);
   }
 

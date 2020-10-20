@@ -29,7 +29,6 @@
       {xDomain}
       xType={xScaleType}
       yType="linear"
-      {width}
       {height}
       top={20}
       bottom={28}
