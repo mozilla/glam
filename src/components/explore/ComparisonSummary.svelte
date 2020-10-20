@@ -183,8 +183,8 @@
           {#if showRight}
             <td class="value-right">
               {#if rightValue !== undefined}
-                <Springable value={rightValue} let:tweenValue>
-                  {valueFormatter(tweenValue)}
+                <Springable value={rightValue} let:springValue>
+                  {valueFormatter(springValue)}
                 </Springable>
               {:else}{' '}{/if}
             </td>
