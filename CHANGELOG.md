@@ -4,6 +4,8 @@
 
 - Expand widths of main content for larger displays
   ([#980](https://github.com/mozilla/glam/pull/980))
+- Fix `NaN` reference values
+  ([bdc42bf](https://github.com/mozilla/glam/commit/bdc42bf3df6b746c6edfce9cad60b3d8094612a6))
 
 ## [2020.10.2](https://github.com/mozilla/glam/compare/2020.10.1...2020.10.2) (2020-10-19)
 
