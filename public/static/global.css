@@ -94,7 +94,6 @@
 
   --increment: var(--space-6x); /* eg. 48dp. */
   --screen-padding: var(--space-6x);
-  --drawer-width: calc(var(--space-base) * 30);
   --header-height: var(--increment);
   --toolbar-background-color: var(--blue-slate-700);
   --toolbar-text-color: white;
@@ -275,12 +274,27 @@
   --button-text-size-compact: calc(var(--space-base) * 1.5);
 
   --content-border-radius: var(--space-2x);
-  --main-content-width: 1200px;
+  --app-width: 1024px; /* Adjusted via media queries below */
+  --drawer-width: calc(var(--app-width) * 0.2);
 
   --alert-notice-item-padding: var(--space-2x);
   --alert-notice-background: var(--bright-yellow-100);
   --alert-notice-border: 1px solid var(--bright-yellow-500);
   --alert-notice-text-color: var(--bright-yellow-700);
+}
+
+@media (min-width: 1300px) {
+  :root {
+    --app-width: 1280px;
+    --drawer-width: calc(var(--app-width) * 0.2);
+  }
+}
+
+@media (min-width: 1620px) {
+  :root {
+    --app-width: 1600px;
+    --drawer-width: calc(var(--app-width) * 0.2);
+  }
 }
 
 html,
@@ -357,21 +371,10 @@ button:focus {
 .app {
   display: grid;
   min-height: 100vh;
-  max-width: 1024px;
+  max-width: var(--app-width);
   grid-template-rows: max-content auto;
   margin-left: auto;
   margin-right: auto;
-}
-
-@media (min-width: 1280px) {
-  .app {
-    max-width: 1280px;
-  }
-}
-@media (min-width: 1600px) {
-  .app {
-    max-width: 1600px;
-  }
 }
 
 .app--toolbar {
@@ -981,7 +984,7 @@ h2 span {
   height: 100%;
   display: grid;
   grid-template-areas: 'left content-body';
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: var(--drawer-width) minmax(0, 1fr);
   border-radius: var(--content-border-radius);
   box-shadow: var(--depth-large);
 }

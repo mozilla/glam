@@ -187,7 +187,7 @@
 <style>
   .graphic-and-summary {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) min-content auto;
+    grid-template-columns: calc(var(--app-width) * 0.4) min-content auto;
     grid-row-gap: var(--space-2x);
   }
 
@@ -232,7 +232,6 @@
       {hovered}
       bind:hoverValue
       {aggregationLevel}
-      {insufficientData}
       on:click={() => {
         if (hovered.datum) {
           reference = hovered.datum;

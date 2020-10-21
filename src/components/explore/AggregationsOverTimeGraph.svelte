@@ -28,7 +28,6 @@
   export let xScaleType;
   export let yScaleType;
   export let data;
-  export let insufficientData;
   export let lineColorMap = () => 'gray';
   export let hovered = {};
   export let reference = {};
