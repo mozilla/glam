@@ -20,7 +20,7 @@ export default {
       ],
       defaultValue: 'nightly',
       isValidKey(key, probe) {
-        return (probe.prerelease && key !== 'release') || !probe.prerelease;
+        return key in probe.info.history;
       },
     },
     os: {
@@ -178,9 +178,14 @@ export default {
       const newProcess = probe.info.calculated.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
+    // If channel isn't included in history, reset state to channel that is
+    if (!(state.productDimensions.channel in probe.info.history)) {
+      store.setDimension('channel', Object.keys(probe.info.history)[0]);
+    }
     // accommodate prerelease-only probes by resetting to nightly (if needed)
     if (
       state.productDimensions.channel === 'release' &&
+      'release' in probe.info.history &&
       !probe.info.history.release[0].optout
     ) {
       store.setDimension('channel', 'nightly');
