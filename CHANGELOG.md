@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.10.1...HEAD) (date TBD)
 
+- Parse glean descriptions with markdown
+  ([#995](https://github.com/mozilla/glam/pull/995))
 - Expand widths of main content for larger displays
   ([#980](https://github.com/mozilla/glam/pull/980))
 
