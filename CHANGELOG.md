@@ -1,7 +1,9 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.10.1...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.10.3...HEAD) (date TBD)
 
+- Attach desktop channels to probe.info.history keys
+  ([#996](https://github.com/mozilla/glam/pull/996))
 - Parse glean descriptions with markdown
   ([#995](https://github.com/mozilla/glam/pull/995))
 - Expand widths of main content for larger displays
