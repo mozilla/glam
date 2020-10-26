@@ -11,7 +11,7 @@ certifi==2020.6.20        # via requests
 cffi==1.14.3              # via cryptography, google-crc32c
 chardet==3.0.4            # via requests
 coverage==5.3             # via pytest-cov
-cryptography==3.1.1       # via josepy, mozilla-django-oidc, pyopenssl
+cryptography==3.2         # via josepy, mozilla-django-oidc, pyopenssl
 dj-database-url==0.5.0    # via -r requirements.in
 django-configurations==2.2  # via -r requirements.in
 django==3.1.2             # via -r requirements.in, djangorestframework, drf-orjson-renderer, mozilla-django-oidc
@@ -19,25 +19,25 @@ djangorestframework==3.12.1  # via -r requirements.in, drf-orjson-renderer
 dockerflow==2020.10.0     # via -r requirements.in
 drf-orjson-renderer==1.1.4  # via -r requirements.in
 flake8==3.8.4             # via -r requirements.in
-google-api-core[grpc]==1.22.4  # via google-cloud-bigquery, google-cloud-core
+google-api-core[grpc]==1.23.0  # via google-cloud-bigquery, google-cloud-core
 google-auth==1.22.1       # via google-api-core, google-cloud-storage
 google-cloud-bigquery==2.2.0  # via -r requirements.in
 google-cloud-core==1.4.3  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.31.2  # via -r requirements.in
+google-cloud-storage==1.32.0  # via -r requirements.in
 google-crc32c==1.0.0      # via google-resumable-media
 google-resumable-media==1.1.0  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.52.0  # via google-api-core
-grpcio==1.32.0            # via google-api-core
+grpcio==1.33.1            # via google-api-core
 gunicorn==20.0.4          # via -r requirements.in
 idna==2.10                # via requests
 iniconfig==1.1.1          # via pytest
 josepy==1.4.0             # via mozilla-django-oidc
 mccabe==0.6.1             # via flake8
 mozilla-django-oidc==1.2.4  # via -r requirements.in
-orjson==3.4.0             # via drf-orjson-renderer
+orjson==3.4.1             # via drf-orjson-renderer
 packaging==20.4           # via pytest
 pluggy==0.13.1            # via pytest
-proto-plus==1.10.2        # via google-cloud-bigquery
+proto-plus==1.11.0        # via google-cloud-bigquery
 protobuf==3.13.0          # via google-api-core, google-cloud-bigquery, googleapis-common-protos, proto-plus
 psycopg2-binary==2.8.6    # via -r requirements.in
 py==1.9.0                 # via pytest
@@ -50,7 +50,7 @@ pyopenssl==19.1.0         # via josepy
 pyparsing==2.4.7          # via packaging
 pytest-blockage==0.2.2    # via -r requirements.in
 pytest-cov==2.10.1        # via -r requirements.in
-pytest-django==4.0.0      # via -r requirements.in
+pytest-django==4.1.0      # via -r requirements.in
 pytest==6.1.1             # via -r requirements.in, pytest-blockage, pytest-cov, pytest-django
 pytz==2020.1              # via django, google-api-core
 requests==2.24.0          # via google-api-core, google-cloud-storage, mozilla-django-oidc
