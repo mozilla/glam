@@ -1,6 +1,6 @@
 # Provide options for further data exploration
 
-- Status: proposed
+- Status: accepted
 - Deciders: Rob Miller, Rob Hudson, Hamilton Ulmer
 - Date: 2020-10-07
 
@@ -32,7 +32,12 @@ Extra options we can provide:
 
 ## Decision Outcome
 
-TBD
+Chosen option: 2. Copy-paste-able SQL query
+
+It was decided that option 2 was the best and most useful option. Option 1 has
+not been requested thus far. Option 3's tight integration with Redash was deemed
+unwise as Redash has an unknown future at Mozilla and the SQL query could be
+easily copied there as well as the bigquery console.
 
 ## Pros and Cons of the Options
 

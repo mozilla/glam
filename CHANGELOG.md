@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.10.3...HEAD) (date TBD)
 
+- Accepted data exploration ADR
+  ([#950](https://github.com/mozilla/glam/pull/950))
 - Attach desktop channels to probe.info.history keys
   ([#996](https://github.com/mozilla/glam/pull/996))
 - Parse glean descriptions with markdown
