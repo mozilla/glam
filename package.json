@@ -61,7 +61,7 @@
     "d3-time-format": "3.0.0",
     "marked": "^1.2.2",
     "page": "1.11.6",
-    "throttle-debounce": "2.3.0"
+    "throttle-debounce": "3.0.0"
   },
   "scripts": {
     "build": "rollup --config --environment NODE_ENV:production",
