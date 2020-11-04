@@ -12,6 +12,8 @@
   ([#980](https://github.com/mozilla/glam/pull/980))
 - Add `scalar` to list of known metric types for desktop
   ([#1007](https://github.com/mozilla/glam/issues/1007))
+- Add validation for unknown metric types
+  ([#1008](https://github.com/mozilla/glam/issues/1008))
 
 ## [2020.10.3](https://github.com/mozilla/glam/compare/2020.10.2...2020.10.3) (2020-10-20)
 

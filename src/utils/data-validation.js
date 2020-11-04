@@ -1,14 +1,13 @@
-export const noDuplicates = (payload, aggregationMethod = 'build_id') => {
-  // go through ever data
-  // look at data[...].metadata[aggregationMethod]. There should be no duplicates.
-  const allBuildIDs = payload.response.map((di) => di[aggregationMethod]);
-  const uniques = new Set(allBuildIDs);
-  if (allBuildIDs.length !== uniques.size) {
-    throw new Error(
-      `Duplicate ${
-        aggregationMethod === 'build_id' ? 'Build IDs' : 'Versions'
-      } found.`
-    );
+export const noUnknownMetrics = (payload, probeViews = []) => {
+  // Ensure the probe metric type is in our list of `probeView`s.
+  const metricType = payload.response[0].metric_type;
+  if (!(metricType in probeViews)) {
+    const er = new Error('This metric type is currently unsupported.');
+    er.moreInformation =
+      `GLAM doesn't yet know how to aggregate "${metricType}" type metrics. ` +
+      'If you seeing aggregations of metrics of this type would be valuable for you, ' +
+      'or if you believe this is an error, please let us know.';
+    throw er;
   }
 };
 

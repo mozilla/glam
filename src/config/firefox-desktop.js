@@ -3,7 +3,11 @@ import { extractBucketMetadata } from './shared';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
 import { getProbeData } from '../state/api';
-import { validate, noResponse } from '../utils/data-validation';
+import {
+  validate,
+  noResponse,
+  noUnknownMetrics,
+} from '../utils/data-validation';
 
 export default {
   label: 'Firefox',
@@ -112,7 +116,10 @@ export default {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
       const metricType = payload.response[0].metric_type;
-      validate(payload, (p) => noResponse(p));
+      validate(payload, (p) => {
+        noResponse(p);
+        noUnknownMetrics(p, Object.keys(this.probeView));
+      });
       const viewType =
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
