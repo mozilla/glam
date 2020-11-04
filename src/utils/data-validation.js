@@ -1,7 +1,7 @@
 export const noUnknownMetrics = (payload, probeViews = []) => {
   // Ensure the probe metric type is in our list of `probeView`s.
   const metricType = payload.response[0].metric_type;
-  if (!(metricType in probeViews)) {
+  if (!(probeViews.includes(metricType))) {
     const er = new Error('This metric type is currently unsupported.');
     er.moreInformation =
       `GLAM doesn't yet know how to aggregate "${metricType}" type metrics. ` +
