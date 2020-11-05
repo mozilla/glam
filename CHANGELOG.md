@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.10.3...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2020.11.0...HEAD) (date TBD)
+
+## [2020.11.0](https://github.com/mozilla/glam/compare/2020.10.3...2020.11.0) (2020-11-04)
 
 - Accepted data exploration ADR
   ([#950](https://github.com/mozilla/glam/pull/950))
