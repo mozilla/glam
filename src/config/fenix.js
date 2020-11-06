@@ -109,20 +109,8 @@ export default {
         aggregationLevel,
         metricType
       );
-      // delete old (bad) builds?
-
-      const transformedData =
-        params.aggregationLevel === 'version'
-          ? data
-          : data.filter((di, i) => {
-              // get di.build_date;
-              if (i > 0 && di.label - data[i - 1].label < 1000 * 60 * 60 * 24)
-                return false;
-              return true;
-            });
-
       return {
-        data: transformedData,
+        data,
         probeType: this.probeView[metricType],
       };
     });
