@@ -24,10 +24,17 @@ class Command(BaseCommand):
 
     help = "Imports user counts"
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--bucket",
+            default=GCS_BUCKET,
+            help="The bucket location for the exported aggregates",
+        )
+
+    def handle(self, bucket, *args, **options):
 
         gcs_client = storage.Client()
-        bucket = gcs_client.get_bucket(GCS_BUCKET)
+        bucket = gcs_client.get_bucket(bucket)
 
         for product, opts in MAPPING.items():
             model = apps.get_model(opts["model"])
@@ -35,6 +42,9 @@ class Command(BaseCommand):
             for app_id in opts["apps"]:
                 filename = f"glam-extract-org_mozilla_fenix_glam_{app_id}-counts.csv"
                 blob = bucket.get_blob(filename)
+
+                if not blob:
+                    continue
 
                 # Create temp table for data.
                 tmp_table = f"tmp_import_{product}_counts"
