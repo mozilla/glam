@@ -39,7 +39,6 @@ class Core(Configuration):
         "dockerflow.django",
         # Django apps
         "django.contrib.auth",
-        "mozilla_django_oidc",
         "django.contrib.contenttypes",
         "django.contrib.staticfiles",
     ]
@@ -173,11 +172,6 @@ class Base(Core):
                 "django.server": {
                     "handlers": ["django.server"],
                     "level": "INFO",
-                    "propagate": False,
-                },
-                "mozilla_django_oidc": {
-                    "level": "INFO",
-                    "handlers": ["console"],
                     "propagate": False,
                 },
             },
