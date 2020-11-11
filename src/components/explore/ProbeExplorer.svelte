@@ -167,7 +167,7 @@
       data: d,
       value: x,
       lowestValue: $domain[0],
-      highestValue: $domain[1],
+      highestValue: $domain[$domain.length - 1],
     });
   }
   let hoverValue = {};
