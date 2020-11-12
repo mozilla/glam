@@ -1,4 +1,5 @@
 import { transformAPIResponse } from '../utils/transform-data';
+import { stripDefaultValues } from '../utils/urls';
 import { extractBucketMetadata } from './shared';
 import { getProbeData } from '../state/api';
 import {
@@ -66,7 +67,7 @@ export default {
     // These parameters will map to a ${key}=${value}&... in the querystring,
     // which is used to convey the view state when the GLAM URL is shared with
     // others.
-    return {
+    const params = {
       app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
       ping_type: storeValue.productDimensions.ping_type,
@@ -77,6 +78,7 @@ export default {
       visiblePercentiles: storeValue.visiblePercentiles,
       reference: storeValue.reference,
     };
+    return stripDefaultValues(params);
   },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself

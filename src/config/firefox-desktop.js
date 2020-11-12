@@ -1,5 +1,6 @@
 import produce from 'immer';
 import { extractBucketMetadata } from './shared';
+import { stripDefaultValues } from '../utils/urls';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
 import { getProbeData } from '../state/api';
@@ -87,7 +88,7 @@ export default {
     // These parameters will map to a ${key}=${value}&... in the querystring,
     // which is used to convey the view state when the GLAM URL is shared with
     // others.
-    return {
+    const params = {
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
@@ -98,6 +99,7 @@ export default {
       visiblePercentiles: storeValue.visiblePercentiles,
       reference: storeValue.reference,
     };
+    return stripDefaultValues(params);
   },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
