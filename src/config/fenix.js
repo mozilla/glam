@@ -34,8 +34,10 @@ export default {
       key: 'ping_type',
       values: [
         { key: '*', label: 'All' },
-        { key: 'metrics', label: 'Metrics' },
         { key: 'baseline', label: 'Baseline' },
+        { key: 'metrics', label: 'Metrics' },
+        { key: 'first-session', label: 'First Session' },
+        { key: 'migration', label: 'Migration' },
       ],
       defaultValue: 'metrics',
       isValidKey(key, probe) {
