@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { extractBucketMetadata } from './shared';
+import sharedDefaults, { extractBucketMetadata } from './shared';
 import { stripDefaultValues } from '../utils/urls';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
@@ -99,7 +99,10 @@ export default {
       visiblePercentiles: storeValue.visiblePercentiles,
       reference: storeValue.reference,
     };
-    return stripDefaultValues(params);
+    return stripDefaultValues(params, {
+      ...sharedDefaults,
+      ...this.dimensions,
+    });
   },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself

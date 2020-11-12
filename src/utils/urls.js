@@ -1,5 +1,3 @@
-import paramDefaults from '../config/shared';
-
 // Return a shortened URL for bugzilla and github URLs.
 export function extractBugId(url) {
   if (url.includes('bugzilla')) {
@@ -20,21 +18,21 @@ export function extractBugId(url) {
 
 // Given an object of query params, return the object stripped of query
 // parameters that are set to their default values.
-export function stripDefaultValues(params) {
+export function stripDefaultValues(params, defaults) {
   return Object.keys(params)
     .filter((k) => {
-      if (Object.keys(paramDefaults).includes(k)) {
+      if (Object.keys(defaults).includes(k)) {
         // If this param has a default value defined.
-        if (paramDefaults[k].isMulti) {
+        if (defaults[k].isMulti) {
           // If it has multiple values, use JSON.stringify for an easy
           // equality check since these are arrays.
           return (
             JSON.stringify(params[k]) !==
-            JSON.stringify(paramDefaults[k].defaultValue)
+            JSON.stringify(defaults[k].defaultValue)
           );
         }
         // It's not `isMulti`, so just compare value to value.
-        return params[k] !== paramDefaults[k].defaultValue;
+        return params[k] !== defaults[k].defaultValue;
       }
       // If no default defined, return true to always include it in the URL.
       return true;
