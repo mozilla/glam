@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.0...HEAD) (date TBD)
 
+- Provide SQL query for further data exploration
+  ([#1021](https://github.com/mozilla/glam/pull/1021))
 - Remove default values from URLs so they aren't as unwieldy
   ([#1027](https://github.com/mozilla/glam/issues/1027))
 - Default to "All" ping types for unknown ping types

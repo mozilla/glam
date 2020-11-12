@@ -1,5 +1,6 @@
 <script>
   import { DocumentationDark } from '@graph-paper/icons';
+  import SqlModal from '../../../components/SqlModal.svelte';
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
@@ -22,6 +23,40 @@
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
   const isProbeActive = $store.probe.info.calculated.active;
+
+  function getSql() {
+    const columns = [
+      'os',
+      'app_version',
+      'app_build_id',
+      'channel',
+      'metric',
+      'metric_type',
+      'key',
+      'process',
+      'client_agg_type',
+      'agg_type',
+      'total_users',
+      'aggregates',
+    ];
+    const sql = [
+      'SELECT',
+      `  ${columns.join(',\n  ')}`,
+      'FROM',
+      '  `moz-fx-data-shared-prod.telemetry.client_probe_counts`',
+      'WHERE',
+      `  metric="${$store.probe.name}"`,
+      `  AND channel="${$store.productDimensions.channel}"`,
+      $store.productDimensions.os === '*'
+        ? '  AND os IS NULL'
+        : `  AND os="${$store.productDimensions.os}"`,
+      `  AND process="${$store.productDimensions.process}"`,
+      $store.productDimensions.aggregationLevel === 'build_id'
+        ? '  AND app_build_id IS NOT NULL'
+        : '  AND app_build_id IS NULL',
+    ];
+    return sql.join('\n');
+  }
 </script>
 
 <style>
@@ -223,6 +258,7 @@
   </div>
   <div class="probe-details-download">
     <div class="drawer-section drawer-section--end">
+      <SqlModal {getSql} />
       <button on:click={exportData} class="docs-button">
         <Brackets size={16} />
         Export to JSON
