@@ -30,7 +30,7 @@
   export let data;
   export let lineColorMap = () => 'gray';
   export let hovered = {};
-  export let reference = {};
+  export let ref = {};
   export let yTickFormatter;
 
   export let metricKeys;
@@ -99,8 +99,8 @@
       {/each}
     </g>
     <g slot="annotation" let:xScale let:yScale>
-      {#if reference}
-        <Tweenable value={xScale(reference.label)} let:tweenValue={tv1}>
+      {#if ref}
+        <Tweenable value={xScale(ref.label)} let:tweenValue={tv1}>
           <TrackingLine xr={tv1} />
           <TrackingLabel
             yOffset={16}
@@ -135,7 +135,7 @@
         {/if}
       {/if}
 
-      {#each plotValues(reference.label, reference[yAccessor], metricKeys, xScale, yScale) as { x, y, bin }, i (bin)}
+      {#each plotValues(ref.label, ref[yAccessor], metricKeys, xScale, yScale) as { x, y, bin }, i (bin)}
         <g in:fly={{ duration: 150, y: 100, easing }}>
           <Springable value={[x, y]} let:springValue>
             <ReferenceSymbol

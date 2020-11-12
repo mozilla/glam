@@ -22,7 +22,7 @@
   export let aggregationLevel;
   export let xDomain;
   export let yDomain;
-  export let reference;
+  export let ref;
   export let hovered;
 
   export let hoverValue = {};
@@ -78,10 +78,10 @@
       {#if hovered && hovered.datum}
         <TrackingLine x={hovered.datum.label} />
       {/if}
-      {#if reference}
+      {#if ref}
         <Tweenable
           params={tween}
-          value={{ location: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize }}
+          value={{ location: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
           let:tweenValue={tv1}>
           <TrackingLine xr={tv1.location} />
         </Tweenable>
@@ -98,11 +98,11 @@
           r="3"
           fill="var(--cool-gray-700)" />
       {/if}
-      {#if reference && reference.label && reference.audienceSize !== undefined}
+      {#if ref && ref.label && ref.audienceSize !== undefined}
         <Tweenable
           params={tween}
-          value={{ x: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize }}
-          from={{ x: xScale(reference.label), y: yScale(reference.audienceSize), audienceSize: reference.audienceSize }}
+          value={{ x: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
+          from={{ x: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
           let:tweenValue>
           <ReferenceSymbol
             size={20}

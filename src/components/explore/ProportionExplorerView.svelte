@@ -52,16 +52,16 @@
   let currentAggregation = aggregationTypes[0];
 
   // set the audience size when the reference updates.
-  let reference;
+  let ref;
   const movingAudienceSize = tweened(0, { duration: 500, easing });
-  $: if (reference) movingAudienceSize.set(reference.audienceSize);
+  $: if (ref) movingAudienceSize.set(ref.audienceSize);
 
-  $: if (currentKey && reference) {
+  $: if (currentKey && ref) {
     if (data[currentKey] !== undefined) {
-      const ref = data[currentKey][currentAggregation].find(
-        (d) => d.label.toString() === reference.label.toString()
+      const r = data[currentKey][currentAggregation].find(
+        (d) => d.label.toString() === ref.label.toString()
       );
-      reference = ref;
+      ref = r;
     }
   }
 
@@ -218,7 +218,7 @@
         {#if key === currentKey && (aggregationTypes.length === 1 || aggType === currentAggregation)}
           <div class="small-multiple">
             <ProbeExplorer
-              bind:reference
+              bind:ref
               aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
               aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
               summaryLabel="cat."

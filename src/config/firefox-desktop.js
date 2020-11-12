@@ -97,7 +97,7 @@ export default {
       proportionMetricType: storeValue.proportionMetricType,
       activeBuckets: storeValue.activeBuckets,
       visiblePercentiles: storeValue.visiblePercentiles,
-      reference: storeValue.reference,
+      ref: storeValue.ref,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,

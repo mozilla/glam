@@ -31,7 +31,7 @@ function getDefaultState(
   }
 
   state.probeName = '';
-  state.reference = getFromQueryString('reference') || '';
+  state.ref = getFromQueryString('ref') || '';
   state.route = {};
   state.searchProduct = state.product || 'firefox';
 

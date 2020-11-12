@@ -61,7 +61,7 @@
           }
           // If the probe has changed, reset the reference point.
           if (storeValue.probeName !== probeName) {
-            store.setField('reference', '');
+            store.setField('ref', '');
           }
           store.setField('probe', newProbe);
 

@@ -126,19 +126,19 @@
 
   // Get the reference point from the query string if possible
   function getDefaultReferencePoint() {
-    if ($store.reference) {
-      const found = data.find((d) => d[aggregationLevel] === $store.reference);
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
       if (found) return found;
     }
     return data[data.length - 1];
   }
 
-  export let reference = getDefaultReferencePoint();
+  export let ref = getDefaultReferencePoint();
 
   // Persist the reference point to the query string
   $: store.setField(
-    'reference',
-    aggregationLevel === 'version' ? reference.version : reference.build_id
+    'ref',
+    aggregationLevel === 'version' ? ref.version : ref.build_id
   );
 
   // This will lightly animate the reference distribution part of the violin plot.
@@ -146,12 +146,10 @@
   // This is pretty inelegant.
   let animatedReferenceDistribution = writable(0);
   $: if (densityMetricType) {
-    animatedReferenceDistribution = histogramSpring(
-      reference[densityMetricType]
-    );
+    animatedReferenceDistribution = histogramSpring(ref[densityMetricType]);
   }
-  $: if (densityMetricType && reference[densityMetricType]) {
-    animatedReferenceDistribution.setValue(reference[densityMetricType]);
+  $: if (densityMetricType && ref[densityMetricType]) {
+    animatedReferenceDistribution.setValue(ref[densityMetricType]);
   }
 
   // client counts.
@@ -206,7 +204,7 @@
 
 <div class="probe-body-overview">
   <ToplineMetrics
-    {reference}
+    {ref}
     hovered={data.length > 2 ? hovered.datum : data[0]}
     dataLength={data.length}
     {aggregationLevel} />
@@ -228,13 +226,13 @@
       {yScaleType}
       {yTickFormatter}
       metricKeys={activeBins}
-      {reference}
+      {ref}
       {hovered}
       bind:hoverValue
       {aggregationLevel}
       on:click={() => {
         if (hovered.datum) {
-          reference = hovered.datum;
+          ref = hovered.datum;
         }
       }}>
       <slot name="additional-plot-elements" />
@@ -245,11 +243,11 @@
     description={compareDescription(aggregationsOverTimeTitle)}
     {yScaleType}
     leftLabel={leftLabelForAggComparison(data, aggregationLevel, hovered.x)}
-    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(reference.label) : reference.label}
+    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(ref.label) : ref.label}
     colorMap={binColorMap}
     {yTickFormatter}
     leftPoints={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
-    rightPoints={reference[pointMetricType]}
+    rightPoints={ref[pointMetricType]}
     {activeBins}
     {yDomain}
     dataVolume={data.length}
@@ -269,10 +267,10 @@
             density={data.length < 3 || !hovered.datum ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
             width={(explorerComparisonSmallMultiple.width - explorerComparisonSmallMultiple.left - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
-        {#if reference && reference[densityMetricType]}
+        {#if ref && ref[densityMetricType]}
           <AdHocViolin
             start={justOne ? lp : (lp + rp) / 2}
-            density={reference[densityMetricType]}
+            density={ref[densityMetricType]}
             width={justOne ? rp - lp - VIOLIN_PLOT_OFFSET * 2 : (explorerComparisonSmallMultiple.width - explorerComparisonSmallMultiple.left - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if !justOne}
@@ -290,7 +288,7 @@
   <ComparisonSummary
     hovered={data.length === 2 || !!hovered.datum}
     left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
-    right={reference[pointMetricType]}
+    right={ref[pointMetricType]}
     leftLabel={data.length === 2 ? 'PREV.' : 'HOV.'}
     rightLabel={data.length <= 2 ? 'LATEST' : 'REF.'}
     binLabel={summaryLabel}
@@ -309,11 +307,11 @@
       yDomain={yClientsDomain}
       {aggregationLevel}
       {hovered}
-      {reference}
+      {ref}
       bind:hoverValue
       on:click={() => {
         if (hovered.datum) {
-          reference = hovered.datum;
+          ref = hovered.datum;
         }
       }} />
   </div>
@@ -322,6 +320,6 @@
       description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}
       hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
-      referenceValue={reference.audienceSize} />
+      referenceValue={ref.audienceSize} />
   </div>
 </div>

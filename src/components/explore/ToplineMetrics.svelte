@@ -10,7 +10,7 @@
     formatParenPercent,
   } from '../../utils/formatters';
 
-  export let reference;
+  export let ref;
   export let hovered;
   export let dataLength;
   export let aggregationLevel;
@@ -49,12 +49,9 @@
 <div
   class="topline"
   style="padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;">
-  <Tweenable
-    params={{ duration: 250 }}
-    value={reference.audienceSize}
-    let:tweenValue>
+  <Tweenable params={{ duration: 250 }} value={ref.audienceSize} let:tweenValue>
     <ToplineRow
-      value={reference.label}
+      value={ref.label}
       {aggregationLevel}
       description="Set the reference point ⭑ by clicking on one of the graphs below.">
       <span slot="icon">⭑</span>
@@ -62,7 +59,7 @@
         {#if dataLength > 2}Reference{:else}Latest{/if}
       </span>
       <span slot="count">
-        <span data-value={reference.audienceSize}>
+        <span data-value={ref.audienceSize}>
           <span
             class="topline__client-count"
             class:topline--client-count--highlighted={hovered && hovered.audienceSize < tweenValue}>
@@ -76,7 +73,7 @@
       <ToplineRow
         params={{ duration: 0 }}
         value={hovered ? hovered.label : undefined}
-        compare={reference.label}
+        compare={ref.label}
         {aggregationLevel}
         description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑.">
         <span slot="icon">●</span>
