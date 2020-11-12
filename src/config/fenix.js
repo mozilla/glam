@@ -143,9 +143,16 @@ export default {
     const state = store.getState();
     const { probe } = state;
     if (!probe.info.send_in_pings.includes(state.productDimensions.ping_type)) {
-      // Try not to pick the 'All' option.
+      // Try not to pick the 'All' option, at first.
       const index = probe.info.send_in_pings.length > 1 ? 1 : 0;
-      store.setDimension('ping_type', probe.info.send_in_pings[index]);
+      let newPingtype = probe.info.send_in_pings[index];
+      if (
+        !Object.keys(this.dimensions.ping_type.values).includes(newPingtype)
+      ) {
+        // We don't know about this ping type, default to 'All'.
+        newPingtype = '*';
+      }
+      store.setDimension('ping_type', newPingtype);
     }
   },
 };

@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.0...HEAD) (date TBD)
 
+- Default to "All" ping types for unknown ping types
+  ([#1026](https://github.com/mozilla/glam/issues/1026))
 - Update labeled counters to use linear probe view
   ([#1023](https://github.com/mozilla/glam/issues/1023))
 - Fix so we can hover latest reference point
