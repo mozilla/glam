@@ -2,6 +2,11 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.0...HEAD) (date TBD)
 
+- Update labeled counters to use linear probe view
+  ([#1023](https://github.com/mozilla/glam/issues/1023))
+- Fix so we can hover latest reference point
+  ([#1022](https://github.com/mozilla/glam/issues/1022))
+
 ## [2020.11.0](https://github.com/mozilla/glam/compare/2020.10.3...2020.11.0) (2020-11-04)
 
 - Accepted data exploration ADR

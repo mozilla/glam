@@ -57,7 +57,7 @@ export default {
     counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'log',
-    labeled_counter: 'categorical',
+    labeled_counter: 'linear',
     memory_distribution: 'linear',
     quantity: 'linear',
     timing_distribution: 'linear',

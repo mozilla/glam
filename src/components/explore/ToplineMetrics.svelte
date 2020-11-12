@@ -80,9 +80,9 @@
         {aggregationLevel}
         description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑.">
         <span slot="icon">●</span>
-        <span slot="label">{#if dataLength > 2}
-            Hovered
-          {:else}Previous{/if}</span>
+        <span slot="label">
+          {#if dataLength > 2}Hovered{:else}Previous{/if}
+        </span>
         <span slot="count">
           <div>
             {#if hovered}
