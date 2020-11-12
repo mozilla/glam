@@ -8,10 +8,42 @@
   import { extractBugId } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
+  import SqlModal from '../../../components/SqlModal.svelte';
 
   async function exportData() {
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
+  }
+
+  function getSql() {
+    const table = `glam-fenix-dev.glam_etl.org_mozilla_fenix_glam_${$store.productDimensions.app_id}__view_probe_counts_v1`;
+    const columns = [
+      'ping_type',
+      'os',
+      'app_version',
+      'app_build_id',
+      'metric',
+      'metric_type',
+      'key',
+      'client_agg_type',
+      'agg_type',
+      'total_users',
+      'aggregates',
+    ];
+    const sql = [
+      'SELECT',
+      `  ${columns.join(',\n  ')}`,
+      'FROM',
+      `  \`${table}\``,
+      'WHERE',
+      `  metric="${$store.probe.name}"`,
+      `  AND os="${$store.productDimensions.os}"`,
+      `  AND ping_type="${$store.productDimensions.ping_type}"`,
+      $store.productDimensions.aggregationLevel === 'build_id'
+        ? '  AND app_build_id!="*"'
+        : '  AND app_build_id="*"',
+    ];
+    return sql.join('\n');
   }
 
   const parseYMD = timeParse('%Y-%m-%d');
@@ -230,6 +262,7 @@
   </div>
   <div class="probe-details-download">
     <div class="drawer-section drawer-section--end">
+      <SqlModal {getSql} />
       <button on:click={exportData} class="docs-button">
         <Brackets size={16} />
         Export to JSON
