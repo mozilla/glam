@@ -22,15 +22,20 @@ class Command(BaseCommand):
 
     help = "Imports user counts"
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--bucket",
+            default=GCS_BUCKET,
+            help="The bucket location for the exported counts",
+        )
+
+    def handle(self, bucket, *args, **options):
 
         self.gcs_client = storage.Client()
 
-        blobs = self.gcs_client.list_blobs(GCS_BUCKET)
+        blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(
-            filter(
-                lambda b: b.name.startswith("glam-extract-firefox-counts"), blobs
-            )
+            filter(lambda b: b.name.startswith("glam-extract-firefox-counts"), blobs)
         )
 
         for blob in blobs:
@@ -61,11 +66,11 @@ class Command(BaseCommand):
     def import_file(self, tmp_table, fp):
 
         csv_columns = [
-            f.name for f in FirefoxCounts._meta.get_fields()
-            if f.name not in ["id"]
+            f.name for f in FirefoxCounts._meta.get_fields() if f.name not in ["id"]
         ]
         conflict_columns = [
-            f for f in FirefoxCounts._meta.constraints[0].fields
+            f
+            for f in FirefoxCounts._meta.constraints[0].fields
             if f not in ["id", "total_users"]
         ]
 
