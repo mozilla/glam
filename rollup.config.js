@@ -1,7 +1,7 @@
 import commonjs from '@rollup/plugin-commonjs';
+import css from 'rollup-plugin-css-only';
 import json from '@rollup/plugin-json';
 import livereload from 'rollup-plugin-livereload';
-import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import svelte from 'rollup-plugin-svelte';
@@ -35,17 +35,15 @@ export default {
       __BASE_SEARCH_DOMAIN__: SEARCH_DOMAIN,
     }),
     svelte({
-      // enable run-time checks when not in production
-      dev: !production,
-      // we'll extract any component CSS out into
-      // a separate file — better for performance
-      css: (css) => {
-        css.write('bundle.css');
+      compilerOptions: {
+        // enable run-time checks when not in production
+        dev: !production,
       },
-      emitCss: true,
     }),
-    postcss({
-      extract: true,
+    // we'll extract any component CSS out into
+    // a separate file — better for performance
+    css({
+      output: 'bundle.css',
     }),
 
     // If you have external dependencies installed from
@@ -53,7 +51,10 @@ export default {
     // some cases you'll need additional configuration —
     // consult the documentation for details:
     // https://github.com/rollup/rollup-plugin-commonjs
-    resolve({ browser: true }),
+    resolve({
+      browser: true,
+      dedupe: ['svelte'],
+    }),
     commonjs(),
 
     // Watch the `public/static/` directory and refresh
