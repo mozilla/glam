@@ -16,7 +16,7 @@
   }
 
   function getSql() {
-    const table = `glam-fenix-dev.glam_etl.org_mozilla_fenix_glam_${$store.productDimensions.app_id}__view_probe_counts_v1`;
+    const table = `moz-fx-data-shared-prod.glam_etl.org_mozilla_fenix_glam_${$store.productDimensions.app_id}__view_probe_counts_v1`;
     const columns = [
       'ping_type',
       'os',

@@ -7,10 +7,11 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from google.cloud import storage
 
+from glam.api import constants
+
 
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
-GCS_BUCKET = "glam-fenix-dev"
 MAPPING = {
     "fenix": {"model": "api.FenixCounts", "apps": ["nightly", "beta", "release"]}
 }
@@ -27,7 +28,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--bucket",
-            default=GCS_BUCKET,
+            default=constants.GCS_BUCKET,
             help="The bucket location for the exported aggregates",
         )
 
