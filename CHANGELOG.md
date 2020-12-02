@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.1...HEAD) (date TBD)
 
+- Remove alpha quality alert notice
+  ([#1058](https://github.com/mozilla/glam/pull/1058))
+
 ## [2020.11.1](https://github.com/mozilla/glam/compare/2020.11.0...2020.11.1) (2020-11-12)
 
 - Provide SQL query for further data exploration

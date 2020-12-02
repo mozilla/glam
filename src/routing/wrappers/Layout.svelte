@@ -6,7 +6,6 @@
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
   import SlackLogo from '../../components/icons/SlackLogo.svelte';
-  import AlertNotice from '../../components/controls/AlertNotice.svelte';
   import ProductSelector from '../../components/controls/ProductSelector.svelte';
 
   import { store } from '../../state/store';
@@ -86,14 +85,4 @@
       <Footer />
     </footer>
   </div>
-  <AlertNotice toggleKey="dataErrorsWarning">
-    <p>Thank you for testing the GLAM prototype!</p>
-    <p>
-      This tool is still in active development so UX bugs and data issues may
-      exist. Help us make it suit your needs by directing questions or feedback
-      to the
-      <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">#glam</a>
-      Slack channel.
-    </p>
-  </AlertNotice>
 </div>
