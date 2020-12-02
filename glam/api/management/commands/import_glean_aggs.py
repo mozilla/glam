@@ -9,12 +9,12 @@ from django.db import connection
 from django.utils import timezone
 from google.cloud import storage
 
+from glam.api import constants
 from glam.api.models import LastUpdated
 
 
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
-GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 APP_TO_MODEL = {
     "nightly": "api.FenixAggregation",
     "beta": "api.FenixAggregation",
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--bucket",
-            default=GCS_BUCKET,
+            default=constants.GCS_BUCKET,
             help="The bucket location for the exported aggregates",
         )
 

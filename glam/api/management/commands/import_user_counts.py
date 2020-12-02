@@ -6,12 +6,12 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from google.cloud import storage
 
+from glam.api import constants
 from glam.api.models import FirefoxCounts
 
 
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
-GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 
 
 def log(message):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--bucket",
-            default=GCS_BUCKET,
+            default=constants.GCS_BUCKET,
             help="The bucket location for the exported counts",
         )
 

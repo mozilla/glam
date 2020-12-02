@@ -42,3 +42,5 @@ PROCESS_CHOICES = (
 )
 PROCESS_NAMES = dict(PROCESS_CHOICES)
 PROCESS_IDS = {v: k for k, v in PROCESS_NAMES.items()}
+
+GCS_BUCKET = 'moz-fx-data-glam-prod-fca7-etl-data'

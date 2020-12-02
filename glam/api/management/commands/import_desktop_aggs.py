@@ -14,7 +14,6 @@ from glam.api.models import LastUpdated
 
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
-GCS_BUCKET = "glam-dev-bespoke-nonprod-dataops-mozgcp-net"
 CHANNEL_TO_MODEL = {
     "nightly": "api.DesktopNightlyAggregation",
     "beta": "api.DesktopBetaAggregation",
@@ -41,7 +40,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--bucket",
             help="The bucket location for the exported aggregates",
-            default=GCS_BUCKET,
+            default=constants.GCS_BUCKET,
         )
 
     def handle(self, bucket, *args, **options):
