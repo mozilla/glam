@@ -45,6 +45,9 @@ server {
 
     client_max_body_size 2g;
 
+    client_header_buffer_size 4k;
+    large_client_header_buffers 4 16k;
+
     # Health checks don't send an x-forwarded-proto header and we need to make
     # sure they don't get infinite redirects
     if ($http_x_forwarded_proto = "http") {
