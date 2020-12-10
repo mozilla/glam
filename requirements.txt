@@ -20,7 +20,7 @@ drf-orjson-renderer==1.1.4  # via -r requirements.in
 flake8==3.8.4             # via -r requirements.in
 google-api-core[grpc]==1.23.0  # via google-cloud-bigquery, google-cloud-core
 google-auth==1.23.0       # via google-api-core, google-cloud-storage
-google-cloud-bigquery==2.4.0  # via -r requirements.in
+google-cloud-bigquery==2.6.1  # via -r requirements.in
 google-cloud-core==1.4.3  # via google-cloud-bigquery, google-cloud-storage
 google-cloud-storage==1.33.0  # via -r requirements.in
 google-crc32c==1.0.0      # via google-resumable-media
