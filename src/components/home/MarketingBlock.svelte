@@ -43,7 +43,7 @@
       Uncover trends and insights about your product's telemetry probes.
     </h2>
     <div class="marketing-block__description">
-      Currently serving: Firefox, Fenix.
+      Currently serving: Firefox Desktop, Firefox Android.
     </div>
     <div class="marketing-block__call-to-action">
       <a

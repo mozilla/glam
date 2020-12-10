@@ -11,7 +11,7 @@ import {
 } from '../utils/data-validation';
 
 export default {
-  label: 'Firefox',
+  label: 'Firefox Desktop',
   key: 'firefox',
   sampleRate: 0.1,
   dimensions: {

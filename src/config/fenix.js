@@ -9,7 +9,7 @@ import {
 } from '../utils/data-validation';
 
 export default {
-  label: 'Fenix',
+  label: 'Firefox Android',
   key: 'fenix',
   sampleRate: 1,
   dimensions: {
@@ -17,9 +17,9 @@ export default {
       title: 'App',
       key: 'app_id',
       values: [
-        { key: 'nightly', label: 'Fenix (nightly)' },
-        { key: 'beta', label: 'Fenix (beta)' },
-        { key: 'release', label: 'Fenix (release)' },
+        { key: 'nightly', label: 'Nightly' },
+        { key: 'beta', label: 'Beta' },
+        { key: 'release', label: 'Release' },
       ],
       defaultValue: 'nightly',
     },
