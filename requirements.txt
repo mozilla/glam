@@ -47,7 +47,7 @@ pyparsing==2.4.7          # via packaging
 pytest-blockage==0.2.2    # via -r requirements.in
 pytest-cov==2.10.1        # via -r requirements.in
 pytest-django==4.1.0      # via -r requirements.in
-pytest==6.1.2             # via -r requirements.in, pytest-blockage, pytest-cov, pytest-django
+pytest==6.2.0             # via -r requirements.in, pytest-blockage, pytest-cov, pytest-django
 pytz==2020.4              # via django, google-api-core
 requests==2.25.0          # via google-api-core, google-cloud-storage
 rsa==4.6                  # via google-auth
