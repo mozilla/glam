@@ -22,7 +22,7 @@ google-api-core[grpc]==1.23.0  # via google-cloud-bigquery, google-cloud-core
 google-auth==1.23.0       # via google-api-core, google-cloud-storage
 google-cloud-bigquery==2.4.0  # via -r requirements.in
 google-cloud-core==1.4.3  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.33.0  # via -r requirements.in
+google-cloud-storage==1.34.0  # via -r requirements.in
 google-crc32c==1.0.0      # via google-resumable-media
 google-resumable-media==1.1.0  # via google-cloud-bigquery, google-cloud-storage
 googleapis-common-protos==1.52.0  # via google-api-core
