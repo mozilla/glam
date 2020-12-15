@@ -1,8 +1,3 @@
-<script>
-  import { Button } from '@graph-paper/button';
-  import { DocumentationDark } from '@graph-paper/icons';
-</script>
-
 <style>
   .marketing-block {
     padding: var(--space-2x);
@@ -26,11 +21,6 @@
     margin-bottom: var(--space-4x);
   }
 
-  .marketing-block__call-to-action {
-    margin-top: var(--space-2x);
-    margin-bottom: var(--space-4x);
-  }
-
   .marketing-block__ask-us {
     font-weight: 200;
     font-style: italic;
@@ -45,21 +35,6 @@
     <div class="marketing-block__description">
       Currently serving: Firefox Desktop, Firefox Android.
     </div>
-    <div class="marketing-block__call-to-action">
-      <a
-        class="button-link"
-        target="_blank"
-        href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview">
-        <Button>
-          <div
-            style="display: grid; grid-auto-flow: column; align-items: center; grid-column-gap: var(--space-base);">
-            <DocumentationDark size={14} />
-            Documentation
-          </div>
-        </Button>
-      </a>
-    </div>
-
     <div class="marketing-block__ask-us">
       Questions? Bugs? Requests? Find us at #GLAM on Slack.
     </div>
