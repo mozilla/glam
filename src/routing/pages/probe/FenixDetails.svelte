@@ -1,6 +1,5 @@
 <script>
   import { timeParse, timeFormat } from 'd3-time-format';
-  import { DocumentationDark } from '@graph-paper/icons';
   import marked from 'marked';
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
@@ -267,13 +266,6 @@
         <Brackets size={16} />
         Export to JSON
       </button>
-      <a
-        class="docs-button"
-        href="https://docs.google.com/document/d/1qIkEDemnODbYuVIfpciohgEXcaFjrK_mfVG5FOSeVuM/preview"
-        target="_blank">
-        <DocumentationDark size={16} />
-        Documentation
-      </a>
     </div>
   </div>
 {/if}
