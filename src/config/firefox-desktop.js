@@ -137,22 +137,20 @@ export default {
           ...appStore.getState().probe.info.calculated.latest_history.details
             .labels,
         };
-        data = produce(data, (draft) => {
-          return draft.map((point) => {
-            return {
-              ...point,
-              histogram: Object.entries(point.histogram).reduce(
-                (acc, [bin, value]) => {
-                  if (bin in labels) {
-                    acc[labels[bin]] = value;
-                  }
-                  return acc;
-                },
-                {}
-              ),
-            };
-          });
-        });
+        data = produce(data, (draft) =>
+          draft.map((point) => ({
+            ...point,
+            histogram: Object.entries(point.histogram).reduce(
+              (acc, [bin, value]) => {
+                if (bin in labels) {
+                  acc[labels[bin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+          }))
+        );
       }
 
       data = transformAPIResponse[viewType](data, aggregationLevel, metricType);

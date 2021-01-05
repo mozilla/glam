@@ -37,8 +37,8 @@ export const formatFromNanoseconds = (v) => {
   return `${format(',.2')(v / 1e9)} s`;
 };
 
-export const formatMemory = (unit) => {
-  return function curried(v) {
+export const formatMemory = (unit) =>
+  function curried(v) {
     const fmt = ',.3s';
     const conv = {
       kilobyte: 1e3,
@@ -50,4 +50,3 @@ export const formatMemory = (unit) => {
     }
     return format(fmt)(v);
   };
-};

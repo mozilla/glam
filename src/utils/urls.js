@@ -37,10 +37,11 @@ export function stripDefaultValues(params, defaults) {
       // If no default defined, return true to always include it in the URL.
       return true;
     })
-    .reduce((obj, k) => {
-      return {
+    .reduce(
+      (obj, k) => ({
         ...obj,
         [k]: params[k],
-      };
-    }, {});
+      }),
+      {}
+    );
 }
