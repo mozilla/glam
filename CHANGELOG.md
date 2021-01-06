@@ -2,6 +2,10 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.1...HEAD) (date TBD)
 
+- Rename Fenix to Firefox Android
+  ([2ea2125](https://github.com/mozilla/glam/commit/2ea2125))
+- Remove empty docs link
+  ([bf05b1a](https://github.com/mozilla/glam/commit/bf05b1a))
 - Remove alpha quality alert notice
   ([#1058](https://github.com/mozilla/glam/pull/1058))
 
