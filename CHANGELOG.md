@@ -2,6 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.1...HEAD) (date TBD)
 
+## [2021.1.0](https://github.com/mozilla/glam/compare/2020.11.1...2021.1.0) (2021-01-07)
+
 - Rename Fenix to Firefox Android
   ([2ea2125](https://github.com/mozilla/glam/commit/2ea2125))
 - Remove empty docs link
