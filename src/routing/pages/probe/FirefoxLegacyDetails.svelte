@@ -36,7 +36,7 @@
       'client_agg_type',
       'agg_type',
       'total_users',
-      'aggregates',
+      'mozfun.glam.histogram_cast_json(aggregates) AS aggregates',
     ];
     const sql = [
       'SELECT',

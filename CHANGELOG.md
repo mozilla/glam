@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2020.11.1...HEAD) (date TBD)
 
+- Update SQL generation to use mozfun UDF
+  ([#1101](https://github.com/mozilla/glam/issues/1101))
+
 ## [2021.1.0](https://github.com/mozilla/glam/compare/2020.11.1...2021.1.0) (2021-01-07)
 
 - Rename Fenix to Firefox Android
