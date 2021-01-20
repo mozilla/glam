@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2020.11.1...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.1.1...HEAD) (date TBD)
+
+## [2021.1.1](https://github.com/mozilla/glam/compare/2021.1.0...2021.1.1) (2021-01-19)
 
 - Update SQL generation to use mozfun UDF
   ([#1101](https://github.com/mozilla/glam/issues/1101))
