@@ -70,10 +70,18 @@
     data={selectedData}
     {aggregationLevel}
     colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
-    visibleBuckets={probeType === 'categorical' ? visibleBuckets : [5, 25, 50, 75, 95]}
+    visibleBuckets={probeType === 'categorical'
+      ? visibleBuckets
+      : [5, 25, 50, 75, 95]}
     keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
-    valueFormatter={probeType === 'categorical' ? formatPercentDecimal : formatCount}
+    valueFormatter={probeType === 'categorical'
+      ? formatPercentDecimal
+      : formatCount}
     key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
-    tooltipFormatter={probeType === 'categorical' ? () => undefined : (v) => `${v}th percentile`}
-    bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'} />
+    tooltipFormatter={probeType === 'categorical'
+      ? () => undefined
+      : (v) => `${v}th percentile`}
+    bucketTypeLabel={probeType === 'categorical'
+      ? 'categories'
+      : 'percentiles'} />
 </div>

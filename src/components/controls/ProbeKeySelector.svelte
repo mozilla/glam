@@ -52,13 +52,19 @@
     class="activating-button"
     on:click={toggle}
     class:active
-    use:tooltipAction={{ text: 'this probe has multiple keys associated with it' }}>
+    use:tooltipAction={{
+      text: 'this probe has multiple keys associated with it',
+    }}>
     <div>
       {#each options as opt, i}
         <div
           style="
-            visibility: {opt === currentKey ? 'visible' : 'hidden'};
-            height: {opt === currentKey ? 'inherit' : 0};
+            visibility: {opt === currentKey
+            ? 'visible'
+            : 'hidden'};
+            height: {opt === currentKey
+            ? 'inherit'
+            : 0};
           ">
           {opt}
         </div>

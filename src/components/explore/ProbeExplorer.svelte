@@ -243,10 +243,16 @@
     description={compareDescription(aggregationsOverTimeTitle)}
     {yScaleType}
     leftLabel={leftLabelForAggComparison(data, aggregationLevel, hovered.x)}
-    rightLabel={aggregationLevel === 'build_id' ? formatBuildIDToDateString(ref.label) : ref.label}
+    rightLabel={aggregationLevel === 'build_id'
+      ? formatBuildIDToDateString(ref.label)
+      : ref.label}
     colorMap={binColorMap}
     {yTickFormatter}
-    leftPoints={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
+    leftPoints={leftPointsForAggComparison(
+      data,
+      pointMetricType,
+      hovered.datum
+    )}
     rightPoints={ref[pointMetricType]}
     {activeBins}
     {yDomain}
@@ -262,16 +268,33 @@
       {#if showViolins}
         {#if hovered.datum && !justOne}
           <AdHocViolin
-            start={(lp + rp) / 2 - (explorerComparisonSmallMultiple.width - explorerComparisonSmallMultiple.left - explorerComparisonSmallMultiple.right) / 2 + VIOLIN_PLOT_OFFSET}
+            start={(lp + rp) / 2 -
+              (explorerComparisonSmallMultiple.width -
+                explorerComparisonSmallMultiple.left -
+                explorerComparisonSmallMultiple.right) /
+                2 +
+              VIOLIN_PLOT_OFFSET}
             direction={-1}
-            density={data.length < 3 || !hovered.datum ? data[0][densityMetricType] : hovered.datum[densityMetricType]}
-            width={(explorerComparisonSmallMultiple.width - explorerComparisonSmallMultiple.left - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
+            density={data.length < 3 || !hovered.datum
+              ? data[0][densityMetricType]
+              : hovered.datum[densityMetricType]}
+            width={(explorerComparisonSmallMultiple.width -
+              explorerComparisonSmallMultiple.left -
+              explorerComparisonSmallMultiple.right) /
+              2 -
+              VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if ref && ref[densityMetricType]}
           <AdHocViolin
             start={justOne ? lp : (lp + rp) / 2}
             density={ref[densityMetricType]}
-            width={justOne ? rp - lp - VIOLIN_PLOT_OFFSET * 2 : (explorerComparisonSmallMultiple.width - explorerComparisonSmallMultiple.left - explorerComparisonSmallMultiple.right) / 2 - VIOLIN_PLOT_OFFSET} />
+            width={justOne
+              ? rp - lp - VIOLIN_PLOT_OFFSET * 2
+              : (explorerComparisonSmallMultiple.width -
+                  explorerComparisonSmallMultiple.left -
+                  explorerComparisonSmallMultiple.right) /
+                  2 -
+                VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if !justOne}
           <line

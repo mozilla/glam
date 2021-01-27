@@ -219,8 +219,14 @@
           <div class="small-multiple">
             <ProbeExplorer
               bind:ref
-              aggregationsOverTimeTitle={overTimeTitle(metricType, aggregationLevel)}
-              aggregationsOverTimeDescription={proportionsOverTimeDescription(metricType, aggregationLevel)}
+              aggregationsOverTimeTitle={overTimeTitle(
+                metricType,
+                aggregationLevel
+              )}
+              aggregationsOverTimeDescription={proportionsOverTimeDescription(
+                metricType,
+                aggregationLevel
+              )}
               summaryLabel="cat."
               data={selectedData}
               activeBins={activeBuckets}
@@ -229,12 +235,21 @@
               showViolins={false}
               {aggregationLevel}
               pointMetricType={metricType}
-              yTickFormatter={metricType === 'proportions' ? formatPercent : formatCount}
-              summaryNumberFormatter={metricType === 'proportions' ? formatPercentDecimal : formatCount}
+              yTickFormatter={metricType === 'proportions'
+                ? formatPercent
+                : formatCount}
+              summaryNumberFormatter={metricType === 'proportions'
+                ? formatPercentDecimal
+                : formatCount}
               yScaleType={'linear'}
-              yDomain={[0, Math.max(...selectedData
+              yDomain={[
+                0,
+                Math.max(
+                  ...selectedData
                     .map((d) => Object.values(d[metricType]))
-                    .flat())]} />
+                    .flat()
+                ),
+              ]} />
           </div>
         {/if}
       {/each}

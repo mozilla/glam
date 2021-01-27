@@ -70,6 +70,8 @@
     If you think this is a bug, report this on the
     <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a>
     channel on Mozilla's Slack instance or in the
-    <a href="https://github.com/mozilla/glam/issues/new">GLAM github repository</a>.
+    <a href="https://github.com/mozilla/glam/issues/new"
+      >GLAM github repository</a
+    >.
   </div>
 </div>

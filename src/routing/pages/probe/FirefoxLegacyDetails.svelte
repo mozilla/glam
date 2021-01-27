@@ -194,7 +194,8 @@
           <dt>
             <a
               class="probe-type-link"
-              href={PROBE_TYPE_DOCS[$store.probe.type] || PROBE_TYPE_DOCS.default}>
+              href={PROBE_TYPE_DOCS[$store.probe.type] ||
+                PROBE_TYPE_DOCS.default}>
               {$store.probe.info.type}
             </a>
           </dt>
@@ -206,7 +207,9 @@
       {#if isProbeActive !== undefined}
         <div class="probe-details-overview-right">
           <StatusLabel
-            tooltip={isProbeActive ? 'this probe is currently active and collecting data' : 'this probe is inactive and is thus not collecting data'}
+            tooltip={isProbeActive
+              ? 'this probe is currently active and collecting data'
+              : 'this probe is inactive and is thus not collecting data'}
             level={isProbeActive ? 'success' : 'info'}>
             {isProbeActive ? 'active' : 'inactive'}
           </StatusLabel>
@@ -219,9 +222,11 @@
         probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
-          {$store.probe.info.history[$store.productDimensions.channel][0].versions.first}
+          {$store.probe.info.history[$store.productDimensions.channel][0]
+            .versions.first}
           &ndash;
-          {$store.probe.info.history[$store.productDimensions.channel][0].versions.last}
+          {$store.probe.info.history[$store.productDimensions.channel][0]
+            .versions.last}
         </dd>
       </dl>
     {/if}

@@ -246,7 +246,11 @@
               id={searchResult.name}
               class:focused={focusedItem === i}
               on:click={() => {
-                page.show(`/${$store.searchProduct}/probe/${results[focusedItem].name.toLowerCase()}/explore${$currentQuery}`);
+                page.show(
+                  `/${$store.searchProduct}/probe/${results[
+                    focusedItem
+                  ].name.toLowerCase()}/explore${$currentQuery}`
+                );
               }}
               on:mouseover={() => {
                 focusedItem = i;

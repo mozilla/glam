@@ -57,7 +57,10 @@
           alignment="right">
           <div class="main-filter__label" slot="label">
             <span class="main-filter__label__dimension">{dimension.title}</span>
-            {productConfigDimensions.dimensionValueLabel(dimension.key, $store.productDimensions[dimension.key])}
+            {productConfigDimensions.dimensionValueLabel(
+              dimension.key,
+              $store.productDimensions[dimension.key]
+            )}
             <div class="pull-right-edge">
               <CaretDown size="14" />
             </div>

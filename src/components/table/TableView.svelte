@@ -79,7 +79,9 @@
           bottomBorderThickness="2px"
           freezeX
           size="max"
-          tooltip="the {aggregationLevel === 'build_id' ? ' build id' : 'version'} associated with this row">
+          tooltip="the {aggregationLevel === 'build_id'
+            ? ' build id'
+            : 'version'} associated with this row">
           <span class="h">
             {#if aggregationLevel === 'build_id'}Build ID{:else}Version{/if}
           </span>
@@ -91,7 +93,10 @@
           bottomBorderThickness="2px"
           freezeX
           align="left"
-          tooltip="the total number of clients associated with this {aggregationLevel === 'build_id' ? ' build id' : 'version'}">
+          tooltip="the total number of clients associated with this {aggregationLevel ===
+          'build_id'
+            ? ' build id'
+            : 'version'}">
           <span class="h"> Clients </span>
         </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
@@ -138,7 +143,9 @@
             <Cell size="tiny">
               <!-- <ProportionSM value={row.proportions[bucket]} /> -->
               <span
-                style="color:{formatPercentDecimal(row[key][bucket]) !== '0.00%' ? 'var(--cool-gray-700)' : 'var(--cool-gray-200)'}">
+                style="color:{formatPercentDecimal(row[key][bucket]) !== '0.00%'
+                  ? 'var(--cool-gray-700)'
+                  : 'var(--cool-gray-200)'}">
                 {valueFormatter(row[key][bucket])}
               </span>
             </Cell>

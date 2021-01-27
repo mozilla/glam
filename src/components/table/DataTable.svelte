@@ -29,8 +29,12 @@
 <div
   bind:this={container}
   style="
-    overflow-x: {overflowX ? 'auto' : 'visible'};
-    overflow-y: {overflowY ? 'auto' : 'visible'};
+    overflow-x: {overflowX
+    ? 'auto'
+    : 'visible'};
+    overflow-y: {overflowY
+    ? 'auto'
+    : 'visible'};
     width: {width};
     height: {height};
     ">

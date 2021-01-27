@@ -53,14 +53,24 @@
         width={(right - left) / 2}
         height={bottom - top}
         fill={compareClientCountsGraph.bgColor}
-        use:tooltipAction={{ text: 'Shows the distribution of the currently-hovered point on the line chart', location: 'top', alignment: 'center' }} />
+        use:tooltipAction={{
+          text:
+            'Shows the distribution of the currently-hovered point on the line chart',
+          location: 'top',
+          alignment: 'center',
+        }} />
       <rect
         x={(left + right) / 2}
         y={top}
         width={(right - left) / 2}
         height={bottom - top}
         fill={compareClientCountsGraph.bgColor}
-        use:tooltipAction={{ text: 'Shows the distribution of the current reference point on the line chart', location: 'top', alignment: 'center' }} />
+        use:tooltipAction={{
+          text:
+            'Shows the distribution of the current reference point on the line chart',
+          location: 'top',
+          alignment: 'center',
+        }} />
       <Axis side="right" tickFormatter={formatCount} ticks={yScale.ticks(4)} />
       <Axis side="bottom" ticks={['HOV.', 'REF.']} />
     </g>
