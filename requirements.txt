@@ -4,58 +4,145 @@
 #
 #    pip-compile
 #
-asgiref==3.3.1            # via django
-attrs==20.3.0             # via pytest
-cachetools==4.2.1         # via google-auth
-certifi==2020.12.5        # via requests
-cffi==1.14.4              # via google-crc32c
-chardet==4.0.0            # via requests
-coverage==5.4             # via pytest-cov
-dj-database-url==0.5.0    # via -r requirements.in
-django-configurations==2.2  # via -r requirements.in
-django==3.1.4             # via -r requirements.in, djangorestframework, drf-orjson-renderer
-djangorestframework==3.12.2  # via -r requirements.in, drf-orjson-renderer
-dockerflow==2020.10.0     # via -r requirements.in
-drf-orjson-renderer==1.1.4  # via -r requirements.in
-flake8==3.8.4             # via -r requirements.in
-google-api-core[grpc]==1.25.1  # via google-cloud-bigquery, google-cloud-core
-google-auth==1.24.0       # via google-api-core, google-cloud-storage
-google-cloud-bigquery==2.6.1  # via -r requirements.in
-google-cloud-core==1.5.0  # via google-cloud-bigquery, google-cloud-storage
-google-cloud-storage==1.35.0  # via -r requirements.in
-google-crc32c==1.1.2      # via google-resumable-media
-google-resumable-media==1.2.0  # via google-cloud-bigquery, google-cloud-storage
-googleapis-common-protos==1.52.0  # via google-api-core
-grpcio==1.35.0            # via google-api-core
-gunicorn==20.0.4          # via -r requirements.in
-idna==2.10                # via requests
-iniconfig==1.1.1          # via pytest
-mccabe==0.6.1             # via flake8
-orjson==3.4.7             # via drf-orjson-renderer
-packaging==20.8           # via pytest
-pluggy==0.13.1            # via pytest
-proto-plus==1.13.0        # via google-cloud-bigquery
-protobuf==3.14.0          # via google-api-core, google-cloud-bigquery, googleapis-common-protos, proto-plus
-psycopg2-binary==2.8.6    # via -r requirements.in
-py==1.10.0                # via pytest
-pyasn1-modules==0.2.8     # via google-auth
-pyasn1==0.4.8             # via pyasn1-modules, rsa
-pycodestyle==2.6.0        # via flake8
-pycparser==2.20           # via cffi
-pyflakes==2.2.0           # via flake8
-pyparsing==2.4.7          # via packaging
-pytest-blockage==0.2.2    # via -r requirements.in
-pytest-cov==2.11.1        # via -r requirements.in
-pytest-django==4.1.0      # via -r requirements.in
-pytest==6.2.2             # via -r requirements.in, pytest-blockage, pytest-cov, pytest-django
-pytz==2020.5              # via django, google-api-core
-requests==2.25.1          # via google-api-core, google-cloud-storage
-rsa==4.7                  # via google-auth
-six==1.15.0               # via django-configurations, google-api-core, google-auth, google-cloud-bigquery, google-cloud-core, google-resumable-media, grpcio, protobuf
-sqlparse==0.4.1           # via django
-toml==0.10.2              # via pytest
-urllib3==1.26.3           # via requests
-whitenoise==5.2.0         # via -r requirements.in
+asgiref==3.3.1
+    # via django
+attrs==20.3.0
+    # via pytest
+cachetools==4.2.1
+    # via google-auth
+certifi==2020.12.5
+    # via requests
+cffi==1.14.4
+    # via google-crc32c
+chardet==4.0.0
+    # via requests
+coverage==5.4
+    # via pytest-cov
+dj-database-url==0.5.0
+    # via -r requirements.in
+django-configurations==2.2
+    # via -r requirements.in
+django==3.1.5
+    # via
+    #   -r requirements.in
+    #   djangorestframework
+    #   drf-orjson-renderer
+djangorestframework==3.12.2
+    # via
+    #   -r requirements.in
+    #   drf-orjson-renderer
+dockerflow==2020.10.0
+    # via -r requirements.in
+drf-orjson-renderer==1.1.4
+    # via -r requirements.in
+flake8==3.8.4
+    # via -r requirements.in
+google-api-core[grpc]==1.25.1
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-core
+google-auth==1.24.0
+    # via
+    #   google-api-core
+    #   google-cloud-storage
+google-cloud-bigquery==2.6.1
+    # via -r requirements.in
+google-cloud-core==1.5.0
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-storage
+google-cloud-storage==1.35.0
+    # via -r requirements.in
+google-crc32c==1.1.2
+    # via google-resumable-media
+google-resumable-media==1.2.0
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-storage
+googleapis-common-protos==1.52.0
+    # via google-api-core
+grpcio==1.35.0
+    # via google-api-core
+gunicorn==20.0.4
+    # via -r requirements.in
+idna==2.10
+    # via requests
+iniconfig==1.1.1
+    # via pytest
+mccabe==0.6.1
+    # via flake8
+orjson==3.4.7
+    # via drf-orjson-renderer
+packaging==20.8
+    # via pytest
+pluggy==0.13.1
+    # via pytest
+proto-plus==1.13.0
+    # via google-cloud-bigquery
+protobuf==3.14.0
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
+    #   googleapis-common-protos
+    #   proto-plus
+psycopg2-binary==2.8.6
+    # via -r requirements.in
+py==1.10.0
+    # via pytest
+pyasn1-modules==0.2.8
+    # via google-auth
+pyasn1==0.4.8
+    # via
+    #   pyasn1-modules
+    #   rsa
+pycodestyle==2.6.0
+    # via flake8
+pycparser==2.20
+    # via cffi
+pyflakes==2.2.0
+    # via flake8
+pyparsing==2.4.7
+    # via packaging
+pytest-blockage==0.2.2
+    # via -r requirements.in
+pytest-cov==2.11.1
+    # via -r requirements.in
+pytest-django==4.1.0
+    # via -r requirements.in
+pytest==6.2.2
+    # via
+    #   -r requirements.in
+    #   pytest-blockage
+    #   pytest-cov
+    #   pytest-django
+pytz==2020.5
+    # via
+    #   django
+    #   google-api-core
+requests==2.25.1
+    # via
+    #   google-api-core
+    #   google-cloud-storage
+rsa==4.7
+    # via google-auth
+six==1.15.0
+    # via
+    #   django-configurations
+    #   google-api-core
+    #   google-auth
+    #   google-cloud-bigquery
+    #   google-cloud-core
+    #   google-resumable-media
+    #   grpcio
+    #   protobuf
+sqlparse==0.4.1
+    # via django
+toml==0.10.2
+    # via pytest
+urllib3==1.26.3
+    # via requests
+whitenoise==5.2.0
+    # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
