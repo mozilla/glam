@@ -138,7 +138,10 @@
                 href={`/firefox/probe/${info.name}/explore${$currentQuery}`}>
                 <div
                   class="probe-small-multiple"
-                  class:probe-small-multiple--proportion={whichSmallMultiple(info.type, info.kind) === 'proportion'}
+                  class:probe-small-multiple--proportion={whichSmallMultiple(
+                    info.type,
+                    info.kind
+                  ) === 'proportion'}
                   style="min-height:100px;">
                   {#if whichSmallMultiple(info.type, info.kind) === 'quantile'}
                     <QuantileSmallMultiple {data} />

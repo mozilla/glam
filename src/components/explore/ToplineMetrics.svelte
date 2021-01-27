@@ -62,7 +62,8 @@
         <span data-value={ref.audienceSize}>
           <span
             class="topline__client-count"
-            class:topline--client-count--highlighted={hovered && hovered.audienceSize < tweenValue}>
+            class:topline--client-count--highlighted={hovered &&
+              hovered.audienceSize < tweenValue}>
             {formatCount(tweenValue)}
           </span>
           clients
@@ -85,7 +86,8 @@
             {#if hovered}
               <span
                 class="topline__client-count"
-                class:topline__client-count--highlighted={hovered && hovered.audienceSize > tweenValue}>
+                class:topline__client-count--highlighted={hovered &&
+                  hovered.audienceSize > tweenValue}>
                 {formatCount(hovered.audienceSize)}
               </span>
               clients
@@ -94,8 +96,12 @@
           {#if hovered}
             <div class="topline__client-count__comparison">
               {formatSignCount(absDiff(hovered.audienceSize, tweenValue))}
-              <span
-                style="font-weight: 500;">{formatParenPercent('.0%', absDiff(hovered.audienceSize, tweenValue, true), 7)}</span>
+              <span style="font-weight: 500;"
+                >{formatParenPercent(
+                  '.0%',
+                  absDiff(hovered.audienceSize, tweenValue, true),
+                  7
+                )}</span>
             </div>
           {/if}
         </span>

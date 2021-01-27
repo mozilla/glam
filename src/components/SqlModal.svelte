@@ -85,7 +85,9 @@
       spellcheck="false"
       use:setHeight
       readonly
-      wrap="off">{getSql()}</textarea>
+      wrap="off">
+      {getSql()}
+    </textarea>
     <button on:click={copyTextarea}>Copy to clipboard</button>
     {#if status}
       <span contenteditable="true" bind:textContent={status} transition:fade />

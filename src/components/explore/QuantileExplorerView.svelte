@@ -116,8 +116,13 @@
         {#if key === currentKey && aggType === currentAggregation}
           <div class="small-multiple">
             <ProbeExplorer
-              aggregationsOverTimeTitle={overTimeTitle('percentiles', aggregationLevel)}
-              aggregationsOverTimeDescription={percentilesOverTimeDescription(aggregationLevel)}
+              aggregationsOverTimeTitle={overTimeTitle(
+                'percentiles',
+                aggregationLevel
+              )}
+              aggregationsOverTimeDescription={percentilesOverTimeDescription(
+                aggregationLevel
+              )}
               summaryLabel="perc."
               data={selectedData}
               activeBins={percentiles}
@@ -126,12 +131,21 @@
               showViolins={true}
               {aggregationLevel}
               binColorMap={percentileLineColorMap}
-              pointMetricType={probeType === 'log' ? 'transformedPercentiles' : 'percentiles'}
-              overTimePointMetricType={probeType === 'log' ? 'transformedPercentiles' : 'percentiles'}
+              pointMetricType={probeType === 'log'
+                ? 'transformedPercentiles'
+                : 'percentiles'}
+              overTimePointMetricType={probeType === 'log'
+                ? 'transformedPercentiles'
+                : 'percentiles'}
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
-              yDomain={probeType === 'log' ? selectedData[0].histogram.map((d) => d.bin) : [1, Math.max(...selectedData.map((d) => d.percentiles[95]))]} />
+              yDomain={probeType === 'log'
+                ? selectedData[0].histogram.map((d) => d.bin)
+                : [
+                    1,
+                    Math.max(...selectedData.map((d) => d.percentiles[95])),
+                  ]} />
           </div>
         {/if}
       {/each}

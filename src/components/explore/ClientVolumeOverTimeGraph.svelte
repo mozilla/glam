@@ -81,7 +81,11 @@
       {#if ref}
         <Tweenable
           params={tween}
-          value={{ location: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
+          value={{
+            location: xScale(ref.label),
+            y: yScale(ref.audienceSize),
+            audienceSize: ref.audienceSize,
+          }}
           let:tweenValue={tv1}>
           <TrackingLine xr={tv1.location} />
         </Tweenable>
@@ -101,8 +105,16 @@
       {#if ref && ref.label && ref.audienceSize !== undefined}
         <Tweenable
           params={tween}
-          value={{ x: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
-          from={{ x: xScale(ref.label), y: yScale(ref.audienceSize), audienceSize: ref.audienceSize }}
+          value={{
+            x: xScale(ref.label),
+            y: yScale(ref.audienceSize),
+            audienceSize: ref.audienceSize,
+          }}
+          from={{
+            x: xScale(ref.label),
+            y: yScale(ref.audienceSize),
+            audienceSize: ref.audienceSize,
+          }}
           let:tweenValue>
           <ReferenceSymbol
             size={20}
@@ -113,7 +125,9 @@
             align="bottom"
             label="Ref."
             xr={tweenValue.x}
-            background={bottom - tweenValue.y < 10 ? 'var(--cool-gray-100)' : 'var(--cool-gray-200)'} />
+            background={bottom - tweenValue.y < 10
+              ? 'var(--cool-gray-100)'
+              : 'var(--cool-gray-200)'} />
         </Tweenable>
       {/if}
     </g>

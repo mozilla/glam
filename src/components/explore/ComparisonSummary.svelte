@@ -135,7 +135,11 @@
   <h3 class="data-graphic__element-title">
     Summary
     <span
-      use:tooltipAction={{ text: 'Compares the numeric values of the reference ⭑ to the hovered values ●', location: 'top' }}
+      use:tooltipAction={{
+        text:
+          'Compares the numeric values of the reference ⭑ to the hovered values ●',
+        location: 'top',
+      }}
       class="data-graphic__element-title__icon"><Help size={14} /></span>
   </h3>
   <table>
@@ -192,7 +196,9 @@
 
           {#if showDiff}
             <td class:hidden={!hovered} class="value-change">
-              {percentageChange !== undefined ? formatPercentDecimal(percentageChange) : ' '}
+              {percentageChange !== undefined
+                ? formatPercentDecimal(percentageChange)
+                : ' '}
             </td>
           {/if}
         </tr>

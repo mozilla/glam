@@ -21,7 +21,10 @@
 
 <a href={`/${$currentQuery}`} on:click={store.reset}>
   <h1
-    use:tooltipAction={{ text: 'The Glean Aggregated Metrics Dashboard', distance: 16 }}>
+    use:tooltipAction={{
+      text: 'The Glean Aggregated Metrics Dashboard',
+      distance: 16,
+    }}>
     <Logo />
     <Text />
   </h1>

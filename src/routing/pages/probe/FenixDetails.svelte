@@ -170,13 +170,16 @@
           <dt>
             <a
               class="probe-type-link"
-              href="https://mozilla.github.io/glean/book/user/metrics/index.html">{$store.probe.type.replace('_', ' ')}</a>
+              href="https://mozilla.github.io/glean/book/user/metrics/index.html"
+              >{$store.probe.type.replace('_', ' ')}</a>
           </dt>
         </dl>
       {/if}
       <div class="probe-details-overview-right">
         <StatusLabel
-          tooltip={!$store.probe.info.disabled ? 'this metric is currently active and collecting data' : 'this metric is inactive and is thus not collecting data'}
+          tooltip={!$store.probe.info.disabled
+            ? 'this metric is currently active and collecting data'
+            : 'this metric is inactive and is thus not collecting data'}
           level={!$store.probe.info.disabled ? 'success' : 'info'}>
           {!$store.probe.info.disabled ? 'active' : 'inactive'}
         </StatusLabel>
@@ -203,7 +206,10 @@
         <dl>
           <dt>unit</dt>
           <dd>
-            {$store.probe.info.time_unit || $store.probe.info.memory_unit || $store.probe.info.unit || 'n/a'}
+            {$store.probe.info.time_unit ||
+              $store.probe.info.memory_unit ||
+              $store.probe.info.unit ||
+              'n/a'}
           </dd>
         </dl>
       {/if}
@@ -211,7 +217,9 @@
         <dl>
           <dt>Expires</dt>
           <dd>
-            {$store.probe.info.expires === 'never' ? 'never' : toNiceDate($store.probe.info.expires)}
+            {$store.probe.info.expires === 'never'
+              ? 'never'
+              : toNiceDate($store.probe.info.expires)}
           </dd>
         </dl>
       {/if}

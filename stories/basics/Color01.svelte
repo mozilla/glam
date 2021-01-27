@@ -102,7 +102,9 @@
                             grid-column-gap: var(--space-2x);
                         "
               class="color
-                        {c.includes('light') ? '' : 'dark'}">
+                        {c.includes('light')
+                ? ''
+                : 'dark'}">
               <div
                 style="
                             background-color: var(--{color}-100);

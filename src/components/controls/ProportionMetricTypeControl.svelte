@@ -5,7 +5,18 @@
 </script>
 
 <BodyControl
-  options={[{ label: 'proportion', value: 'proportions', tooltip: 'shows proportions of clients for each category' }, { label: 'total clients', value: 'counts', tooltip: 'shows the volume of clients for each category' }]}
+  options={[
+    {
+      label: 'proportion',
+      value: 'proportions',
+      tooltip: 'shows proportions of clients for each category',
+    },
+    {
+      label: 'total clients',
+      value: 'counts',
+      tooltip: 'shows the volume of clients for each category',
+    },
+  ]}
   selected={metricType}
   level="medium"
   on:selection />

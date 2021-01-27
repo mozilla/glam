@@ -78,7 +78,10 @@
     {yDomain}
     yType={yScaleType}
     xType="scalePoint"
-    width={explorerComparisonSmallMultiple.width + (dataVolume <= 2 ? explorerComparisonSmallMultiple.insufficientDataAdjustment : 0)}
+    width={explorerComparisonSmallMultiple.width +
+      (dataVolume <= 2
+        ? explorerComparisonSmallMultiple.insufficientDataAdjustment
+        : 0)}
     height={explorerComparisonSmallMultiple.height}
     bind:xScale
     bind:yScale
@@ -96,14 +99,24 @@
         width={(right - left) / 2}
         height={bottom - top}
         fill={explorerComparisonSmallMultiple.bgColor}
-        use:tooltipAction={{ text: 'Shows the distribution of the currently-hovered point on the line chart', location: 'top', alignment: 'center' }} />
+        use:tooltipAction={{
+          text:
+            'Shows the distribution of the currently-hovered point on the line chart',
+          location: 'top',
+          alignment: 'center',
+        }} />
       <rect
         x={(left + right) / 2}
         y={top}
         width={(right - left) / 2}
         height={bottom - top}
         fill={explorerComparisonSmallMultiple.bgColor}
-        use:tooltipAction={{ text: 'Shows the distribution of the current reference point on the line chart', location: 'top', alignment: 'center' }} />
+        use:tooltipAction={{
+          text:
+            'Shows the distribution of the current reference point on the line chart',
+          location: 'top',
+          alignment: 'center',
+        }} />
     </g>
     <g
       slot="annotation"
@@ -145,7 +158,10 @@
               useYScale={false}
               curve={'curveStep'}
               color={$dotsAndLines[bin].color}
-              data={[{ y: $dotsAndLines[bin].leftY, label: leftLabel }, { y: $dotsAndLines[bin].rightY, label: rightLabel }]} />
+              data={[
+                { y: $dotsAndLines[bin].leftY, label: leftLabel },
+                { y: $dotsAndLines[bin].rightY, label: rightLabel },
+              ]} />
           {/if}
           <circle
             cx={dataVolume === 2 ? xScale(leftLabel) : left}

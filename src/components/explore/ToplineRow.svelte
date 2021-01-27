@@ -99,11 +99,13 @@
     <div>
       {#if aggregationLevel === 'build_id'}
         <span class="big-label__value__date">
-          {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4, 6)}-{parsedLabel.slice(6, 8)}</span>
-        <span
-          class="big-label__value__time">{parsedLabel.slice(8, 10)}:</span><span
-          class="big-label__value__time">{parsedLabel.slice(10, 12)}:</span><span
-          class="big-label__value__time">{parsedLabel.slice(12, 14)}</span>
+          {parsedLabel.slice(0, 4)}-{parsedLabel.slice(
+            4,
+            6
+          )}-{parsedLabel.slice(6, 8)}</span>
+        <span class="big-label__value__time">{parsedLabel.slice(8, 10)}:</span
+        ><span class="big-label__value__time">{parsedLabel.slice(10, 12)}:</span
+        ><span class="big-label__value__time">{parsedLabel.slice(12, 14)}</span>
       {:else}{value}{/if}
     </div>
   {/if}
