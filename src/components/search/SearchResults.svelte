@@ -256,14 +256,14 @@
                 focusedItem = i;
               }}>
               <div class="name body-text--short-01">{searchResult.name}</div>
-              {#if searchResult.info.calculated.active}
+              {#if searchResult.info.calculated && searchResult.info.calculated.active === false}
+                <div class="probe-type label label-text--01 label--inactive">
+                  inactive
+                </div>
+              {:else}
                 <div
                   class="probe-type label label-text--01 label--{searchResult.type}">
                   {searchResult.type}
-                </div>
-              {:else}
-                <div class="probe-type label label-text--01 label--inactive">
-                  inactive
                 </div>
               {/if}
               <div class="description body-text--short-01">
