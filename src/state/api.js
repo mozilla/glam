@@ -64,7 +64,6 @@ export function getSearchResults(
 ) {
   const getFormattedSearchURL = (str) => {
     const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
-    const strFragments = str.split(/\s+/);
 
     const params = new URLSearchParams();
     const queryOptions = [];
@@ -75,11 +74,7 @@ export function getSearchResults(
     if (!exactSearch) {
       queryOptions.push(`search.plfts(simple).${str}`);
       queryOptions.push(`description.phfts(english).${str}`);
-      queryOptions.push(
-        `name.ilike.*${
-          strFragments.length ? strFragments[strFragments.length - 1] : str
-        }*`
-      );
+      queryOptions.push(`name.ilike.*${str.split(/\s+/).join('*')}*`);
     }
 
     params.set('limit', resultsLimit);
@@ -87,6 +82,8 @@ export function getSearchResults(
     params.set('type', 'neq.event');
     params.set('or', `(${queryOptions.join(',')})`);
     params.set('not.and', stringScalars);
+    // Show active probes first.
+    params.set('order', 'info->calculated->>active.desc');
 
     if (product === 'firefox') {
       URLResult.pathname = 'telemetry'; // hint: change this to test 404 error case
