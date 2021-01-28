@@ -45,18 +45,7 @@
     (value) => {
       query = value;
       getSearchResults(query, false, $store.searchProduct).then((r) => {
-        // sort these?
-        if (r.constructor === Array) {
-          results = r.sort((a, b) => {
-            const aHas = a.name.toLowerCase().includes(query);
-            const bHas = b.name.toLowerCase().includes(query);
-            if (aHas && !bHas) return -1;
-            if (bHas && !aHas) return 1;
-            return 0;
-          });
-        } else {
-          results = r;
-        }
+        results = r;
         searchWaiting = false;
       });
       searchIsActive = true;

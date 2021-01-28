@@ -2,6 +2,10 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.1.1...HEAD) (date TBD)
 
+- Improve search, adds inactive label, pushes inactive metrics to the bottom,
+  includes all search terms in search query
+  ([#1139](https://github.com/mozilla/glam/pull/1139))
+
 ## [2021.1.1](https://github.com/mozilla/glam/compare/2021.1.0...2021.1.1) (2021-01-19)
 
 - Update SQL generation to use mozfun UDF

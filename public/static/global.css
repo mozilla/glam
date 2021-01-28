@@ -249,7 +249,9 @@
   --scalar-color: var(--pantone-red-700);
   --scalar-bg: var(--pantone-red-200);
   --event-color: var(--blue-slate-400);
-  --event-color: var(--blue-slate-100);
+  --event-bg: var(--blue-slate-100);
+  --inactive-color: var(--bright-yellow-900);
+  --inactive-bg: var(--bright-yellow-400);
 
   --primary-text: white;
 
@@ -556,6 +558,11 @@ main .details {
 .label--scalar {
   color: var(--scalar-color);
   background-color: var(--scalar-bg);
+}
+
+.label--inactive {
+  color: var(--inactive-color);
+  background-color: var(--inactive-bg);
 }
 
 /* TYPOGRAPHY - this is a rough draft. */
