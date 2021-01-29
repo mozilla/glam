@@ -49,7 +49,7 @@
     "rollup-plugin-livereload": "2.0.0",
     "rollup-plugin-svelte": "7.1.0",
     "rollup-plugin-terser": "7.0.2",
-    "rollup": "2.38.0",
+    "rollup": "2.38.1",
     "svelte-loader": "3.0.0",
     "svelte": "3.32.0"
   },
