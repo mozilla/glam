@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.12.10",
-    "@babel/plugin-transform-runtime": "7.12.10",
+    "@babel/plugin-transform-runtime": "7.12.15",
     "@babel/preset-env": "7.12.11",
     "@graph-paper/button": "0.0.0-alpha.15",
     "@graph-paper/core": "0.0.0-alpha.15",
