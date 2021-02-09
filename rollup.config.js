@@ -4,6 +4,7 @@ import json from '@rollup/plugin-json';
 import livereload from 'rollup-plugin-livereload';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
+import { string } from 'rollup-plugin-string';
 import svelte from 'rollup-plugin-svelte';
 import { terser } from 'rollup-plugin-terser';
 
@@ -34,6 +35,7 @@ export default {
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
       __BASE_SEARCH_DOMAIN__: SEARCH_DOMAIN,
     }),
+    string({ include: 'src/**/*.tpl' }),
     svelte({
       compilerOptions: {
         // enable run-time checks when not in production
