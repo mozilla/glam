@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.2.0...HEAD) (date TBD)
 
+- Add telementry.main SQL example for desktop histograms
+  ([#1162](https://github.com/mozilla/glam/pull/1162))
+
 ## [2021.2.0](https://github.com/mozilla/glam/compare/2021.1.1...2021.2.0) (2021-02-01)
 
 - Improve search, adds inactive label, pushes inactive metrics to the bottom,

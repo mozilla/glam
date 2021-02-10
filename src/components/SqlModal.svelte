@@ -63,8 +63,8 @@
     }
     const osFilter =
       $store.productDimensions.os === '*'
-        ? 'normalized_os IS NULL'
-        : `normalized_os="${$store.productDimensions.os}"`;
+        ? `-- AND normalized_os="Windows" -- To add OS filter.`
+        : `AND normalized_os="${$store.productDimensions.os}"`;
 
     return _.template(desktopTelemetrySql)({
       metric: $store.probe.name,

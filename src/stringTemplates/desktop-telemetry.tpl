@@ -8,12 +8,12 @@ WITH per_build_client_day AS (
   SELECT
     PARSE_DATETIME("%Y%m%d%H%M%S", application.build_id) AS build_id,
     client_id,
-    udf.histogram_normalize(
-      udf.histogram_merge(
+    mozfun.hist.normalize(
+      mozfun.hist.merge(
         ARRAY_AGG(
-          udf.json_extract_histogram(
+          mozfun.hist.extract(
             ${ telemetryPath }
-          )
+          ) IGNORE NULLS
         )
       )
   ) AS ${ metric }
@@ -21,7 +21,7 @@ WITH per_build_client_day AS (
     telemetry.${ table }
   WHERE
     normalized_channel = '${ channel }'
-    AND ${ osFilter }
+    ${ osFilter }
     AND application.build_id > FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY))
     AND application.build_id <= FORMAT_DATE("%Y%m%d", CURRENT_DATE)
     AND DATE(submission_timestamp) >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
