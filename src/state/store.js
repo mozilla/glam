@@ -1,4 +1,4 @@
-import { derived, get } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 
 import { createStore } from '../utils/create-store';
 
@@ -216,3 +216,5 @@ export const currentQuery = derived(store, ($store) => {
   const params = activeProductConfig.getParamsForQueryString($store);
   return toQueryString(params);
 });
+
+export const showContextMenu = writable(false);

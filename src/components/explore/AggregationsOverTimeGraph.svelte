@@ -19,6 +19,9 @@
   import TrackingLabel from './TrackingLabel.svelte';
   import ChartTitle from './ChartTitle.svelte';
 
+  import { showContextMenu } from '../../state/store';
+  import ContextMenu from '../ContextMenu.svelte';
+
   export let title;
   export let description;
   export let aggregationLevel;
@@ -54,9 +57,20 @@
   }
 
   export let hoverValue = {};
+
+  let menuPos = { x: 0, y: 0 };
+
+  function onRightClick(e) {
+    menuPos = { x: e.clientX + 10, y: e.clientY };
+    $showContextMenu = true;
+  }
 </script>
 
-<div>
+{#if showContextMenu}
+  <ContextMenu {...menuPos} />
+{/if}
+
+<div on:contextmenu|preventDefault={onRightClick}>
   <ChartTitle
     {description}
     left={aggregationsOverTimeGraph.left}
