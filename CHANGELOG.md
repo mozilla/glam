@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.2.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.2.1...HEAD) (date TBD)
+
+## [2021.2.1](https://github.com/mozilla/glam/compare/2021.2.0...2021.2.1) (2021-02-19)
 
 - Add telementry.main SQL example for desktop histograms
   ([#1162](https://github.com/mozilla/glam/pull/1162))
