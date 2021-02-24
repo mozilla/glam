@@ -63,6 +63,7 @@ export default {
     labeled_counter: 'linear',
     memory_distribution: 'log',
     quantity: 'linear',
+    timespan: 'log',
     timing_distribution: 'log',
   },
   getParamsForQueryString(storeValue) {
