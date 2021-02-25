@@ -5,7 +5,6 @@
 
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
-  import { Line } from '@graph-paper/elements';
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
   import ChartTitle from './ChartTitle.svelte';
@@ -17,7 +16,6 @@
   import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
   export let description;
-  export let leftLabel;
   export let rightLabel;
   export let leftPoints;
   export let rightPoints;
@@ -37,8 +35,6 @@
 
   if (dataVolume === 1) {
     labelSet = [rightLabel];
-  } else if (dataVolume === 2) {
-    labelSet = [leftLabel, rightLabel];
   }
 
   export let xDomain = labelSet;
@@ -61,9 +57,9 @@
 
   // If insufficient data, let's not use the spring on mount.
   $: if (leftPoints && yScale)
-    dotsAndLines.setHover(leftPoints, dataVolume <= 2);
+    dotsAndLines.setHover(leftPoints, dataVolume === 1);
   $: if (rightPoints && yScale)
-    dotsAndLines.setReference(rightPoints, dataVolume <= 2);
+    dotsAndLines.setReference(rightPoints, dataVolume === 1);
 </script>
 
 <div>
@@ -78,10 +74,7 @@
     {yDomain}
     yType={yScaleType}
     xType="scalePoint"
-    width={explorerComparisonSmallMultiple.width +
-      (dataVolume <= 2
-        ? explorerComparisonSmallMultiple.insufficientDataAdjustment
-        : 0)}
+    width={explorerComparisonSmallMultiple.width}
     height={explorerComparisonSmallMultiple.height}
     bind:xScale
     bind:yScale
@@ -140,31 +133,16 @@
     <g slot="interaction" let:left let:right>
       {#if leftPoints && rightPoints}
         {#each activeBins as bin, i}
-          {#if dataVolume !== 2}
-            <line
-              x1={left}
-              x2={right}
-              y1={$dotsAndLines[bin].leftY}
-              y2={$dotsAndLines[bin].rightY}
-              stroke={$dotsAndLines[bin].color}
-              stroke-width={dataVolume === 1 ? 1 : 2}
-              stroke-opacity={dataVolume === 1 ? 0.5 : 1} />
-          {:else}
-            <!-- This is the case of only having two points. -->
-            <Line
-              scaling={false}
-              y={'y'}
-              x={'label'}
-              useYScale={false}
-              curve={'curveStep'}
-              color={$dotsAndLines[bin].color}
-              data={[
-                { y: $dotsAndLines[bin].leftY, label: leftLabel },
-                { y: $dotsAndLines[bin].rightY, label: rightLabel },
-              ]} />
-          {/if}
+          <line
+            x1={left}
+            x2={right}
+            y1={$dotsAndLines[bin].leftY}
+            y2={$dotsAndLines[bin].rightY}
+            stroke={$dotsAndLines[bin].color}
+            stroke-width={dataVolume === 1 ? 1 : 2}
+            stroke-opacity={dataVolume === 1 ? 0.5 : 1} />
           <circle
-            cx={dataVolume === 2 ? xScale(leftLabel) : left}
+            cx={left}
             cy={$dotsAndLines[bin].leftY}
             r="3"
             fill={$dotsAndLines[bin].color} />
@@ -172,7 +150,7 @@
       {/if}
       {#each activeBins as bin, i}
         <ReferenceSymbol
-          xLocation={dataVolume === 2 ? xScale(rightLabel) : right}
+          xLocation={right}
           yLocation={$dotsAndLines[bin].rightY}
           color={$dotsAndLines[bin].color} />
       {/each}
