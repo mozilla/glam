@@ -55,9 +55,7 @@
       {aggregationLevel}
       description="Set the reference point ⭑ by clicking on one of the graphs below.">
       <span slot="icon">⭑</span>
-      <span slot="label">
-        {#if dataLength > 2}Reference{:else}Latest{/if}
-      </span>
+      <span slot="label"> Reference </span>
       <span slot="count">
         <span data-value={ref.audienceSize}>
           <span
@@ -78,9 +76,7 @@
         {aggregationLevel}
         description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑.">
         <span slot="icon">●</span>
-        <span slot="label">
-          {#if dataLength > 2}Hovered{:else}Previous{/if}
-        </span>
+        <span slot="label"> Hovered </span>
         <span slot="count">
           <div>
             {#if hovered}

@@ -70,13 +70,10 @@
 
   // If there isn't more than one other point to compare,
   // let's turn off the hover.
-  let hoverActive = data.length > 2;
-  $: hoverActive = data.length > 2;
+  let hoverActive = data.length > 1;
+  $: hoverActive = data.length > 1;
 
   // If insufficient data, suppress the main graph
-  // and blow up the other.
-  let insufficientData = data.length <= 2;
-  $: insufficientData = data.length <= 2;
   $: justOne = data.length === 1;
 
   let domain = writable([]);
@@ -107,20 +104,10 @@
     setDomain(timeHorizon);
   }
 
-  export let hovered = !hoverActive ? { x: data[0].label, datum: data[0] } : {};
-
-  function leftLabelForAggComparison(d, aggLevel, x) {
-    if (d.length === 2) {
-      if (aggLevel === 'build_id') return formatBuildIDToDateString(d[0].label);
-      return d[0].label;
-    }
-    if (aggLevel === 'build_id') return formatBuildIDToDateString(x);
-    return x;
-  }
+  export let hovered = hoverActive ? {} : { x: data[0].label, datum: data[0] };
 
   function leftPointsForAggComparison(d, pmt, dt) {
-    if (d.length === 2) return d[0][pmt];
-    if (d.length > 2 && dt) return dt[pmt];
+    if (d.length > 1 && dt) return dt[pmt];
     return undefined;
   }
 
@@ -205,14 +192,14 @@
 <div class="probe-body-overview">
   <ToplineMetrics
     {ref}
-    hovered={data.length > 2 ? hovered.datum : data[0]}
+    hovered={hovered.datum}
     dataLength={data.length}
     {aggregationLevel} />
   <slot name="summary" />
 </div>
 
-<div class="graphic-and-summary" class:no-line-chart={insufficientData}>
-  <div style="display: {insufficientData ? 'none' : 'block'}">
+<div class="graphic-and-summary" class:no-line-chart={justOne}>
+  <div style="display: {justOne ? 'none' : 'block'}">
     <AggregationsOverTimeGraph
       title={aggregationsOverTimeTitle}
       description={aggregationsOverTimeDescription}
@@ -242,7 +229,6 @@
   <AggregationComparisonGraph
     description={compareDescription(aggregationsOverTimeTitle)}
     {yScaleType}
-    leftLabel={leftLabelForAggComparison(data, aggregationLevel, hovered.x)}
     rightLabel={aggregationLevel === 'build_id'
       ? formatBuildIDToDateString(ref.label)
       : ref.label}
@@ -275,7 +261,7 @@
                 2 +
               VIOLIN_PLOT_OFFSET}
             direction={-1}
-            density={data.length < 3 || !hovered.datum
+            density={data.length < 2 || !hovered.datum
               ? data[0][densityMetricType]
               : hovered.datum[densityMetricType]}
             width={(explorerComparisonSmallMultiple.width -
@@ -309,11 +295,11 @@
   </AggregationComparisonGraph>
 
   <ComparisonSummary
-    hovered={data.length === 2 || !!hovered.datum}
+    hovered={data.length === 1 || !!hovered.datum}
     left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
     right={ref[pointMetricType]}
-    leftLabel={data.length === 2 ? 'PREV.' : 'HOV.'}
-    rightLabel={data.length <= 2 ? 'LATEST' : 'REF.'}
+    leftLabel={'HOV.'}
+    rightLabel={'REF.'}
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
@@ -321,7 +307,7 @@
     keyFormatter={comparisonKeyFormatter}
     showLeft={data.length > 1}
     showDiff={data.length > 1} />
-  <div style="display: {insufficientData ? 'none' : 'block'}">
+  <div style="display: {justOne ? 'none' : 'block'}">
     <ClientVolumeOverTimeGraph
       title={clientVolumeOverTimeTitle}
       description={clientVolumeOverTimeDescription}
@@ -338,7 +324,7 @@
         }
       }} />
   </div>
-  <div style="display: {insufficientData ? 'none' : 'block'}">
+  <div style="display: {justOne ? 'none' : 'block'}">
     <CompareClientVolumeGraph
       description={compareDescription(clientVolumeOverTimeTitle)}
       yDomain={yClientsDomain}
