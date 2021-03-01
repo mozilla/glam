@@ -83,13 +83,29 @@
     QUARTER: 90,
   };
 
+  // Get the reference point from the query string if possible
+  function getDefaultReferencePoint() {
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
+      if (found) return found;
+    }
+    return data[data.length - 1];
+  }
+
+  let ref = getDefaultReferencePoint();
+
   function setDomain(str) {
-    if (aggregationLevel === 'build_id') {
+    if (str === 'ZOOM') {
+      // Try to get ref & hov from query string.
+      const start = data.find((d) => d.build_id === $store.hov).label;
+      const end = getDefaultReferencePoint().label;
+      domain.set([new Date(+start), new Date(+end)]);
+    } else if (aggregationLevel === 'build_id') {
       const start =
         str === 'ALL'
           ? new Date(+data[0].label)
           : new Date(+data[data.length - 1].label);
-      if (str !== 'ALL') {
+      if (Object.keys(horizonToDays).includes(str)) {
         start.setDate(start.getDate() - horizonToDays[str]);
       }
       const end = new Date(+data[data.length - 1].label);
@@ -100,7 +116,7 @@
   }
 
   // Trigger `setDomain` to run any time this changes.
-  $: if (aggregationLevel) {
+  $: if (aggregationLevel || timeHorizon) {
     setDomain(timeHorizon);
   }
 
@@ -111,22 +127,12 @@
     return undefined;
   }
 
-  // Get the reference point from the query string if possible
-  function getDefaultReferencePoint() {
-    if ($store.ref) {
-      const found = data.find((d) => d[aggregationLevel] === $store.ref);
-      if (found) return found;
-    }
-    return data[data.length - 1];
+  // Persist the reference point to the query string if not last data point.
+  $: if (ref[aggregationLevel] !== data[data.length - 1][aggregationLevel]) {
+    store.setField('ref', ref[aggregationLevel]);
+  } else {
+    store.setField('ref', '');
   }
-
-  export let ref = getDefaultReferencePoint();
-
-  // Persist the reference point to the query string
-  $: store.setField(
-    'ref',
-    aggregationLevel === 'version' ? ref.version : ref.build_id
-  );
 
   // This will lightly animate the reference distribution part of the violin plot.
   // FIXME: for quantile plots, let's move this up a level to the view.

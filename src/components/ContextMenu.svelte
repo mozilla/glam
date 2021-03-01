@@ -1,8 +1,10 @@
 <script>
-  import { showContextMenu } from '../state/store.js';
+  import { store, showContextMenu } from '../state/store';
 
   export let x;
   export let y;
+  export let hov;
+  export let zoomUrl;
 
   let elem;
 
@@ -14,6 +16,15 @@
 
   function closeMenu() {
     $showContextMenu = false;
+  }
+
+  // NOTE: I'd like to keep as much logic out of this file as much as possible
+  // and keep it focused on only displaying context menus. I'm not quite sure
+  // how to handle this with specific menu options and click event handlers,
+  // however.
+  function engageZoom() {
+    store.setField('hov', hov.build_id);
+    store.setField('timeHorizon', 'ZOOM');
   }
 </script>
 
@@ -46,7 +57,9 @@
     on:click={closeMenu}
     bind:this={elem}>
     <div class="option">
-      Zoom from here to the <code>REF</code> point
+      <a href={zoomUrl} on:click|preventDefault={engageZoom}>
+        Zoom from here to the <code>REF</code> point
+      </a>
     </div>
   </div>
 {/if}

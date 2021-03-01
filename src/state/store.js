@@ -32,6 +32,7 @@ function getDefaultState(
 
   state.probeName = '';
   state.ref = getFromQueryString('ref') || '';
+  state.hov = getFromQueryString('hov') || '';
   state.route = {};
   state.searchProduct = state.product || 'firefox';
 
@@ -73,7 +74,7 @@ store.reset = () => {
   store.reinitialize();
 };
 
-function getActiveProductConfig() {
+export function getActiveProductConfig() {
   return productConfig[get(store).product];
 }
 
@@ -139,7 +140,7 @@ const toQueryStringPair = (k, v) => {
   return `${k}=${encodeURIComponent(v)}`;
 };
 
-function toQueryString(params) {
+export function toQueryString(params) {
   const keys = Object.keys(params);
   keys.sort();
   return `?${keys.map((k) => toQueryStringPair(k, params[k])).join('&')}`;

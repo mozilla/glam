@@ -59,10 +59,6 @@
           if (product && storeValue.product !== product) {
             store.setProduct(product);
           }
-          // If the probe has changed, reset the reference point.
-          if (storeValue.probeName !== probeName) {
-            store.setField('ref', '');
-          }
           store.setField('probe', newProbe);
 
           if (productConfig[product].transformProbeForGLAM) {
