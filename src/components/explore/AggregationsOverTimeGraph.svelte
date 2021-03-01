@@ -19,7 +19,12 @@
   import TrackingLabel from './TrackingLabel.svelte';
   import ChartTitle from './ChartTitle.svelte';
 
-  import { showContextMenu } from '../../state/store';
+  import {
+    getActiveProductConfig,
+    store,
+    showContextMenu,
+    toQueryString,
+  } from '../../state/store';
   import ContextMenu from '../ContextMenu.svelte';
 
   export let title;
@@ -59,15 +64,29 @@
   export let hoverValue = {};
 
   let menuPos = { x: 0, y: 0 };
+  let zoomUrl;
+  let hov;
+
+  function generateQueryString(paramsToUpdate) {
+    const activeProductConfig = getActiveProductConfig();
+    if (!activeProductConfig) return '';
+    const params = activeProductConfig.getParamsForQueryString($store);
+    return toQueryString({ ...params, ...paramsToUpdate });
+  }
 
   function onRightClick(e) {
     menuPos = { x: e.clientX + 10, y: e.clientY };
-    $showContextMenu = true;
+    zoomUrl = generateQueryString({
+      hov: hovered.datum.build_id,
+      timeHorizon: 'ZOOM',
+    });
+    hov = hovered.datum;
+    $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
 </script>
 
 {#if showContextMenu}
-  <ContextMenu {...menuPos} />
+  <ContextMenu {...menuPos} {hov} {zoomUrl} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>

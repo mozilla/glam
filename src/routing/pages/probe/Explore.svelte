@@ -17,8 +17,11 @@
 
     const field = renames[type] || type;
     // FIXME: use the productConfig from an upcoming PR.
-    if (field === 'aggregationLevel') store.setDimension(field, selection);
-    else store.setField(field, selection);
+    if (field === 'aggregationLevel') {
+      store.setDimension(field, selection);
+    } else {
+      store.setField(field, selection);
+    }
   }
 </script>
 

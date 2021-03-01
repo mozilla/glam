@@ -21,6 +21,8 @@ export function extractBugId(url) {
 export function stripDefaultValues(params, defaults) {
   return Object.keys(params)
     .filter((k) => {
+      // If it's empty or undefined, remove it.
+      if (!params[k]) return false;
       if (Object.keys(defaults).includes(k)) {
         // If this param has a default value defined.
         if (defaults[k].isMulti) {
@@ -34,7 +36,7 @@ export function stripDefaultValues(params, defaults) {
         // It's not `isMulti`, so just compare value to value.
         return params[k] !== defaults[k].defaultValue;
       }
-      // If no default defined, return true to always include it in the URL.
+      // If no default defined, return true to include it in the URL.
       return true;
     })
     .reduce(
