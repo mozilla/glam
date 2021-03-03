@@ -6,10 +6,10 @@ https://github.com/mozilla/glam
 
 GLAM uses Docker for local development and deployment. Please make sure to
 install [Docker] and [Docker Compose] on your computer to contribute code or
-documentation changes. Note that GLAM requires a fair bit of disk space--
-if you're using Docker for Mac, you might want to increase the allocation
-of disk space to the Docker virtual machine to at least 100G (via Preferences
--> Resources -> Advanced).
+documentation changes. Note that GLAM requires a fair bit of disk space-- if
+you're using Docker for Mac, you might want to increase the allocation of disk
+space to the Docker virtual machine to at least 100G (via Preferences ->
+Resources -> Advanced).
 
 [docker]: https://docs.docker.com/engine/installation/#supported-platforms
 [docker compose]: https://docs.docker.com/compose/install/
