@@ -1,18 +1,18 @@
 log_format main escape=json
 '{'
-    '"time":"$time_local",'
-    '"remote_addr":"$remote_addr",'
-    '"remote_user":"$remote_user",'
-    '"request":"$request",'
-    '"status": "$status",'
-    '"bytes_sent": $body_bytes_sent,'
-    '"request_time": $request_time,'
-    '"referrer":"$http_referer",'
-    '"user_agent":"$http_user_agent",'
-    '"x_forwarded_for":"$http_x_forwarded_for",'
-    '"x_forwarded_proto":"$http_x_forwarded_proto",'
-    '"trace":"$http_x_cloud_trace_context",'
-    '"host":"$host"'
+    '"time":"$$time_local",'
+    '"remote_addr":"$$remote_addr",'
+    '"remote_user":"$$remote_user",'
+    '"request":"$$request",'
+    '"status": "$$status",'
+    '"bytes_sent": $$body_bytes_sent,'
+    '"request_time": $$request_time,'
+    '"referrer":"$$http_referer",'
+    '"user_agent":"$$http_user_agent",'
+    '"x_forwarded_for":"$$http_x_forwarded_for",'
+    '"x_forwarded_proto":"$$http_x_forwarded_proto",'
+    '"trace":"$$http_x_cloud_trace_context",'
+    '"host":"$$host"'
 '}';
 
 access_log logs/access.log main;
@@ -39,7 +39,7 @@ server {
     lua_ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
     lua_ssl_verify_depth 3;
 
-    resolver 8.8.8.8 ipv6=off;
+    resolver ${NGINX_RESOLVER:=8.8.8.8} ipv6=off;
 
     listen ${NGINX_LISTEN};
 
@@ -50,26 +50,36 @@ server {
 
     # Health checks don't send an x-forwarded-proto header and we need to make
     # sure they don't get infinite redirects
-    if ($http_x_forwarded_proto = "http") {
-        return 302 ${APP_BASE_URL}$request_uri;
+    if ($$http_x_forwarded_proto = "http") {
+        return 302 ${APP_BASE_URL}$$request_uri;
     }
 
     add_header Strict-Transport-Security "max-age=31536000";
 
     location / {
-        set $session_cookie_lifetime 86400;
-        set $session_check_ssi off;
-        set $session_secret "${NGINX_SESSION_SECRET}";
-        set $oidc_client_id "${OIDC_CLIENT_ID}";
-        set $oidc_redirect_uri "${OIDC_REDIRECT_URI}";
-        set $oidc_logout_path "${OIDC_LOGOUT_PATH}";
-        set $oidc_use_pkce true;
+        # session config
+        set $$session_storage         "${NGINX_SESSION_STORAGE:=cookie}";
+        set $$session_cookie_lifetime 86400;
+        set $$session_secret          "${NGINX_SESSION_SECRET}";
+
+        # memcache config if $$session_storage is "memcache"
+        set $$session_memcache_prefix       "${SESSION_MEMCACHE_PREFIX:=sessions}";
+        set $$session_memcache_host         "${SESSION_MEMCACHE_HOST:=127.0.0.1}";
+        set $$session_memcache_port         "${SESSION_MEMCACHE_PORT:=11211}";
+        set $$session_memcache_pool_size    10;
+        set $$session_memcache_pool_timeout 1000;
+
+        # openidc config
+        set $$oidc_client_id    "${OIDC_CLIENT_ID}";
+        set $$oidc_redirect_uri "${OIDC_REDIRECT_URI}";
+        set $$oidc_logout_path  "${OIDC_LOGOUT_PATH}";
+        set $$oidc_use_pkce     true;
 
         access_by_lua_file "../site/lualib/resty/access_by_openidc.lua";
 
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
-        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For   $$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $$http_x_forwarded_proto;
+        proxy_set_header Host              $$http_host;
         more_clear_input_headers "X-Forwarded-Host";
         proxy_redirect off;
 
@@ -78,9 +88,9 @@ server {
 
     location ~ ^/__(?:(?:lb)?heartbeat|version)__/? {
         # set proxy options
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
-        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-For   $$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $$http_x_forwarded_proto;
+        proxy_set_header Host              $$http_host;
         more_clear_input_headers "X-Forwarded-Host";
         proxy_redirect off;
 
