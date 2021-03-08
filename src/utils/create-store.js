@@ -41,6 +41,12 @@ export function createStore(initialStore) {
   function setDimension(key, value) {
     INTERNAL_STORE.update((state) =>
       produce(state, (draft) => {
+        // When changing aggregation level, reset zoom states.
+        if (key === 'aggregationLevel') {
+          draft.hov = '';
+          draft.ref = '';
+          draft.timeHorizon = 'MONTH';
+        }
         draft.productDimensions[key] = value;
       })
     );

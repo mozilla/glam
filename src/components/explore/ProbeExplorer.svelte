@@ -97,7 +97,9 @@
   function setDomain(str) {
     if (str === 'ZOOM') {
       // Try to get ref & hov from query string.
-      const start = data.find((d) => d.build_id === $store.hov).label;
+      const start = data.find(
+        (d) => d.build_id === $store.hov || d.version === $store.hov
+      ).label;
       const end = getDefaultReferencePoint().label;
       domain.set([new Date(+start), new Date(+end)]);
     } else if (aggregationLevel === 'build_id') {

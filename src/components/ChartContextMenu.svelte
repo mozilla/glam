@@ -3,7 +3,6 @@
 
   export let x;
   export let y;
-  export let hov;
   export let zoomUrl;
 
   let elem;
@@ -18,12 +17,7 @@
     $showContextMenu = false;
   }
 
-  // NOTE: I'd like to keep as much logic out of this file as much as possible
-  // and keep it focused on only displaying context menus. I'm not quite sure
-  // how to handle this with specific menu options and click event handlers,
-  // however.
   function engageZoom() {
-    store.setField('hov', hov.build_id);
     store.setField('timeHorizon', 'ZOOM');
   }
 </script>
@@ -42,8 +36,8 @@
     padding: 5px 15px;
     grid-gap: 5px;
   }
-  div.option:hover {
-    background-color: #e5e7eb;
+  div.option:hover a {
+    /* background-color: #e5e7eb; */
     cursor: pointer;
   }
 </style>
@@ -57,9 +51,16 @@
     on:click={closeMenu}
     bind:this={elem}>
     <div class="option">
+      <strong>Hov: </strong>
+      {$store.hov}
+    </div>
+    <div class="option">
       <a href={zoomUrl} on:click|preventDefault={engageZoom}>
         Zoom from here to the <code>REF</code> point
       </a>
+    </div>
+    <div class="option">
+      <i>Coming soon: Pushlog links for selected ranges.</i>
     </div>
   </div>
 {/if}
