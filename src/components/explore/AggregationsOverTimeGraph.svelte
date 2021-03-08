@@ -25,7 +25,7 @@
     showContextMenu,
     toQueryString,
   } from '../../state/store';
-  import ContextMenu from '../ContextMenu.svelte';
+  import ChartContextMenu from '../ChartContextMenu.svelte';
 
   export let title;
   export let description;
@@ -65,28 +65,59 @@
 
   let menuPos = { x: 0, y: 0 };
   let zoomUrl;
-  let hov;
 
   function generateQueryString(paramsToUpdate) {
     const activeProductConfig = getActiveProductConfig();
-    if (!activeProductConfig) return '';
-    const params = activeProductConfig.getParamsForQueryString($store);
-    return toQueryString({ ...params, ...paramsToUpdate });
+    return activeProductConfig
+      ? {
+          ...toQueryString(activeProductConfig.getParamsForQueryString($store)),
+          ...paramsToUpdate,
+        }
+      : '';
+  }
+
+  function getDefaultReferencePoint() {
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
+      if (found) return found;
+    }
+    return data[data.length - 1];
   }
 
   function onRightClick(e) {
+    // Only show context menu when aggregation is build_id.
+    if (aggregationLevel !== 'build_id') {
+      return;
+    }
+
     menuPos = { x: e.clientX + 10, y: e.clientY };
+    let hov =
+      hovered.datum.build_id === '*'
+        ? hovered.datum.version
+        : hovered.datum.build_id;
+    let thisRef = getDefaultReferencePoint();
+    thisRef =
+      aggregationLevel === 'build_id' ? thisRef.build_id : thisRef.version;
+
+    if (thisRef < hov) {
+      [hov, thisRef] = [thisRef, hov];
+    }
+
+    store.setField('hov', hov);
+    store.setField('ref', thisRef);
+
     zoomUrl = generateQueryString({
-      hov: hovered.datum.build_id,
+      hov,
       timeHorizon: 'ZOOM',
     });
-    hov = hovered.datum;
+
+    // Finally, set the flag to open the context menu.
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
 </script>
 
 {#if showContextMenu}
-  <ContextMenu {...menuPos} {hov} {zoomUrl} />
+  <ChartContextMenu {...menuPos} {zoomUrl} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>

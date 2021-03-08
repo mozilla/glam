@@ -33,6 +33,7 @@ function getDefaultState(
   state.probeName = '';
   state.ref = getFromQueryString('ref') || '';
   state.hov = getFromQueryString('hov') || '';
+  state.timeHorizon = getFromQueryString('timeHorizon') || 'MONTH';
   state.route = {};
   state.searchProduct = state.product || 'firefox';
 
