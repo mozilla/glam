@@ -90,7 +90,7 @@
       return;
     }
 
-    menuPos = { x: e.clientX + 10, y: e.clientY };
+    menuPos = { x: e.clientX, y: e.clientY };
     let hov =
       hovered.datum.build_id === '*'
         ? hovered.datum.version
