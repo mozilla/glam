@@ -13,6 +13,12 @@
     }
   }
 
+  function onEscape(e) {
+    if (e.key === 'Escape' && $showContextMenu) {
+      $showContextMenu = false;
+    }
+  }
+
   function closeMenu() {
     $showContextMenu = false;
   }
@@ -42,7 +48,7 @@
   }
 </style>
 
-<svelte:body on:click={onClickOutside} />
+<svelte:body on:click={onClickOutside} on:keydown|stopPropagation={onEscape} />
 
 {#if $showContextMenu}
   <div
