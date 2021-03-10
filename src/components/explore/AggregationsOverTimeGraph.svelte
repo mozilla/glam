@@ -123,7 +123,7 @@
 </script>
 
 {#if showContextMenu}
-  <ChartContextMenu {...menuPos} {zoomUrl} />
+  <ChartContextMenu {...menuPos} {zoomUrl} {data} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>

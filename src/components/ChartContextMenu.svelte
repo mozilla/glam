@@ -1,6 +1,9 @@
 <script>
+  import _ from 'lodash';
+  import { timeFormat } from 'd3-time-format';
   import { store, showContextMenu } from '../state/store';
 
+  export let data;
   export let x;
   export let y;
   export let zoomUrl;
@@ -26,25 +29,55 @@
   function engageZoom() {
     store.setField('timeHorizon', 'ZOOM');
   }
+
+  function getDateFromPoint(p) {
+    let label;
+    if (p) {
+      const found = data.find((d) => d.build_id === p);
+      if (found) {
+        label = found.label;
+      }
+    } else {
+      label = data[data.length - 1].label;
+    }
+    return timeFormat('%Y-%m-%d %H:%M:%S')(label);
+  }
 </script>
 
 <style>
   div#menu {
     position: absolute;
     display: grid;
-    background: white;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    width: 300px;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     border-radius: 0.375rem;
+  }
+  div.range {
+    padding: 5px 15px;
+    grid-gap: 5px;
+    display: flex;
+    flex-direction: row;
+  }
+  div.key {
+    width: 25%;
+    font-weight: bold;
+  }
+  div.value {
+    width: 75%;
   }
   div.option {
     padding: 5px 15px;
     grid-gap: 5px;
   }
-  div.option:hover a {
-    /* background-color: #e5e7eb; */
+  div.link:hover {
+    background-color: #e5e7eb;
+  }
+  div.link a {
+    display: block;
     cursor: pointer;
+    text-decoration: none;
   }
 </style>
 
@@ -56,17 +89,24 @@
     style="top: {y}px; left: {x}px;"
     on:click={closeMenu}
     bind:this={elem}>
-    <div class="option">
-      <strong>Hov: </strong>
-      {$store.hov}
+    <div class="range">
+      <div class="key">Range:</div>
+      <div class="value">
+        {getDateFromPoint(_.min([$store.ref, $store.hov]))}
+      </div>
+    </div>
+    <div class="range">
+      <div class="key">to:</div>
+      <div class="value">
+        {getDateFromPoint(_.max([$store.ref, $store.hov]))}
+      </div>
+    </div>
+    <div class="option link">
+      <a href={zoomUrl} on:click|preventDefault={engageZoom}> Zoom to Range </a>
     </div>
     <div class="option">
-      <a href={zoomUrl} on:click|preventDefault={engageZoom}>
-        Zoom from here to the <code>REF</code> point
-      </a>
-    </div>
-    <div class="option">
-      <i>Coming soon: Pushlog links for selected ranges.</i>
+      <i>Coming soon:</i><br />
+      Pushlog link for selected range
     </div>
   </div>
 {/if}
