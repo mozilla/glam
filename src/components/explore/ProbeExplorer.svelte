@@ -14,7 +14,7 @@
 
   import AdHocViolin from './AdHocViolin.svelte';
 
-  import { store } from '../../state/store';
+  import { showContextMenu, store } from '../../state/store';
 
   import {
     explorerComparisonSmallMultiple,
@@ -154,6 +154,9 @@
   $: yMax = Math.max(50, Math.max(...yVals));
   $: yClientsDomain = [0, yMax * MULT];
 
+  let hoverValue = {};
+  let lastHoverValue = {};
+
   // setting hovered value.
   function get(d, x) {
     return window1D({
@@ -163,15 +166,21 @@
       highestValue: $domain[$domain.length - 1],
     });
   }
-  let hoverValue = {};
+
   $: if (hoverValue.x) {
-    const i = get(data, hoverValue.x);
-    hovered = {
-      ...hoverValue,
-      datum: data[i.currentIndex],
-      previous: data[i.previousIndex],
-      next: data[i.nextIndex],
-    };
+    if ($showContextMenu) {
+      hovered = lastHoverValue;
+    } else {
+      const i = get(data, hoverValue.x);
+      hovered = {
+        ...hoverValue,
+        datum: data[i.currentIndex],
+        previous: data[i.previousIndex],
+        next: data[i.nextIndex],
+      };
+    }
+  } else if ($showContextMenu) {
+    hovered = lastHoverValue;
   } else {
     hovered = {};
   }

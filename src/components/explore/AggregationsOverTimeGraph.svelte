@@ -18,6 +18,7 @@
   import TrackingLine from './TrackingLine.svelte';
   import TrackingLabel from './TrackingLabel.svelte';
   import ChartTitle from './ChartTitle.svelte';
+  import ChartContextMenu from '../ChartContextMenu.svelte';
 
   import {
     getActiveProductConfig,
@@ -25,7 +26,6 @@
     showContextMenu,
     toQueryString,
   } from '../../state/store';
-  import ChartContextMenu from '../ChartContextMenu.svelte';
 
   export let title;
   export let description;
@@ -85,6 +85,12 @@
   }
 
   function onRightClick(e) {
+    // If the context menu is already up, disable it and return.
+    if ($showContextMenu) {
+      $showContextMenu = false;
+      return;
+    }
+
     // Only show context menu when aggregation is build_id.
     if (aggregationLevel !== 'build_id') {
       return;
