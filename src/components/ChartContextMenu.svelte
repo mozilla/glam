@@ -27,6 +27,8 @@
   }
 
   function engageZoom() {
+    store.setField('ref', _.max([$store.ref, $store.hov]));
+    store.setField('hov', _.min([$store.ref, $store.hov]));
     store.setField('timeHorizon', 'ZOOM');
   }
 
