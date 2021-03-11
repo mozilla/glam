@@ -46,24 +46,26 @@
 </style>
 
 <ButtonGroup {justify}>
-  {#each options as { label, value, labelColor, tooltip, component }, i (label)}
-    <Button
-      {tooltip}
-      {level}
-      {compact}
-      toggled={multi ? selected.includes(value) : selected === value}
-      on:click={() => {
-        toggle(value);
-      }}>
-      {#if labelColor}
-        <div class="body-control__color-swatch-wrapper">
-          <ColorSwatch color={labelColor} />
-        </div>
-      {/if}
-      {#if component}
-        <svelte:component this={component} size={14} />
-      {/if}
-      {label}
-    </Button>
+  {#each options as { label, value, labelColor, tooltip, enabled, component }, i (label)}
+    {#if enabled}
+      <Button
+        {tooltip}
+        {level}
+        {compact}
+        toggled={multi ? selected.includes(value) : selected === value}
+        on:click={() => {
+          toggle(value);
+        }}>
+        {#if labelColor}
+          <div class="body-control__color-swatch-wrapper">
+            <ColorSwatch color={labelColor} />
+          </div>
+        {/if}
+        {#if component}
+          <svelte:component this={component} size={14} />
+        {/if}
+        {label}
+      </Button>
+    {/if}
   {/each}
 </ButtonGroup>
