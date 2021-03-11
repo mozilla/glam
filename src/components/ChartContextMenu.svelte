@@ -1,11 +1,12 @@
 <script>
-  import _ from 'lodash';
   import { timeFormat } from 'd3-time-format';
   import { store, showContextMenu } from '../state/store';
 
   export let data;
   export let x;
   export let y;
+  export let clickedRef;
+  export let clickedHov;
   export let zoomUrl;
 
   let elem;
@@ -27,8 +28,8 @@
   }
 
   function engageZoom() {
-    store.setField('ref', _.max([$store.ref, $store.hov]));
-    store.setField('hov', _.min([$store.ref, $store.hov]));
+    store.setField('ref', clickedRef);
+    store.setField('hov', clickedHov);
     store.setField('timeHorizon', 'ZOOM');
   }
 
@@ -94,13 +95,13 @@
     <div class="range">
       <div class="key">Range:</div>
       <div class="value">
-        {getDateFromPoint(_.min([$store.ref, $store.hov]))}
+        {getDateFromPoint(clickedHov)}
       </div>
     </div>
     <div class="range">
       <div class="key">to:</div>
       <div class="value">
-        {getDateFromPoint(_.max([$store.ref, $store.hov]))}
+        {getDateFromPoint(clickedRef)}
       </div>
     </div>
     <div class="option link">

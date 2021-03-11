@@ -118,7 +118,7 @@
   }
 
   // Trigger `setDomain` to run any time this changes.
-  $: if (aggregationLevel || timeHorizon) {
+  $: if (aggregationLevel || (timeHorizon && $store.hov)) {
     setDomain(timeHorizon);
   }
 

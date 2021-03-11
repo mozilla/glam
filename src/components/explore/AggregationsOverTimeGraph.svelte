@@ -1,4 +1,6 @@
 <script>
+  import _ from 'lodash';
+
   import { fly } from 'svelte/transition';
   import { cubicOut as easing } from 'svelte/easing';
 
@@ -84,6 +86,10 @@
     return data[data.length - 1];
   }
 
+  // Values we pass to context menu for zoom events.
+  let clickedRef;
+  let clickedHov;
+
   function onRightClick(e) {
     // If the context menu is already up, disable it and return.
     if ($showContextMenu) {
@@ -97,23 +103,24 @@
     }
 
     menuPos = { x: e.clientX, y: e.clientY };
-    let hov =
+    clickedHov =
       hovered.datum.build_id === '*'
         ? hovered.datum.version
         : hovered.datum.build_id;
-    let thisRef = getDefaultReferencePoint();
-    thisRef =
-      aggregationLevel === 'build_id' ? thisRef.build_id : thisRef.version;
+    clickedRef = getDefaultReferencePoint();
+    clickedRef =
+      aggregationLevel === 'build_id'
+        ? clickedRef.build_id
+        : clickedRef.version;
 
-    if (thisRef < hov) {
-      [hov, thisRef] = [thisRef, hov];
-    }
-
-    store.setField('hov', hov);
-    store.setField('ref', thisRef);
+    // Make sure `hov` is on the left of the range.
+    [clickedRef, clickedHov] = [
+      _.max([clickedRef, clickedHov]),
+      _.min([clickedRef, clickedHov]),
+    ];
 
     zoomUrl = generateQueryString({
-      hov,
+      clickedHov,
       timeHorizon: 'ZOOM',
     });
 
@@ -123,7 +130,7 @@
 </script>
 
 {#if showContextMenu}
-  <ChartContextMenu {...menuPos} {zoomUrl} {data} />
+  <ChartContextMenu {...menuPos} {zoomUrl} {data} {clickedRef} {clickedHov} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>
