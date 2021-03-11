@@ -2,6 +2,11 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.2.1...HEAD) (date TBD)
 
+- Support `timespan` Glean metric type
+  ([32a6ab9](https://github.com/mozilla/glam/commit/32a6ab9))
+- Add ability to zoom to a custom range
+  ([#1127](https://github.com/mozilla/glam/issues/1127))
+
 ## [2021.2.1](https://github.com/mozilla/glam/compare/2021.2.0...2021.2.1) (2021-02-19)
 
 - Add telementry.main SQL example for desktop histograms
