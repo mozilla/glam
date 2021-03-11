@@ -7,6 +7,7 @@
   import FileCopy from './icons/FileCopy.svelte';
   import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
   import desktopTelemetrySql from '../stringTemplates/desktop-telemetry.tpl';
+  import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
 
   let sqlElement;
   let status;
@@ -75,19 +76,40 @@
     });
   }
 
-  const tabs = [
-    {
+  function getFenixGlamSql() {
+    const buildIdFilter =
+      $store.productDimensions.aggregationLevel === 'build_id'
+        ? 'app_build_id!="*"'
+        : 'app_build_id="*"';
+    return _.template(fenixGlamSql)({
+      app_id: $store.productDimensions.app_id,
+      metric: $store.probe.name,
+      os: $store.productDimensions.os,
+      ping_type: $store.productDimensions.ping_type,
+      buildIdFilter,
+    });
+  }
+
+  const tabs = [];
+  if ($store.product === 'firefox') {
+    tabs.push({
       id: 1,
       label: 'GLAM SQL',
       sql: getGlamSql,
-    },
-  ];
-  // Telemetry SQL only works on histograms.
-  if ($store.probe.type === 'histogram') {
+    });
+    // Telemetry SQL only works on histograms.
+    if ($store.probe.type === 'histogram') {
+      tabs.push({
+        id: 2,
+        label: 'Telemetry SQL',
+        sql: getTelemetrySql,
+      });
+    }
+  } else if ($store.product === 'fenix') {
     tabs.push({
-      id: 2,
-      label: 'Telemetry SQL',
-      sql: getTelemetrySql,
+      id: 1,
+      label: 'GLAM SQL',
+      sql: getFenixGlamSql,
     });
   }
 </script>
