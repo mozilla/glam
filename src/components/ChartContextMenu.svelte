@@ -89,7 +89,7 @@
 {#if $showContextMenu}
   <div
     id="menu"
-    style="top: {y}px; left: {x}px;"
+    style="top: {y + window.scrollY}px; left: {x + window.scrollX}px;"
     on:click={closeMenu}
     bind:this={elem}>
     <div class="range">
