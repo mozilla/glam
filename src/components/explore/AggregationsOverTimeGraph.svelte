@@ -71,10 +71,10 @@
   function generateQueryString(paramsToUpdate) {
     const activeProductConfig = getActiveProductConfig();
     return activeProductConfig
-      ? {
-          ...toQueryString(activeProductConfig.getParamsForQueryString($store)),
+      ? toQueryString({
+          ...activeProductConfig.getParamsForQueryString($store),
           ...paramsToUpdate,
-        }
+        })
       : '';
   }
 
