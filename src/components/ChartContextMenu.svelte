@@ -99,6 +99,12 @@
   div.option-link {
     padding: 5px 15px 5px 5px;
   }
+  div.option-icon a {
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--digital-blue-500);
+  }
   div.option-link a {
     text-transform: uppercase;
     display: block;
@@ -136,7 +142,9 @@
     <div class="options">
       <div class="option">
         <div class="option-icon">
-          <ZoomIn size="12" />
+          <a href={zoomUrl} on:click|preventDefault={engageZoom}>
+            <ZoomIn size="12" />
+          </a>
         </div>
         <div class="option-link">
           <a href={zoomUrl} on:click|preventDefault={engageZoom}>
