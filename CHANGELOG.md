@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.2.1...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.3.0...HEAD) (date TBD)
+
+## [2021.3.0](https://github.com/mozilla/glam/compare/2021.2.1...2021.3.0) (2021-03-16)
 
 - Support `timespan` Glean metric type
   ([32a6ab9](https://github.com/mozilla/glam/commit/32a6ab9))
