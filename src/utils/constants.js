@@ -26,7 +26,11 @@ export function overTimeTitle(metricType, aggregationLevel) {
 }
 
 export function exploreInstructionsDescription(aggregationLevel) {
-  return `Hover to compare to reference ⭑; click to set reference ⭑ to hovered ${niceAggregations[aggregationLevel]} ●.`;
+  return `
+  Hover to compare to reference ⭑; click to set reference ⭑ 
+  to hovered ${niceAggregations[aggregationLevel]} ●.
+  Right-click to perform actions from reference ⭑ to hovered ●.
+  `;
 }
 
 export function percentilesOverTimeDescription(aggregationLevel) {
