@@ -46,7 +46,7 @@ google-auth==1.27.1
     #   google-api-core
     #   google-cloud-core
     #   google-cloud-storage
-google-cloud-bigquery==2.11.0
+google-cloud-bigquery==2.13.1
     # via -r requirements.in
 google-cloud-core==1.6.0
     # via
@@ -126,6 +126,7 @@ pytz==2021.1
 requests==2.25.1
     # via
     #   google-api-core
+    #   google-cloud-bigquery
     #   google-cloud-storage
 rsa==4.7.2
     # via google-auth
