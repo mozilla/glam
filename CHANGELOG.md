@@ -2,6 +2,9 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.3.0...HEAD) (date TBD)
 
+- Add proportions SQL for other histogram types
+  ([#1277](https://github.com/mozilla/glam/pull/1277))
+
 ## [2021.3.0](https://github.com/mozilla/glam/compare/2021.2.1...2021.3.0) (2021-03-16)
 
 - Support `timespan` Glean metric type
