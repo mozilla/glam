@@ -7,6 +7,7 @@
   import FileCopy from './icons/FileCopy.svelte';
   import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
   import desktopTelemetrySql from '../stringTemplates/desktop-telemetry.tpl';
+  import desktopHistogramProportionsSql from '../stringTemplates/desktop-histogram-proportions.tpl';
   import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
 
   let sqlElement;
@@ -50,6 +51,15 @@
   function getTelemetrySql() {
     // TODO: Use the time horizon to date window in SQL?
     const { process } = $store.productDimensions;
+    let sqlTemplate = desktopTelemetrySql;
+    if (
+      ['categorical', 'count', 'enumerated', 'flag'].includes(
+        $store.probe.info.calculated.latest_history.details.kind
+      )
+    ) {
+      sqlTemplate = desktopHistogramProportionsSql;
+    }
+
     let telemetryPath;
     const table =
       $store.productDimensions.channel === 'nightly'
@@ -67,7 +77,7 @@
         ? `-- AND normalized_os="Windows" -- To add OS filter.`
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
-    return _.template(desktopTelemetrySql)({
+    return _.template(sqlTemplate)({
       metric: $store.probe.name,
       channel: $store.productDimensions.channel,
       table,
