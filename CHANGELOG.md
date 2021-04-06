@@ -1,6 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.3.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.4.0...HEAD) (date TBD)
+
+## [2021.4.0](https://github.com/mozilla/glam/compare/2021.3.0...2021.4.0) (2021-04-06)
 
 - Add proportions SQL for other histogram types
   ([#1277](https://github.com/mozilla/glam/pull/1277))
