@@ -4,7 +4,7 @@
 #
 #    pip-compile
 #
-asgiref==3.3.1
+asgiref==3.3.4
     # via django
 attrs==20.3.0
     # via pytest
@@ -22,7 +22,7 @@ dj-database-url==0.5.0
     # via -r requirements.in
 django-configurations==2.2
     # via -r requirements.in
-django==3.1.7
+django==3.2
     # via
     #   -r requirements.in
     #   djangorestframework
