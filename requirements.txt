@@ -111,7 +111,7 @@ pytest-blockage==0.2.2
     # via -r requirements.in
 pytest-cov==2.11.1
     # via -r requirements.in
-pytest-django==4.1.0
+pytest-django==4.2.0
     # via -r requirements.in
 pytest==6.2.2
     # via
