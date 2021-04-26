@@ -10,6 +10,8 @@
   let button;
   let width;
 
+  options.sort();
+
   function toggle() {
     active = !active;
   }
@@ -56,7 +58,7 @@
       text: 'this probe has multiple keys associated with it',
     }}>
     <div>
-      {#each options as opt, i}
+      {#each options as opt}
         <div
           style="
             visibility: {opt === currentKey
