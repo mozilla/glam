@@ -35,7 +35,7 @@
   let currentKey = probeKeys[0];
   let currentAggregation = aggregationTypes.includes('summed_histogram')
     ? 'summed_histogram'
-    : aggregationTypes[0];
+    : 'avg';
 
   let aggregationInfo;
 
