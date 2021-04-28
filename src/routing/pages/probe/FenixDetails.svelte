@@ -162,7 +162,7 @@
           {@html marked($store.probe.info.description)}
           <a
             class="more-info-link"
-            href={`https://dictionary.protosaur.dev/apps/fenix/metrics/${$store.probe.name}`}
+            href={`https://dictionary.telemetry.mozilla.org/apps/fenix/metrics/${$store.probe.name}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
