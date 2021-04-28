@@ -10,6 +10,8 @@
   let button;
   let width;
 
+  aggregationTypes.sort();
+
   function toggle() {
     active = !active;
   }
