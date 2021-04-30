@@ -48,7 +48,11 @@ To gather the probe data that populates the probe API, run the following:
 ./manage.py import_probes
 ```
 
-The next step requires viewer permissions in the non-prod GCP project, please reach out to someone on the #glam Slack channel if you need the proper authorization. Then, log in to GCP with [`gcloud auth application-default login`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login) to be able to pull data using terminal commands.
+The next step requires viewer permissions in the non-prod GCP project, please
+reach out to someone on the #glam Slack channel if you need the proper
+authorization. Then, log in to GCP with
+[`gcloud auth application-default login`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login)
+to be able to import data using terminal commands.
 
 The last step is to populate the aggregation tables with data from desktop
 Firefox:
