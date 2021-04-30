@@ -32,7 +32,7 @@ Reach out to someone on the #glam Slack channel for the values of the
 ## Initial Setup
 
 When first setting up the project you will need to set up the database and
-import data that the front-end is expecting.
+import data that the front-end is expecting. 
 
 First, from the project root, log into the Docker container with `make shell`.
 
@@ -47,6 +47,8 @@ To gather the probe data that populates the probe API, run the following:
 ```
 ./manage.py import_probes
 ```
+
+The next step requires viewer permissions in the non-prod GCP project, please reach out to someone on the #glam Slack channel if you need the proper authorization. Then, log in to GCP with [`gcloud auth application-default login`](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login) to be able to pull data using terminal commands.
 
 The last step is to populate the aggregation tables with data from desktop
 Firefox:
@@ -64,10 +66,6 @@ Remember to set the project accordingly:
 export GOOGLE_CLOUD_PROJECT=<PROJECT>
 ./manage.py import_desktop_aggs release --bucket <BUCKET>
 ```
-
-You will need to have viewer permissions in the non-prod GCP project to pull
-down data. Reach out to someone on the #glam Slack channel if you need the
-proper authorization.
 
 Data from glean may be pulled down using the following command:
 
