@@ -32,7 +32,7 @@ Reach out to someone on the #glam Slack channel for the values of the
 ## Initial Setup
 
 When first setting up the project you will need to set up the database and
-import data that the front-end is expecting. 
+import data that the front-end is expecting.
 
 First, from the project root, log into the Docker container with `make shell`.
 
