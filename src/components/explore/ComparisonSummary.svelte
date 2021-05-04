@@ -120,9 +120,7 @@
   .value-label {
     min-width: calc(var(--space-base) * 7);
     max-width: calc(var(--space-base) * 10);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: break-word;
   }
 
   .value-change {
