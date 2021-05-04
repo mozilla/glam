@@ -202,3 +202,19 @@ class FenixCounts(models.Model):
                 fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
             )
         ]
+
+
+class FirefoxBuildRevisions(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel = models.CharField(max_length=100, db_index=True)
+    build_id = models.CharField(max_length=100)
+    revision = models.CharField(max_length=100)
+
+    class Meta:
+        db_table = "glam_firefox_build_revisions"
+        constraints = [
+            models.UniqueConstraint(
+                name="firefox_channel_build_unique",
+                fields=["channel", "build_id"],
+            )
+        ]
