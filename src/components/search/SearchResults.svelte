@@ -5,6 +5,7 @@
   import { Portal } from '@graph-paper/portal';
   import LineSegSpinner from '../LineSegSpinner.svelte';
   import { currentQuery, store } from '../../state/store';
+  import Markdown from '../Markdown.svelte';
 
   export let results = [];
 
@@ -267,7 +268,7 @@
                 </div>
               {/if}
               <div class="description body-text--short-01">
-                {@html searchResult.description}
+                <Markdown text={searchResult.description} />
               </div>
             </li>
           {/each}
