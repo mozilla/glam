@@ -16,6 +16,7 @@ from glam.api.models import (
     DesktopReleaseAggregationView,
     FenixAggregationView,
     FenixCounts,
+    FirefoxBuildRevisions,
     FirefoxCounts,
     LastUpdated,
     Probe,
@@ -96,9 +97,11 @@ def get_firefox_aggregations(request, **kwargs):
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
         counts = _get_firefox_counts(channel, os, versions, by_build=False)
+        shas = {}
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
         counts = _get_firefox_counts(channel, os, versions, by_build=True)
+        shas = _get_firefox_shas(channel)
 
     if "process" in kwargs:
         dimensions.append(Q(process=kwargs["process"]))
@@ -112,6 +115,7 @@ def get_firefox_aggregations(request, **kwargs):
             "version": row.version,
             "os": row.os,
             "build_id": row.build_id,
+            "revision": shas.get(row.build_id, ""),
             "process": row.process,
             "metric": row.metric,
             "metric_key": row.metric_key,
@@ -155,6 +159,14 @@ def _get_firefox_counts(channel, os, versions, by_build):
     }
 
     return data
+
+
+def _get_firefox_shas(channel):
+    return dict(
+        FirefoxBuildRevisions.objects.filter(channel=channel).values_list(
+            "build_id", "revision"
+        )
+    )
 
 
 def get_glean_aggregations(request, **kwargs):

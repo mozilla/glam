@@ -11,6 +11,7 @@ from glam.api.models import (
     DesktopNightlyAggregation,
     FenixAggregation,
     FenixCounts,
+    FirefoxBuildRevisions,
     FirefoxCounts,
     LastUpdated,
     Probe,
@@ -308,6 +309,45 @@ class TestDesktopAggregationsApi:
         assert len(data["response"]) == 1
         assert data["response"][0] == {
             "build_id": "*",
+            "revision": "",
+            "client_agg_type": "summed-histogram",
+            "histogram": {"0": 100.0001, "1": 200.0002, "2": 300.0003, "3": 400.0004},
+            "metric": "gc_ms",
+            "metric_key": "",
+            "metric_type": "histogram-exponential",
+            "os": "*",
+            "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
+            "process": "parent",
+            "total_addressable_market": 999,
+            "total_users": 1110,
+            "version": "72",
+        }
+
+    def test_revision_lookup(self, client):
+        build_id = "20210504113355"
+        revision = "abcdefg1234567"
+
+        _create_aggregation()
+        _create_aggregation(data={"build_id": build_id}, multiplier=10)
+
+        FirefoxBuildRevisions.objects.create(
+            channel="nightly", build_id=build_id, revision=revision
+        )
+
+        query = {
+            "query": {
+                "channel": "nightly",
+                "probe": "gc_ms",
+                "aggregationLevel": "build_id",
+            }
+        }
+        resp = client.post(self.url, data=query, content_type="application/json")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["response"]) == 1
+        assert data["response"][0] == {
+            "build_id": build_id,
+            "revision": revision,
             "client_agg_type": "summed-histogram",
             "histogram": {"0": 100.0001, "1": 200.0002, "2": 300.0003, "3": 400.0004},
             "metric": "gc_ms",
