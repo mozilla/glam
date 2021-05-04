@@ -73,3 +73,6 @@ tests/data
 # Database dumps
 *.sql
 *.sql.gz
+
+# virtual env
+venv/
