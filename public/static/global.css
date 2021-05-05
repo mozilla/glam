@@ -253,6 +253,41 @@
   --inactive-color: var(--bright-yellow-900);
   --inactive-bg: var(--bright-yellow-400);
 
+  /* glean type colors */
+
+  --boolean-color: var(--blue-slate-900);
+  --boolean-bg: var(--digital-blue-200);
+  --labeled_boolean-color: var(--digital-blue-900);
+  --labeled_boolean-bg: var(--digital-blue-250);
+  --counter-color: var(--bright-yellow-900);
+  --counter-bg: var(--bright-yellow-200);
+  --labeled_counter-bg: var(--bright-yellow-900);
+  --labeled_counter-bg: var(--bright-yellow-200);
+  --string-color: var(--pantone-red-900);
+  --string-bg: var(--pantone-red-300);
+  --labeled_string-color: var(--pantone-red-900);
+  --labeled_string-bg: var(--pantone-red-300);
+  --string_list-color: var(--pantone-red-900);
+  --string_list-bg: var(--pantone-red-250);
+  --timespan-color: var(--cool-gray-900);
+  --timespan-bg: var(--cool-gray-200);
+  --timing_distribution-color: var(--cool-gray-900);
+  --timing_distribution-bg: var(--cool-gray-300);
+  --memory_distribution-color: var(--pond-green-900);
+  --memory_distribution-bg: var(--pond-green-250);
+  --uuid-color: var(--blue-slate-900);
+  --uuid-bg: var(--blue-slate-100);
+  --datetime-color: var(--blue-slate-900);
+  --datetime-bg: var(--blue-slate-300);
+  --events-color: var(--pond-green-900);
+  --events-bg: var(--pond-green-200);
+  --quantity-color: var(--pantone-red-900);
+  --quantity-bg: var(--pantone-red-250);
+  --rate-color: var(--pond-green-900);
+  --rate-bg: var(--pond-green-300);
+  --custom_distribution-color: var(--pond-green-900);
+  --custom_distribution-bg: var(--pond-green-200);
+
   --primary-text: white;
 
   --elevation-base: 0px var(--space-1q) var(--space-base) var(--cool-gray-600);
@@ -545,6 +580,8 @@ main .details {
   padding-right: var(--space-2x);
 }
 
+/* probe labels */
+
 .label--histogram {
   background-color: var(--histogram-bg);
   color: var(--histogram-color);
@@ -563,6 +600,88 @@ main .details {
 .label--inactive {
   color: var(--inactive-color);
   background-color: var(--inactive-bg);
+}
+
+/* glean labels */
+
+.label--boolean {
+  color: var(--boolean-color);
+  background-color: var(--boolean-bg);
+}
+
+.label--labeled_boolean {
+  color: var(--labeled_boolean-color);
+  background-color: var(--labeled_boolean-bg);
+}
+
+.label--counter {
+  color: var(--counter-color);
+  background-color: var(--counter-bg);
+}
+
+.label--labeled_counter {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
+.label--string {
+  color: var(--string-color);
+  background-color: var(--string-bg);
+}
+
+.label--labeled_string {
+  color: var(--labeled_string-color);
+  background-color: var(--labeled_string-bg);
+}
+
+.label--string_list {
+  color: var(--string_list-color);
+  background-color: var(--string_list-bg);
+}
+
+.label--timespan {
+  color: var(--timespan-color);
+  background-color: var(--timespan-bg);
+}
+
+.label--timing_distribution {
+  color: var(--timing_distribution-color);
+  background-color: var(--timing_distribution-bg);
+}
+
+.label--memory_distribution {
+  color: var(--memory_distribution-color);
+  background-color: var(--memory_distribution-bg);
+}
+
+.label--uuid {
+  color: var(--uuid-color);
+  background-color: var(--uuid-bg);
+}
+
+.label--datetime {
+  color: var(--datetime-color);
+  background-color: var(--datetime-bg);
+}
+
+.label--events {
+  color: var(--events-color);
+  background-color: var(--events-bg);
+}
+
+.label--quantity {
+  color: var(--quantity-color);
+  background-color: var(--quantity-bg);
+}
+
+.label--rate {
+  color: var(--rate-color);
+  background-color: var(--rate-bg);
+}
+
+.label--custom_distribution {
+  color: var(--custom_distribution-color);
+  background-color: var(--custom_distribution-bg);
 }
 
 /* TYPOGRAPHY - this is a rough draft. */
