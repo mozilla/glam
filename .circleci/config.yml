@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+orbs:
+  docker: circleci/docker@1.5.0
+
 jobs:
   build:
     working_directory: ~/mozilla/glam
@@ -57,3 +61,27 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - docker/publish:
+          name: publish-latest
+          requires:
+            - frontend-tests
+            - build
+          filters:
+            branches:
+              only: main
+            tags:
+              ignore: /.*/
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: $CIRCLE_SHA1,latest
+      - docker/publish:
+          name: publish-release
+          requires:
+            - frontend-tests
+            - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^\d+\.\d+\.\d+$/
+          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+          tag: $CIRCLE_TAG
