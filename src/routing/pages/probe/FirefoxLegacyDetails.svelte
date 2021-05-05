@@ -5,6 +5,7 @@
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
+  import Markdown from '../../../components/Markdown.svelte';
 
   const PROBE_TYPE_DOCS = {
     histogram:
@@ -200,7 +201,7 @@
       {#if $store.probe.description}
         <h2 class="detail__heading--01">description</h2>
         <div class="probe-description helper-text--01">
-          {@html $store.probe.description}
+          <Markdown text={$store.probe.description} />
           <a
             class="more-info-link"
             href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.info.type}/${$store.probe.info.name}`}
