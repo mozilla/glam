@@ -188,6 +188,7 @@
 
   .probe-type {
     grid-area: probe-type;
+    white-space: nowrap;
   }
 
   .description {
@@ -264,7 +265,7 @@
               {:else}
                 <div
                   class="probe-type label label-text--01 label--{searchResult.type}">
-                  {searchResult.type}
+                  {searchResult.type.replace('_', ' ')}
                 </div>
               {/if}
               <div class="description body-text--short-01">
