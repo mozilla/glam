@@ -67,6 +67,7 @@
 
   let menuPos = { x: 0, y: 0 };
   let zoomUrl;
+  let pushlogUrl;
 
   function generateQueryString(paramsToUpdate) {
     const activeProductConfig = getActiveProductConfig();
@@ -89,6 +90,7 @@
   // Values we pass to context menu for zoom events.
   let clickedRef;
   let clickedHov;
+  let revisionMap = new Map();
 
   function onRightClick(e) {
     // If the context menu is already up, disable it and return.
@@ -103,15 +105,10 @@
     }
 
     menuPos = { x: e.clientX, y: e.clientY };
-    clickedHov =
-      hovered.datum.build_id === '*'
-        ? hovered.datum.version
-        : hovered.datum.build_id;
-    clickedRef = getDefaultReferencePoint();
-    clickedRef =
-      aggregationLevel === 'build_id'
-        ? clickedRef.build_id
-        : clickedRef.version;
+    let referencePoint = getDefaultReferencePoint();
+
+    clickedHov = hovered.datum.build_id;
+    clickedRef = referencePoint.build_id;
 
     // Make sure `hov` is on the left of the range.
     [clickedRef, clickedHov] = [
@@ -119,10 +116,19 @@
       _.min([clickedRef, clickedHov]),
     ];
 
+    revisionMap.set(referencePoint.build_id, referencePoint.revision);
+    revisionMap.set(hovered.datum.build_id, hovered.datum.revision);
+
     zoomUrl = generateQueryString({
       clickedHov,
       timeHorizon: 'ZOOM',
     });
+
+    if (revisionMap.has(clickedHov) && revisionMap.has(clickedRef)) {
+      pushlogUrl = `https://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=${revisionMap.get(
+        clickedHov
+      )}&tochange=${revisionMap.get(clickedRef)}`;
+    }
 
     // Finally, set the flag to open the context menu.
     $showContextMenu = true; // eslint-disable-line no-unused-vars
@@ -130,7 +136,13 @@
 </script>
 
 {#if showContextMenu}
-  <ChartContextMenu {...menuPos} {zoomUrl} {data} {clickedRef} {clickedHov} />
+  <ChartContextMenu
+    {...menuPos}
+    {zoomUrl}
+    {pushlogUrl}
+    {data}
+    {clickedRef}
+    {clickedHov} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>

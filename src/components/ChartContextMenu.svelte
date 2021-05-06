@@ -1,6 +1,7 @@
 <script>
   import { timeFormat } from 'd3-time-format';
   import { store, showContextMenu } from '../state/store';
+  import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
 
   export let data;
@@ -9,6 +10,7 @@
   export let clickedRef;
   export let clickedHov;
   export let zoomUrl;
+  export let pushlogUrl;
 
   let elem;
 
@@ -152,12 +154,18 @@
           </a>
         </div>
       </div>
-      <div class="option">
-        <div class="option-icon" />
-        <div class="option-link">
-          <i>Coming soon: PUSHLOG LINK</i>
+      {#if pushlogUrl}
+        <div class="option">
+          <div class="option-icon">
+            <a href={pushlogUrl} target="pushlog">
+              <GitBranch size="12" />
+            </a>
+          </div>
+          <div class="option-link">
+            <a href={pushlogUrl} target="pushlog">View Changesets in Range</a>
+          </div>
         </div>
-      </div>
+      {/if}
     </div>
   </div>
 {/if}

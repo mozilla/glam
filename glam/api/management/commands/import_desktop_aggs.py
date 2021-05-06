@@ -6,7 +6,7 @@ from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.utils import timezone
-from google.cloud import storage
+from google.cloud import bigquery, storage
 
 from glam.api import constants
 from glam.api.models import LastUpdated
@@ -49,6 +49,7 @@ class Command(BaseCommand):
         model = apps.get_model(CHANNEL_TO_MODEL[channel])
 
         self.gcs_client = storage.Client()
+        self.bq_client = bigquery.Client()
 
         blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(
@@ -95,6 +96,9 @@ class Command(BaseCommand):
             product="desktop", defaults={"last_updated": timezone.now()}
         )
 
+        # Now import the revisions to match any new build IDs we imported.
+        self.import_revisions(channel)
+
     def import_file(self, tmp_table, fp, model, channel):
 
         csv_columns = [f.name for f in model._meta.get_fields() if f.name not in ["id"]]
@@ -124,3 +128,52 @@ class Command(BaseCommand):
                     percentiles = EXCLUDED.percentiles
             """
             cursor.execute(sql)
+
+    def import_revisions(self, channel):
+
+        FirefoxBuildRevisions = apps.get_model("api", "FirefoxBuildRevisions")
+
+        known_builds = list(
+            FirefoxBuildRevisions.objects.filter(channel=channel).values_list(
+                "build_id", flat=True
+            )
+        )
+        known_builds.append("*")
+
+        log(channel, f"We currently have {len(known_builds) - 1} known SHAs")
+
+        aggs_model = apps.get_model(CHANNEL_TO_MODEL[channel])
+        build_ids = list(
+            aggs_model.objects.exclude(build_id__in=known_builds)
+            .distinct("build_id")
+            .values_list("build_id", flat=True)
+        )
+
+        log(channel, f"We are missing {len(build_ids)} SHAs")
+
+        if len(build_ids) == 0:
+            log(channel, "No SHAs to update")
+            return
+
+        query = """
+            SELECT build.build.id, build.source.revision
+            FROM `moz-fx-data-shared-prod.telemetry.buildhub2`
+            WHERE build.build.id IN UNNEST(@build_ids)
+            AND build.target.channel = @channel
+            GROUP BY 1, 2
+        """
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ArrayQueryParameter("build_ids", "STRING", build_ids),
+                bigquery.ScalarQueryParameter("channel", "STRING", channel),
+            ]
+        )
+        job = self.bq_client.query(query, job_config=job_config)
+        for row in job.result():
+            FirefoxBuildRevisions.objects.get_or_create(
+                channel=channel,
+                build_id=row.id,
+                defaults={"revision": row.revision},
+            )
+
+        log(channel, "SHAs updated")
