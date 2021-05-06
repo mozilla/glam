@@ -2,8 +2,8 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.4.0...HEAD) (date TBD)
 
-## [2021.5.0](Link) (TBD)
-
+- Add ability to get pushlog for range
+  ([#1348](https://github.com/mozilla/glam/pull/1348))
 - Add type labels for Glean metric search
   ([#1340](https://github.com/mozilla/glam/pull/1340))
 - Fix Markdown rendering of probe/metric description
