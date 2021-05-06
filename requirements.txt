@@ -4,11 +4,11 @@
 #
 #    pip-compile
 #
-asgiref==3.3.1
+asgiref==3.3.4
     # via django
-attrs==20.3.0
+attrs==21.1.0
     # via pytest
-cachetools==4.2.1
+cachetools==4.2.2
     # via google-auth
 certifi==2020.12.5
     # via requests
@@ -22,7 +22,7 @@ dj-database-url==0.5.0
     # via -r requirements.in
 django-configurations==2.2
     # via -r requirements.in
-django==3.1.7
+django==3.1.10
     # via
     #   -r requirements.in
     #   djangorestframework
@@ -35,24 +35,24 @@ dockerflow==2020.10.0
     # via -r requirements.in
 drf-orjson-renderer==1.1.4
     # via -r requirements.in
-flake8==3.9.0
+flake8==3.9.1
     # via -r requirements.in
 google-api-core[grpc]==1.26.3
     # via
     #   google-cloud-bigquery
     #   google-cloud-core
-google-auth==1.28.0
+google-auth==1.30.0
     # via
     #   google-api-core
     #   google-cloud-core
     #   google-cloud-storage
-google-cloud-bigquery==2.13.1
+google-cloud-bigquery==2.16.0
     # via -r requirements.in
 google-cloud-core==1.6.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==1.37.0
+google-cloud-storage==1.37.1
     # via -r requirements.in
 google-crc32c==1.1.2
     # via google-resumable-media
@@ -62,7 +62,7 @@ google-resumable-media==1.2.0
     #   google-cloud-storage
 googleapis-common-protos==1.53.0
     # via google-api-core
-grpcio==1.36.1
+grpcio==1.37.1
     # via google-api-core
 gunicorn==20.1.0
     # via -r requirements.in
@@ -72,7 +72,7 @@ iniconfig==1.1.1
     # via pytest
 mccabe==0.6.1
     # via flake8
-orjson==3.5.1
+orjson==3.5.2
     # via drf-orjson-renderer
 packaging==20.9
     # via
@@ -83,7 +83,7 @@ pluggy==0.13.1
     # via pytest
 proto-plus==1.18.1
     # via google-cloud-bigquery
-protobuf==3.15.6
+protobuf==3.15.8
     # via
     #   google-api-core
     #   google-cloud-bigquery
@@ -111,9 +111,9 @@ pytest-blockage==0.2.2
     # via -r requirements.in
 pytest-cov==2.11.1
     # via -r requirements.in
-pytest-django==4.1.0
+pytest-django==4.2.0
     # via -r requirements.in
-pytest==6.2.2
+pytest==6.2.4
     # via
     #   -r requirements.in
     #   pytest-blockage
@@ -130,7 +130,7 @@ requests==2.25.1
     #   google-cloud-storage
 rsa==4.7.2
     # via google-auth
-six==1.15.0
+six==1.16.0
     # via
     #   django-configurations
     #   google-api-core
