@@ -13,11 +13,10 @@
   }
   .project-links {
     list-style: none;
-    display: grid;
+    display: flex;
     font-size: var(--text-015);
     font-weight: 400;
-    grid-gap: var(--space-2x);
-    grid-template-columns: auto auto auto;
+    gap: var(--space-2x);
     padding: 0 var(--space-4x);
     margin: 0;
   }
@@ -38,6 +37,9 @@
 <div class="glam-footer">
   <a class="mozilla-logo" href="https://www.mozilla.org/"><MozillaLogo /></a>
   <ul class="project-links">
+    <li>
+      <a href="https://docs.telemetry.mozilla.org/cookbooks/glam.html">Docs</a>
+    </li>
     <li>
       <a href="https://www.mozilla.org/privacy/websites/#cookies">Cookies</a>
     </li>
