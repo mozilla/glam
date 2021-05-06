@@ -2,6 +2,20 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.4.0...HEAD) (date TBD)
 
+## [2021.5.0](Link) (TBD)
+
+- Add type labels for Glean metric search
+  ([#1340](https://github.com/mozilla/glam/pull/1340))
+- Fix Markdown rendering of probe/metric description
+  ([#1342](https://github.com/mozilla/glam/pull/1342))
+- Sort key order in dropdown menu
+  ([#1323](https://github.com/mozilla/glam/pull/1323))
+- Change the default aggregation method to average
+  ([#1326](https://github.com/mozilla/glam/pull/1326))
+- Show full word in summary table
+  ([#1339](https://github.com/mozilla/glam/pull/1339))
+- Link to GLAM docs on DTMO ([#1349](https://github.com/mozilla/glam/pull/1349))
+
 ## [2021.4.0](https://github.com/mozilla/glam/compare/2021.3.0...2021.4.0) (2021-04-06)
 
 - Add proportions SQL for other histogram types
