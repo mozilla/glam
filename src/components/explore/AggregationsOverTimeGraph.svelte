@@ -46,6 +46,11 @@
   export let metricKeys;
   export let yAccessor;
 
+  const pushlogUrlTemplate = _.template(
+    // eslint-disable-next-line no-template-curly-in-string
+    'https://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=${from}&tochange=${to}'
+  );
+
   function createTimeSeries(d, actives, accessor) {
     return actives.map((a) => ({
       bin: a,
@@ -116,18 +121,23 @@
       _.min([clickedRef, clickedHov]),
     ];
 
-    revisionMap.set(referencePoint.build_id, referencePoint.revision);
-    revisionMap.set(hovered.datum.build_id, hovered.datum.revision);
-
     zoomUrl = generateQueryString({
       clickedHov,
       timeHorizon: 'ZOOM',
     });
 
+    if (referencePoint.revision) {
+      revisionMap.set(referencePoint.build_id, referencePoint.revision);
+    }
+    if (hovered.datum.revision) {
+      revisionMap.set(hovered.datum.build_id, hovered.datum.revision);
+    }
+
     if (revisionMap.has(clickedHov) && revisionMap.has(clickedRef)) {
-      pushlogUrl = `https://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=${revisionMap.get(
-        clickedHov
-      )}&tochange=${revisionMap.get(clickedRef)}`;
+      pushlogUrl = pushlogUrlTemplate({
+        from: revisionMap.get(clickedHov),
+        to: revisionMap.get(clickedRef),
+      });
     }
 
     // Finally, set the flag to open the context menu.
