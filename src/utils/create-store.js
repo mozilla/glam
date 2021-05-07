@@ -1,6 +1,14 @@
 import produce from 'immer';
 import { writable, get } from 'svelte/store';
 
+// Workaround to use immer > v.8.x
+// https://github.com/immerjs/immer/issues/557#issuecomment-621491287
+window.process = {
+  env: {
+    NODE_ENV: 'production',
+  },
+};
+
 export function createStore(initialStore) {
   const INTERNAL_STORE = writable(initialStore);
   const getState = () => get(INTERNAL_STORE);
