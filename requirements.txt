@@ -35,7 +35,7 @@ dockerflow==2020.10.0
     # via -r requirements.in
 drf-orjson-renderer==1.1.5
     # via -r requirements.in
-flake8==3.9.1
+flake8==3.9.2
     # via -r requirements.in
 google-api-core[grpc]==1.26.3
     # via
