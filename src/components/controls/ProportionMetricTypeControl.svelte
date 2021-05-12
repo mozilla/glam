@@ -10,11 +10,13 @@
       label: 'proportion',
       value: 'proportions',
       tooltip: 'shows proportions of clients for each category',
+      enabled: true,
     },
     {
       label: 'total clients',
       value: 'counts',
       tooltip: 'shows the volume of clients for each category',
+      enabled: true,
     },
   ]}
   selected={metricType}

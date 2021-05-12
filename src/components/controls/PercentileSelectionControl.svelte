@@ -12,11 +12,35 @@
 
 <BodyControl
   options={[
-    { label: '5%', value: 5, labelColor: cmp(5), tooltip: t(5) },
-    { label: '25%', value: 25, labelColor: cmp(25), tooltip: t(25) },
-    { label: '50%', value: 50, labelColor: cmp(50), tooltip: t(50) },
-    { label: '75%', value: 75, labelColor: cmp(75), tooltip: t(75) },
-    { label: '95%', value: 95, labelColor: cmp(95), tooltip: t(95) },
+    { label: '5%', value: 5, labelColor: cmp(5), tooltip: t(5), enabled: true },
+    {
+      label: '25%',
+      value: 25,
+      labelColor: cmp(25),
+      tooltip: t(25),
+      enabled: true,
+    },
+    {
+      label: '50%',
+      value: 50,
+      labelColor: cmp(50),
+      tooltip: t(50),
+      enabled: true,
+    },
+    {
+      label: '75%',
+      value: 75,
+      labelColor: cmp(75),
+      tooltip: t(75),
+      enabled: true,
+    },
+    {
+      label: '95%',
+      value: 95,
+      labelColor: cmp(95),
+      tooltip: t(95),
+      enabled: true,
+    },
   ]}
   reverse={true}
   bind:selected={percentiles}
