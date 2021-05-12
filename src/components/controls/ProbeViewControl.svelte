@@ -12,12 +12,14 @@
       label: 'Explore',
       component: LineChart,
       tooltip: "explore this probe's aggregated values over time",
+      enabled: true,
     },
     {
       value: 'table',
       label: 'Table',
       component: Table,
       tooltip: "view this probe's aggregated data in tabular form",
+      enabled: true,
     },
   ];
 </script>

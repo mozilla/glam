@@ -10,6 +10,7 @@
     label: opt,
     value: opt,
     labelColor: colorMap(opt),
+    enabled: true,
   }));
 </script>
 
