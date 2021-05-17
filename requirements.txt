@@ -16,7 +16,7 @@ cffi==1.14.5
     # via google-crc32c
 chardet==4.0.0
     # via requests
-coverage==5.5
+coverage[toml]==5.5
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
@@ -109,7 +109,7 @@ pyparsing==2.4.7
     # via packaging
 pytest-blockage==0.2.2
     # via -r requirements.in
-pytest-cov==2.11.1
+pytest-cov==2.12.0
     # via -r requirements.in
 pytest-django==4.2.0
     # via -r requirements.in
@@ -142,7 +142,9 @@ six==1.16.0
 sqlparse==0.4.1
     # via django
 toml==0.10.2
-    # via pytest
+    # via
+    #   coverage
+    #   pytest
 urllib3==1.26.4
     # via requests
 whitenoise==5.2.0
