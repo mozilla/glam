@@ -1,6 +1,11 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.5.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.5.1...HEAD) (date TBD)
+
+## [2021.5.1](https://github.com/mozilla/glam/compare/2021.5.0...2021.5.1) (2021-05-17)
+
+- Fix percentile togges and table view not showing
+  ([#1367](https://github.com/mozilla/glam/pull/1367))
 
 ## [2021.5.0](https://github.com/mozilla/glam/compare/2021.4.0...2021.5.0) (2021-05-11)
 
