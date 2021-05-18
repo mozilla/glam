@@ -143,6 +143,28 @@
     // Finally, set the flag to open the context menu.
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
+
+  const getUniqueArray = (arr) => {
+    let a = arr.concat();
+    for (let i = 0; i < a.length; ++i) {
+      for (let j = i + 1; j < a.length; ++j) {
+        if (a[i] === a[j]) a.splice(j--, 1);
+      }
+    }
+    return a;
+  };
+
+  const getYDomain = (percentiles) => {
+    let percentileData = [];
+    for (const p in percentiles) {
+      percentileData = [
+        ...percentileData,
+        ...data.map((arr) => arr.percentiles[percentiles[p]]),
+      ];
+    }
+    return getUniqueArray(percentileData).sort((a, b) => a - b);
+  };
+  $: yValues = getYDomain($store.visiblePercentiles);
 </script>
 
 {#if showContextMenu}
@@ -164,7 +186,7 @@
   </ChartTitle>
   <DataGraphic
     {xDomain}
-    {yDomain}
+    yDomain={yValues}
     yType={yScaleType}
     xType={xScaleType}
     height={aggregationsOverTimeGraph.height}
