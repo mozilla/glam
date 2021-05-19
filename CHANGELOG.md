@@ -1,6 +1,11 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.5.1...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.5.2...HEAD) (date TBD)
+
+## [2021.5.2](https://github.com/mozilla/glam/compare/2021.5.1...2021.5.2) (2021-05-19)
+
+- Add migration to import initial SHAs
+  ([#1380](https://github.com/mozilla/glam/pull/1380))
 
 ## [2021.5.1](https://github.com/mozilla/glam/compare/2021.5.0...2021.5.1) (2021-05-17)
 
