@@ -84,14 +84,6 @@
       : '';
   }
 
-  function getDefaultReferencePoint() {
-    if ($store.ref) {
-      const found = data.find((d) => d[aggregationLevel] === $store.ref);
-      if (found) return found;
-    }
-    return data[data.length - 1];
-  }
-
   // Values we pass to context menu for zoom events.
   let clickedRef;
   let clickedHov;
@@ -144,27 +136,69 @@
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
 
-  const getUniqueArray = (arr) => {
-    let a = arr.concat();
-    for (let i = 0; i < a.length; ++i) {
-      for (let j = i + 1; j < a.length; ++j) {
-        if (a[i] === a[j]) a.splice(j--, 1);
+  function getDefaultReferencePoint() {
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
+      if (found) return found;
+    }
+    return data[data.length - 1];
+  }
+
+  // for some reason only this works with function for ticks
+  function getDefaultReferencePoint2() {
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
+      if (found) {
+        console.log(found);
+        return found;
       }
     }
-    return a;
+    return Object.values(getDefaultReferencePoint()['percentiles']);
+  }
+
+  // so that it doesn't jump say if we use defaultreferencepoint instead
+  const tryThis = (arr) => {
+    let something = _.round(arr.length / 5)
+    return [arr[0], arr[something], arr[2*something], arr[3*something], arr[arr.length - 1]]
+  }
+
+  const getTicks = (ranges) => {
+    if (yScaleType === 'linear') return getDefaultReferencePoint2();
+    if (ranges.length < 5) return yValues;
+    return tryThis(yValues)
   };
 
   const getYDomain = (percentiles) => {
     let percentileData = [];
+    let yDomainValues = [];
     for (const p in percentiles) {
       percentileData = [
         ...percentileData,
         ...data.map((arr) => arr.percentiles[percentiles[p]]),
       ];
     }
-    return getUniqueArray(percentileData).sort((a, b) => a - b);
+    yDomainValues = _.uniq(percentileData).sort((a, b) => a - b);
+    if (yScaleType === 'linear') {
+      yDomainValues = [
+        _.round(yDomainValues[0] - 5, -1),
+        yDomainValues[yDomainValues.length - 1],
+      ];
+    }
+    return yDomainValues;
   };
   $: yValues = getYDomain($store.visiblePercentiles);
+  $: console.log(
+    'yValues',
+    yValues,
+    'getTicks',
+    getTicks(yValues),
+    'yscaleType',
+    yScaleType,
+    'yDomain',
+    yDomain,
+    'store',
+    $store
+  );
 </script>
 
 {#if showContextMenu}
@@ -198,7 +232,11 @@
     bind:mousePosition={hoverValue}
     on:click>
     <g slot="background">
-      <Axis side="left" lineStyle="short" tickFormatter={yTickFormatter} />
+      <Axis
+        side="left"
+        lineStyle="short"
+        tickFormatter={yTickFormatter}
+        ticks={getTicks(yValues)} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
