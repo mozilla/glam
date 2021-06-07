@@ -144,28 +144,31 @@
     return data[data.length - 1];
   }
 
-  // for some reason only this works with function for ticks
-  function getDefaultReferencePoint2() {
-    if ($store.ref) {
-      const found = data.find((d) => d[aggregationLevel] === $store.ref);
-      if (found) {
-        console.log(found);
-        return found;
-      }
-    }
-    return Object.values(getDefaultReferencePoint()['percentiles']);
-  }
-
-  // so that it doesn't jump say if we use defaultreferencepoint instead
-  const tryThis = (arr) => {
-    let something = _.round(arr.length / 5)
-    return [arr[0], arr[something], arr[2*something], arr[3*something], arr[arr.length - 1]]
-  }
+  const simplifyYDomain = (arr) => {
+    let partition = _.round(arr.length / 5);
+    return [
+      arr[0],
+      arr[partition],
+      arr[2 * partition],
+      arr[3 * partition],
+      arr[arr.length - 1],
+    ];
+  };
 
   const getTicks = (ranges) => {
-    if (yScaleType === 'linear') return getDefaultReferencePoint2();
-    if (ranges.length < 5) return yValues;
-    return tryThis(yValues)
+    let linearTicks = Object.values(getDefaultReferencePoint()['percentiles']);
+
+    if (yScaleType === 'linear' && !$store.activeBuckets.length) {
+      return yValues[yValues.length - 1]
+        ? _.uniq([...linearTicks, ...yValues]).sort((a, b) => a - b)
+        : _.uniq(linearTicks[0]);
+    }
+
+    if (ranges.length < 5 && !$store.activeBuckets.length) return yValues;
+    if ($store.activeBuckets.length) {
+      return undefined;
+    }
+    return simplifyYDomain(yValues);
   };
 
   const getYDomain = (percentiles) => {
@@ -178,27 +181,18 @@
       ];
     }
     yDomainValues = _.uniq(percentileData).sort((a, b) => a - b);
-    if (yScaleType === 'linear') {
+    if (yScaleType === 'linear' && !$store.activeBuckets.length) {
       yDomainValues = [
         _.round(yDomainValues[0] - 5, -1),
         yDomainValues[yDomainValues.length - 1],
       ];
     }
+    if ($store.activeBuckets.length) {
+      return yDomain;
+    }
     return yDomainValues;
   };
   $: yValues = getYDomain($store.visiblePercentiles);
-  $: console.log(
-    'yValues',
-    yValues,
-    'getTicks',
-    getTicks(yValues),
-    'yscaleType',
-    yScaleType,
-    'yDomain',
-    yDomain,
-    'store',
-    $store
-  );
 </script>
 
 {#if showContextMenu}
