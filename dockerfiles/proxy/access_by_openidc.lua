@@ -24,7 +24,8 @@ if ngx.var.oidc_hd then
 end
 
 -- call authenticate for OpenID Connect user authentication
-local res, err = require("resty.openidc").authenticate(opts)
+local res, err, target, session = require("resty.openidc").authenticate(opts)
+session:close() -- explicitly close session to prevent timeouts around locking
 
 if err then
     ngx.status = 500
