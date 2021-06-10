@@ -57,8 +57,11 @@ server {
     add_header Strict-Transport-Security "max-age=31536000";
 
     location / {
+        set $session_storage "${NGINX_SESSION_STORAGE}";
         set $session_cookie_lifetime 86400;
         set $session_check_ssi off;
+        set $session_redis_host "${NGINX_SESSION_REDIS_HOST}";
+        set $session_redis_port "${NGINX_SESSION_REDIS_PORT}";
         set $session_secret "${NGINX_SESSION_SECRET}";
         set $oidc_client_id "${OIDC_CLIENT_ID}";
         set $oidc_redirect_uri "${OIDC_REDIRECT_URI}";
