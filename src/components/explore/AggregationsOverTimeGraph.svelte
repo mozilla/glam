@@ -172,28 +172,31 @@
   const getYDomain = (percentiles, buckets) => {
     let yData = [];
     let yDomainValues = [];
-
-    if ($store.proportionMetricType === 'proportions') {
-      buckets.forEach((bucket) => {
-        yData = [
-          ...yData,
-          ...data.map((arr) => arr.proportions[buckets[bucket]]),
-        ];
-      });
-    } else if ($store.proportionMetricType === 'counts') {
-      buckets.forEach((bucket) => {
-        yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
-      });
-    }
-    // exponential and linear graphs
-    else {
-      percentiles.forEach((p) => {
+    // categorical graphs
+    if (buckets.length) {
+      if ($store.proportionMetricType === 'proportions') {
+        buckets.forEach((bucket) => {
+          yData = [
+            ...yData,
+            ...data.map((arr) => arr.proportions[buckets[bucket]]),
+          ];
+        });
+      } else if ($store.proportionMetricType === 'counts') {
+        buckets.forEach((bucket) => {
+          yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
+        });
+      }
+    } else {
+      /* eslint-disable */
+      // exponential(log) and linear graphs
+      for (const p in percentiles) {
         yData = [
           ...yData,
           ...data.map((arr) => arr.percentiles[percentiles[p]]),
         ];
-      });
+      }
     }
+    /* eslint-enable */
 
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
     yDomainValues = yDomainValues.filter((a) => typeof a === 'number');
