@@ -31,7 +31,7 @@ jobs:
   frontend-tests:
     working_directory: ~/mozilla/glam
     docker:
-      - image: circleci/node:11.5
+      - image: circleci/node:12
     steps:
       - checkout
       - run:
