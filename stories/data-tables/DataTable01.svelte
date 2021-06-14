@@ -8,8 +8,10 @@
   import drugUse from './drug-use-by-age.json';
 
   const headers = Object.keys(drugUse[0]);
-  const which = (metricType = 'frequency') => (k) =>
-    k.includes(metricType) || k === 'age' || k === 'n';
+  const which =
+    (metricType = 'frequency') =>
+    (k) =>
+      k.includes(metricType) || k === 'age' || k === 'n';
   let key = 'frequency';
 
   let width = 35;

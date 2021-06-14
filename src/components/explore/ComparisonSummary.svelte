@@ -134,8 +134,7 @@
     Summary
     <span
       use:tooltipAction={{
-        text:
-          'Compares the numeric values of the reference ⭑ to the hovered values ●',
+        text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
         location: 'top',
       }}
       class="data-graphic__element-title__icon"><Help size={14} /></span>

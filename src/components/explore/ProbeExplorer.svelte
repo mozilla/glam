@@ -64,9 +64,8 @@
     'clientVolume',
     aggregationLevel
   );
-  export let clientVolumeOverTimeDescription = clientDescription(
-    aggregationLevel
-  );
+  export let clientVolumeOverTimeDescription =
+    clientDescription(aggregationLevel);
 
   // If there isn't more than one other point to compare,
   // let's turn off the hover.

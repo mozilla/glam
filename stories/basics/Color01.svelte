@@ -18,23 +18,8 @@
 
   const tintsAndShades = (color) => {
     const vals = [
-      100,
-      150,
-      200,
-      250,
-      300,
-      350,
-      400,
-      450,
-      500,
-      550,
-      600,
-      650,
-      700,
-      750,
-      800,
-      850,
-      900,
+      100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800,
+      850, 900,
     ];
 
     return vals.map((v) => ({
@@ -102,9 +87,7 @@
                             grid-column-gap: var(--space-2x);
                         "
               class="color
-                        {c.includes('light')
-                ? ''
-                : 'dark'}">
+                        {c.includes('light') ? '' : 'dark'}">
               <div
                 style="
                             background-color: var(--{color}-100);
