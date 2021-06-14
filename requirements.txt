@@ -22,7 +22,7 @@ dj-database-url==0.5.0
     # via -r requirements.in
 django-configurations==2.2
     # via -r requirements.in
-django==3.1.12
+django==3.2.4
     # via
     #   -r requirements.in
     #   djangorestframework
