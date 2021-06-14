@@ -191,6 +191,7 @@
     }
 
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
+    yDomainValues = yDomainValues.filter((a) => typeof a === 'number');
 
     if (yScaleType === 'linear' && !$store.activeBuckets.length)
       return yDomainValues[yDomainValues.length - 1]
@@ -210,20 +211,6 @@
   };
 
   $: yValues = getYDomain($store.visiblePercentiles, $store.activeBuckets);
-  $: console.log(
-    'data',
-    data,
-    'yValues',
-    yValues,
-    'getTicks',
-    getYTicks(yValues),
-    'yscaleType',
-    yScaleType,
-    'yDomain',
-    yDomain,
-    'store',
-    $store
-  );
 </script>
 
 {#if showContextMenu}
