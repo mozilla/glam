@@ -147,6 +147,7 @@
   const getYTicks = (ranges) => {
     // when returns undefined means we want to preserve graph-paper original tick setting
     if (yScaleType === 'linear' && !$store.activeBuckets.length) {
+      if (ranges[ranges.length - 1] < 5) return [0, 1, 2, 3, 4, 5];
       return undefined;
     }
     if (
@@ -171,23 +172,27 @@
   const getYDomain = (percentiles, buckets) => {
     let yData = [];
     let yDomainValues = [];
-    // categorical graph
+
     if ($store.proportionMetricType === 'proportions') {
-      for (const bucket in buckets) {
+      buckets.forEach((bucket) => {
         yData = [
           ...yData,
           ...data.map((arr) => arr.proportions[buckets[bucket]]),
         ];
-      }
-    }
-    if ($store.proportionMetricType === 'counts') {
-      for (const bucket in buckets) {
+      });
+    } else if ($store.proportionMetricType === 'counts') {
+      buckets.forEach((bucket) => {
         yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
-      }
+      });
     }
     // exponential and linear graphs
-    for (const p in percentiles) {
-      yData = [...yData, ...data.map((arr) => arr.percentiles[percentiles[p]])];
+    else {
+      percentiles.forEach((p) => {
+        yData = [
+          ...yData,
+          ...data.map((arr) => arr.percentiles[percentiles[p]]),
+        ];
+      });
     }
 
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
