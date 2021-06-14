@@ -84,6 +84,14 @@
       : '';
   }
 
+  function getDefaultReferencePoint() {
+    if ($store.ref) {
+      const found = data.find((d) => d[aggregationLevel] === $store.ref);
+      if (found) return found;
+    }
+    return data[data.length - 1];
+  }
+
   // Values we pass to context menu for zoom events.
   let clickedRef;
   let clickedHov;
@@ -136,63 +144,86 @@
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
 
-  function getDefaultReferencePoint() {
-    if ($store.ref) {
-      const found = data.find((d) => d[aggregationLevel] === $store.ref);
-      if (found) return found;
-    }
-    return data[data.length - 1];
-  }
-
-  const simplifyYDomain = (arr) => {
-    let partition = _.round(arr.length / 5);
-    return [
-      arr[0],
-      arr[partition],
-      arr[2 * partition],
-      arr[3 * partition],
-      arr[arr.length - 1],
-    ];
-  };
-
-  const getTicks = (ranges) => {
-    let linearTicks = Object.values(getDefaultReferencePoint()['percentiles']);
-
+  const getYTicks = (ranges) => {
+    // when returns undefined means we want to preserve graph-paper original tick setting
     if (yScaleType === 'linear' && !$store.activeBuckets.length) {
-      return yValues[yValues.length - 1]
-        ? _.uniq([...linearTicks, ...yValues]).sort((a, b) => a - b)
-        : _.uniq(linearTicks[0]);
-    }
-
-    if (ranges.length < 5 && !$store.activeBuckets.length) return yValues;
-    if ($store.activeBuckets.length) {
       return undefined;
     }
-    return simplifyYDomain(yValues);
+    if (
+      $store.activeBuckets.length &&
+      $store.proportionMetricType === 'proportions'
+    ) {
+      // if the available data is too small for graph-paper to scale
+      // we need to set the smallest range accepted
+      if (ranges[ranges.length - 1] < 0.01) return [0, 0.01];
+    }
+    if (
+      $store.activeBuckets.length &&
+      $store.proportionMetricType === 'counts'
+    ) {
+      if (ranges[ranges.length - 1] < 5) return [0, 5];
+    }
+    // we need to have at least 5 elements in the tick array
+    if (ranges.length < 5 && !$store.activeBuckets.length) return yValues;
+    return undefined;
   };
 
-  const getYDomain = (percentiles) => {
-    let percentileData = [];
+  const getYDomain = (percentiles, buckets) => {
+    let yData = [];
     let yDomainValues = [];
+    // categorical graph
+    if ($store.proportionMetricType === 'proportions') {
+      for (const bucket in buckets) {
+        yData = [
+          ...yData,
+          ...data.map((arr) => arr.proportions[buckets[bucket]]),
+        ];
+      }
+    }
+    if ($store.proportionMetricType === 'counts') {
+      for (const bucket in buckets) {
+        yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
+      }
+    }
+    // exponential and linear graphs
     for (const p in percentiles) {
-      percentileData = [
-        ...percentileData,
-        ...data.map((arr) => arr.percentiles[percentiles[p]]),
-      ];
+      yData = [...yData, ...data.map((arr) => arr.percentiles[percentiles[p]])];
     }
-    yDomainValues = _.uniq(percentileData).sort((a, b) => a - b);
-    if (yScaleType === 'linear' && !$store.activeBuckets.length) {
-      yDomainValues = [
-        _.round(yDomainValues[0] - 5, -1),
-        yDomainValues[yDomainValues.length - 1],
-      ];
+
+    yDomainValues = _.uniq(yData).sort((a, b) => a - b);
+
+    if (yScaleType === 'linear' && !$store.activeBuckets.length)
+      return yDomainValues[yDomainValues.length - 1]
+        ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
+        : [NaN, NaN];
+    if (
+      $store.activeBuckets.length &&
+      $store.proportionMetricType === 'proportions'
+    ) {
+      yDomainValues = yDomainValues.filter((a) => a < 1);
+      return [yDomainValues[0], yDomainValues[yDomainValues.length - 1]];
     }
-    if ($store.activeBuckets.length) {
-      return yDomain;
-    }
+    if ($store.activeBuckets.length && $store.proportionMetricType === 'counts')
+      return [yDomainValues[0], yDomainValues[yDomainValues.length - 1]];
+
     return yDomainValues;
   };
-  $: yValues = getYDomain($store.visiblePercentiles);
+
+  $: yValues = getYDomain($store.visiblePercentiles, $store.activeBuckets);
+  $: console.log(
+    'data',
+    data,
+    'yValues',
+    yValues,
+    'getTicks',
+    getYTicks(yValues),
+    'yscaleType',
+    yScaleType,
+    'yDomain',
+    yDomain,
+    'store',
+    $store
+  );
 </script>
 
 {#if showContextMenu}
@@ -230,7 +261,7 @@
         side="left"
         lineStyle="short"
         tickFormatter={yTickFormatter}
-        ticks={getTicks(yValues)} />
+        ticks={getYTicks(yValues)} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
