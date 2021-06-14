@@ -61,12 +61,8 @@
       {#each options as opt}
         <div
           style="
-            visibility: {opt === currentKey
-            ? 'visible'
-            : 'hidden'};
-            height: {opt === currentKey
-            ? 'inherit'
-            : 0};
+            visibility: {opt === currentKey ? 'visible' : 'hidden'};
+            height: {opt === currentKey ? 'inherit' : 0};
           ">
           {opt}
         </div>

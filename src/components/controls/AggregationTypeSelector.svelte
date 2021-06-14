@@ -87,8 +87,7 @@
   class="menu-button"
   bind:this={button}
   use:tooltipAction={{
-    text:
-      'this probe has multiple aggregation methods – select one from this menu',
+    text: 'this probe has multiple aggregation methods – select one from this menu',
   }}>
   <button class="activating-button" on:click={toggle} class:active>
     <div>{aggregationInfo[currentAggregation].name}</div>

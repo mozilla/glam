@@ -54,24 +54,18 @@
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY
       ? $scrollTop
       : 0}px);
-      --bottom-border-color: {bottomBorderColor ||
-      'var(--border-color)'};
+      --bottom-border-color: {bottomBorderColor || 'var(--border-color)'};
       --bottom-border-thickness: {bottomBorderThickness ||
       'var(--border-thickness)'};
-      --top-border-color: {topBorderColor ||
-      'var(--border-color)'};
-      --top-border-thickness: {topBorderThickness ||
-      'var(--border-thickness)'};
-      --left-border-color: {leftBorderColor ||
-      'var(--border-color)'};
+      --top-border-color: {topBorderColor || 'var(--border-color)'};
+      --top-border-thickness: {topBorderThickness || 'var(--border-thickness)'};
+      --left-border-color: {leftBorderColor || 'var(--border-color)'};
       --left-border-thickness: {leftBorderThickness ||
       'var(--border-thickness)'};
-      --right-border-color: {rightBorderColor ||
-      'var(--border-color)'};
+      --right-border-color: {rightBorderColor || 'var(--border-color)'};
       --right-border-thickness: {rightBorderThickness ||
       'var(--border-thickness)'};
-      background-color: {backgroundColor ||
-      'var(--default-background-color)'};
+      background-color: {backgroundColor || 'var(--default-background-color)'};
     ">
     <slot />
   </th>
@@ -93,24 +87,18 @@
       transform: translate({freezeX ? $scrollLeft : 0}px, {freezeY
       ? $scrollTop
       : 0}px);
-      --bottom-border-color: {bottomBorderColor ||
-      'var(--border-color)'};
+      --bottom-border-color: {bottomBorderColor || 'var(--border-color)'};
       --bottom-border-thickness: {bottomBorderThickness ||
       'var(--border-thickness)'};
-      --top-border-color: {topBorderColor ||
-      'var(--border-color)'};
-      --top-border-thickness: {topBorderThickness ||
-      'var(--border-thickness)'};
-      --left-border-color: {leftBorderColor ||
-      'var(--border-color)'};
+      --top-border-color: {topBorderColor || 'var(--border-color)'};
+      --top-border-thickness: {topBorderThickness || 'var(--border-thickness)'};
+      --left-border-color: {leftBorderColor || 'var(--border-color)'};
       --left-border-thickness: {leftBorderThickness ||
       'var(--border-thickness)'};
-      --right-border-color: {rightBorderColor ||
-      'var(--border-color)'};
+      --right-border-color: {rightBorderColor || 'var(--border-color)'};
       --right-border-thickness: {rightBorderThickness ||
       'var(--border-thickness)'};
-      background-color: {backgroundColor ||
-      'var(--default-background-color)'};
+      background-color: {backgroundColor || 'var(--default-background-color)'};
     "
     use:tooltipAction={{ text: tooltip }}>
     <slot />

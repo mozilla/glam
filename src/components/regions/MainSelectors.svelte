@@ -72,7 +72,8 @@
               }}>
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined || dimension.isValidKey(di.key, $store.probe, store)) as { key, label }, i (key)}
                 <MenuListItem {key} value={key}>
-                  <span class="story-label
+                  <span
+                    class="story-label
                   first" />{label}
                 </MenuListItem>
               {/each}

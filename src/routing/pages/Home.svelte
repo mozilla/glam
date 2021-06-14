@@ -120,9 +120,7 @@
       </h2>
       {#await randomProbes}
         <div class="probes-overview">
-          {#each Array.from({
-            length: NUMBER_OF_RANDOM_PROBES,
-          }).fill(null) as _, i}
+          {#each Array.from( { length: NUMBER_OF_RANDOM_PROBES } ).fill(null) as _, i}
             <div class="probe-overview__probe placeholder">
               <RandomProbePlaceholder />
             </div>
