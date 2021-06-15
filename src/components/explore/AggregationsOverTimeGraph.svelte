@@ -173,21 +173,21 @@
     let yData = [];
     let yDomainValues = [];
     // categorical graphs
+    /* eslint-disable */
     if (buckets.length) {
       if ($store.proportionMetricType === 'proportions') {
-        buckets.forEach((bucket) => {
+        for (const bucket in buckets) {
           yData = [
             ...yData,
             ...data.map((arr) => arr.proportions[buckets[bucket]]),
           ];
-        });
+        }
       } else if ($store.proportionMetricType === 'counts') {
-        buckets.forEach((bucket) => {
+        for (const bucket in buckets) {
           yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
-        });
+        }
       }
     } else {
-      /* eslint-disable */
       // exponential(log) and linear graphs
       for (const p in percentiles) {
         yData = [
