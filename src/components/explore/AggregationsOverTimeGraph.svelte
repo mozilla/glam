@@ -145,18 +145,22 @@
   }
 
   const getYTicks = (ranges) => {
-    // when returns undefined means we want to preserve graph-paper original tick setting
-    if (yScaleType === 'linear' && !$store.activeBuckets.length) {
-      if (ranges[ranges.length - 1] < 5) return [0, 1, 2, 3, 4, 5];
+    if (
+      data[0].metric_type === 'histogram-linear' ||
+      yScaleType === 'scalePoint'
+    ) {
+      // when the range is too small we need to custom set it
+      if (ranges[ranges.length - 1] <= 5) return [0, 1, 2, 3, 4, 5];
+      if (yScaleType === 'scalePoint' && ranges.length < 5) return yValues;
       return undefined;
     }
     if (
       $store.activeBuckets.length &&
       $store.proportionMetricType === 'proportions'
     ) {
-      // if the available data is too small for graph-paper to scale
-      // we need to set the smallest range accepted
-      if (ranges[ranges.length - 1] < 0.01) return [0, 0.01];
+      // when the percentage gets too small we need to manually set the ticks
+      if (ranges[ranges.length - 1] - ranges[0] < 0.05)
+        return [0, ranges[ranges.length - 1]];
     }
     if (
       $store.activeBuckets.length &&
@@ -164,60 +168,69 @@
     ) {
       if (ranges[ranges.length - 1] < 5) return [0, 5];
     }
-    // we need to have at least 5 elements in the tick array
-    if (ranges.length < 5 && !$store.activeBuckets.length) return yValues;
     return undefined;
   };
 
-  const getYDomain = (percentiles, buckets) => {
+  const getYDomain = (visiblePercentiles, buckets) => {
     let yData = [];
     let yDomainValues = [];
+
+    // linear and log graphs
+    if (
+      data[0].metric_type === 'histogram-linear' ||
+      yScaleType === 'scalePoint'
+    ) {
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+      for (const p in visiblePercentiles) {
+        yData = [
+          ...yData,
+          ...data.map((arr) => arr.percentiles[visiblePercentiles[p]]),
+        ];
+      }
+    }
     // categorical graphs
-    /* eslint-disable */
-    if (buckets.length) {
+    if (
+      buckets.length &&
+      data[0].metric_type !== 'histogram-linear' &&
+      yScaleType !== 'scalePoint'
+    ) {
       if ($store.proportionMetricType === 'proportions') {
+        // eslint-disable-next-line no-restricted-syntax, guard-for-in
         for (const bucket in buckets) {
+          // get all possible data of the toggled percentiles
           yData = [
             ...yData,
             ...data.map((arr) => arr.proportions[buckets[bucket]]),
           ];
         }
       } else if ($store.proportionMetricType === 'counts') {
+        // eslint-disable-next-line no-restricted-syntax, guard-for-in
         for (const bucket in buckets) {
           yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
         }
       }
-    } else {
-      // exponential(log) and linear graphs
-      for (const p in percentiles) {
-        yData = [
-          ...yData,
-          ...data.map((arr) => arr.percentiles[percentiles[p]]),
-        ];
-      }
     }
-    /* eslint-enable */
 
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
-    yDomainValues = yDomainValues.filter((a) => typeof a === 'number');
+    yDomainValues = yDomainValues.filter((a) => !Number.isNaN(a));
 
-    if (yScaleType === 'linear' && !$store.activeBuckets.length)
+    // set the range for each graph type based on graph-paper setting
+    if (yScaleType === 'linear' && data[0].metric_type === 'histogram-linear')
       return yDomainValues[yDomainValues.length - 1]
         ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
         : [NaN, NaN];
     if (
-      $store.activeBuckets.length &&
-      $store.proportionMetricType === 'proportions'
+      data[0].metric_type !== 'histogram-linear' &&
+      yScaleType !== 'scalePoint' &&
+      buckets.length
     ) {
-      yDomainValues = yDomainValues.filter((a) => a < 1);
+      if ($store.proportionMetricType === 'proportions') {
+        yDomainValues = yDomainValues.filter((a) => a < 1);
+      }
       return [yDomainValues[0], yDomainValues[yDomainValues.length - 1]];
     }
-    if ($store.activeBuckets.length && $store.proportionMetricType === 'counts')
-      return [yDomainValues[0], yDomainValues[yDomainValues.length - 1]];
-
-    return yDomainValues;
+    return yDomainValues.length ? yDomainValues : yDomain;
   };
-
   $: yValues = getYDomain($store.visiblePercentiles, $store.activeBuckets);
 </script>
 
