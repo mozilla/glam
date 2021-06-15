@@ -147,6 +147,7 @@
   const getYTicks = (ranges) => {
     if (
       data[0].metric_type === 'histogram-linear' ||
+      data[0].metric_type === 'quantity' ||
       yScaleType === 'scalePoint'
     ) {
       // when the range is too small we need to custom set it
@@ -175,16 +176,17 @@
     let yData = [];
     let yDomainValues = [];
 
-    // linear and log graphs
+    // get percentile data of linear and log graphs
     if (
       data[0].metric_type === 'histogram-linear' ||
+      data[0].metric_type === 'quantity' ||
       yScaleType === 'scalePoint'
     ) {
       visiblePercentiles.forEach((p) => {
         yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
       });
     }
-    // categorical graphs
+    // get proportion and count data of categorical graphs
     if (
       buckets.length &&
       data[0].metric_type !== 'histogram-linear' &&
@@ -201,14 +203,19 @@
         });
       }
     }
+
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
     yDomainValues = yDomainValues.filter((a) => !Number.isNaN(a));
 
     // set the range for each graph type based on graph-paper setting
-    if (yScaleType === 'linear' && data[0].metric_type === 'histogram-linear')
+    if (
+      yScaleType === 'linear' &&
+      (data[0].metric_type === 'histogram-linear' ||
+        data[0].metric_type === 'quantity')
+    )
       return yDomainValues[yDomainValues.length - 1]
         ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
-        : [NaN, NaN];
+        : [0, 1];
     if (
       data[0].metric_type !== 'histogram-linear' &&
       yScaleType !== 'scalePoint' &&
