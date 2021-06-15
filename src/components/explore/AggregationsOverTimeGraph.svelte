@@ -143,6 +143,92 @@
     // Finally, set the flag to open the context menu.
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
+
+  const getYTicks = (ranges) => {
+    if (
+      data[0].metric_type === 'histogram-linear' ||
+      data[0].metric_type === 'quantity' ||
+      yScaleType === 'scalePoint'
+    ) {
+      // when the range is too small we need to custom set it
+      if (ranges[ranges.length - 1] <= 5) return [0, 1, 2, 3, 4, 5];
+      if (yScaleType === 'scalePoint' && ranges.length < 5) return yValues;
+      return undefined;
+    }
+    if (
+      $store.activeBuckets.length &&
+      $store.proportionMetricType === 'proportions'
+    ) {
+      // when the percentage gets too small we need to manually set the ticks
+      if (ranges[ranges.length - 1] - ranges[0] < 0.05)
+        return [0, ranges[ranges.length - 1]];
+    }
+    if (
+      $store.activeBuckets.length &&
+      $store.proportionMetricType === 'counts'
+    ) {
+      if (ranges[ranges.length - 1] < 5) return [0, 5];
+    }
+    return undefined;
+  };
+
+  const getYDomain = (visiblePercentiles, buckets) => {
+    let yData = [];
+    let yDomainValues = [];
+
+    // get percentile data of linear and log graphs
+    if (
+      data[0].metric_type === 'histogram-linear' ||
+      data[0].metric_type === 'quantity' ||
+      yScaleType === 'scalePoint'
+    ) {
+      visiblePercentiles.forEach((p) => {
+        yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
+      });
+    }
+    // get proportion and count data of categorical graphs
+    if (
+      buckets.length &&
+      data[0].metric_type !== 'histogram-linear' &&
+      yScaleType !== 'scalePoint'
+    ) {
+      if ($store.proportionMetricType === 'proportions') {
+        buckets.forEach((bucket) => {
+          yData = yData.concat([...data.map((arr) => arr.proportions[bucket])]);
+        });
+      }
+      if ($store.proportionMetricType === 'counts') {
+        buckets.forEach((bucket) => {
+          yData = yData.concat([...data.map((arr) => arr.counts[bucket])]);
+        });
+      }
+    }
+
+    yDomainValues = _.uniq(yData).sort((a, b) => a - b);
+    yDomainValues = yDomainValues.filter((a) => !Number.isNaN(a));
+
+    // set the range for each graph type based on graph-paper setting
+    if (
+      yScaleType === 'linear' &&
+      (data[0].metric_type === 'histogram-linear' ||
+        data[0].metric_type === 'quantity')
+    )
+      return yDomainValues[yDomainValues.length - 1]
+        ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
+        : [0, 1];
+    if (
+      data[0].metric_type !== 'histogram-linear' &&
+      yScaleType !== 'scalePoint' &&
+      buckets.length
+    ) {
+      if ($store.proportionMetricType === 'proportions') {
+        yDomainValues = yDomainValues.filter((a) => a < 1);
+      }
+      return [yDomainValues[0], yDomainValues[yDomainValues.length - 1]];
+    }
+    return yDomainValues.length ? yDomainValues : yDomain;
+  };
+  $: yValues = getYDomain($store.visiblePercentiles, $store.activeBuckets);
 </script>
 
 {#if showContextMenu}
@@ -164,7 +250,7 @@
   </ChartTitle>
   <DataGraphic
     {xDomain}
-    {yDomain}
+    yDomain={yValues}
     yType={yScaleType}
     xType={xScaleType}
     height={aggregationsOverTimeGraph.height}
@@ -176,7 +262,11 @@
     bind:mousePosition={hoverValue}
     on:click>
     <g slot="background">
-      <Axis side="left" lineStyle="short" tickFormatter={yTickFormatter} />
+      <Axis
+        side="left"
+        lineStyle="short"
+        tickFormatter={yTickFormatter}
+        ticks={getYTicks(yValues)} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
