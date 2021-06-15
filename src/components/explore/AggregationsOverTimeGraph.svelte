@@ -180,13 +180,9 @@
       data[0].metric_type === 'histogram-linear' ||
       yScaleType === 'scalePoint'
     ) {
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (const p in visiblePercentiles) {
-        yData = [
-          ...yData,
-          ...data.map((arr) => arr.percentiles[visiblePercentiles[p]]),
-        ];
-      }
+      visiblePercentiles.forEach((p) => {
+        yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
+      });
     }
     // categorical graphs
     if (
@@ -195,22 +191,16 @@
       yScaleType !== 'scalePoint'
     ) {
       if ($store.proportionMetricType === 'proportions') {
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const bucket in buckets) {
-          // get all possible data of the toggled percentiles
-          yData = [
-            ...yData,
-            ...data.map((arr) => arr.proportions[buckets[bucket]]),
-          ];
-        }
-      } else if ($store.proportionMetricType === 'counts') {
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const bucket in buckets) {
-          yData = [...yData, ...data.map((arr) => arr.counts[buckets[bucket]])];
-        }
+        buckets.forEach((bucket) => {
+          yData = yData.concat([...data.map((arr) => arr.proportions[bucket])]);
+        });
+      }
+      if ($store.proportionMetricType === 'counts') {
+        buckets.forEach((bucket) => {
+          yData = yData.concat([...data.map((arr) => arr.counts[bucket])]);
+        });
       }
     }
-
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
     yDomainValues = yDomainValues.filter((a) => !Number.isNaN(a));
 
