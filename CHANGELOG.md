@@ -2,6 +2,11 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.5.2...HEAD) (date TBD)
 
+- Upgrade OpenResty to support larger session URLs
+  ([#1416](https://github.com/mozilla/glam/pull/1416))
+- Rescale y-axis when percentiles are toggled
+  ([#1379](https://github.com/mozilla/glam/pull/1379))
+
 ## [2021.5.2](https://github.com/mozilla/glam/compare/2021.5.1...2021.5.2) (2021-05-19)
 
 - Add migration to import initial SHAs
