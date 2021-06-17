@@ -7,7 +7,7 @@ drf-orjson-renderer==1.1.5
 google-cloud-bigquery==2.20.0
 google-cloud-storage==1.38.0
 gunicorn==20.1.0
-psycopg2-binary==2.8.6
+psycopg2-binary==2.9.1
 whitenoise==5.2.0
 
 # For linting and testing.
