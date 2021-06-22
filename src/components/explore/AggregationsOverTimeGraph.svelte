@@ -144,10 +144,17 @@
     $showContextMenu = true; // eslint-disable-line no-unused-vars
   }
 
+  const linearMetrics = [
+    'histogram-linear',
+    'quantity',
+    'counter',
+    'labeled_counter',
+  ];
+
   const getYTicks = (ranges) => {
+    // exponential and linear graphs
     if (
-      data[0].metric_type === 'histogram-linear' ||
-      data[0].metric_type === 'quantity' ||
+      linearMetrics.includes(data[0].metric_type) ||
       yScaleType === 'scalePoint'
     ) {
       // when the range is too small we need to custom set it
@@ -155,6 +162,7 @@
       if (yScaleType === 'scalePoint' && ranges.length < 5) return yValues;
       return undefined;
     }
+    // categorical graphs
     if (
       $store.activeBuckets.length &&
       $store.proportionMetricType === 'proportions'
@@ -178,13 +186,23 @@
 
     // get percentile data of linear and log graphs
     if (
-      data[0].metric_type === 'histogram-linear' ||
-      data[0].metric_type === 'quantity' ||
+      linearMetrics.includes(data[0].metric_type) ||
       yScaleType === 'scalePoint'
     ) {
+      // do not change yDomain when all percentiles are selected
+      // (we want the graph to match the violin plot initially)
+      if ($store.visiblePercentiles.length === 5) return yDomain;
       visiblePercentiles.forEach((p) => {
         yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
       });
+      // use transformed data for Android metrics
+      if (data[0].transformedPercentiles) {
+        visiblePercentiles.forEach((p) => {
+          yData = yData.concat([
+            ...data.map((arr) => arr.transformedPercentiles[p]),
+          ]);
+        });
+      }
     }
     // get proportion and count data of categorical graphs
     if (
@@ -192,6 +210,8 @@
       data[0].metric_type !== 'histogram-linear' &&
       yScaleType !== 'scalePoint'
     ) {
+      // do not change yDomain when all categories are selected
+      if ($store.activeBuckets.length === 10) return yDomain;
       if ($store.proportionMetricType === 'proportions') {
         buckets.forEach((bucket) => {
           yData = yData.concat([...data.map((arr) => arr.proportions[bucket])]);
@@ -205,14 +225,12 @@
     }
 
     yDomainValues = _.uniq(yData).sort((a, b) => a - b);
-    yDomainValues = yDomainValues.filter((a) => !Number.isNaN(a));
+    yDomainValues = yDomainValues.filter(
+      (a) => !Number.isNaN(a) && Number.isFinite(a)
+    );
 
     // set the range for each graph type based on graph-paper setting
-    if (
-      yScaleType === 'linear' &&
-      (data[0].metric_type === 'histogram-linear' ||
-        data[0].metric_type === 'quantity')
-    )
+    if (yScaleType === 'linear' && linearMetrics.includes(data[0].metric_type))
       return yDomainValues[yDomainValues.length - 1]
         ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
         : [0, 1];
