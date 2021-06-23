@@ -1,11 +1,15 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.5.2...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.6.0...HEAD) (date TBD)
+
+## [2021.6.0](https://github.com/mozilla/glam/compare/2021.5.2...2021.6.0) (2021-06-22)
 
 - Upgrade OpenResty to support larger session URLs
   ([#1416](https://github.com/mozilla/glam/pull/1416))
 - Rescale y-axis when percentiles are toggled
   ([#1379](https://github.com/mozilla/glam/pull/1379))
+- Fix rescaling y-axis edge cases
+  ([#1437](https://github.com/mozilla/glam/pull/1437))
 
 ## [2021.5.2](https://github.com/mozilla/glam/compare/2021.5.1...2021.5.2) (2021-05-19)
 
