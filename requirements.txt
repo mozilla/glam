@@ -20,18 +20,18 @@ coverage==5.5
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
-django-configurations==2.2
-    # via -r requirements.in
 django==3.1.12
     # via
     #   -r requirements.in
     #   djangorestframework
     #   drf-orjson-renderer
+django-configurations==2.2
+    # via -r requirements.in
 djangorestframework==3.12.4
     # via
     #   -r requirements.in
     #   drf-orjson-renderer
-dockerflow==2020.10.0
+dockerflow==2021.7.0
     # via -r requirements.in
 drf-orjson-renderer==1.1.5
     # via -r requirements.in
@@ -93,12 +93,12 @@ psycopg2-binary==2.8.6
     # via -r requirements.in
 py==1.10.0
     # via pytest
-pyasn1-modules==0.2.8
-    # via google-auth
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
     #   rsa
+pyasn1-modules==0.2.8
+    # via google-auth
 pycodestyle==2.7.0
     # via flake8
 pycparser==2.20
@@ -107,18 +107,18 @@ pyflakes==2.3.1
     # via flake8
 pyparsing==2.4.7
     # via packaging
-pytest-blockage==0.2.2
-    # via -r requirements.in
-pytest-cov==2.12.1
-    # via -r requirements.in
-pytest-django==4.4.0
-    # via -r requirements.in
 pytest==6.2.4
     # via
     #   -r requirements.in
     #   pytest-blockage
     #   pytest-cov
     #   pytest-django
+pytest-blockage==0.2.2
+    # via -r requirements.in
+pytest-cov==2.12.1
+    # via -r requirements.in
+pytest-django==4.4.0
+    # via -r requirements.in
 pytz==2021.1
     # via
     #   django
