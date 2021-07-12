@@ -1,8 +1,8 @@
 <script>
-  import { DataGraphic } from '@graph-paper/datagraphic';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
 
   import { Axis } from '@graph-paper/guides';
+  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
 
   import Tweenable from '../Tweenable.svelte';
   import ChartTitle from './ChartTitle.svelte';

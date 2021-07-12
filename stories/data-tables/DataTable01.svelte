@@ -1,5 +1,5 @@
 <script>
-  import { DataGraphic } from '@graph-paper/datagraphic';
+  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
   import DataTable from '../../src/components/table/DataTable.svelte';
   import Row from '../../src/components/table/Row.svelte';
   import Cell from '../../src/components/table/Cell.svelte';

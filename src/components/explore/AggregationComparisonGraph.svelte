@@ -1,9 +1,8 @@
 <script>
   import { Axis } from '@graph-paper/guides';
 
-  import { DataGraphic } from '@graph-paper/datagraphic';
-
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
+  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
 
