@@ -2,7 +2,7 @@
   import { Axis } from '@graph-paper/guides';
 
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
-  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
 

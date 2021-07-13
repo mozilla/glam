@@ -3,7 +3,7 @@
   import { fade } from 'svelte/transition';
   import { Axis } from '@graph-paper/guides';
   import Violin from './Violin.svelte';
-  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   import { formatCount, formatPercentDecimal } from '../../utils/formatters';
 

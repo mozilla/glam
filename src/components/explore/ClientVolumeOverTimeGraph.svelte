@@ -3,7 +3,7 @@
   import { Line } from '@graph-paper/elements';
 
   import Tweenable from '../Tweenable.svelte';
-  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 

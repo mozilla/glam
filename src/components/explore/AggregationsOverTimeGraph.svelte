@@ -7,7 +7,7 @@
   import { Axis } from '@graph-paper/guides';
   import { Line } from '@graph-paper/elements';
 
-  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   import Tweenable from '../Tweenable.svelte';
   import Springable from '../Springable.svelte';

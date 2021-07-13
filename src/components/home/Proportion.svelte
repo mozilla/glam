@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import { Axis } from '@graph-paper/guides';
-  import DataGraphic from '../../graph-paper/datagraphic/DataGraphic.svelte';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   import { createCatColorMap } from '../../utils/color-maps';
 
