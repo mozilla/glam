@@ -1,7 +1,7 @@
 <script>
   import { tweened } from 'svelte/motion';
   import { cubicOut as easing } from 'svelte/easing';
-  import { DataGraphic } from '@graph-paper/datagraphic';
+  import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
   export let value;
   export let hovered = false;
