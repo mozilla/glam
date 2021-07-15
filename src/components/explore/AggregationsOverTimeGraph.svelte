@@ -147,10 +147,14 @@
 
   const linearMetrics = [
     'histogram-linear',
+    'keyed-scalar',
+    'scalar',
     'quantity',
     'counter',
     'labeled_counter',
   ];
+
+  const desktopLinearMetrics = ['histogram-linear', 'keyed-scalar', 'scalar'];
 
   const getYTicks = (ranges) => {
     // exponential and linear graphs
@@ -208,7 +212,7 @@
     // get proportion and count data of categorical graphs
     if (
       buckets.length &&
-      data[0].metric_type !== 'histogram-linear' &&
+      !desktopLinearMetrics.includes(data[0].metric_type) &&
       yScaleType !== 'scalePoint'
     ) {
       // do not change yDomain when all categories are selected
@@ -236,7 +240,7 @@
         ? [yDomainValues[0], yDomainValues[yDomainValues.length - 1]]
         : [0, 1];
     if (
-      data[0].metric_type !== 'histogram-linear' &&
+      !desktopLinearMetrics.includes(data[0].metric_type) &&
       yScaleType !== 'scalePoint' &&
       buckets.length
     ) {
