@@ -147,7 +147,7 @@ toml==0.10.2
     #   pytest-cov
 urllib3==1.26.5
     # via requests
-whitenoise==5.2.0
+whitenoise==5.3.0
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
