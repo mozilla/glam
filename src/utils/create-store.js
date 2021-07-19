@@ -77,6 +77,10 @@ export function createStore(initialStore) {
     INTERNAL_STORE.set({ ...initialStore, ...stateToKeep });
   }
 
+  function setState(state) {
+    INTERNAL_STORE.set(state);
+  }
+
   return {
     dispatch,
     connect,
@@ -85,5 +89,6 @@ export function createStore(initialStore) {
     setField,
     setDimension,
     reinitialize,
+    setState,
   };
 }

@@ -23,6 +23,7 @@
     store.setField('searchProduct', 'firefox');
   }
 
+  store.reset(true);
   $: selectedProcess = $store.productDimensions.process;
 </script>
 
