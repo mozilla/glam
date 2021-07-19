@@ -72,10 +72,11 @@ function getDefaultState(
 export const store = createStore(getDefaultState({ basedOnQueryParams: true }));
 
 store.reset = (home = false) => {
-  store.reinitialize();
   if (home) {
     // if user clicks on home page, reset state to not include query params
     store.setState(getDefaultState());
+  } else {
+    store.reinitialize();
   }
 };
 
