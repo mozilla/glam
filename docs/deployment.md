@@ -8,7 +8,9 @@ GLAM has a 3-stage deployment:
    the form `m<integer>` or of the [CalVer](http://calver.org/) format
    `YYYY.MM.N` where `N` is a zero-based counter for the number of tags during
    the month
-3. **Production**: TBD
+3. **Production**: File a Jira ticket with the label GLAM in Data SRE board to
+   deploy to production. See example ticket:
+   https://mozilla-hub.atlassian.net/browse/DSRE-8
 
 ## Tagging for release
 
@@ -32,7 +34,12 @@ The steps for tagging a release for the staging server are as follows:
 3. Tag a release locally in git via: `git tag <tag>`
 4. Push the tag to github via: `git push origin --tags`
 
-## Logs
+## How to view the import logs in Google Cloud Platform console
 
-The results of the deploy will be logged to the **#datatools-deploys** channel
-on Slack.
+1. Log into the GCP console web page using authorized credentials
+2. Make sure you're in the "glam-prod" project
+3. Drill down into the "Kubernetes Engine -> Workloads"
+4. Look for the one that says name="glam-prod-glam-app-1" type="Cron job" and
+   click the name
+5. Select the "Logs" tab along the top. From there you can see all the recent
+   logging from the imports which are run via cron.
