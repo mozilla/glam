@@ -34,6 +34,11 @@ The steps for tagging a release for the staging server are as follows:
 3. Tag a release locally in git via: `git tag <tag>`
 4. Push the tag to github via: `git push origin --tags`
 
+## Logs
+
+- The results of the deploy will be logged to the **#datatools-deploys** channel
+  on Slack.
+
 ## How to view the import logs in Google Cloud Platform console
 
 1. Log into the GCP console web page using authorized credentials
