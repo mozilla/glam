@@ -1,6 +1,15 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.6.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.8.0...HEAD) (date TBD)
+
+## [2021.8.0](https://github.com/mozilla/glam/compare/2021.6.0...2021.8.0) (2021-08-03)
+
+- Increase graphic container width to show bigger numbers
+  ([#1466](https://github.com/mozilla/glam/pull/1466))
+- Vertically scale scalar and keyed-scalar probes
+  ([#1470](https://github.com/mozilla/glam/pull/1470))
+- Properly reset default state on homepage
+  ([#1476](https://github.com/mozilla/glam/pull/1476))
 
 ## [2021.6.0](https://github.com/mozilla/glam/compare/2021.5.2...2021.6.0) (2021-06-22)
 
