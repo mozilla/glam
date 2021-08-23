@@ -80,6 +80,8 @@ export default {
       activeBuckets: storeValue.activeBuckets,
       visiblePercentiles: storeValue.visiblePercentiles,
       ref: storeValue.ref,
+      aggKey: storeValue.aggKey,
+      aggType: storeValue.aggType,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,

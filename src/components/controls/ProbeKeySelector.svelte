@@ -3,6 +3,8 @@
   import { FloatingMenu, MenuList, MenuListItem } from '@graph-paper/menu';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
 
+  import { store } from '../../state/store';
+
   export let options;
   export let currentKey;
   export let active;
@@ -18,6 +20,7 @@
 
   function setValue(event) {
     currentKey = event.detail.key;
+    store.setField('aggKey', currentKey);
     active = false;
   }
 </script>
