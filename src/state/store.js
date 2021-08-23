@@ -36,7 +36,8 @@ function getDefaultState(
   state.timeHorizon = getFromQueryString('timeHorizon') || 'MONTH';
   state.route = {};
   state.searchProduct = state.product || 'firefox';
-
+  state.aggKey = getFromQueryString('aggKey') || '';
+  state.aggType = getFromQueryString('aggType') || 'avg';
   state.probe = {
     name: '',
     loaded: false,

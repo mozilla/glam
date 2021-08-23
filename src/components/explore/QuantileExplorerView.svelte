@@ -17,6 +17,7 @@
     gatherProbeKeys,
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
+  import { store } from '../../state/store';
 
   const dispatch = createEventDispatcher();
 
@@ -32,10 +33,10 @@
   let aggregationTypes = gatherAggregationTypes(data);
   let probeKeys = gatherProbeKeys(data);
 
-  let currentKey = probeKeys[0];
+  let currentKey = $store.aggKey || probeKeys[0];
   let currentAggregation = aggregationTypes.includes('summed_histogram')
     ? 'summed_histogram'
-    : 'avg';
+    : $store.aggType;
 
   let aggregationInfo;
 
