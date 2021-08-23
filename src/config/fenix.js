@@ -135,6 +135,12 @@ export default {
     const isCategoricalTypeProbe = viewType === 'categorical';
 
     let etc = {};
+
+    // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
+    if (data[0].metric_type === 'boolean') {
+      data = data.filter((di) => di.client_agg_type === '');
+    }
+
     if (isCategoricalTypeProbe) {
       etc = extractBucketMetadata(data);
     }
