@@ -105,7 +105,6 @@ class Command(BaseCommand):
         csv_columns = [
             f.name for f in model._meta.get_fields() if f.name not in ["id", "app_id"]
         ]
-        conflict_columns = model._meta.constraints[0].fields
 
         log(app_id, "  Importing file into temp table.")
         with connection.cursor() as cursor:
@@ -120,7 +119,7 @@ class Command(BaseCommand):
             sql = f"""
                 INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})
                 SELECT '{app_id}', * from {tmp_table}
-                ON CONFLICT ({", ".join(conflict_columns)})
+                ON CONFLICT ON CONSTRAINT fenix_unique_dimensions
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
                     histogram = EXCLUDED.histogram,
