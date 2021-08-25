@@ -102,11 +102,6 @@ class Command(BaseCommand):
     def import_file(self, tmp_table, fp, model, channel):
 
         csv_columns = [f.name for f in model._meta.get_fields() if f.name not in ["id"]]
-        conflict_columns = [
-            f
-            for f in model._meta.constraints[0].fields
-            if f not in ["id", "total_users", "histogram", "percentiles"]
-        ]
 
         log(channel, "  Importing file into temp table.")
         with connection.cursor() as cursor:
@@ -121,7 +116,7 @@ class Command(BaseCommand):
             sql = f"""
                 INSERT INTO {model._meta.db_table} ({", ".join(csv_columns)})
                 SELECT * from {tmp_table}
-                ON CONFLICT ({", ".join(conflict_columns)})
+                ON CONFLICT ON CONSTRAINT desktop_{channel}_unique_dimensions
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
                     histogram = EXCLUDED.histogram,
