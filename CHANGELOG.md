@@ -2,6 +2,15 @@
 
 ## [unreleased](https://github.com/mozilla/glam/compare/2021.8.0...HEAD) (date TBD)
 
+## [2021.8.1](https://github.com/mozilla/glam/compare/2021.6.0...2021.8.0) (2021-08-26)
+
+- Filter boolean data before passing down to component
+  ([#1533](https://github.com/mozilla/glam/pull/1533))
+- Persist aggregation type and key in URL
+  ([#1531](https://github.com/mozilla/glam/pull/1531))
+- Switch imports to using named constraints
+  ([#1538](https://github.com/mozilla/glam/pull/1538))
+
 ## [2021.8.0](https://github.com/mozilla/glam/compare/2021.6.0...2021.8.0) (2021-08-03)
 
 - Increase graphic container width to show bigger numbers
