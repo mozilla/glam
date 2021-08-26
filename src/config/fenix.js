@@ -131,15 +131,16 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const viewType = this.probeView[data[0].metric_type];
-
-    const isCategoricalTypeProbe = viewType === 'categorical';
-
     let etc = {};
-    if (isCategoricalTypeProbe) {
-      etc = extractBucketMetadata(data);
+
+    // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
+    if (data[0].metric_type === 'boolean') {
+      // eslint-disable-next-line no-param-reassign
+      data = data.filter((di) => di.client_agg_type === '');
     }
 
-    if (isCategoricalTypeProbe) {
+    if (viewType === 'categorical') {
+      etc = extractBucketMetadata(data);
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
 
