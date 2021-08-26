@@ -1,8 +1,8 @@
 # Changelog
 
-## [unreleased](https://github.com/mozilla/glam/compare/2021.8.0...HEAD) (date TBD)
+## [unreleased](https://github.com/mozilla/glam/compare/2021.8.1...HEAD) (date TBD)
 
-## [2021.8.1](https://github.com/mozilla/glam/compare/2021.6.0...2021.8.0) (2021-08-26)
+## [2021.8.1](https://github.com/mozilla/glam/compare/2021.8.0...2021.8.1) (2021-08-26)
 
 - Filter boolean data before passing down to component
   ([#1533](https://github.com/mozilla/glam/pull/1533))
