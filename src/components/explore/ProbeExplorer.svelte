@@ -322,7 +322,8 @@
     valueFormatter={summaryNumberFormatter}
     keyFormatter={comparisonKeyFormatter}
     showLeft={data.length > 1}
-    showDiff={data.length > 1} />
+    showDiff={data.length > 1}
+    viewType={$store.viewType} />
   <div style="display: {justOne ? 'none' : 'block'}">
     <ClientVolumeOverTimeGraph
       title={clientVolumeOverTimeTitle}
