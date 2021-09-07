@@ -18,9 +18,10 @@
   export let showLeft = true;
   export let showRight = true;
   export let showDiff = true;
+  export let viewType;
 
   function percentChange(l, r) {
-    return (r - l) / l;
+    return viewType === 'proportion' ? r - l : (r - l) / l;
   }
 
   let displayValues = [];

@@ -130,6 +130,9 @@ export default {
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
           : 'quantile';
+
+      appStore.setField('viewType', viewType);
+
       let data = payload.response;
 
       // Attach labels to histogram if appropriate type.

@@ -114,6 +114,8 @@ export default {
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
           : 'quantile';
+      appStore.setField('viewType', viewType);
+
       const data = transformAPIResponse[viewType](
         payload.response,
         aggregationLevel,
