@@ -2,7 +2,7 @@
 
 GLAM is Mozilla's interactive dashboard for examining the distribution of
 telemetry values over time and across different user populations. You can check
-out GLAM at [glam.telemetry.mozilla.org](glam.telemetry.mozilla.org).
+out GLAM at [glam.telemetry.mozilla.org](https://glam.telemetry.mozilla.org).
 
 This repository contains:
 
