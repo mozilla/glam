@@ -185,7 +185,10 @@ class Dev(Base):
     def VERSION(self):
         return {"version": datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")}
 
-    MIDDLEWARE = Base.MIDDLEWARE + ["glam.middleware.dev_cors_middleware"]
+    MIDDLEWARE = Base.MIDDLEWARE + [
+        "glam.middleware.dev_cors_middleware",
+        "glam.middleware.auth0_user",
+    ]
 
 
 class Test(Dev):
