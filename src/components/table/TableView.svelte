@@ -1,4 +1,6 @@
 <script>
+  import { Button, ButtonGroup } from '@graph-paper/button';
+
   import DataTable from './DataTable.svelte';
   import Row from './Row.svelte';
   import Cell from './Cell.svelte';
@@ -12,6 +14,7 @@
     formatPercentDecimal,
     ymd,
     timecode,
+    formatPercent,
   } from '../../utils/formatters';
 
   import { backwards } from '../../utils/iterables';
@@ -27,10 +30,22 @@
   export let pageSize = 10;
   export let bucketTypeLabel = 'Categories';
 
+  let showHistogramData = false;
+
   let totalPages = 0;
   let currentPage = 0;
   $: if (data) currentPage = 0;
   $: totalPages = Math.ceil(data.length / pageSize);
+
+  const metricsWithPercentileData = [
+    'histogram-exponential',
+    'histogram-linear',
+    'keyed-scalar',
+    'scalar',
+    'quantity',
+    'counter',
+    'labeled_counter',
+  ];
 
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
@@ -63,15 +78,34 @@
       {totalPages}
       {currentPage} />
   </div>
+
+  {#if metricsWithPercentileData.includes(data[0].metric_type)}
+    <div style="display: flex; justify-content: flex-end; padding: 1em;">
+      <ButtonGroup>
+        <Button
+          tooltip="Show Percentile Data"
+          on:click={() => {
+            showHistogramData = false;
+          }}
+          level="medium"
+          compact>
+          Percentile Data
+        </Button>
+        <Button
+          tooltip="Show Histogram Data"
+          on:click={() => {
+            showHistogramData = true;
+          }}
+          level="medium"
+          compact>
+          Histogram Data
+        </Button>
+      </ButtonGroup>
+    </div>
+  {/if}
+
   <DataTable overflowX={true}>
     <thead>
-      <Row header>
-        <Cell colspan={2} freezeX bottomBorder={false} />
-        <Cell colspan={2} align="left" freezeX bottomBorder={false}>
-          <span class="h"> {bucketTypeLabel} </span>
-        </Cell>
-      </Row>
-
       <Row header>
         <Cell
           backgroundColor="var(--cool-gray-subtle)"
@@ -100,20 +134,36 @@
           <span class="h"> Clients </span>
         </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
-        {#each visibleBuckets as bucket, i}
-          <Cell
-            backgroundColor="var(--cool-gray-subtle)"
-            tooltip={tooltipFormatter(bucket)}
-            size="small"
-            text
-            topBorder={true}
-            bottomBorderThickness="2px">
-            <span
-              class="percentile-label-block"
-              style="background-color: {colorMap(bucket)}" />
-            <span class="bucket">{keyFormatter(bucket)}</span>
-          </Cell>
-        {/each}
+        {#if showHistogramData}
+          {#each data[0].histogram as bucket}
+            <Cell
+              backgroundColor="var(--cool-gray-subtle)"
+              size="small"
+              text
+              topBorder={true}
+              bottomBorderThickness="2px">
+              <span
+                class="percentile-label-block"
+                style="background-color: black" />
+              <span class="bucket">{bucket.bin}</span>
+            </Cell>
+          {/each}
+        {:else}
+          {#each visibleBuckets as bucket}
+            <Cell
+              backgroundColor="var(--cool-gray-subtle)"
+              tooltip={tooltipFormatter(bucket)}
+              size="small"
+              text
+              topBorder={true}
+              bottomBorderThickness="2px">
+              <span
+                class="percentile-label-block"
+                style="background-color: {colorMap(bucket)}" />
+              <span class="bucket">{keyFormatter(bucket)}</span>
+            </Cell>
+          {/each}
+        {/if}
       </Row>
     </thead>
     <tbody>
@@ -122,9 +172,9 @@
           <Cell freezeX backgroundColor="white">
             <div class="build-version">
               {#if aggregationLevel === 'build_id'}
-                <div style="font-weight: bold; color: var(--cool-gray-550);">
+                <span style="font-weight: bold; color: var(--cool-gray-550);">
                   {ymd(row.label)}
-                </div>
+                </span>
                 <div>{timecode(row.label)}</div>
               {:else}
                 <div>{row.version}</div>
@@ -139,17 +189,27 @@
           </Cell>
           <!-- <Cell freezeX rightBorder>
           </Cell> -->
-          {#each visibleBuckets as bucket, j}
-            <Cell size="tiny">
-              <!-- <ProportionSM value={row.proportions[bucket]} /> -->
-              <span
-                style="color:{formatPercentDecimal(row[key][bucket]) !== '0.00%'
-                  ? 'var(--cool-gray-700)'
-                  : 'var(--cool-gray-200)'}">
-                {valueFormatter(row[key][bucket])}
-              </span>
-            </Cell>
-          {/each}
+          {#if showHistogramData}
+            {#each row.histogram as bucket}
+              <Cell size="tiny" backgroundColor="white">
+                <span>
+                  {formatPercent(bucket.value)}
+                </span>
+              </Cell>
+            {/each}
+          {:else}
+            {#each visibleBuckets as bucket, j}
+              <Cell size="tiny" backgroundColor="white">
+                <span
+                  style="color:{formatPercentDecimal(row[key][bucket]) !==
+                  '0.00%'
+                    ? 'var(--cool-gray-700)'
+                    : 'var(--cool-gray-200)'};">
+                  {valueFormatter(row[key][bucket])}
+                </span>
+              </Cell>
+            {/each}
+          {/if}
         </Row>
       {/each}
     </tbody>
