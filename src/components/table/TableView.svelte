@@ -37,7 +37,7 @@
   $: if (data) currentPage = 0;
   $: totalPages = Math.ceil(data.length / pageSize);
 
-  const metricsWithPercentileData = [
+  const METRICS_WITH_PERCENTILE_DATA = new Set([
     'histogram-exponential',
     'histogram-linear',
     'keyed-scalar',
@@ -45,7 +45,7 @@
     'quantity',
     'counter',
     'labeled_counter',
-  ];
+  ]);
 
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
