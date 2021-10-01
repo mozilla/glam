@@ -14,7 +14,7 @@
   "devDependencies": {
     "@babel/core": "7.14.8",
     "@babel/plugin-transform-runtime": "7.14.5",
-    "@babel/preset-env": "7.14.9",
+    "@babel/preset-env": "7.15.6",
     "@graph-paper/button": "0.0.0-alpha.15",
     "@graph-paper/core": "0.0.0-alpha.15",
     "@graph-paper/datagraphic": "0.0.0-alpha.15",
