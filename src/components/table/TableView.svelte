@@ -79,7 +79,7 @@
       {currentPage} />
   </div>
 
-  {#if metricsWithPercentileData.includes(data[0].metric_type)}
+  {#if METRICS_WITH_PERCENTILE_DATA.has(data[0].metric_type)}
     <div style="display: flex; justify-content: flex-end; padding: 1em;">
       <ButtonGroup>
         <Button
