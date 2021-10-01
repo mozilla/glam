@@ -149,6 +149,7 @@
             </Cell>
           {/each}
         {:else}
+          <!-- show percentile data -->
           {#each visibleBuckets as bucket}
             <Cell
               backgroundColor="var(--cool-gray-subtle)"
