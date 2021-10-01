@@ -38,7 +38,7 @@
     "eslint-plugin-import": "2.23.4",
     "eslint-plugin-jest": "24.5.0",
     "eslint-plugin-prettier": "3.4.0",
-    "eslint-plugin-svelte3": "3.2.0",
+    "eslint-plugin-svelte3": "3.2.1",
     "immer": "9.0.5",
     "jest": "27.2.4",
     "jest-transform-svelte": "2.1.1",
