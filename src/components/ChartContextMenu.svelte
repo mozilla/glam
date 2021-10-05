@@ -51,10 +51,6 @@
   const timeFormatter = timeFormat('%H:%M:%S');
 
   let telemetryPath;
-  const table =
-    $store.productDimensions.channel === 'nightly'
-      ? 'main_nightly'
-      : 'main_1pct';
   if ($store.probe.type === 'histogram') {
     if (['main', 'parent'].includes($store.productDimensions.process)) {
       telemetryPath = `payload.histograms.${$store.probe.name}`;
@@ -62,26 +58,13 @@
       telemetryPath = `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
     }
   }
-
-  const getRedash = (clicked, hov, path, tableName) => {
-    let buildOne = `${dateFormatter(getDateFromPoint(clicked))} ${timeFormatter(
+  const getComparisonViewinRedash = (clicked, hov, probe) =>
+    'https://sql.telemetry.mozilla.org/queries/82247/source?' +
+    `&p_OS=${$store.productDimensions.os}` +
+    `&p_Probe=${probe}` +
+    `&p_Start%20Date=${dateFormatter(
       getDateFromPoint(clicked)
-    )}`;
-    let buildTwo = `${dateFormatter(getDateFromPoint(hov))} ${timeFormatter(
-      getDateFromPoint(hov)
-    )}`;
-    return (
-      'https://sql.telemetry.mozilla.org/queries/82226/source?' +
-      `p_Build 1=${buildOne}&p_Build 2=${buildTwo}` +
-      '&p_Days%20to%20Query=7' +
-      `&p_OS=${$store.productDimensions.os}` +
-      `&p_Probe=${path}` +
-      `&p_Start%20Date=${dateFormatter(
-        getDateFromPoint(clicked)
-      )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(hov))}` +
-      `&p_Table=telemetry.${tableName}`
-    );
-  };
+    )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(hov))}`;
 </script>
 
 <style>
@@ -190,13 +173,22 @@
       </div>
       <div class="option">
         <div class="option-icon">
-          <a href={getRedash(clickedRef, clickedHov, telemetryPath, table)}>
+          <a
+            href={getComparisonViewinRedash(
+              clickedRef,
+              clickedHov,
+              telemetryPath
+            )}>
             <Graphs size="12" />
           </a>
         </div>
         <div class="option-link">
-          <a href={getRedash(clickedRef, clickedHov, telemetryPath, table)}
-            >View Comparison in Redash</a>
+          <a
+            href={getComparisonViewinRedash(
+              clickedRef,
+              clickedHov,
+              telemetryPath
+            )}>View Comparison in Redash</a>
         </div>
       </div>
       {#if pushlogUrl}
