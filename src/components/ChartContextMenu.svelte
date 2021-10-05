@@ -3,6 +3,7 @@
   import { store, showContextMenu } from '../state/store';
   import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
+  import Graphs from './icons/Graphs.svelte';
 
   export let data;
   export let x;
@@ -48,6 +49,39 @@
 
   const dateFormatter = timeFormat('%Y-%m-%d');
   const timeFormatter = timeFormat('%H:%M:%S');
+
+  let telemetryPath;
+  const table =
+    $store.productDimensions.channel === 'nightly'
+      ? 'main_nightly'
+      : 'main_1pct';
+  if ($store.probe.type === 'histogram') {
+    if (['main', 'parent'].includes($store.productDimensions.process)) {
+      telemetryPath = `payload.histograms.${$store.probe.name}`;
+    } else {
+      telemetryPath = `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
+    }
+  }
+
+  const getRedash = (clicked, hov, path, tableName) => {
+    let buildOne = `${dateFormatter(getDateFromPoint(clicked))} ${timeFormatter(
+      getDateFromPoint(clicked)
+    )}`;
+    let buildTwo = `${dateFormatter(getDateFromPoint(hov))} ${timeFormatter(
+      getDateFromPoint(hov)
+    )}`;
+    return (
+      'https://sql.telemetry.mozilla.org/queries/82226/source?' +
+      `p_Build 1=${buildOne}&p_Build 2=${buildTwo}` +
+      '&p_Days%20to%20Query=7' +
+      `&p_OS=${$store.productDimensions.os}` +
+      `&p_Probe=${path}` +
+      `&p_Start%20Date=${dateFormatter(
+        getDateFromPoint(clicked)
+      )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(hov))}` +
+      `&p_Table=telemetry.${tableName}`
+    );
+  };
 </script>
 
 <style>
@@ -152,6 +186,17 @@
           <a href={zoomUrl} on:click|preventDefault={engageZoom}>
             Zoom to Range
           </a>
+        </div>
+      </div>
+      <div class="option">
+        <div class="option-icon">
+          <a href={getRedash(clickedRef, clickedHov, telemetryPath, table)}>
+            <Graphs size="12" />
+          </a>
+        </div>
+        <div class="option-link">
+          <a href={getRedash(clickedRef, clickedHov, telemetryPath, table)}
+            >View Comparison in Redash</a>
         </div>
       </div>
       {#if pushlogUrl}
