@@ -3,6 +3,7 @@
   import BodyControl from './BodyControl.svelte';
 
   export let percentiles = [50];
+  export let product;
 
   function t(v) {
     // We can even return a string built using a template literal
@@ -40,6 +41,20 @@
       labelColor: cmp(95),
       tooltip: t(95),
       enabled: true,
+    },
+    {
+      label: '99%',
+      value: 99,
+      labelColor: cmp(99),
+      tooltip: t(99),
+      enabled: product === 'firefox',
+    },
+    {
+      label: '99.9%',
+      value: 99.9,
+      labelColor: cmp(99.9),
+      tooltip: t(99.9),
+      enabled: product === 'firefox',
     },
   ]}
   reverse={true}
