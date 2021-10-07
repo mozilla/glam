@@ -34,6 +34,8 @@ export default {
       __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
       __BASE_SEARCH_DOMAIN__: SEARCH_DOMAIN,
+      __GLEAN_DICTIONARY_DOMAIN__:
+        'https://deploy-preview-882--glean-dictionary-dev.netlify.app',
     }),
     string({ include: 'src/**/*.tpl' }),
     svelte({
