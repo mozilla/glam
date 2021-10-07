@@ -50,7 +50,7 @@ To gather the probe data that populates the probe API, run the following:
 
 The next step requires viewer permissions in the non-prod GCP project, please
 reach out to someone on the #glam Slack channel if you need the proper
-authorization. First, log in to GCP via 
+authorization. First, log in to GCP or reauthenticate via 
 [gcloud](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login)
 (outside of the Docker container):
 
