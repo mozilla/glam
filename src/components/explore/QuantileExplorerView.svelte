@@ -88,7 +88,6 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        product={$store.product}
         on:selection={makeSelection('percentiles')} />
     </div>
   </div>
