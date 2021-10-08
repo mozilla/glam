@@ -93,7 +93,7 @@
         : 'app_build_id="*"';
     return _.template(fenixGlamSql)({
       app_id: $store.productDimensions.app_id,
-      metric: $store.probe.name,
+      metric: $store.probe.name.replace('.', '_'),
       os: $store.productDimensions.os,
       ping_type: $store.productDimensions.ping_type,
       buildIdFilter,
