@@ -4,7 +4,7 @@
   import { get } from 'svelte/store';
   import productConfig from '../config/products';
   import { store, currentQuery } from '../state/store';
-  import { getSearchResults } from '../state/api';
+  import { getProbeInfo } from '../state/api';
 
   // Wrappers
   import Layout from './wrappers/Layout.svelte';
@@ -50,8 +50,8 @@
         store.setField('probeName', probeName);
 
         // The canonical probe info fetch. (PSS)
-        getSearchResults(probeName, true, $store.searchProduct).then((r) => {
-          let newProbe = { ...r[0], loaded: true };
+        getProbeInfo($store.searchProduct, probeName).then((r) => {
+          let newProbe = { ...r, loaded: true };
 
           // if the product has changed,
           // set it in the store and use store.resetProductDimensions()

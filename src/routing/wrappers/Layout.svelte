@@ -14,9 +14,11 @@
   $: isProbeDetailsView = $store.route.section === 'probe';
 
   const defaultTitle = 'GLAM: Glean Aggregated Metrics Explorer';
+  // Use the proper probe name if available (for Glean applications),
+  // falling back to the probeName state if not
   $: title =
     $store.route.section === 'probe'
-      ? `${$store.probeName} | GLAM`
+      ? `${$store.probe.name || $store.probeName} | GLAM`
       : defaultTitle;
 </script>
 

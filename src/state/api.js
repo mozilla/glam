@@ -56,49 +56,75 @@ export async function getProbeData(params) {
   return data;
 }
 
+function getFormattedSearchURL(
+  queryString,
+  exactSearch,
+  product,
+  resultsLimit
+) {
+  const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
+
+  const params = new URLSearchParams();
+  const queryOptions = [];
+  const stringScalars =
+    '(type.eq.scalar,info->calculated->latest_history->details->>kind.eq.string)';
+
+  queryOptions.push(`name.eq.${queryString}`);
+  if (!exactSearch) {
+    queryOptions.push(`search.plfts(simple).${queryString}`);
+    queryOptions.push(`description.phfts(english).${queryString}`);
+    queryOptions.push(`name.ilike.*${queryString.split(/\s+/).join('*')}*`);
+  }
+
+  params.set('limit', resultsLimit);
+  params.set('select', 'name,description,type,info');
+  params.set('type', 'neq.event');
+  params.set('or', `(${queryOptions.join(',')})`);
+  params.set('not.and', stringScalars);
+  // Show active probes first.
+  params.set('order', 'info->calculated->>active.desc');
+
+  if (product === 'firefox') {
+    URLResult.pathname = 'telemetry'; // hint: change this to test 404 error case
+  } else {
+    URLResult.pathname = 'glean';
+    params.set('product', `eq.${product}`);
+  }
+
+  URLResult.search = params;
+
+  return URLResult;
+}
+
 export function getSearchResults(
   queryString,
   exactSearch = false,
   product,
   resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
 ) {
-  const getFormattedSearchURL = (str) => {
-    const URLResult = new URL('__BASE_SEARCH_DOMAIN__');
-
-    const params = new URLSearchParams();
-    const queryOptions = [];
-    const stringScalars =
-      '(type.eq.scalar,info->calculated->latest_history->details->>kind.eq.string)';
-
-    queryOptions.push(`name.eq.${str}`);
-    if (!exactSearch) {
-      queryOptions.push(`search.plfts(simple).${str}`);
-      queryOptions.push(`description.phfts(english).${str}`);
-      queryOptions.push(`name.ilike.*${str.split(/\s+/).join('*')}*`);
-    }
-
-    params.set('limit', resultsLimit);
-    params.set('select', 'name,description,type,info');
-    params.set('type', 'neq.event');
-    params.set('or', `(${queryOptions.join(',')})`);
-    params.set('not.and', stringScalars);
-    // Show active probes first.
-    params.set('order', 'info->calculated->>active.desc');
-
-    if (product === 'firefox') {
-      URLResult.pathname = 'telemetry'; // hint: change this to test 404 error case
-    } else {
-      URLResult.pathname = 'glean';
-      params.set('product', `eq.${product}`);
-    }
-
-    URLResult.search = params;
-
-    return URLResult;
-  };
-
-  return fetch(getFormattedSearchURL(queryString)).then((r) => {
+  return fetch(
+    getFormattedSearchURL(queryString, exactSearch, product, resultsLimit)
+  ).then((r) => {
     if (r.ok) return r.json(); // everything is fine
+    return r; // fetch error - send the error object
+  });
+}
+
+export function getProbeInfo(product, probeName) {
+  // this method pulls from the probe search service in the case of Firefox and the
+  // Glean Dictionary in the case of Fenix (can be extended to other glean products
+  // in the future).
+  const useGleanDictionary = product === 'fenix';
+
+  const url = useGleanDictionary
+    ? `__GLEAN_DICTIONARY_DOMAIN__/data/${product}/metrics/data_${probeName}.json`
+    : getFormattedSearchURL(probeName, true, product);
+
+  return fetch(url).then((r) => {
+    // the probe search service returns an array of results (one in this case),
+    // whereas the Glean Dictionary returns a single JSON dictionary
+    if (r.ok)
+      return r.json().then((json) => (useGleanDictionary ? json : json[0]));
     return r; // fetch error - send the error object
   });
 }

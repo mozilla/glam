@@ -17,6 +17,14 @@
   const parseYMD = timeParse('%Y-%m-%d');
   const mdY = timeFormat('%b %d, %Y');
   const toNiceDate = (dt) => mdY(parseYMD(dt));
+
+  // taken from glean dictionary
+  const isExpired = (item) => {
+    if (item.expires === 'never' || item.expires === undefined) {
+      return false;
+    }
+    return new Date() > new Date(item.expires);
+  };
 </script>
 
 <style>
@@ -145,13 +153,25 @@
         </dl>
       {/if}
       <div class="probe-details-overview-right">
-        <StatusLabel
-          tooltip={!$store.probe.info.disabled
-            ? 'this metric is currently active and collecting data'
-            : 'this metric is inactive and is thus not collecting data'}
-          level={!$store.probe.info.disabled ? 'success' : 'info'}>
-          {!$store.probe.info.disabled ? 'active' : 'inactive'}
-        </StatusLabel>
+        {#if !$store.probe.in_source}
+          <StatusLabel
+            tooltip={'This metric is no longer defined in the source code: new data will not be collected by the application.'}
+            level={'warning'}>
+            Removed
+          </StatusLabel>
+        {:else if isExpired($store.probe)}
+          <StatusLabel
+            tooltip={'This metric has expired: new data will not be collected by the application.'}
+            level={'warning'}>Expired</StatusLabel>
+        {:else if $store.probe.disabled}
+          <StatusLabel
+            tooltip={'This metric is disabled. New data will not be collected by the application.'}
+            level={'warning'}>Disabled</StatusLabel>
+        {:else}
+          <StatusLabel
+            tooltip={'This metric is active and collecting data.'}
+            level={'success'}>Active</StatusLabel>
+        {/if}
       </div>
     </div>
 
@@ -159,10 +179,10 @@
       {#if $store.probe.description}
         <h2 class="detail-title">description</h2>
         <div class="probe-description helper-text--01">
-          {@html marked($store.probe.info.description)}
+          {@html marked($store.probe.description)}
           <a
             class="more-info-link"
-            href={`https://dictionary.telemetry.mozilla.org/apps/fenix/metrics/${$store.probe.name}`}
+            href={`https://dictionary.telemetry.mozilla.org/apps/fenix/metrics/${$store.probeName}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
@@ -171,24 +191,24 @@
       {/if}
     </div>
     <div class="tiled">
-      {#if $store.probe.info.send_in_pings}
+      {#if $store.probe.send_in_pings}
         <dl>
           <dt>unit</dt>
           <dd>
-            {$store.probe.info.time_unit ||
-              $store.probe.info.memory_unit ||
-              $store.probe.info.unit ||
+            {$store.probe.time_unit ||
+              $store.probe.memory_unit ||
+              $store.probe.unit ||
               'n/a'}
           </dd>
         </dl>
       {/if}
-      {#if $store.probe.info.expires}
+      {#if $store.probe.expires}
         <dl>
           <dt>Expires</dt>
           <dd>
-            {$store.probe.info.expires === 'never'
+            {$store.probe.expires === 'never'
               ? 'never'
-              : toNiceDate($store.probe.info.expires)}
+              : toNiceDate($store.probe.expires)}
           </dd>
         </dl>
       {/if}
@@ -197,18 +217,18 @@
       <dl>
         <dt>Send in Pings</dt>
         <dd>
-          {#each $store.probe.info.send_in_pings as ping}
+          {#each $store.probe.send_in_pings as ping}
             <div>{ping}</div>
           {/each}
         </dd>
       </dl>
     </div>
     <div class="drawer-section">
-      {#if $store.probe.info.bugs}
+      {#if $store.probe.bugs}
         <dl>
           <dt>bugs</dt>
           <dd>
-            {#each $store.probe.info.bugs as bug}
+            {#each $store.probe.bugs as bug}
               <div><a href={bug}>{extractBugId(bug)}</a></div>
             {/each}
           </dd>
@@ -216,11 +236,11 @@
       {/if}
     </div>
     <div class="drawer-section">
-      {#if $store.probe.info.data_reviews}
+      {#if $store.probe.data_reviews}
         <dl>
           <dt>data reviews</dt>
           <dd>
-            {#each $store.probe.info.data_reviews as bug}
+            {#each $store.probe.data_reviews as bug}
               <div><a href={bug}>{extractBugId(bug)}</a></div>
             {/each}
           </dd>
@@ -230,7 +250,7 @@
     <dl>
       <dt>Notify</dt>
       <dd style="font-size: var(--text-015);">
-        {#each $store.probe.info.notification_emails as email}
+        {#each $store.probe.notification_emails as email}
           <div>{email}</div>
         {/each}
       </dd>
