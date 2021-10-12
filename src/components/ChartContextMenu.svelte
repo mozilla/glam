@@ -58,13 +58,21 @@
       telemetryPath = `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
     }
   }
-  const getComparisonViewinRedash = (clicked, hov, probe) =>
+
+  const table =
+    $store.productDimensions.channel === 'nightly'
+      ? 'main_nightly'
+      : 'main_1pct';
+
+  const getComparisonViewinRedash = (probe) =>
     'https://sql.telemetry.mozilla.org/queries/82247/source?' +
+    `&p_Build 1=${clickedHov}&p_Build 2=${clickedRef}` +
     `&p_OS=${$store.productDimensions.os}` +
+    `&p_Table=telemetry.${table}` +
     `&p_Probe=${probe}` +
     `&p_Start%20Date=${dateFormatter(
-      getDateFromPoint(clicked)
-    )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(hov))}`;
+      getDateFromPoint(clickedHov)
+    )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(clickedRef))}`;
 </script>
 
 <style>
@@ -173,22 +181,13 @@
       </div>
       <div class="option">
         <div class="option-icon">
-          <a
-            href={getComparisonViewinRedash(
-              clickedRef,
-              clickedHov,
-              telemetryPath
-            )}>
+          <a href={getComparisonViewinRedash(telemetryPath)}>
             <Graphs size="12" />
           </a>
         </div>
         <div class="option-link">
-          <a
-            href={getComparisonViewinRedash(
-              clickedRef,
-              clickedHov,
-              telemetryPath
-            )}>View Comparison in Redash</a>
+          <a href={getComparisonViewinRedash(telemetryPath)}
+            >View Comparison in Redash</a>
         </div>
       </div>
       {#if pushlogUrl}
