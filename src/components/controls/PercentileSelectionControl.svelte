@@ -59,5 +59,5 @@
   reverse={true}
   bind:selected={percentiles}
   multi={true}
-  level="low"
+  level="medium"
   on:selection />
