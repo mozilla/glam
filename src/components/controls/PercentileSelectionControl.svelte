@@ -41,6 +41,20 @@
       tooltip: t(95),
       enabled: true,
     },
+    {
+      label: '99%',
+      value: 99,
+      labelColor: cmp(99),
+      tooltip: t(99),
+      enabled: true,
+    },
+    {
+      label: '99.9%',
+      value: 99.9,
+      labelColor: cmp(99.9),
+      tooltip: t(99.9),
+      enabled: true,
+    },
   ]}
   reverse={true}
   bind:selected={percentiles}

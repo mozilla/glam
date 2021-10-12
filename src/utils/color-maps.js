@@ -7,6 +7,8 @@ export function percentileLineColorMap(percentile) {
   if (p === 50) return 'var(--cool-gray-600)';
   if (p === 75) return 'var(--pantone-red-500)';
   if (p === 95) return 'var(--pantone-red-300)';
+  if (p === 99) return 'var(--pond-green-500)';
+  if (p === 99.9) return 'var(--blue-slate-600)';
   return 'black';
 }
 
