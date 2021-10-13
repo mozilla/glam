@@ -87,19 +87,19 @@
           on:click={() => {
             showHistogramData = false;
           }}
-          level={showHistogramData ? 'medium' : 'small'}
-          compact>
-          Percentile Data
-        </Button>
+          label="Percentile Data"
+          toggled={!showHistogramData}
+          level="medium"
+          compact />
         <Button
           tooltip="Show Histogram Data"
           on:click={() => {
             showHistogramData = true;
           }}
-          level={showHistogramData ? 'small' : 'medium'}
-          compact>
-          Histogram Data
-        </Button>
+          label="Histogram Data"
+          level="medium"
+          toggled={showHistogramData}
+          compact />
       </ButtonGroup>
     </div>
   {/if}
