@@ -87,7 +87,7 @@
           on:click={() => {
             showHistogramData = false;
           }}
-          level="medium"
+          level={showHistogramData ? 'medium' : 'small'}
           compact>
           Percentile Data
         </Button>
@@ -96,7 +96,7 @@
           on:click={() => {
             showHistogramData = true;
           }}
-          level="medium"
+          level={showHistogramData ? 'small' : 'medium'}
           compact>
           Histogram Data
         </Button>
