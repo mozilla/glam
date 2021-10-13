@@ -47,6 +47,12 @@
     'labeled_counter',
   ]);
 
+  const PERCENTILES = [5, 25, 50, 75, 95, 99, 99.9];
+
+  visibleBuckets = METRICS_WITH_PERCENTILE_DATA.has(data[0].metric_type)
+    ? PERCENTILES
+    : visibleBuckets;
+
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 </script>
