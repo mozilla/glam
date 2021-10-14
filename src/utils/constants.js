@@ -144,14 +144,4 @@ export const proportionSmallMultiple = {
   height: 16,
 };
 
-export const METRICS_WITH_PERCENTILE_DATA = new Set([
-  'histogram-exponential',
-  'histogram-linear',
-  'keyed-scalar',
-  'scalar',
-  'quantity',
-  'counter',
-  'labeled_counter',
-]);
-
 export const PERCENTILES = [5, 25, 50, 75, 95, 99, 99.9];

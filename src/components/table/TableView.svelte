@@ -18,7 +18,6 @@
   } from '../../utils/formatters';
 
   import { backwards } from '../../utils/iterables';
-  import { METRICS_WITH_PERCENTILE_DATA } from '../../utils/constants';
 
   export let data; // nested as key, aggregation_type
   export let aggregationLevel = 'build_id';
@@ -70,7 +69,7 @@
       {currentPage} />
   </div>
 
-  {#if METRICS_WITH_PERCENTILE_DATA.has(data[0].metric_type)}
+  {#if bucketTypeLabel === 'percentiles'}
     <div style="display: flex; justify-content: flex-end; padding: 1em;">
       <ButtonGroup>
         <Button
