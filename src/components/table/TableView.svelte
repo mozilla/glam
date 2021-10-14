@@ -18,6 +18,7 @@
   } from '../../utils/formatters';
 
   import { backwards } from '../../utils/iterables';
+  import { METRICS_WITH_PERCENTILE_DATA } from '../../utils/constants';
 
   export let data; // nested as key, aggregation_type
   export let aggregationLevel = 'build_id';
@@ -36,22 +37,6 @@
   let currentPage = 0;
   $: if (data) currentPage = 0;
   $: totalPages = Math.ceil(data.length / pageSize);
-
-  const METRICS_WITH_PERCENTILE_DATA = new Set([
-    'histogram-exponential',
-    'histogram-linear',
-    'keyed-scalar',
-    'scalar',
-    'quantity',
-    'counter',
-    'labeled_counter',
-  ]);
-
-  const PERCENTILES = [5, 25, 50, 75, 95, 99, 99.9];
-
-  visibleBuckets = METRICS_WITH_PERCENTILE_DATA.has(data[0].metric_type)
-    ? PERCENTILES
-    : visibleBuckets;
 
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
