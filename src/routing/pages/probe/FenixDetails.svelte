@@ -218,7 +218,9 @@
         <dt>Send in Pings</dt>
         <dd>
           {#each $store.probe.send_in_pings as ping}
-            <div>{ping}</div>
+            <a
+              href="https://dictionary.telemetry.mozilla.org/apps/fenix/pings/{ping}"
+              >{ping}</a>
           {/each}
         </dd>
       </dl>
