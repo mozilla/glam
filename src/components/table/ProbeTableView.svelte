@@ -8,6 +8,7 @@
     gatherProbeKeys,
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
+  import { PERCENTILES } from '../../utils/constants';
 
   export let data;
   export let probeType = 'categorical';
@@ -70,9 +71,7 @@
     data={selectedData}
     {aggregationLevel}
     colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
-    visibleBuckets={probeType === 'categorical'
-      ? visibleBuckets
-      : [5, 25, 50, 75, 95]}
+    visibleBuckets={probeType === 'categorical' ? visibleBuckets : PERCENTILES}
     keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
     valueFormatter={probeType === 'categorical'
       ? formatPercentDecimal

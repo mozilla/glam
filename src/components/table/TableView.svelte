@@ -37,16 +37,6 @@
   $: if (data) currentPage = 0;
   $: totalPages = Math.ceil(data.length / pageSize);
 
-  const METRICS_WITH_PERCENTILE_DATA = new Set([
-    'histogram-exponential',
-    'histogram-linear',
-    'keyed-scalar',
-    'scalar',
-    'quantity',
-    'counter',
-    'labeled_counter',
-  ]);
-
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 </script>
@@ -79,7 +69,7 @@
       {currentPage} />
   </div>
 
-  {#if METRICS_WITH_PERCENTILE_DATA.has(data[0].metric_type)}
+  {#if bucketTypeLabel === 'percentiles'}
     <div style="display: flex; justify-content: flex-end; padding: 1em;">
       <ButtonGroup>
         <Button

@@ -143,3 +143,5 @@ export const proportionSmallMultiple = {
   width: 80,
   height: 16,
 };
+
+export const PERCENTILES = [5, 25, 50, 75, 95, 99, 99.9];
