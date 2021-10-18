@@ -50,29 +50,33 @@
   const dateFormatter = timeFormat('%Y-%m-%d');
   const timeFormatter = timeFormat('%H:%M:%S');
 
-  let telemetryPath;
-  if ($store.probe.type === 'histogram') {
-    if (['main', 'parent'].includes($store.productDimensions.process)) {
-      telemetryPath = `payload.histograms.${$store.probe.name}`;
-    } else {
-      telemetryPath = `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
+  const getTelemetryPath = () => {
+    if ($store.probe.type === 'histogram') {
+      return ['main', 'parent'].includes($store.productDimensions.process)
+        ? `payload.histograms.${$store.probe.name}`
+        : `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
     }
-  }
+    return undefined;
+  };
 
   const table =
     $store.productDimensions.channel === 'nightly'
       ? 'main_nightly'
       : 'main_1pct';
 
-  const getComparisonViewinRedash = (probe) =>
-    'https://sql.telemetry.mozilla.org/queries/82247/source?' +
-    `&p_Build 1=${clickedHov}&p_Build 2=${clickedRef}` +
-    `&p_OS=${$store.productDimensions.os}` +
-    `&p_Table=telemetry.${table}` +
-    `&p_Probe=${probe}` +
-    `&p_Start%20Date=${dateFormatter(
-      getDateFromPoint(clickedHov)
-    )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(clickedRef))}`;
+  const getComparisonViewinSTMO = () =>
+    $store.product === 'firefox'
+      ? 'https://sql.telemetry.mozilla.org/queries/82247/source?' +
+        `&p_Table=telemetry.${table}` +
+        `&p_Probe=${getTelemetryPath()}` +
+        `&p_channel=${$store.productDimensions.channel}` +
+        `&p_Build 1=${clickedHov}&p_Build 2=${clickedRef}` +
+        `&p_OS=${$store.productDimensions.os}` +
+        `&p_Days to Query=7` +
+        `&p_Start%20Date=${dateFormatter(
+          getDateFromPoint(clickedHov)
+        )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(clickedRef))}`
+      : undefined;
 </script>
 
 <style>
@@ -179,17 +183,18 @@
           </a>
         </div>
       </div>
-      <div class="option">
-        <div class="option-icon">
-          <a href={getComparisonViewinRedash(telemetryPath)}>
-            <Graphs size="12" />
-          </a>
+      {#if getComparisonViewinSTMO()}
+        <div class="option">
+          <div class="option-icon">
+            <a href={getComparisonViewinSTMO()}>
+              <Graphs />
+            </a>
+          </div>
+          <div class="option-link">
+            <a href={getComparisonViewinSTMO()}>View Comparison in STMO</a>
+          </div>
         </div>
-        <div class="option-link">
-          <a href={getComparisonViewinRedash(telemetryPath)}
-            >View Comparison in Redash</a>
-        </div>
-      </div>
+      {/if}
       {#if pushlogUrl}
         <div class="option">
           <div class="option-icon">
