@@ -64,7 +64,7 @@
       ? 'main_nightly'
       : 'main_1pct';
 
-  const getComparisonViewinSTMO = () =>
+  const STMOComparisonLink =
     $store.product === 'firefox'
       ? 'https://sql.telemetry.mozilla.org/queries/82247/source?' +
         `&p_Table=telemetry.${table}` +
@@ -183,15 +183,15 @@
           </a>
         </div>
       </div>
-      {#if getComparisonViewinSTMO()}
+      {#if getTelemetryPath() && STMOComparisonLink}
         <div class="option">
           <div class="option-icon">
-            <a href={getComparisonViewinSTMO()}>
+            <a href={STMOComparisonLink}>
               <Graphs />
             </a>
           </div>
           <div class="option-link">
-            <a href={getComparisonViewinSTMO()}>View Comparison in STMO</a>
+            <a href={STMOComparisonLink}>View Comparison in STMO</a>
           </div>
         </div>
       {/if}
