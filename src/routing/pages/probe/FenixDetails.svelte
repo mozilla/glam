@@ -4,7 +4,7 @@
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
-  import { extractBugId } from '../../../utils/urls';
+  import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
@@ -231,7 +231,7 @@
           <dt>bugs</dt>
           <dd>
             {#each $store.probe.bugs as bug}
-              <div><a href={bug}>{extractBugId(bug)}</a></div>
+              <div><a href={getBugURL(bug)}>{getBugLinkTitle(bug)}</a></div>
             {/each}
           </dd>
         </dl>
@@ -243,7 +243,7 @@
           <dt>data reviews</dt>
           <dd>
             {#each $store.probe.data_reviews as bug}
-              <div><a href={bug}>{extractBugId(bug)}</a></div>
+              <div><a href={getBugURL(bug)}>{getBugLinkTitle(bug)}</a></div>
             {/each}
           </dd>
         </dl>

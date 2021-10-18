@@ -1,20 +1,33 @@
-// Return a shortened URL for bugzilla and github URLs.
-export function extractBugId(url) {
-  if (url.includes('bugzilla')) {
-    const match = /id=(?<id>\d+)/.exec(url);
-    if (match) {
-      return `bugzil.la/${match.groups.id}`;
-    }
+export function getBugURL(ref) {
+  // handle old-style Glean bug references
+  // copied from the Glean Dictionary
+  return ref.toString().startsWith('http')
+    ? ref
+    : `https://bugzilla.mozilla.org/show_bug.cgi?id=${ref}`;
+}
+
+export function getBugLinkTitle(ref) {
+  // return a shortened URL for bugzilla and github URLs.
+  // also copied from the Glean Dictionary
+  const url = getBugURL(ref);
+
+  // bugzilla bugs
+  if (url.includes('bugzilla.mozilla.org') || url.includes('bugzil.la')) {
+    return url.replace(/([^\d]+)/, 'bugzil.la/');
   }
-  if (url.includes('github')) {
-    const regexp =
-      /github\.com\/(?<org>[^/]+)\/(?<project>[^/]+)\/(pull|issues)\/(?<id>\d+)/;
-    const match = regexp.exec(url);
-    if (match) {
-      return `${match.groups.org}/${match.groups.project}#${match.groups.id}`;
-    }
+  // github issues or pull requests
+  if (url.includes('github.com')) {
+    return url
+      .replace(
+        /[^\d]+\/([^\d]+)\/([^\d]+)\/[^\d]+\/([\d]+)/,
+        (_, orgName, repoName, issueNumber) =>
+          `${orgName}/${repoName}#${issueNumber}`
+      )
+      .replace(/#issuecomment.*/, '-comment');
   }
-  return url;
+  // some other hitherto unseen issue URL, we'll just return
+  // it verbatim, just remove the http/https part
+  return url.replace(/^http(s?):\/\//, '');
 }
 
 // Given an object of query params, return the object stripped of query

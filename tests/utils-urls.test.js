@@ -1,27 +1,35 @@
-import { extractBugId } from '../src/utils/urls';
+import { getBugLinkTitle } from '../src/utils/urls';
 
-describe('extractBugId', () => {
-  it('correctly finds bugzilla ids', () => {
-    expect(
-      extractBugId('https://bugzilla.mozilla.org/show_bug.cgi?id=123456')
-    ).toEqual('bugzil.la/123456');
-    expect(
-      extractBugId('https://bugzilla.mozilla.org/show_bug.cgi?id=123456#c7')
-    ).toEqual('bugzil.la/123456');
-  });
-  it('correctly finds github ids', () => {
-    expect(extractBugId('https://github.com/org/project/issues/12345')).toEqual(
-      'org/project#12345'
+describe('Titles for bugzilla URLs', () => {
+  it('works as expected', () => {
+    expect(getBugLinkTitle('https://bugzilla.mozilla.org/1234')).toEqual(
+      'bugzil.la/1234'
     );
+    expect(getBugLinkTitle('https://bugzilla.mozilla.org/1234#c23')).toEqual(
+      'bugzil.la/1234#c23'
+    );
+    expect(getBugLinkTitle('https://bugzil.la/1234')).toEqual('bugzil.la/1234');
+    expect(getBugLinkTitle('https://bugzil.la/show_bug.cgi?id=1234')).toEqual(
+      'bugzil.la/1234'
+    );
+  });
+});
+
+describe('Titles for github URLs', () => {
+  it('works as expected', () => {
     expect(
-      extractBugId(
-        'https://github.com/org/project/pull/12345#issuecomment-123456789'
+      getBugLinkTitle('https://github.com/mozilla-mobile/fenix/issues/1234')
+    ).toEqual('mozilla-mobile/fenix#1234');
+    expect(
+      getBugLinkTitle(
+        'https://github.com/mozilla-mobile/fenix/issues/1234#issuecomment-5678'
       )
-    ).toEqual('org/project#12345');
+    ).toEqual('mozilla-mobile/fenix#1234-comment');
   });
-  it('correctly defaults to returning the url', () => {
-    expect(extractBugId('https://github.com/org/project')).toEqual(
-      'https://github.com/org/project'
-    );
+});
+
+describe('Titles for other issue tracker URLs', () => {
+  it('correctly defaults to returning the url without https://', () => {
+    expect(getBugLinkTitle('https://jira.com/1234')).toEqual('jira.com/1234');
   });
 });
