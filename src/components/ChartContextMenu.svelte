@@ -68,20 +68,15 @@
     'https://sql.telemetry.mozilla.org/queries/82247/source?';
 
   const getComparisonViewinSTMO = (clicked, hovered) => {
-    let queryParams = new URLSearchParams();
-    queryParams.append('p_Table', `telemetry.${table}`);
-    queryParams.append('p_Probe', getTelemetryPath());
-    queryParams.append('p_OS', $store.productDimensions.os);
-    queryParams.append('p_Build 1', clicked);
-    queryParams.append('p_Build 2', hovered);
-    queryParams.append(
-      'p_Start Date',
-      dateFormatter(getDateFromPoint(clicked))
-    );
-    queryParams.append(
-      'p_Start Date 2',
-      dateFormatter(getDateFromPoint(hovered))
-    );
+    const queryParams = new URLSearchParams({
+      p_Table: `telemetry.${table}`,
+      p_Probe: getTelemetryPath(),
+      p_OS: $store.productDimensions.os,
+      'p_Build 1': clicked,
+      'p_Build 2': hovered,
+      'p_Start Date': dateFormatter(getDateFromPoint(clicked)),
+      'p_Start Date 2': dateFormatter(getDateFromPoint(hovered)),
+    });
     return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
   };
 
