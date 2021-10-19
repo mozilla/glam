@@ -82,7 +82,7 @@
       'p_Start Date 2',
       dateFormatter(getDateFromPoint(hovered))
     );
-    return REDASH_PROBE_COMPARISON_URL + queryParams.toString()
+    return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
   };
 
   let STMOComparisonLink;
