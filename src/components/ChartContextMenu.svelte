@@ -64,19 +64,29 @@
       ? 'main_nightly'
       : 'main_1pct';
 
-  const STMOComparisonLink =
-    $store.product === 'firefox'
-      ? 'https://sql.telemetry.mozilla.org/queries/82247/source?' +
-        `&p_Table=telemetry.${table}` +
-        `&p_Probe=${getTelemetryPath()}` +
-        `&p_channel=${$store.productDimensions.channel}` +
-        `&p_Build 1=${clickedHov}&p_Build 2=${clickedRef}` +
-        `&p_OS=${$store.productDimensions.os}` +
-        `&p_Days to Query=7` +
-        `&p_Start%20Date=${dateFormatter(
-          getDateFromPoint(clickedHov)
-        )}&p_Start%20Date%202=${dateFormatter(getDateFromPoint(clickedRef))}`
-      : undefined;
+  const REDASH_PROBE_COMPARISON_URL =
+    'https://sql.telemetry.mozilla.org/queries/82247/source?';
+
+  const getComparisonViewinSTMO = (clicked, hovered) => {
+    let queryParams = new URLSearchParams();
+    queryParams.append('p_Table', `telemetry.${table}`);
+    queryParams.append('p_Probe', getTelemetryPath());
+    queryParams.append('p_OS', $store.productDimensions.os);
+    queryParams.append('p_Build 1', clicked);
+    queryParams.append('p_Build 2', hovered);
+    queryParams.append(
+      'p_Start Date',
+      dateFormatter(getDateFromPoint(clicked))
+    );
+    queryParams.append(
+      'p_Start Date 2',
+      dateFormatter(getDateFromPoint(hovered))
+    );
+    return REDASH_PROBE_COMPARISON_URL + queryParams.toString()
+  };
+
+  let STMOComparisonLink;
+  $: STMOComparisonLink = getComparisonViewinSTMO(clickedRef, clickedHov);
 </script>
 
 <style>
@@ -183,7 +193,7 @@
           </a>
         </div>
       </div>
-      {#if getTelemetryPath() && STMOComparisonLink}
+      {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
             <a href={STMOComparisonLink}>
