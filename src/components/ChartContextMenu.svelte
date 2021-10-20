@@ -3,6 +3,7 @@
   import { store, showContextMenu } from '../state/store';
   import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
+  import Graphs from './icons/Graphs.svelte';
 
   export let data;
   export let x;
@@ -48,6 +49,39 @@
 
   const dateFormatter = timeFormat('%Y-%m-%d');
   const timeFormatter = timeFormat('%H:%M:%S');
+
+  const getTelemetryPath = () => {
+    if ($store.probe.type === 'histogram') {
+      return ['main', 'parent'].includes($store.productDimensions.process)
+        ? `payload.histograms.${$store.probe.name}`
+        : `payload.processes.${$store.productDimensions.process}.histograms.${$store.probe.name}`;
+    }
+    return undefined;
+  };
+
+  const table =
+    $store.productDimensions.channel === 'nightly'
+      ? 'main_nightly'
+      : 'main_1pct';
+
+  const REDASH_PROBE_COMPARISON_URL =
+    'https://sql.telemetry.mozilla.org/queries/82247/source?';
+
+  const getComparisonViewinSTMO = (clicked, hovered) => {
+    const queryParams = new URLSearchParams({
+      p_Table: `telemetry.${table}`,
+      p_Probe: getTelemetryPath(),
+      p_OS: $store.productDimensions.os,
+      'p_Build 1': clicked,
+      'p_Build 2': hovered,
+      'p_Start Date': dateFormatter(getDateFromPoint(clicked)),
+      'p_Start Date 2': dateFormatter(getDateFromPoint(hovered)),
+    });
+    return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
+  };
+
+  let STMOComparisonLink;
+  $: STMOComparisonLink = getComparisonViewinSTMO(clickedRef, clickedHov);
 </script>
 
 <style>
@@ -154,6 +188,18 @@
           </a>
         </div>
       </div>
+      {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
+        <div class="option">
+          <div class="option-icon">
+            <a href={STMOComparisonLink}>
+              <Graphs />
+            </a>
+          </div>
+          <div class="option-link">
+            <a href={STMOComparisonLink}>View Comparison in STMO</a>
+          </div>
+        </div>
+      {/if}
       {#if pushlogUrl}
         <div class="option">
           <div class="option-icon">
