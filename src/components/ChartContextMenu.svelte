@@ -75,14 +75,12 @@
       'p_Build 2': hovered,
       'p_Start Date': dateFormatter(getDateFromPoint(clicked)),
       'p_Start Date 2': dateFormatter(getDateFromPoint(hovered)),
+      // do not add OS filter to the query if 'All OSes' is selected
+      'p_OS Filter':
+        $store.productDimensions.os === '*'
+          ? ' '
+          : `AND normalized_os="${$store.productDimensions.os}"`,
     });
-    // do not add OS filter to the query if 'All OSes' is selected
-    queryParams.append(
-      'p_OS Filter',
-      $store.productDimensions.os === '*'
-        ? ' '
-        : `AND normalized_os="${$store.productDimensions.os}"`
-    );
     return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
   };
 
