@@ -191,12 +191,13 @@
       {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
-            <a href={STMOComparisonLink}>
+            <a href={STMOComparisonLink} target="_blank">
               <Graphs />
             </a>
           </div>
           <div class="option-link">
-            <a href={STMOComparisonLink}>View Comparison in STMO</a>
+            <a href={STMOComparisonLink} target="_blank"
+              >View Comparison in STMO</a>
           </div>
         </div>
       {/if}
