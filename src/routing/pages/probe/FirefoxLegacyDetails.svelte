@@ -7,9 +7,7 @@
   import SqlModal from '../../../components/SqlModal.svelte';
   import Markdown from '../../../components/Markdown.svelte';
 
-  import LookerLogo from '../../../components/icons/LookerLogo.svelte';
-
-  import { tooltip as tooltipAction } from '@graph-paper/core/actions';
+  import LookerLink from '../../../components/LookerLink.svelte';
 
   const PROBE_TYPE_DOCS = {
     histogram:
@@ -154,12 +152,6 @@
   .docs-button:hover {
     background-color: var(--cool-gray-150);
   }
-  .docs-button.disabled {
-    color: gray;
-  }
-  .docs-button.disabled:hover {
-    background-color: transparent;
-  }
 </style>
 
 <!-- probe-details-content -->
@@ -244,15 +236,7 @@
         <Brackets size={16} />
         Export to JSON
       </button>
-      <button
-        class="docs-button disabled"
-        disabled={true}
-        use:tooltipAction={{
-          text: 'This feature is only available for Glean applications.',
-        }}>
-        <LookerLogo color="gray" />
-        View in Looker
-      </button>
+      <LookerLink product="firefox" />
     </div>
   </div>
 {/if}

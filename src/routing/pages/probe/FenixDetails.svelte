@@ -2,14 +2,14 @@
   import { timeParse, timeFormat } from 'd3-time-format';
   import marked from 'marked';
   import Brackets from '../../../components/icons/Brackets.svelte';
-  import LookerLogo from '../../../components/icons/LookerLogo.svelte';
-
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
+
+  import LookerLink from '../../../components/LookerLink.svelte';
 
   async function exportData() {
     const data = await $dataset;
@@ -27,18 +27,6 @@
     }
     return new Date() > new Date(item.expires);
   };
-
-  // 2 step process:
-  //
-
-  const variant = $store.probe.variants.find(
-    (el) => el.channel === $store.productDimensions.app_id
-  );
-
-  const lookerURL =
-    variant &&
-    variant.etl.ping_data[$store.probe.send_in_pings].looker &&
-    variant.etl.ping_data[$store.probe.send_in_pings].looker.metric.url;
 </script>
 
 <style>
@@ -129,18 +117,6 @@
 
   .docs-button:hover {
     background-color: var(--cool-gray-150);
-  }
-
-  .docs-button a {
-    text-decoration: none;
-  }
-
-  .docs-button.disabled {
-    color: gray;
-  }
-
-  .docs-button.disabled:hover {
-    background-color: transparent;
   }
 
   dt,
@@ -291,13 +267,11 @@
         <Brackets size={16} />
         Export to JSON
       </button>
-      <button class="docs-button {lookerURL ? '' : 'disabled'}"
-      use:tooltipAction={{
-        text: lookerURL ? '' : 'Looker analysis is not available for this metric yet.'
-      }}>
-        <LookerLogo color={lookerURL ? '' : 'gray'} />
-        <a href={lookerURL} target="_blank">View in Looker</a>
-      </button>
+      <LookerLink
+        product="fenix"
+        variants={$store.probe.variants}
+        sendInPings={$store.probe.send_in_pings}
+        channel={$store.productDimensions.app_id} />
     </div>
   </div>
 {/if}
