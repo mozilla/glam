@@ -65,17 +65,21 @@
       : 'main_1pct';
 
   const REDASH_PROBE_COMPARISON_URL =
-    'https://sql.telemetry.mozilla.org/queries/82247/source?';
+    'https://sql.telemetry.mozilla.org/dashboard/test_38?';
 
   const getComparisonViewinSTMO = (clicked, hovered) => {
     const queryParams = new URLSearchParams({
       p_Table: `telemetry.${table}`,
       p_Probe: getTelemetryPath(),
-      p_OS: $store.productDimensions.os,
       'p_Build 1': clicked,
       'p_Build 2': hovered,
       'p_Start Date': dateFormatter(getDateFromPoint(clicked)),
       'p_Start Date 2': dateFormatter(getDateFromPoint(hovered)),
+      // do not add OS filter to the query if 'All OSes' is selected
+      'p_OS Filter':
+        $store.productDimensions.os === '*'
+          ? ' '
+          : `AND normalized_os="${$store.productDimensions.os}"`,
     });
     return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
   };
