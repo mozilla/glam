@@ -23,7 +23,7 @@
     helpText =
       (lookerURL && 'Explore this metric in Looker.') ||
       (product === 'firefox' &&
-        'Looker is only available in Glean applications.') ||
+        'Looker is only available for Glean applications.') ||
       'Currently this metric is not yet supported in Looker.';
   }
 </script>
