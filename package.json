@@ -11,6 +11,10 @@
   "bugs": {
     "url": "https://github.com/mozilla/glam/issues"
   },
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=8.1.2"
+  },
   "devDependencies": {
     "@babel/core": "7.15.8",
     "@babel/plugin-transform-runtime": "7.15.8",
