@@ -4,12 +4,18 @@ GLAM is maintained on GitHub at:
 
 https://github.com/mozilla/glam
 
-GLAM uses Docker for local development and deployment. Please make sure to
-install [Docker] and [Docker Compose] on your computer to contribute code or
-documentation changes. Note that GLAM requires a fair bit of disk space-- if
-you're using Docker for Mac, you might want to increase the allocation of disk
-space to the Docker virtual machine to at least 100G (via Preferences ->
-Resources -> Advanced).
+To install a local copy of GLAM, you need:
+
+- [Python](https://www.python.org/) (version 3.8+)
+- [node.js](https://nodejs.org/) (version 12+)
+- [npm](https://docs.npmjs.com/cli/v7/commands/npm) (v7+): run
+  `npm install -g npm@latest` to upgrade to the latest npm
+- [Docker](https://www.docker.com/): GLAM uses Docker for local development and
+  deployment. Please make sure to install [Docker] and [Docker Compose] on your
+  computer to contribute code or documentation changes. Note that GLAM requires
+  a fair bit of disk space-- if you're using Docker for Mac, you might want to
+  increase the allocation of disk space to the Docker virtual machine to at
+  least 100G (via Preferences -> Resources -> Advanced).
 
 [docker]: https://docs.docker.com/engine/installation/#supported-platforms
 [docker compose]: https://docs.docker.com/compose/install/
