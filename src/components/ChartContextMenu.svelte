@@ -75,6 +75,7 @@
       'p_Build 2': hovered,
       'p_Start Date': dateFormatter(getDateFromPoint(clicked)),
       'p_Start Date 2': dateFormatter(getDateFromPoint(hovered)),
+      p_channel: $store.productDimensions.channel,
       // do not add OS filter to the query if 'All OSes' is selected
       'p_OS Filter':
         $store.productDimensions.os === '*'
