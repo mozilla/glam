@@ -56,6 +56,7 @@ jobs:
       - checkout
       - run:
           command: |
+            cp .env-dist .env
             docker-compose pull
             docker-compose build
 workflows:
