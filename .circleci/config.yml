@@ -48,12 +48,25 @@ jobs:
             - ./node_modules
       - run: npm run build
       - run: npm run test
-
+  test-environment:
+    docker:
+      - image: cimg/base:2021.10
+    working_directory: ~/mozilla/glam/
+    steps:
+      - checkout
+      - run:
+          command: | # bind {PWD} because we use it in docker-compose.yml
+            cp .env-dist .env
+            make build -v ${PWD}:/app
 workflows:
   version: 2
   test-and-deploy:
     jobs:
       - frontend-tests:
+          filters:
+            tags:
+              only: /.*/
+      - test-environment:
           filters:
             tags:
               only: /.*/
