@@ -55,9 +55,8 @@ jobs:
     steps:
       - checkout
       - run:
-          command: |
+          command: | # bind {PWD} because we use it in docker-compose.yml
             cp .env-dist .env
-            make up -v ${PWD}:/app
             make build -v ${PWD}:/app
 workflows:
   version: 2
