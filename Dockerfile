@@ -33,7 +33,7 @@ COPY glam /app/glam
 # FRONTEND BUILDER IMAGE
 FROM node:lts-slim AS frontend
 
-RUN apt-get update || : && apt-get install python -y
+RUN apt-get update || : && apt-get install python3 -y
 
 WORKDIR /app
 
