@@ -56,8 +56,9 @@ jobs:
       - checkout
       - run:
           command: |
-            docker-compose pull
-            docker-compose build
+            cp .env-dist .env
+            make up -v ${PWD}:/app
+            make build -v ${PWD}:/app
 workflows:
   version: 2
   test-and-deploy:
