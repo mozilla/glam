@@ -48,12 +48,25 @@ jobs:
             - ./node_modules
       - run: npm run build
       - run: npm run test
-
+  test-environment:
+    docker:
+      - image: cimg/base:2021.10
+    working_directory: ~/mozilla/glam/
+    steps:
+      - checkout
+      - run:
+          command: |
+            docker-compose pull
+            docker-compose build
 workflows:
   version: 2
   test-and-deploy:
     jobs:
       - frontend-tests:
+          filters:
+            tags:
+              only: /.*/
+      - test-environment:
           filters:
             tags:
               only: /.*/
