@@ -34,6 +34,7 @@ COPY glam /app/glam
 FROM node:lts-slim AS frontend
 
 RUN apt-get update || : && apt-get install python3 -y
+RUN apt-get -y install make
 
 WORKDIR /app
 
