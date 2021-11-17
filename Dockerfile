@@ -31,7 +31,7 @@ COPY glam /app/glam
 
 
 # FRONTEND BUILDER IMAGE
-FROM node:12 AS frontend
+FROM node:17 AS frontend
 
 RUN apt-get update || : && apt-get install python3 -y
 RUN apt-get -y install make
