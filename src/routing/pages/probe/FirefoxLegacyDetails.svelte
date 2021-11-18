@@ -7,6 +7,8 @@
   import SqlModal from '../../../components/SqlModal.svelte';
   import Markdown from '../../../components/Markdown.svelte';
 
+  import LookerLink from '../../../components/LookerLink.svelte';
+
   const PROBE_TYPE_DOCS = {
     histogram:
       'https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/collection/histograms.html',
@@ -234,6 +236,7 @@
         <Brackets size={16} />
         Export to JSON
       </button>
+      <LookerLink product="firefox" />
     </div>
   </div>
 {/if}

@@ -9,6 +9,8 @@
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
 
+  import LookerLink from '../../../components/LookerLink.svelte';
+
   async function exportData() {
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
@@ -265,6 +267,11 @@
         <Brackets size={16} />
         Export to JSON
       </button>
+      <LookerLink
+        product="fenix"
+        variants={$store.probe.variants}
+        sendInPings={$store.probe.send_in_pings}
+        channel={$store.productDimensions.app_id} />
     </div>
   </div>
 {/if}
