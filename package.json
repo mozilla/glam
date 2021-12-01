@@ -67,8 +67,7 @@
     "d3-scale-chromatic": "3.0.0",
     "d3-shape": "3.0.1",
     "d3-time-format": "3.0.0",
-    "page": "1.11.6",
-    "throttle-debounce": "3.0.1"
+    "page": "1.11.6"
   },
   "scripts": {
     "build": "rollup --config --environment NODE_ENV:production",
