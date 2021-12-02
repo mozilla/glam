@@ -1,7 +1,7 @@
 <script>
   import { tick } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { throttle } from 'throttle-debounce';
+  import { debounce } from 'lodash';
   import { Search as SearchIcon } from '@graph-paper/icons';
 
   import LineSegSpinner from '../LineSegSpinner.svelte';
@@ -15,7 +15,7 @@
   let searchIsActive = false;
   let searchQuery = '';
 
-  const SEARCH_THROTTLE_TIME = 500; // how often to send the PSS fetch (in ms)
+  const SEARCH_DEBOUNCE_TIME = 100; // defer getting search results until user input has stopped for a short interval
 
   function turnOnSearch() {
     searchIsActive = true;
@@ -40,18 +40,14 @@
 
   let query = '';
 
-  const handleSearchInput = throttle(
-    SEARCH_THROTTLE_TIME,
-    (value) => {
-      query = value;
-      getSearchResults(query, false, $store.searchProduct).then((r) => {
-        results = r;
-        searchWaiting = false;
-      });
-      searchIsActive = true;
-    },
-    false
-  );
+  const handleSearchInput = debounce((value) => {
+    query = value;
+    getSearchResults(query, false, $store.searchProduct).then((r) => {
+      results = r;
+      searchWaiting = false;
+    });
+    searchIsActive = true;
+  }, SEARCH_DEBOUNCE_TIME);
 </script>
 
 <style>
