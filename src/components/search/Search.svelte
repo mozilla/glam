@@ -42,7 +42,7 @@
 
   const handleSearchInput = debounce((value) => {
     query = value;
-    getSearchResults(query, false, $store.searchProduct).then((r) => {
+    getSearchResults($store.searchProduct, query).then((r) => {
       results = r;
       searchWaiting = false;
     });
