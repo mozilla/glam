@@ -41,7 +41,7 @@ export default {
       ],
       defaultValue: 'metrics',
       isValidKey(key, probe) {
-        return key === '*' ? true : probe.info.send_in_pings.includes(key);
+        return key === '*' ? true : probe.send_in_pings.includes(key);
       },
     },
     aggregationLevel: {
