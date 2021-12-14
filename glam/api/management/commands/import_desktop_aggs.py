@@ -71,7 +71,7 @@ class Command(BaseCommand):
             fp = tempfile.NamedTemporaryFile()
             log(channel, f"Copying GCS file {blob.name} to local file {fp.name}.")
             blob.download_to_filename(fp.name)
-
+            
             #  Load CSV into temp table & insert data from temp table into
             #  aggregation tables, using upserts.
             self.import_file(tmp_table, fp, model, channel)
@@ -88,6 +88,18 @@ class Command(BaseCommand):
         if blobs:
             with connection.cursor() as cursor:
                 view = f"view_{model._meta.db_table}"
+                log(channel, f"Create new test materialized view for {view}_test")
+                sql_string = f"""CREATE MATERIALIZED VIEW {view}_test AS SELECT * FROM glam_desktop_{channel}_aggregation;
+                CREATE UNIQUE INDEX ON {view}_test (id);
+                CREATE INDEX ON  {view}_test USING HASH (metric);
+                CREATE INDEX ON  {view}_test (version);
+                CREATE INDEX ON  {view}_test USING HASH (os);"""
+                cursor.execute(sql_string)
+
+                log(channel, f"Refreshing test materialized view for {view}_test")
+                cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}_test")
+                log(channel, "Refresh of test view completed.")
+
                 log(channel, f"Refreshing materialized view for {view}")
                 cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
                 log(channel, "Refresh completed.")
