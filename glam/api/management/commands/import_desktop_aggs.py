@@ -58,7 +58,6 @@ class Command(BaseCommand):
 
         for blob in blobs:
             # Create temp table for data.
-            print(blob)
             tmp_table = f"tmp_import_desktop_{channel}"
             log(channel, f"Creating temp table for import: {tmp_table}.")
             with connection.cursor() as cursor:
