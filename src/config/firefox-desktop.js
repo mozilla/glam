@@ -25,7 +25,7 @@ export default {
       ],
       defaultValue: 'nightly',
       isValidKey(key, probe) {
-        return key in probe.info.history;
+        return key in probe.versions;
       },
     },
     os: {
@@ -49,10 +49,7 @@ export default {
       ],
       defaultValue: 'content',
       isValidKey(key, probe) {
-        return isSelectedProcessValid(
-          probe.info.calculated.seen_in_processes,
-          key
-        );
+        return isSelectedProcessValid(probe.seen_in_processes, key);
       },
     },
     aggregationLevel: {
@@ -138,8 +135,7 @@ export default {
       // Attach labels to histogram if appropriate type.
       if (metricType === 'histogram-categorical') {
         const labels = {
-          ...appStore.getState().probe.info.calculated.latest_history.details
-            .labels,
+          ...appStore.getState().probe.labels,
         };
         data = produce(data, (draft) =>
           draft.map((point) => ({
@@ -187,22 +183,22 @@ export default {
     const { probe } = state; // accommodate only valid processes.
     if (
       !isSelectedProcessValid(
-        probe.info.calculated.seen_in_processes,
+        probe.seen_in_processes,
         state.productDimensions.process
       )
     ) {
-      const newProcess = probe.info.calculated.seen_in_processes[0];
+      const newProcess = probe.seen_in_processes[0];
       store.setDimension('process', newProcess);
     }
     // If channel isn't included in history, reset state to channel that is
-    if (!(state.productDimensions.channel in probe.info.history)) {
-      store.setDimension('channel', Object.keys(probe.info.history)[0]);
+    if (!(state.productDimensions.channel in probe.versions)) {
+      store.setDimension('channel', Object.keys(probe.versions)[0]);
     }
     // accommodate prerelease-only probes by resetting to nightly (if needed)
     if (
       state.productDimensions.channel === 'release' &&
-      'release' in probe.info.history &&
-      !probe.info.history.release[0].optout
+      'release' in probe.versions &&
+      !probe.optout
     ) {
       store.setDimension('channel', 'nightly');
     }

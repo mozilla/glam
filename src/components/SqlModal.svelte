@@ -53,9 +53,7 @@
     const { process } = $store.productDimensions;
     let sqlTemplate = desktopTelemetrySql;
     if (
-      ['categorical', 'count', 'enumerated', 'flag'].includes(
-        $store.probe.info.calculated.latest_history.details.kind
-      )
+      ['categorical', 'count', 'enumerated', 'flag'].includes($store.probe.kind)
     ) {
       sqlTemplate = desktopHistogramProportionsSql;
     }

@@ -249,16 +249,16 @@
               class:focused={focusedItem === i}
               on:click={() => {
                 page.show(
-                  `/${$store.searchProduct}/probe/${results[
-                    focusedItem
-                  ].name.toLowerCase()}/explore${$currentQuery}`
+                  `/${$store.searchProduct}/probe/${results[focusedItem].name
+                    .toLowerCase()
+                    .replaceAll('.', '_')}/explore${$currentQuery}`
                 );
               }}
               on:mouseover={() => {
                 focusedItem = i;
               }}>
               <div class="name body-text--short-01">{searchResult.name}</div>
-              {#if searchResult.info.calculated && searchResult.info.calculated.active === false}
+              {#if searchResult.active === false}
                 <div class="probe-type label label-text--01 label--inactive">
                   inactive
                 </div>

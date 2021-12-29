@@ -24,7 +24,7 @@
     const data = await $dataset;
     downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
   }
-  const isProbeActive = $store.probe.info.calculated.active;
+  const isProbeActive = $store.probe.active;
 </script>
 
 <style>
@@ -165,11 +165,11 @@
               class="probe-type-link"
               href={PROBE_TYPE_DOCS[$store.probe.type] ||
                 PROBE_TYPE_DOCS.default}>
-              {$store.probe.info.type}
+              {$store.probe.type}
             </a>
           </dt>
-          {#if $store.probe.info.calculated.latest_history.details.kind}
-            <dd>{$store.probe.info.calculated.latest_history.details.kind}</dd>
+          {#if $store.probe.kind}
+            <dd>{$store.probe.kind}</dd>
           {/if}
         </dl>
       {/if}
@@ -185,17 +185,15 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.info.history[$store.productDimensions.channel][0].versions}
+    {#if $store.probe.versions[$store.productDimensions.channel]}
       <dl
         class="drawer-section probe-details-overview-left
         probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
-          {$store.probe.info.history[$store.productDimensions.channel][0]
-            .versions.first}
+          {$store.probe.versions[$store.productDimensions.channel].first}
           &ndash;
-          {$store.probe.info.history[$store.productDimensions.channel][0]
-            .versions.last}
+          {$store.probe.versions[$store.productDimensions.channel].last}
         </dd>
       </dl>
     {/if}
@@ -206,7 +204,7 @@
           <Markdown text={$store.probe.description} />
           <a
             class="more-info-link"
-            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.info.type}/${$store.probe.info.name}`}
+            href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.id}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
@@ -214,11 +212,11 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.info.calculated.latest_history.bug_numbers && $store.probe.info.calculated.latest_history.bug_numbers.length}
+    {#if $store.probe.bug_numbers && $store.probe.bug_numbers.length}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
-          {#each $store.probe.info.calculated.latest_history.bug_numbers as bugID, i (bugID)}
+          {#each $store.probe.bug_numbers as bugID, i (bugID)}
             <a
               href="https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}"
               target="_blank">
