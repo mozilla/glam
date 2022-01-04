@@ -21,6 +21,11 @@ APP_TO_MODEL = {
     "release": "api.FenixAggregation",
 }
 
+PRODUCT_TO_MODEL = {
+    "org_mozilla_fenix" :  "api.FenixAggregation",
+    "firefox_desktop" :  "api.FirefoxAggregation",
+}
+
 
 def log(app_id, message):
     print(
@@ -47,60 +52,61 @@ class Command(BaseCommand):
 
     def handle(self, app_id, bucket, *args, **options):
 
-        self.gcs_client = storage.Client()
-        model = apps.get_model(APP_TO_MODEL[app_id])
+        for product in PRODUCT_TO_MODEL.keys():
+            self.gcs_client = storage.Client()
+            # model = apps.get_model(APP_TO_MODEL[app_id])
+            model = apps.get_model(PRODUCT_TO_MODEL[product])
+            # Find all files in bucket that match the pattern with provided app_id.
+            pattern = re.compile(f"glam-extract-{product}_glam_{app_id}-\\d+.csv")
+            blobs = self.gcs_client.list_blobs(bucket)
+            blobs = [blob for blob in blobs if pattern.fullmatch(blob.name)]
 
-        # Find all files in bucket that match the pattern with provided app_id.
-        pattern = re.compile(f"glam-extract-org_mozilla_fenix_glam_{app_id}-\\d+.csv")
-        blobs = self.gcs_client.list_blobs(bucket)
-        blobs = [blob for blob in blobs if pattern.fullmatch(blob.name)]
+            for blob in blobs:
+                # Create temp table for data.
+                tmp_table = "tmp_import_glean_{}".format(app_id)
+                log(app_id, f"Creating temp table for import: {tmp_table}.")
+                with connection.cursor() as cursor:
+                    cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
+                    cursor.execute(
+                        f"CREATE TABLE {tmp_table} (LIKE {model._meta.db_table})"
+                    )
+                    # The incoming CSV files don't have an `id` or `app_id`.
+                    cursor.execute(
+                        f"ALTER TABLE {tmp_table} DROP COLUMN id, DROP COLUMN app_id"
+                    )
 
-        for blob in blobs:
-            # Create temp table for data.
-            tmp_table = "tmp_import_glean_{}".format(app_id)
-            log(app_id, f"Creating temp table for import: {tmp_table}.")
-            with connection.cursor() as cursor:
-                cursor.execute(f"DROP TABLE IF EXISTS {tmp_table}")
-                cursor.execute(
-                    f"CREATE TABLE {tmp_table} (LIKE {model._meta.db_table})"
-                )
-                # The incoming CSV files don't have an `id` or `app_id`.
-                cursor.execute(
-                    f"ALTER TABLE {tmp_table} DROP COLUMN id, DROP COLUMN app_id"
-                )
+                # Download CSV file to local filesystem.
+                fp = tempfile.NamedTemporaryFile()
+                log(app_id, f"Copying GCS file {blob.name} to local file {fp.name}.")
+                blob.download_to_filename(fp.name)
 
-            # Download CSV file to local filesystem.
-            fp = tempfile.NamedTemporaryFile()
-            log(app_id, f"Copying GCS file {blob.name} to local file {fp.name}.")
-            blob.download_to_filename(fp.name)
+                #  Load CSV into temp table & insert data from temp table into
+                #  aggregation tables, using upserts.
+                self.import_file(tmp_table, fp, app_id,product)
 
-            #  Load CSV into temp table & insert data from temp table into
-            #  aggregation tables, using upserts.
-            self.import_file(tmp_table, fp, app_id)
+                #  Drop temp table and remove file.
+                log(app_id, "Dropping temp table.")
+                with connection.cursor() as cursor:
+                    cursor.execute(f"DROP TABLE {tmp_table}")
+                log(app_id, f"Deleting local file: {fp.name}.")
+                fp.close()
 
-            #  Drop temp table and remove file.
-            log(app_id, "Dropping temp table.")
-            with connection.cursor() as cursor:
-                cursor.execute(f"DROP TABLE {tmp_table}")
-            log(app_id, f"Deleting local file: {fp.name}.")
-            fp.close()
+            # Once all files are loaded, refresh the materialized views.
 
-        # Once all files are loaded, refresh the materialized views.
+            if blobs:
+                with connection.cursor() as cursor:
+                    view = f"view_{model._meta.db_table}"
+                    log(app_id, f"Refreshing materialized view for {view}")
+                    cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
+                    log(app_id, "Refresh completed.")
 
-        if blobs:
-            with connection.cursor() as cursor:
-                view = f"view_{model._meta.db_table}"
-                log(app_id, f"Refreshing materialized view for {view}")
-                cursor.execute(f"REFRESH MATERIALIZED VIEW CONCURRENTLY {view}")
-                log(app_id, "Refresh completed.")
+            LastUpdated.objects.update_or_create(
+                product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
+            )
 
-        LastUpdated.objects.update_or_create(
-            product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
-        )
+    def import_file(self, tmp_table, fp, app_id,product):
 
-    def import_file(self, tmp_table, fp, app_id):
-
-        model = apps.get_model(APP_TO_MODEL[app_id])
+        model = apps.get_model(PRODUCT_TO_MODEL[product])
 
         csv_columns = [
             f.name for f in model._meta.get_fields() if f.name not in ["id", "app_id"]
@@ -114,12 +120,12 @@ class Command(BaseCommand):
                 """
                 cursor.copy_expert(sql, tmp_file)
 
-        log(app_id, "  Inserting data from temp table into aggregation tables.")
+        log(app_id, " Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = f"""
                 INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})
                 SELECT '{app_id}', * from {tmp_table}
-                ON CONFLICT ON CONSTRAINT fenix_unique_dimensions
+                ON CONFLICT ON CONSTRAINT {model._meta.constraints[0].name}
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
                     histogram = EXCLUDED.histogram,
