@@ -23,7 +23,7 @@ APP_TO_MODEL = {
 
 PRODUCT_TO_MODEL = {
     "org_mozilla_fenix" :  "api.FenixAggregation",
-    "firefox_desktop" :  "api.FirefoxAggregation",
+    "firefox_desktop" :  "api.FOGAggregation",
 }
 
 
@@ -54,7 +54,6 @@ class Command(BaseCommand):
 
         for product in PRODUCT_TO_MODEL.keys():
             self.gcs_client = storage.Client()
-            # model = apps.get_model(APP_TO_MODEL[app_id])
             model = apps.get_model(PRODUCT_TO_MODEL[product])
             # Find all files in bucket that match the pattern with provided app_id.
             pattern = re.compile(f"glam-extract-{product}_glam_{app_id}-\\d+.csv")
@@ -112,7 +111,7 @@ class Command(BaseCommand):
             f.name for f in model._meta.get_fields() if f.name not in ["id", "app_id"]
         ]
 
-        log(app_id, "  Importing file into temp table.")
+        log(app_id, "Importing file into temp table.")
         with connection.cursor() as cursor:
             with open(fp.name, "r") as tmp_file:
                 sql = f"""
@@ -120,7 +119,7 @@ class Command(BaseCommand):
                 """
                 cursor.copy_expert(sql, tmp_file)
 
-        log(app_id, " Inserting data from temp table into aggregation tables.")
+        log(app_id, "Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = f"""
                 INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})

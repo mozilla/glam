@@ -80,12 +80,12 @@ class FenixAggregationView(AbstractGleanAggregation):
         managed = False
         db_table = "view_glam_fenix_aggregation"
 
-class FirefoxAggregation(AbstractGleanAggregation):
+class FOGAggregation(AbstractGleanAggregation):
     class Meta(AbstractGleanAggregation.Meta):
-        db_table = "glam_firefox_aggregation"
+        db_table = "glam_fog_aggregation"
         constraints = [
             models.UniqueConstraint(
-                name="firefox_unique_dimensions",
+                name="fog_unique_dimensions",
                 fields=[
                     "app_id",
                     "channel",
@@ -102,10 +102,10 @@ class FirefoxAggregation(AbstractGleanAggregation):
         ]
 
 
-class FirefoxAggregationView(AbstractGleanAggregation):
+class FOGAggregationView(AbstractGleanAggregation):
     class Meta:
         managed = False
-        db_table = "view_glam_firefox_aggregation"
+        db_table = "view_glam_fog_aggregation"
 
 
 class AbstractDesktopAggregation(models.Model):

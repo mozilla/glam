@@ -15,7 +15,7 @@ from glam.api.models import (
     DesktopNightlyAggregationView,
     DesktopReleaseAggregationView,
     FenixAggregationView,
-    FirefoxAggregationView,
+    FOGAggregationView,
     FenixCounts,
     FirefoxBuildRevisions,
     FirefoxCounts,
@@ -187,7 +187,7 @@ def get_glean_aggregations(request, **kwargs):
 
     MODEL_MAP = {
         "fenix": FenixAggregationView,
-        "firefox": FirefoxAggregationView,
+        "firefox": FOGAggregationView,
 
     }
     model = MODEL_MAP[kwargs.get("product")]

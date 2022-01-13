@@ -6,16 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0019_firefox_aggregation'),
+        ('api', '0019_fog_aggregation'),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='FirefoxAggregation',
+            name='FOGAggregation',
         ),
 
         migrations.CreateModel(
-            name='FirefoxAggregation',
+            name='FOGAggregation',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
                 ('channel', models.CharField(max_length=100)),
@@ -33,16 +33,16 @@ class Migration(migrations.Migration):
                 ('percentiles', models.TextField(blank=True, null=True)),
             ],
             options={
-                'db_table': 'glam_firefox_aggregation',
+                'db_table': 'glam_fog_aggregation',
                 'abstract': False,
             },
         ),
         migrations.AddConstraint(
-            model_name='firefoxaggregation',
-            constraint=models.UniqueConstraint(fields=('channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type'), name='firefox_unique_dimensions'),
+            model_name='fogaggregation',
+            constraint=models.UniqueConstraint(fields=('channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type'), name='fog_unique_dimensions'),
         ),
         migrations.CreateModel(
-            name='FirefoxAggregationView',
+            name='FOGAggregationView',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
                 ('channel', models.CharField(max_length=100)),
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
                 ('percentiles', models.TextField(blank=True, null=True)),
             ],
             options={
-                'db_table': 'view_glam_firefox_aggregation',
+                'db_table': 'view_glam_fog_aggregation',
                 'managed': False,
             },
         ),

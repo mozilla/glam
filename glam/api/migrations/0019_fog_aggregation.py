@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='FirefoxAggregation',
+            name='FOGAggregation',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
                 ('channel', models.CharField(max_length=100)),
@@ -28,11 +28,11 @@ class Migration(migrations.Migration):
                 ('data', django.contrib.postgres.fields.jsonb.JSONField()),
             ],
             options={
-                'db_table': 'glam_firefox_aggregation',
+                'db_table': 'glam_fog_aggregation',
             },
         ),
         migrations.AddConstraint(
-            model_name='firefoxaggregation',
-            constraint=models.UniqueConstraint(fields=('channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type', 'agg_type'), name='firefox_unique_dimensions'),
+            model_name='fogaggregation',
+            constraint=models.UniqueConstraint(fields=('channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type', 'agg_type'), name='fog_unique_dimensions'),
         ),
     ]
