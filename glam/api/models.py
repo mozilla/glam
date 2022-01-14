@@ -30,7 +30,7 @@ class LastUpdated(models.Model):
     last_updated = models.DateTimeField()
 
 
-class AbstractFenixAggregation(models.Model):
+class AbstractGleanAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.
     app_id = models.CharField(max_length=100)
@@ -53,8 +53,8 @@ class AbstractFenixAggregation(models.Model):
         abstract = True
 
 
-class FenixAggregation(AbstractFenixAggregation):
-    class Meta(AbstractFenixAggregation.Meta):
+class FenixAggregation(AbstractGleanAggregation):
+    class Meta(AbstractGleanAggregation.Meta):
         db_table = "glam_fenix_aggregation"
         constraints = [
             models.UniqueConstraint(
@@ -75,10 +75,37 @@ class FenixAggregation(AbstractFenixAggregation):
         ]
 
 
-class FenixAggregationView(AbstractFenixAggregation):
+class FenixAggregationView(AbstractGleanAggregation):
     class Meta:
         managed = False
         db_table = "view_glam_fenix_aggregation"
+
+class FOGAggregation(AbstractGleanAggregation):
+    class Meta(AbstractGleanAggregation.Meta):
+        db_table = "glam_fog_aggregation"
+        constraints = [
+            models.UniqueConstraint(
+                name="fog_unique_dimensions",
+                fields=[
+                    "app_id",
+                    "channel",
+                    "version",
+                    "ping_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_type",
+                    "metric_key",
+                    "client_agg_type",
+                ],
+            )
+        ]
+
+
+class FOGAggregationView(AbstractGleanAggregation):
+    class Meta:
+        managed = False
+        db_table = "view_glam_fog_aggregation"
 
 
 class AbstractDesktopAggregation(models.Model):
