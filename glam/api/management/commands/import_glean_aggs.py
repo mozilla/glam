@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
                 #  Load CSV into temp table & insert data from temp table into
                 #  aggregation tables, using upserts.
-                self.import_file(tmp_table, fp, app_id,product)
+                self.import_file(tmp_table, fp, app_id, product)
 
                 #  Drop temp table and remove file.
                 log(app_id, "Dropping temp table.")
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                 """
                 cursor.copy_expert(sql, tmp_file)
 
-        log(app_id, "Inserting data from temp table into aggregation tables.")
+        log(app_id, " Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
             sql = f"""
                 INSERT INTO {model._meta.db_table} (app_id, {", ".join(csv_columns)})
