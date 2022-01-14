@@ -51,9 +51,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, app_id, bucket, *args, **options):
-
+        self.gcs_client = storage.Client()
         for product in PRODUCT_TO_MODEL.keys():
-            self.gcs_client = storage.Client()
             model = apps.get_model(PRODUCT_TO_MODEL[product])
             # Find all files in bucket that match the pattern with provided app_id.
             pattern = re.compile(f"glam-extract-{product}_glam_{app_id}-\\d+.csv")
@@ -103,7 +102,7 @@ class Command(BaseCommand):
                 product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
             )
 
-    def import_file(self, tmp_table, fp, app_id,product):
+    def import_file(self, tmp_table, fp, app_id, product):
 
         model = apps.get_model(PRODUCT_TO_MODEL[product])
 
