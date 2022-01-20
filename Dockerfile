@@ -1,5 +1,5 @@
 # BACKEND IMAGE
-FROM python:3.9-slim AS backend
+FROM python:3.10.2-slim AS backend
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -46,7 +46,7 @@ RUN npm run build
 
 
 # FINAL IMAGE
-FROM python:3.9-slim AS final
+FROM python:3.10.2-slim AS final
 
 EXPOSE 8000
 
