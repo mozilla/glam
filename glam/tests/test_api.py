@@ -11,6 +11,7 @@ from glam.api.models import (
     DesktopNightlyAggregation,
     FenixAggregation,
     FenixCounts,
+    FOGCounts,
     FirefoxBuildRevisions,
     FirefoxCounts,
     LastUpdated,
