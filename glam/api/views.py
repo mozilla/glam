@@ -192,6 +192,7 @@ def get_glean_aggregations(request, **kwargs):
 
     }
     model = MODEL_MAP[kwargs.get("product")]
+    product = kwargs.get("product")
 
     num_versions = kwargs.get("versions", 3)
     try:
