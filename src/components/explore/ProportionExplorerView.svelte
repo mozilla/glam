@@ -4,6 +4,8 @@
   import { cubicOut as easing } from 'svelte/easing';
   import { OptionMenu, Option, OptionDivider } from '@graph-paper/optionmenu';
 
+  import { store } from '../../state/store';
+
   import ProbeExplorer from './ProbeExplorer.svelte';
   import KeySelectionControl from '../controls/KeySelectionControl.svelte';
   import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
@@ -94,6 +96,7 @@
       .slice(-numHighlightedBuckets)
       .map(([bucket]) => bucket);
   }
+  let selectAll = false;
 
   $: if (showOptionMenu) {
     everActiveBuckets = [...new Set([...activeBuckets, ...everActiveBuckets])];
@@ -109,14 +112,25 @@
     // important for the rest of the interaction. If we did not do this, the bucket
     // would switch between the important group and the unimportant group as it's
     // toggled, which would be annoying.
-    sortedImportantBuckets = [
-      ...new Set([...everActiveBuckets, ...coloredBuckets]),
-    ].sort(numericStringsSort);
+    sortedImportantBuckets = selectAll
+      ? bucketOptions
+      : [...new Set([...everActiveBuckets, ...coloredBuckets])].sort(
+          numericStringsSort
+        );
 
     // An unimportant bucket is any other bucket
     sortedUnimportantBuckets = bucketOptions
       .filter((bucket) => !sortedImportantBuckets.includes(bucket))
       .sort(numericStringsSort);
+  }
+
+  $: {
+    selectAll
+      ? store.setField(
+          'activeBuckets2',
+          bucketOptions.length ? bucketOptions : 'yes'
+        )
+      : store.setField('activeBuckets2', $store.activeBuckets);
   }
 </script>
 
@@ -136,7 +150,7 @@
 
 <div class="body-content">
   <slot />
-
+  <input type="checkbox" bind:checked={selectAll} />
   <div class="body-control-row body-control-row--stretch">
     <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
@@ -150,6 +164,7 @@
     <div class="body-control-set">
       <label class="body-control-set--label">Categories</label>
       {#if showOptionMenu}
+        <input type="checkbox" bind:checked={selectAll} />
         <OptionMenu
           multi
           on:selection={(evt) => {
