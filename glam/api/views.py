@@ -221,7 +221,7 @@ def get_glean_aggregations(request, **kwargs):
 
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
-    if aggregation_level == "version" 
+    if aggregation_level == "version":
         if product == 'fenix':
             dimensions.append(Q(build_id="*"))
             counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
@@ -229,7 +229,7 @@ def get_glean_aggregations(request, **kwargs):
             dimensions.append(~Q(build_id="*"))
             counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
 
-    if aggregation_level == "build_id" 
+    if aggregation_level == "build_id":
         if product == 'fenix':
             dimensions.append(~Q(build_id="*"))
             counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
