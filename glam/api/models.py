@@ -229,6 +229,26 @@ class FenixCounts(models.Model):
                 fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
             )
         ]
+class FOGCounts(models.Model):
+    id = models.AutoField(primary_key=True)
+    app_id = models.CharField(max_length=100)
+    channel = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
+    ping_type = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    build_date = models.DateTimeField(null=True)
+    os = models.CharField(max_length=100)
+    total_users = models.IntegerField()
+
+    class Meta:
+        db_table = "glam_fog_counts"
+        constraints = [
+            models.UniqueConstraint(
+                name="fog_counts_unique_dimensions",
+                fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
+            )
+        ]
+
 
 
 class FirefoxBuildRevisions(models.Model):

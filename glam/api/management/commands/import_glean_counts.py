@@ -13,9 +13,9 @@ from glam.api import constants
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
 MAPPING = {
-    "fenix": {"model": "api.FenixCounts", "apps": ["nightly", "beta", "release"]}
+    "fenix": {"model": "api.FenixCounts","schema_name":"org_mozilla_fenix", "apps": ["nightly", "beta", "release"]},
+    "fog": {"model": "api.FOGCounts", "schema_name":"firefox_desktop","apps": ["nightly", "beta", "release"]}
 }
-
 
 def log(message):
     print(f"{datetime.datetime.now().strftime('%x %X')} - {FILENAME} - {message}")
@@ -39,9 +39,9 @@ class Command(BaseCommand):
 
         for product, opts in MAPPING.items():
             model = apps.get_model(opts["model"])
-
+            schema = opts["schema_name"]
             for app_id in opts["apps"]:
-                filename = f"glam-extract-org_mozilla_fenix_glam_{app_id}-counts.csv"
+                filename = f"glam-extract-{schema}_glam_{app_id}-counts.csv"
                 blob = bucket.get_blob(filename)
 
                 if not blob:

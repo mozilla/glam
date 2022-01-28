@@ -17,6 +17,7 @@ from glam.api.models import (
     FenixAggregationView,
     FOGAggregationView,
     FenixCounts,
+    FOGCounts,
     FirefoxBuildRevisions,
     FirefoxCounts,
     LastUpdated,
@@ -191,6 +192,7 @@ def get_glean_aggregations(request, **kwargs):
 
     }
     model = MODEL_MAP[kwargs.get("product")]
+    product = kwargs.get("product")
 
     num_versions = kwargs.get("versions", 3)
     try:
@@ -220,11 +222,20 @@ def get_glean_aggregations(request, **kwargs):
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        dimensions.append(Q(build_id="*"))
-        counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
-    elif aggregation_level == "build_id":
-        dimensions.append(~Q(build_id="*"))
-        counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
+        if product == 'fenix':
+            dimensions.append(Q(build_id="*"))
+            counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
+        if product == 'firefox':
+            dimensions.append(~Q(build_id="*"))
+            counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
+
+    if aggregation_level == "build_id":
+        if product == 'fenix':
+            dimensions.append(~Q(build_id="*"))
+            counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
+        if product == 'firefox':
+            dimensions.append(~Q(build_id="*"))
+            counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
@@ -264,6 +275,28 @@ def _get_fenix_counts(app_id, versions, ping_type, os, by_build):
 
     """
     query = FenixCounts.objects.filter(
+        app_id=app_id, version__in=versions, ping_type=ping_type, os=os
+    )
+    if by_build:
+        query = query.exclude(build_id="*")
+    else:
+        query = query.filter(build_id="*")
+    query = query.annotate(key=Concat("version", Value("-"), "build_id"))
+    data = {
+        row["key"]: row["total_users"] for row in query.values("key", "total_users")
+    }
+
+    return data
+
+def _get_fog_counts(app_id, versions, ping_type, os, by_build):
+    """
+    Helper method to gather the `FOGCounts` data in a single query.
+
+    Returns the data as a Python dict keyed by "{version}-{build_id}" for
+    quick lookup.
+
+    """
+    query = FOGCounts.objects.filter(
         app_id=app_id, version__in=versions, ping_type=ping_type, os=os
     )
     if by_build:
