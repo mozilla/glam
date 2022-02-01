@@ -2,3 +2,4 @@ public/static/bundle.js
 public/static/bundle.css
 tests/data/
 CODE_OF_CONDUCT.md
+.github/ISSUE_TEMPLATE/bug_report.md
