@@ -58,7 +58,7 @@ export async function getProbeData(params) {
 
 function getProbeSearchURL(productId, queryString, resultsLimit) {
   const URLResult = new URL(
-    `__GLEAN_DICTIONARY_DOMAIN__/.netlify/functions/metrics_search_${productId}`
+    `__GLEAN_DICTIONARY_DOMAIN__/api/v1/metrics_search_${productId}`
   );
 
   const params = new URLSearchParams();
