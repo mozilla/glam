@@ -13,6 +13,9 @@
   import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
   import ColorSwatch from '../controls/ColorSwatch.svelte';
 
+  import { Checkbox, CheckboxBlank } from '@graph-paper/icons';
+  import { Button } from '@graph-paper/button';
+
   import {
     formatPercent,
     formatCount,
@@ -112,11 +115,9 @@
     // important for the rest of the interaction. If we did not do this, the bucket
     // would switch between the important group and the unimportant group as it's
     // toggled, which would be annoying.
-    sortedImportantBuckets = selectAll
-      ? bucketOptions
-      : [...new Set([...everActiveBuckets, ...coloredBuckets])].sort(
-          numericStringsSort
-        );
+    sortedImportantBuckets = [
+      ...new Set([...everActiveBuckets, ...coloredBuckets]),
+    ].sort(numericStringsSort);
 
     // An unimportant bucket is any other bucket
     sortedUnimportantBuckets = bucketOptions
@@ -124,14 +125,26 @@
       .sort(numericStringsSort);
   }
 
-  $: {
-    selectAll
-      ? store.setField(
-          'activeBuckets2',
-          bucketOptions.length ? bucketOptions : 'yes'
-        )
-      : store.setField('activeBuckets2', $store.activeBuckets);
+  function clicky() {
+    store.setField('activeBuckets', bucketOptions);
   }
+  $: {
+    if ($store.activeBuckets.length == bucketOptions.length) {
+      selectAll = true;
+    } else {
+      selectAll = false;
+    }
+  }
+
+  $: console.log(
+    'sortedImportant',
+    sortedImportantBuckets,
+    'activeBuckets',
+    $store.activeBuckets,
+    'ever',
+    everActiveBuckets,
+    activeBuckets
+  );
 </script>
 
 <style>
@@ -150,7 +163,6 @@
 
 <div class="body-content">
   <slot />
-  <input type="checkbox" bind:checked={selectAll} />
   <div class="body-control-row body-control-row--stretch">
     <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
@@ -162,9 +174,12 @@
     </div>
 
     <div class="body-control-set">
-      <label class="body-control-set--label">Categories</label>
+      <span>
+        <label class="body-control-set--label">Categories
+        </label>
+      <!-- <Button compact level="low" on:click={clicky}>Select All</Button> -->
+</span>
       {#if showOptionMenu}
-        <input type="checkbox" bind:checked={selectAll} />
         <OptionMenu
           multi
           on:selection={(evt) => {
