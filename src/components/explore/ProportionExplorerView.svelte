@@ -175,10 +175,8 @@
 
     <div class="body-control-set">
       <span>
-        <label class="body-control-set--label">Categories
-        </label>
-      <!-- <Button compact level="low" on:click={clicky}>Select All</Button> -->
-</span>
+        <label class="body-control-set--label">Categories </label>
+      </span>
       {#if showOptionMenu}
         <OptionMenu
           multi
@@ -188,6 +186,10 @@
               type: 'activeBuckets',
             });
           }}>
+          <input type="checkbox" bind={selectAll} />
+          <Button style="margin-left: 10px;" compact level="low" on:click={clicky}>Select All</Button>
+
+      <OptionDivider />
           {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
             <Option
               selected={activeBuckets.includes(importantBucket)}
