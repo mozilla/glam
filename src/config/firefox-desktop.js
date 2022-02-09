@@ -96,6 +96,7 @@ export default {
       visiblePercentiles: storeValue.visiblePercentiles,
       ref: storeValue.ref,
       hov: storeValue.hov,
+      currentPage: storeValue.currentPage,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,

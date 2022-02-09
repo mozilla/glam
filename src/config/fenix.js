@@ -82,6 +82,7 @@ export default {
       ref: storeValue.ref,
       aggKey: storeValue.aggKey,
       aggType: storeValue.aggType,
+      currentPage: storeValue.currentPage,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,
