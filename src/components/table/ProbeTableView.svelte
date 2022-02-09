@@ -18,6 +18,7 @@
   export let probeKeys = gatherProbeKeys(data);
   export let colorMap;
   export let visibleBuckets;
+  export let bucketOptions;
 
   let currentKey = probeKeys[0];
   let currentAggregation = aggregationTypes[0];
@@ -71,6 +72,7 @@
     data={selectedData}
     {aggregationLevel}
     colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
+    {bucketOptions}
     visibleBuckets={probeType === 'categorical' ? visibleBuckets : PERCENTILES}
     keyFormatter={probeType === 'categorical' ? (v) => v : (v) => `${v}%`}
     valueFormatter={probeType === 'categorical'

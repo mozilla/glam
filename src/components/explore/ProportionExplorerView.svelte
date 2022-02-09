@@ -2,18 +2,16 @@
   import { createEventDispatcher } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { cubicOut as easing } from 'svelte/easing';
-  import { OptionMenu, Option, OptionDivider } from '@graph-paper/optionmenu';
 
   import { store } from '../../state/store';
 
   import ProbeExplorer from './ProbeExplorer.svelte';
-  import KeySelectionControl from '../controls/KeySelectionControl.svelte';
   import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
   import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
   import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
-  import ColorSwatch from '../controls/ColorSwatch.svelte';
 
-  import { Checkbox, CheckboxBlank } from '@graph-paper/icons';
+  import CategoricalMenu from './CategoricalMenu.svelte';
+
   import { Button } from '@graph-paper/button';
 
   import {
@@ -99,7 +97,7 @@
       .slice(-numHighlightedBuckets)
       .map(([bucket]) => bucket);
   }
-  let selectAll = false;
+  let selectAllCategories = false;
 
   $: if (showOptionMenu) {
     everActiveBuckets = [...new Set([...activeBuckets, ...everActiveBuckets])];
@@ -125,26 +123,12 @@
       .sort(numericStringsSort);
   }
 
-  function clicky() {
+  function handleSelectAllCategories() {
     store.setField('activeBuckets', bucketOptions);
   }
-  $: {
-    if ($store.activeBuckets.length == bucketOptions.length) {
-      selectAll = true;
-    } else {
-      selectAll = false;
-    }
-  }
 
-  $: console.log(
-    'sortedImportant',
-    sortedImportantBuckets,
-    'activeBuckets',
-    $store.activeBuckets,
-    'ever',
-    everActiveBuckets,
-    activeBuckets
-  );
+  $: selectAllCategories =
+    $store.activeBuckets.length == bucketOptions.length ? true : false;
 </script>
 
 <style>
@@ -173,60 +157,7 @@
       {/if}
     </div>
 
-    <div class="body-control-set">
-      <span>
-        <label class="body-control-set--label">Categories </label>
-      </span>
-      {#if showOptionMenu}
-        <OptionMenu
-          multi
-          on:selection={(evt) => {
-            dispatch('selection', {
-              selection: evt.detail.keys,
-              type: 'activeBuckets',
-            });
-          }}>
-          <input type="checkbox" bind={selectAll} />
-          <Button style="margin-left: 10px;" compact level="low" on:click={clicky}>Select All</Button>
-
-      <OptionDivider />
-          {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
-            <Option
-              selected={activeBuckets.includes(importantBucket)}
-              key={importantBucket}
-              label={importantBucket}>
-              <div class="option-menu__list-item__slot-right" slot="right">
-                <ColorSwatch color={bucketColorMap(importantBucket)} />
-              </div>
-            </Option>
-          {/each}
-          {#if sortedImportantBuckets.length && sortedUnimportantBuckets.length}
-            <OptionDivider />
-          {/if}
-          {#each sortedUnimportantBuckets as unimportantBucket, i (unimportantBucket)}
-            <!--
-              By definition, an unimportantBucket is never a selected bucket,
-              hence selected={false}
-            -->
-            <Option
-              selected={false}
-              key={unimportantBucket}
-              label={unimportantBucket}>
-              <div slot="right">
-                <ColorSwatch color={bucketColorMap(unimportantBucket)} />
-              </div>
-            </Option>
-          {/each}
-        </OptionMenu>
-      {:else}
-        <KeySelectionControl
-          sortFunction={bucketSortOrder}
-          options={bucketOptions}
-          selections={activeBuckets}
-          on:selection={makeSelection('activeBuckets')}
-          colorMap={bucketColorMap} />
-      {/if}
-    </div>
+    <CategoricalMenu {data} {activeBuckets} {bucketColorMap} {bucketOptions} />
   </div>
 
   <div class="body-control-row  body-control-row--stretch">

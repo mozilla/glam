@@ -6,8 +6,10 @@
   import Cell from './Cell.svelte';
 
   import ProportionSM from './ProportionSM.svelte';
+  import CategoricalMenu from '../../components/explore/CategoricalMenu.svelte';
 
   import Pagination from '../controls/Pagination.svelte';
+  import { store } from '../../state/store';
 
   import {
     formatCount,
@@ -29,6 +31,7 @@
   export let colorMap; // bucketColorMap
   export let pageSize = 10;
   export let bucketTypeLabel = 'Categories';
+  export let bucketOptions;
 
   let showHistogramData = false;
 
@@ -91,6 +94,16 @@
           toggled={showHistogramData}
           compact />
       </ButtonGroup>
+    </div>
+  {/if}
+
+  {#if $store.probe.kind === 'categorical'}
+    <div style="display: flex; justify-content: flex-end; padding: 1em;">
+      <CategoricalMenu
+        {data}
+        activeBuckets={$store.activeBuckets}
+        bucketColorMap={colorMap}
+        {bucketOptions} />
     </div>
   {/if}
 
