@@ -1,4 +1,5 @@
 <script>
+  import { store } from '../../state/store';
   import { Button, ButtonGroup } from '@graph-paper/button';
 
   import DataTable from './DataTable.svelte';
@@ -64,9 +65,10 @@
     <Pagination
       on:page={(evt) => {
         currentPage = evt.detail.page;
+        store.setField('currentPage', currentPage);
       }}
       {totalPages}
-      {currentPage} />
+      currentPage={Number($store.currentPage)} />
   </div>
 
   {#if bucketTypeLabel === 'percentiles'}

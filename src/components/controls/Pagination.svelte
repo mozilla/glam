@@ -38,7 +38,9 @@
   <ButtonGroup>
     <Button
       tooltip="move back a page"
-      on:click={() => changePage(currentPage - 1)}
+      on:click={() => {
+        return currentPage === 1 ? undefined : changePage(currentPage - 1);
+      }}
       level="medium"
       compact>
       <CaretLeft size={10} />
@@ -52,7 +54,7 @@
     </Button>
   </ButtonGroup>
   page
-  {currentPage < 9 ? '0' : ''}{currentPage + 1}
+  {currentPage < 9 ? '0' : ''}{currentPage}
   of
   {totalPages < 9 ? '0' : ''}{totalPages}
 </div>

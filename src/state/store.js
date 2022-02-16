@@ -38,6 +38,8 @@ function getDefaultState(
   state.searchProduct = state.product || 'firefox';
   state.aggKey = getFromQueryString('aggKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
+  state.currentPage = getFromQueryString('currentPage') || '1';
+
   state.probe = {
     name: '',
     loaded: false,
