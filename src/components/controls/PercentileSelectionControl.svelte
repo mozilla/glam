@@ -12,7 +12,27 @@
 
 <BodyControl
   options={[
-    { label: '5%', value: 5, labelColor: cmp(5), tooltip: t(5), enabled: true },
+    {
+      label: '0.1%',
+      value: 0.1,
+      labelColor: cmp(0.1),
+      tooltip: t(0.1),
+      enabled: true,
+    },
+    {
+      label: '1%',
+      value: 1,
+      labelColor: cmp(1),
+      tooltip: t(1),
+      enabled: true,
+    },
+    {
+      label: '5%',
+      value: 5,
+      labelColor: cmp(5),
+      tooltip: t(5),
+      enabled: true,
+    },
     {
       label: '25%',
       value: 25,
