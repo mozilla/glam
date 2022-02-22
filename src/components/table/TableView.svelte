@@ -1,5 +1,4 @@
 <script>
-  import { store } from '../../state/store';
   import { Button, ButtonGroup } from '@graph-paper/button';
 
   import DataTable from './DataTable.svelte';
@@ -19,6 +18,7 @@
   } from '../../utils/formatters';
 
   import { backwards } from '../../utils/iterables';
+  import { store } from '../../state/store';
 
   export let data; // nested as key, aggregation_type
   export let aggregationLevel = 'build_id';
