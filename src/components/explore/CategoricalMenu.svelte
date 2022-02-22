@@ -6,8 +6,6 @@
   import KeySelectionControl from '../controls/KeySelectionControl.svelte';
   import ColorSwatch from '../controls/ColorSwatch.svelte';
 
-  import { Button } from '@graph-paper/button';
-
   import { numericStringsSort } from '../../utils/sort';
   import { numHighlightedBuckets } from '../../config/shared';
 
@@ -77,7 +75,7 @@
   }
 
   $: selectAllCategories =
-    $store.activeBuckets.length == bucketOptions.length ? true : false;
+    $store.activeBuckets.length === bucketOptions.length && true;
 </script>
 
 <style>
@@ -92,6 +90,20 @@
   .small-multiple {
     margin-bottom: var(--space-8x);
   }
+
+  .select-all-button {
+    border: none;
+    width: 100%;
+    font-family: var(--main-text-font);
+    color: var(--digital-blue-600);
+    font-weight: 500;
+    font-size: 0.8em;
+    padding: 0.5em;
+  }
+
+  .inactive {
+    color: var(--cool-gray-350);
+  }
 </style>
 
 <div class="body-control-set">
@@ -102,17 +114,13 @@
       on:selection={(evt) => {
         store.setField('activeBuckets', evt.detail.keys);
       }}>
-      <div style="margin-left: 4.5em">
-        <Button
-          tooltip={'select all available categories'}
-          on:click={handleSelectAllCategories}
-          level={$store.activeBuckets.length == bucketOptions.length
-            ? 'small'
-            : 'low'}
-          compact>
-          Select All
-        </Button>
-      </div>
+      <button
+        class="select-all-button {$store.activeBuckets.length ===
+          bucketOptions.length && 'inactive'}"
+        disabled={$store.activeBuckets.length === bucketOptions.length}
+        on:click={handleSelectAllCategories}>
+        SELECT ALL
+      </button>
       {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
         <Option
           selected={activeBuckets.includes(importantBucket)}

@@ -6,7 +6,7 @@
   import Cell from './Cell.svelte';
 
   import ProportionSM from './ProportionSM.svelte';
-  import CategoricalMenu from '../../components/explore/CategoricalMenu.svelte';
+  import CategoricalMenu from '../explore/CategoricalMenu.svelte';
 
   import Pagination from '../controls/Pagination.svelte';
   import { store } from '../../state/store';

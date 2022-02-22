@@ -12,8 +12,6 @@
 
   import CategoricalMenu from './CategoricalMenu.svelte';
 
-  import { Button } from '@graph-paper/button';
-
   import {
     formatPercent,
     formatCount,
@@ -123,12 +121,8 @@
       .sort(numericStringsSort);
   }
 
-  function handleSelectAllCategories() {
-    store.setField('activeBuckets', bucketOptions);
-  }
-
   $: selectAllCategories =
-    $store.activeBuckets.length == bucketOptions.length ? true : false;
+    $store.activeBuckets.length === bucketOptions.length && true;
 </script>
 
 <style>
