@@ -226,7 +226,7 @@ class FenixCounts(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name="fenix_counts_unique_dimensions",
-                fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
+                fields=["app_id", "channel", "version", "ping_type", "build_id", "os",],
             )
         ]
 class FOGCounts(models.Model):
@@ -246,6 +246,72 @@ class FOGCounts(models.Model):
             models.UniqueConstraint(
                 name="fog_counts_unique_dimensions",
                 fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
+            )
+        ]
+class FirefoxSampleCounts(models.Model):
+    id = models.AutoField(primary_key=True)
+    channel = models.IntegerField(
+        choices=constants.CHANNEL_CHOICES, null=True, blank=True
+    )
+    version = models.CharField(max_length=100, null=True, blank=True)
+    build_id = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    process = models.CharField(max_length=100)
+    metric = models.CharField(max_length=100)
+    key = models.CharField(max_length=100)
+    client_agg_type = models.CharField(max_length=100)
+    total_sample = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "glam_firefox_sample_counts"
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_sample_dimensions",
+                fields=["channel", "version", "build_id", "os","metric","process","key","client_agg_type"],
+            )
+        ]
+
+
+class FenixSampleCounts(models.Model):
+    id = models.AutoField(primary_key=True)
+    app_id = models.CharField(max_length=100)
+    channel = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
+    ping_type = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    metric = models.CharField(max_length=100)
+    key = models.CharField(max_length=100)
+    client_agg_type = models.CharField(max_length=100)
+    total_sample = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "glam_fenix_sample_counts"
+        constraints = [
+            models.UniqueConstraint(
+                name="fenix_sample_counts_unique_dimensions",
+                fields=["app_id", "channel", "version", "ping_type", "build_id", "os","key","metric","client_agg_type"],
+            )
+        ]
+class FOGSampleCounts(models.Model):
+    id = models.AutoField(primary_key=True)
+    app_id = models.CharField(max_length=100)
+    channel = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
+    ping_type = models.CharField(max_length=100)
+    build_id = models.CharField(max_length=100)
+    os = models.CharField(max_length=100)
+    metric = models.CharField(max_length=100)
+    key = models.CharField(max_length=100)
+    client_agg_type = models.CharField(max_length=100)
+    total_sample = models.BigIntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "glam_fog_sample_counts"
+        constraints = [
+            models.UniqueConstraint(
+                name="fog_sample_counts_unique_dimensions",
+                fields=["app_id", "channel", "version", "ping_type", "build_id", "os","key","metric","client_agg_type"],
             )
         ]
 
