@@ -2,14 +2,15 @@
   import { createEventDispatcher } from 'svelte';
   import { tweened } from 'svelte/motion';
   import { cubicOut as easing } from 'svelte/easing';
-  import { OptionMenu, Option, OptionDivider } from '@graph-paper/optionmenu';
+
+  import { store } from '../../state/store';
 
   import ProbeExplorer from './ProbeExplorer.svelte';
-  import KeySelectionControl from '../controls/KeySelectionControl.svelte';
   import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
   import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
   import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
-  import ColorSwatch from '../controls/ColorSwatch.svelte';
+
+  import CategoricalMenu from './CategoricalMenu.svelte';
 
   import {
     formatPercent,
@@ -94,6 +95,7 @@
       .slice(-numHighlightedBuckets)
       .map(([bucket]) => bucket);
   }
+  let selectAllCategories = false;
 
   $: if (showOptionMenu) {
     everActiveBuckets = [...new Set([...activeBuckets, ...everActiveBuckets])];
@@ -118,6 +120,8 @@
       .filter((bucket) => !sortedImportantBuckets.includes(bucket))
       .sort(numericStringsSort);
   }
+
+  $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
 </script>
 
 <style>
@@ -136,7 +140,6 @@
 
 <div class="body-content">
   <slot />
-
   <div class="body-control-row body-control-row--stretch">
     <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
@@ -147,54 +150,7 @@
       {/if}
     </div>
 
-    <div class="body-control-set">
-      <label class="body-control-set--label">Categories</label>
-      {#if showOptionMenu}
-        <OptionMenu
-          multi
-          on:selection={(evt) => {
-            dispatch('selection', {
-              selection: evt.detail.keys,
-              type: 'activeBuckets',
-            });
-          }}>
-          {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
-            <Option
-              selected={activeBuckets.includes(importantBucket)}
-              key={importantBucket}
-              label={importantBucket}>
-              <div class="option-menu__list-item__slot-right" slot="right">
-                <ColorSwatch color={bucketColorMap(importantBucket)} />
-              </div>
-            </Option>
-          {/each}
-          {#if sortedImportantBuckets.length && sortedUnimportantBuckets.length}
-            <OptionDivider />
-          {/if}
-          {#each sortedUnimportantBuckets as unimportantBucket, i (unimportantBucket)}
-            <!--
-              By definition, an unimportantBucket is never a selected bucket,
-              hence selected={false}
-            -->
-            <Option
-              selected={false}
-              key={unimportantBucket}
-              label={unimportantBucket}>
-              <div slot="right">
-                <ColorSwatch color={bucketColorMap(unimportantBucket)} />
-              </div>
-            </Option>
-          {/each}
-        </OptionMenu>
-      {:else}
-        <KeySelectionControl
-          sortFunction={bucketSortOrder}
-          options={bucketOptions}
-          selections={activeBuckets}
-          on:selection={makeSelection('activeBuckets')}
-          colorMap={bucketColorMap} />
-      {/if}
-    </div>
+    <CategoricalMenu {data} {activeBuckets} {bucketColorMap} {bucketOptions} />
   </div>
 
   <div class="body-control-row  body-control-row--stretch">
