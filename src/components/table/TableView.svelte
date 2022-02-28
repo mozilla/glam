@@ -9,7 +9,6 @@
   import CategoricalMenu from '../explore/CategoricalMenu.svelte';
 
   import Pagination from '../controls/Pagination.svelte';
-  import { store } from '../../state/store';
 
   import {
     formatCount,
