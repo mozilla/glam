@@ -157,21 +157,21 @@ class Base(Core):
                     "formatter": "json" if self.LOGGING_USE_JSON else "verbose",
                 },
                 "django.server": {
-                    "level": "INFO",
+                    "level": "DEBUG",
                     "class": "logging.StreamHandler",
                     "formatter": "django.server",
                 },
             },
             "loggers": {
-                "root": {"level": "INFO", "handlers": ["console"]},
+                "root": {"level": "DEBUG", "handlers": ["console"]},
                 "django.db.backends": {
-                    "level": "ERROR",
+                    "level": "DEBUG",
                     "handlers": ["console"],
                     "propagate": False,
                 },
                 "django.server": {
-                    "handlers": ["django.server"],
-                    "level": "INFO",
+                    "handlers": ["console"],
+                    "level": "DEBUG",
                     "propagate": False,
                 },
             },
@@ -180,6 +180,8 @@ class Base(Core):
 
 class Dev(Base):
     "Configuration to be used during development and base class for testing"
+
+    DEBUG = True
 
     @property
     def VERSION(self):

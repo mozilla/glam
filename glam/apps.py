@@ -8,3 +8,4 @@ logger = logging.getLogger("django")
 
 class GlamAppConfig(AppConfig):
     name = "glam"
+

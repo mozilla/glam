@@ -70,5 +70,5 @@ CMD exec gunicorn \
     --worker-tmp-dir /dev/shm \
     --log-file - \
     --access-logfile - \
-    glam.wsgi:application
+    glam.wsgi:application --log-level=debug
 # END FINAL IMAGE
