@@ -15,6 +15,7 @@
         <ProbeTableView
           data={data.data}
           {probeType}
+          bucketOptions={data.bucketOptions}
           colorMap={data.bucketColorMap}
           visibleBuckets={[...$store.activeBuckets]}
           aggregationLevel={$store.productDimensions.aggregationLevel}>
