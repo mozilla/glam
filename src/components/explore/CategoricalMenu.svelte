@@ -74,8 +74,7 @@
     store.setField('activeBuckets', bucketOptions);
   }
 
-  $: selectAllCategories =
-    $store.activeBuckets.length === bucketOptions.length && true;
+  $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
 </script>
 
 <style>
