@@ -30,16 +30,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, bucket, *args, **options):
-        print("Im here  ....")
 
         self.gcs_client = storage.Client()
-        print(self.gcs_client)
-
         blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(
             filter(lambda b: b.name.startswith("glam-extract-firefox-sample-counts"), blobs)
         )
-        print(blobs)
 
         for blob in blobs:
             # Create temp table for data.
@@ -71,7 +67,7 @@ class Command(BaseCommand):
         csv_columns = [
             f.name for f in FirefoxSampleCounts._meta.get_fields() if f.name not in ["id"]
         ]
-        
+
         conflict_columns = [
             f
             for f in FirefoxSampleCounts._meta.constraints[0].fields
@@ -99,5 +95,4 @@ class Command(BaseCommand):
                 tmp_table=tmp_table,
                 conflict_columns=", ".join(conflict_columns),
             )
-            print(sql)
             cursor.execute(sql)
