@@ -20,9 +20,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 2500M
         reservations:
-          cpus: '100M'
+          cpus: '500M'
           memory: 100M
 
 
