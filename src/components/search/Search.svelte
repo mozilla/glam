@@ -15,7 +15,7 @@
   let searchIsActive = false;
   let searchQuery = '';
 
-  const SEARCH_DEBOUNCE_TIME = 100; // defer getting search results until user input has stopped for a short interval
+  const SEARCH_DEBOUNCE_TIME = 300; // defer getting search results until user input has stopped for a short interval
 
   function turnOnSearch() {
     searchIsActive = true;

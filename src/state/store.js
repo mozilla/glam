@@ -39,6 +39,7 @@ function getDefaultState(
   state.aggKey = getFromQueryString('aggKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
   state.currentPage = getFromQueryString('currentPage') || '1';
+  state.legacy = getFromQueryString('legacy') || false;
 
   state.probe = {
     name: '',

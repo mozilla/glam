@@ -3,6 +3,7 @@ import FENIX from './fenix';
 
 const products = {
   firefox: FIREFOX_DESKTOP,
+  fog: FENIX,
   fenix: FENIX,
 };
 

@@ -74,9 +74,15 @@
           <div class="graphic-body__details">
             <ProbeDetails>
               {#if $store.product}
+              {#if $store.product === "firefox" && !$store.legacy}
                 <svelte:component
+                  this={routes["fog"].details}
+                  bla={$store.product} />
+              {:else}
+              <svelte:component
                   this={routes[$store.product].details}
                   bla={$store.product} />
+              {/if}
               {/if}
             </ProbeDetails>
           </div>

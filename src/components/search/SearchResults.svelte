@@ -221,9 +221,9 @@
         <div class="header" in:fly={{ x: -5, duration: 200 }}>
           {#if results.length}
             <div>found {results.length} probes</div>
-          {:else if results.length === 0}
+            {:else if results.length === 0}
             <div>your search produced 0 results</div>
-          {:else if results.status}
+            {:else if results.status}
             <!-- FIXME: This should be pretty. -->
             <div>
               hmm ... having trouble reaching the search service ({results.status}).
@@ -248,8 +248,8 @@
               id={searchResult.name}
               class:focused={focusedItem === i}
               on:click={() => {
-                page.show(
-                  `/${$store.searchProduct}/probe/${results[focusedItem].name
+                  page.show(
+                  `/${results[focusedItem].fog ? "fog" : $store.searchProduct}/probe/${results[focusedItem].name
                     .toLowerCase()
                     .replaceAll('.', '_')}/explore${$currentQuery}`
                 );

@@ -5,6 +5,9 @@ export default {
   firefox: {
     details: FirefoxLegacyDetails,
   },
+  fog: {
+    details: FenixDetails,
+  },
   fenix: {
     details: FenixDetails,
   },
