@@ -69,6 +69,9 @@
       } else {
         telemetryPath = `payload.processes.${process}.histograms.${$store.probe.name}`;
       }
+      if ($store.aggKey) {
+        telemetryPath = `mozfun.map.get_key(${telemetryPath}, ${$store.aggKey})`;
+      }
     }
     const osFilter =
       $store.productDimensions.os === '*'
