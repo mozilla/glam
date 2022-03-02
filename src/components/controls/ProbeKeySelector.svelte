@@ -23,6 +23,11 @@
     store.setField('aggKey', currentKey);
     active = false;
   }
+
+  // initialize aggregation key if none has been selected yet
+  if (!$store.aggKey && options.length) {
+    store.setField('aggKey', options[0]);
+  }
 </script>
 
 <style>
