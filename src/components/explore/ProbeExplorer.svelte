@@ -3,6 +3,7 @@
 
   import { window1D } from '@graph-paper/core/utils/window-functions';
   import ToplineMetrics from './ToplineMetrics.svelte';
+  import GlamErrorShapes from '../errors/GlamErrorShapes.svelte';
 
   import AggregationsOverTimeGraph from './AggregationsOverTimeGraph.svelte';
   import AggregationComparisonGraph from './AggregationComparisonGraph.svelte';
@@ -203,6 +204,23 @@
     justify-items: start;
     margin-bottom: var(--space-4x);
   }
+
+  .data-error-msg__bg {
+    background: radial-gradient(var(--cool-gray-100), var(--cool-gray-100));
+    width: 200px;
+    height: 200px;
+    padding: var(--space-4x);
+    margin: 0 auto;
+    border-radius: 50%;
+    margin-top: var(--space-2x);
+  }
+
+  .detail-title {
+    font-size: var(--text-015);
+    font-weight: 300;
+    color: var(--cool-gray-700);
+    padding: 10px 40px;
+  }
 </style>
 
 <div class="probe-body-overview">
@@ -215,31 +233,53 @@
 </div>
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
-  <div style="display: {justOne ? 'none' : 'block'}">
-    <AggregationsOverTimeGraph
-      title={aggregationsOverTimeTitle}
-      description={aggregationsOverTimeDescription}
-      {data}
-      xDomain={$domain}
-      {yDomain}
-      lineColorMap={binColorMap}
-      {key}
-      yAccessor={overTimePointMetricType}
-      xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
-      {yScaleType}
-      {yTickFormatter}
-      metricKeys={activeBins}
-      {ref}
-      {hovered}
-      bind:hoverValue
-      {aggregationLevel}
-      on:click={() => {
-        if (hovered.datum) {
-          ref = hovered.datum;
-        }
-      }}>
-      <slot name="additional-plot-elements" />
-    </AggregationsOverTimeGraph>
+  <div style="display: block">
+    {#if justOne}
+      <div class="data-error-msg">
+        <div class="data-error-msg__bg">
+          <GlamErrorShapes />
+        </div>
+        <div>
+          <p class="detail-title">
+            Currently we don't have enough data to generate an over-time graph
+            for this metric. Please refer to the Table View to see the available
+            data, or use the SQL query generator for <a
+              href="https://docs.telemetry.mozilla.org/cookbooks/main_ping_exponential_histograms.html"
+              >further STMO analysis</a
+            >.
+            <br /> <br />
+            Please reach out in
+            <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a> if you
+            need more help.
+          </p>
+        </div>
+      </div>
+    {:else}
+      <AggregationsOverTimeGraph
+        title={aggregationsOverTimeTitle}
+        description={aggregationsOverTimeDescription}
+        {data}
+        xDomain={$domain}
+        {yDomain}
+        lineColorMap={binColorMap}
+        {key}
+        yAccessor={overTimePointMetricType}
+        xScaleType={aggregationLevel === 'version' ? 'scalePoint' : 'time'}
+        {yScaleType}
+        {yTickFormatter}
+        metricKeys={activeBins}
+        {ref}
+        {hovered}
+        bind:hoverValue
+        {aggregationLevel}
+        on:click={() => {
+          if (hovered.datum) {
+            ref = hovered.datum;
+          }
+        }}>
+        <slot name="additional-plot-elements" />
+      </AggregationsOverTimeGraph>
+    {/if}
   </div>
 
   <AggregationComparisonGraph
