@@ -19,6 +19,16 @@ for channel in constants.CHANNEL_NAMES.values():
             f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_backup  RENAME TO view_glam_desktop_{channel}_aggregation;"
         ]
     )
+sql_rename_idx = []
+for channel in constants.CHANNEL_NAMES.values():
+    sql_rename_idx.extend(
+        [
+            f"ALTER INDEX view_glam_desktop_{channel}_aggregation_backup_id_idx RENAME TO view_glam_desktop_{channel}_aggregation_id_idx;",
+            f"ALTER INDEX view_glam_desktop_{channel}_aggregation_backup_metric_idx RENAME TO view_glam_desktop_{channel}_aggregation_metric_idx;",
+            f"ALTER INDEX view_glam_desktop_{channel}_aggregation_backup_os_idx RENAME TO view_glam_desktop_{channel}_aggregation_os_idx;",
+            f"ALTER INDEX view_glam_desktop_{channel}_aggregation_backup_version_idx RENAME TO view_glam_desktop_{channel}_aggregation_version_idx;",
+        ]
+    )
 
 class Migration(migrations.Migration):
 
@@ -64,5 +74,26 @@ class Migration(migrations.Migration):
                 f"DROP MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_backup"
                 for channel in constants.CHANNEL_NAMES.values()
             ],
+        ),
+        migrations.RunSQL(
+            [
+                "ALTER INDEX view_glam_fenix_aggregation_backup_id_idx RENAME TO view_glam_fenix_aggregation_id_idx",
+                "ALTER INDEX view_glam_fenix_aggregation_backup_metric_idx RENAME TO view_glam_fenix_aggregation_metric_idx",
+                "ALTER INDEX view_glam_fenix_aggregation_backup_os_idx RENAME TO view_glam_fenix_aggregation_os_idx",
+                "ALTER INDEX view_glam_fenix_aggregation_backup_version_idx RENAME TO view_glam_fenix_aggregation_version_idx",
+                "ALTER INDEX view_glam_fenix_aggregation_backup_app_id_idx RENAME TO view_glam_fenix_aggregation_app_id_idx",
+            ]
+        ),
+         migrations.RunSQL(
+            [
+                "ALTER INDEX view_glam_fog_aggregation_backup_id_idx RENAME TO view_glam_fog_aggregation_id_idx",
+                "ALTER INDEX view_glam_fog_aggregation_backup_metric_idx RENAME TO view_glam_fog_aggregation_metric_idx",
+                "ALTER INDEX view_glam_fog_aggregation_backup_os_idx RENAME TO view_glam_fog_aggregation_os_idx",
+                "ALTER INDEX view_glam_fog_aggregation_backup_version_idx RENAME TO view_glam_fog_aggregation_version_idx",
+                "ALTER INDEX view_glam_fog_aggregation_backup_app_id_idx RENAME TO view_glam_fog_aggregation_app_id_idx",
+            ]
+        ),
+        migrations.RunSQL(
+            sql_rename_idx
         ),
     ]
