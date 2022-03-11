@@ -219,7 +219,6 @@
     font-size: var(--text-015);
     font-weight: 300;
     color: var(--cool-gray-700);
-    padding: 10px 40px;
   }
 </style>
 
@@ -233,7 +232,7 @@
 </div>
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
-  <div style="display: block">
+  <div>
     {#if justOne}
       <div class="data-error-msg">
         <div class="data-error-msg__bg">
@@ -247,7 +246,8 @@
               href="https://docs.telemetry.mozilla.org/cookbooks/main_ping_exponential_histograms.html"
               >further STMO analysis</a
             >.
-            <br /> <br />
+          </p>
+          <p class="detail-title">
             Please reach out in
             <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a> if you
             need more help.
@@ -284,6 +284,7 @@
 
   <AggregationComparisonGraph
     description={compareDescription(aggregationsOverTimeTitle)}
+    {justOne}
     {yScaleType}
     rightLabel={aggregationLevel === 'build_id'
       ? formatBuildIDToDateString(ref.label)
@@ -363,7 +364,8 @@
     keyFormatter={comparisonKeyFormatter}
     showLeft={data.length > 1}
     showDiff={data.length > 1}
-    viewType={$store.viewType} />
+    viewType={$store.viewType}
+    {justOne} />
   <div style="display: {justOne ? 'none' : 'block'}">
     <ClientVolumeOverTimeGraph
       title={clientVolumeOverTimeTitle}
