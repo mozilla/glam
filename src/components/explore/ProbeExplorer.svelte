@@ -219,6 +219,7 @@
     font-size: var(--text-015);
     font-weight: 300;
     color: var(--cool-gray-700);
+    margin-right: 3em;
   }
 </style>
 
