@@ -3,7 +3,8 @@ import os
 import orjson
 from django.conf import settings
 from django.core.cache import caches
-from django.db.models import Max, Q, Value
+from django.db.models import Max, Q, Value, BigIntegerField
+from django.db.models.functions import Cast
 from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
@@ -72,7 +73,11 @@ def get_firefox_aggregations(request, **kwargs):
 
     num_versions = kwargs.get("versions", 3)
     try:
-        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        max_version = int(
+            model.objects.annotate(
+                version_int=Cast("version", output_field=BigIntegerField())
+            ).aggregate(Max("version_int"))["version_int__max"]
+        )
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
@@ -114,7 +119,7 @@ def get_firefox_aggregations(request, **kwargs):
     for row in result:
 
         data = {
-            "version": row.version,
+            "version": int(row.version),
             "os": row.os,
             "build_id": row.build_id,
             "revision": shas.get(row.build_id, ""),
@@ -196,7 +201,11 @@ def get_glean_aggregations(request, **kwargs):
 
     num_versions = kwargs.get("versions", 3)
     try:
-        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        max_version = int(
+            model.objects.annotate(
+                version_int=Cast("version", output_field=BigIntegerField())
+            ).aggregate(Max("version_int"))["version_int__max"]
+        )
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
@@ -244,7 +253,7 @@ def get_glean_aggregations(request, **kwargs):
     for row in result:
 
         data = {
-            "version": row.version,
+            "version": int(row.version),
             "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
