@@ -35,7 +35,7 @@ class AbstractGleanAggregation(models.Model):
     # Dimensions.
     app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
-    version = models.CharField(max_length=100)
+    version = models.IntegerField()
     ping_type = models.CharField(max_length=100)
     os = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
@@ -48,6 +48,7 @@ class AbstractGleanAggregation(models.Model):
     total_users = models.IntegerField()
     histogram = models.TextField(null=True, blank=True)
     percentiles = models.TextField(null=True, blank=True)
+    total_sample = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -111,7 +112,7 @@ class FOGAggregationView(AbstractGleanAggregation):
 class AbstractDesktopAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.
-    version = models.CharField(max_length=100)
+    version = models.IntegerField()
     os = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     process = models.CharField(max_length=50)
@@ -123,6 +124,7 @@ class AbstractDesktopAggregation(models.Model):
     total_users = models.IntegerField()
     histogram = models.TextField(null=True, blank=True)
     percentiles = models.TextField(null=True, blank=True)
+    total_sample = models.BigIntegerField(null=True, blank=True)
     # TODO: Update these fields to not allow NULLs.
 
     class Meta:
@@ -195,7 +197,7 @@ class FirefoxCounts(models.Model):
     channel = models.IntegerField(
         choices=constants.CHANNEL_CHOICES, null=True, blank=True
     )
-    version = models.CharField(max_length=100, null=True, blank=True)
+    version = models.IntegerField()
     build_id = models.CharField(max_length=100)
     os = models.CharField(max_length=100)
     total_users = models.IntegerField()
@@ -214,7 +216,7 @@ class FenixCounts(models.Model):
     id = models.AutoField(primary_key=True)
     app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
-    version = models.CharField(max_length=100)
+    version = models.IntegerField()
     ping_type = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     build_date = models.DateTimeField(null=True)
@@ -233,7 +235,7 @@ class FOGCounts(models.Model):
     id = models.AutoField(primary_key=True)
     app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
-    version = models.CharField(max_length=100)
+    version = models.IntegerField()
     ping_type = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     build_date = models.DateTimeField(null=True)
