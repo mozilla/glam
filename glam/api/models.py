@@ -48,6 +48,7 @@ class AbstractGleanAggregation(models.Model):
     total_users = models.IntegerField()
     histogram = models.TextField(null=True, blank=True)
     percentiles = models.TextField(null=True, blank=True)
+    total_sample = models.BigIntegerField(null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -123,6 +124,7 @@ class AbstractDesktopAggregation(models.Model):
     total_users = models.IntegerField()
     histogram = models.TextField(null=True, blank=True)
     percentiles = models.TextField(null=True, blank=True)
+    total_sample = models.BigIntegerField(null=True, blank=True)
     # TODO: Update these fields to not allow NULLs.
 
     class Meta:

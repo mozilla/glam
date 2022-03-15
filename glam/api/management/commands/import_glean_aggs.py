@@ -127,6 +127,7 @@ class Command(BaseCommand):
                 DO UPDATE SET
                     total_users = EXCLUDED.total_users,
                     histogram = EXCLUDED.histogram,
-                    percentiles = EXCLUDED.percentiles
+                    percentiles = EXCLUDED.percentiles,
+                    total_sample = EXCLUDED.total_sample
             """
             cursor.execute(sql)
