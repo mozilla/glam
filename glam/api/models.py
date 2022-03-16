@@ -112,7 +112,7 @@ class FOGAggregationView(AbstractGleanAggregation):
 class AbstractDesktopAggregation(models.Model):
     id = models.BigAutoField(primary_key=True)
     # Dimensions.
-    version = models.IntegerField()
+    version = models.BigIntegerField()
     os = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     process = models.CharField(max_length=50)
