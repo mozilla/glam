@@ -98,11 +98,11 @@ def get_firefox_aggregations(request, **kwargs):
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
-        counts = _get_firefox_counts(channel, os, versions, by_build=False)
+        #counts = _get_firefox_counts(channel, os, versions, by_build=False)
         shas = {}
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
-        counts = _get_firefox_counts(channel, os, versions, by_build=True)
+        #counts = _get_firefox_counts(channel, os, versions, by_build=True)
         shas = _get_firefox_shas(channel)
 
     if "process" in kwargs:
@@ -133,7 +133,7 @@ def get_firefox_aggregations(request, **kwargs):
                 data["client_agg_type"] = row.client_agg_type
 
         # Get the total distinct client IDs for this set of dimensions.
-        data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
@@ -224,18 +224,18 @@ def get_glean_aggregations(request, **kwargs):
     if aggregation_level == "version":
         if product == 'fenix':
             dimensions.append(Q(build_id="*"))
-            counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
+            #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
         if product == 'firefox':
             dimensions.append(~Q(build_id="*"))
-            counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
+            #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
 
     if aggregation_level == "build_id":
         if product == 'fenix':
             dimensions.append(~Q(build_id="*"))
-            counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
+            #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
         if product == 'firefox':
             dimensions.append(~Q(build_id="*"))
-            counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
+            #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
@@ -259,7 +259,7 @@ def get_glean_aggregations(request, **kwargs):
         }
 
         # Get the total distinct client IDs for this set of dimensions.
-        data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 

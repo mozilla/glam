@@ -22,7 +22,7 @@ from glam.api.models import (
 def _create_aggregation(data=None, multiplier=1.0, model=None):
     model = model or DesktopNightlyAggregation
     _data = {
-        "version": "72",
+        "version": 72,
         "os": "*",
         "build_id": "*",
         "process": "parent",
@@ -71,7 +71,7 @@ def _create_glean_aggregation(model, data=None, multiplier=1.0):
     _data = {
         "channel": "production",
         "app_id": "nightly",
-        "version": "2",
+        "version": 2,
         "ping_type": "*",
         "os": "*",
         "build_id": "*",
@@ -319,7 +319,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            "total_addressable_market": 999,
+            #"total_addressable_market": 999,
             "total_users": 1110,
             "version": 72,
         }
@@ -357,7 +357,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            "total_addressable_market": 999,
+            #"total_addressable_market": 999,
             "total_users": 1110,
             "version": 72,
         }
@@ -494,7 +494,7 @@ class TestGleanAggregationsApi:
             "ping_type": "*",
             "total_users": 1110,
             "version": 2,
-            "total_addressable_market": 888,
+            #"total_addressable_market": 888,
         }
 
     def test_versions_count(self, client):
