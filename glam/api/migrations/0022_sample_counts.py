@@ -81,42 +81,42 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='desktopbetaaggregation',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='desktopnightlyaggregation',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='desktopreleaseaggregation',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='fenixaggregation',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='fenixcounts',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='firefoxcounts',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='fogaggregation',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.AlterField(
             model_name='fogcounts',
             name='version',
-            field=models.IntegerField(),
+            field=models.BigIntegerField(),
         ),
         migrations.RunSQL(
             [
