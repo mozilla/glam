@@ -22,7 +22,7 @@ from glam.api.models import (
 def _create_aggregation(data=None, multiplier=1.0, model=None):
     model = model or DesktopNightlyAggregation
     _data = {
-        "version": "72",
+        "version": 72,
         "os": "*",
         "build_id": "*",
         "process": "parent",
@@ -71,7 +71,7 @@ def _create_glean_aggregation(model, data=None, multiplier=1.0):
     _data = {
         "channel": "production",
         "app_id": "nightly",
-        "version": "2",
+        "version": 2,
         "ping_type": "*",
         "os": "*",
         "build_id": "*",
@@ -319,9 +319,9 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            "total_addressable_market": 999,
+            #"total_addressable_market": 999,
             "total_users": 1110,
-            "version": "72",
+            "version": 72,
         }
 
     def test_revision_lookup(self, client):
@@ -357,9 +357,9 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            "total_addressable_market": 999,
+            #"total_addressable_market": 999,
             "total_users": 1110,
-            "version": "72",
+            "version": 72,
         }
 
     def test_versions_provided(self, client):
@@ -380,11 +380,11 @@ class TestDesktopAggregationsApi:
         # Max version in the test data is 72. If we pass versions=4 we should
         # get 4 records back, even though we have 7 in the db.
         _create_aggregation()
-        _create_aggregation({"version": 71})
-        _create_aggregation({"version": 70})
-        _create_aggregation({"version": 69})
-        _create_aggregation({"version": 68})
-        _create_aggregation({"version": 67})
+        _create_aggregation({"version": 101})
+        _create_aggregation({"version": 100})
+        _create_aggregation({"version": 99})
+        _create_aggregation({"version": 98})
+        _create_aggregation({"version": 97})
 
         query = {
             "query": {
@@ -399,7 +399,7 @@ class TestDesktopAggregationsApi:
         data = resp.json()
         assert len(data["response"]) == 4
         versions = sorted([d["version"] for d in data["response"]])
-        assert versions == sorted(["72", "71", "70", "69"])
+        assert versions == sorted([101, 100, 99, 98])
 
     def test_process_filter(self, client):
         _create_aggregation()
@@ -493,8 +493,8 @@ class TestGleanAggregationsApi:
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "ping_type": "*",
             "total_users": 1110,
-            "version": "2",
-            "total_addressable_market": 888,
+            "version": 2,
+            #"total_addressable_market": 888,
         }
 
     def test_versions_count(self, client):
@@ -521,7 +521,7 @@ class TestGleanAggregationsApi:
         data = resp.json()
         assert len(data["response"]) == 4
         versions = sorted([d["version"] for d in data["response"]])
-        assert versions == sorted(["6", "5", "4", "3"])
+        assert versions == sorted([6, 5, 4, 3])
 
 
 class TestUpdatesApi:
