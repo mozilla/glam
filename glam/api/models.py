@@ -197,7 +197,7 @@ class FirefoxCounts(models.Model):
     channel = models.IntegerField(
         choices=constants.CHANNEL_CHOICES, null=True, blank=True
     )
-    version = models.BigIntegerField()
+    version = models.BigIntegerField(null=True, blank=True)
     build_id = models.CharField(max_length=100)
     os = models.CharField(max_length=100)
     total_users = models.IntegerField()
@@ -216,7 +216,7 @@ class FenixCounts(models.Model):
     id = models.AutoField(primary_key=True)
     app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
-    version = models.BigIntegerField()
+    version = models.BigIntegerField(null=True, blank=True)
     ping_type = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     build_date = models.DateTimeField(null=True)
@@ -235,7 +235,7 @@ class FOGCounts(models.Model):
     id = models.AutoField(primary_key=True)
     app_id = models.CharField(max_length=100)
     channel = models.CharField(max_length=100)
-    version = models.BigIntegerField()
+    version = models.BigIntegerField(null=True, blank=True)
     ping_type = models.CharField(max_length=100)
     build_id = models.CharField(max_length=100)
     build_date = models.DateTimeField(null=True)

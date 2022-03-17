@@ -99,24 +99,24 @@ class Migration(migrations.Migration):
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='fenixcounts',
-            name='version',
-            field=models.BigIntegerField(),
-        ),
-        migrations.AlterField(
-            model_name='firefoxcounts',
-            name='version',
-            field=models.BigIntegerField(),
-        ),
-        migrations.AlterField(
             model_name='fogaggregation',
             name='version',
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
+            model_name='fenixcounts',
+            name='version',
+            field=models.BigIntegerField(null=True, blank=True),
+        ),
+        migrations.AlterField(
+            model_name='firefoxcounts',
+            name='version',
+            field=models.BigIntegerField(null=True, blank=True),
+        ),
+        migrations.AlterField(
             model_name='fogcounts',
             name='version',
-            field=models.BigIntegerField(),
+            field=models.BigIntegerField(null=True, blank=True),
         ),
         migrations.RunSQL(
             [
