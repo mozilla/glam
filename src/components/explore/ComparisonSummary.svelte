@@ -19,6 +19,7 @@
   export let showRight = true;
   export let showDiff = true;
   export let viewType;
+  export let justOne;
 
   function percentChange(l, r) {
     return viewType === 'proportion' ? r - l : (r - l) / l;
@@ -135,7 +136,11 @@
     Summary
     <span
       use:tooltipAction={{
-        text: 'Compares the numeric values of the reference ⭑ to the hovered values ●',
+        text: `Compares the numeric values of the reference ⭑ to the hovered values ●. ${
+          justOne
+            ? `Currently we don't have enough data to generate a meaningful comparison yet, please use this chart as a histogram distribution graph.`
+            : ''
+        }`,
         location: 'top',
       }}
       class="data-graphic__element-title__icon"><Help size={14} /></span>

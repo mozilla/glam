@@ -15,6 +15,7 @@
   import { explorerComparisonSmallMultiple } from '../../utils/constants';
 
   export let description;
+  export let justOne;
   export let rightLabel;
   export let leftPoints;
   export let rightPoints;
@@ -63,7 +64,9 @@
 
 <div>
   <ChartTitle
-    {description}
+    description={justOne
+      ? `${description}. Please note that currently this probe doesn't have enough data to produce a meaningful comparison yet.`
+      : description}
     left={explorerComparisonSmallMultiple.left}
     right={0}>
     compare
