@@ -138,7 +138,7 @@
       use:tooltipAction={{
         text: `Compares the numeric values of the reference ⭑ to the hovered values ●. ${
           justOne
-            ? `Please note that currently this probe doesn't have enough data to produce a meaningful comparison yet.`
+            ? `Currently we don't have enough data to generate a meaningful comparison yet, please use this chart as a histogram distribution graph.`
             : ''
         }`,
         location: 'top',
