@@ -34,6 +34,7 @@
   export let bucketOptions;
 
   let showHistogramData = false;
+  let categoricalHistograms = ['categorical', 'enumerated'];
 
   let totalPages = 0;
   let currentPage = 0;
@@ -98,7 +99,7 @@
     </div>
   {/if}
 
-  {#if $store.probe.kind === 'categorical'}
+  {#if categoricalHistograms.includes($store.probe.kind)}
     <div style="display: flex; justify-content: flex-end; padding: 1em;">
       <CategoricalMenu
         {data}
