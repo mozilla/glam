@@ -20,11 +20,12 @@
   const mdY = timeFormat('%b %d, %Y');
   const toNiceDate = (dt) => mdY(parseYMD(dt));
 
+  const willNeverExpire = (expiry) =>
+    expiry === 'never' || expiry === undefined || expiry === null;
+
   // taken from glean dictionary
   const isExpired = (item) => {
-    if (item.expires === 'never' || item.expires === undefined) {
-      return false;
-    }
+    if (willNeverExpire(item.expires)) return false;
     return new Date() > new Date(item.expires);
   };
 </script>
@@ -204,16 +205,14 @@
           </dd>
         </dl>
       {/if}
-      {#if $store.probe.expires}
-        <dl>
-          <dt>Expires</dt>
-          <dd>
-            {$store.probe.expires === 'never'
-              ? 'never'
-              : toNiceDate($store.probe.expires)}
-          </dd>
-        </dl>
-      {/if}
+      <dl>
+        <dt>Expires</dt>
+        <dd>
+          {willNeverExpire($store.probe.expires)
+            ? 'never'
+            : toNiceDate($store.probe.expires)}
+        </dd>
+      </dl>
     </div>
     <div class="drawer-section">
       <dl>
