@@ -24,10 +24,15 @@ function getDefaultState(
   // Storybook's URL.)
   const firstPathComponent = window.location.pathname.split('/')[1];
 
+  const searchProducts = {
+    legacy: 'firefox',
+    fog: 'firefox',
+    fenix: 'fenix',
+  };
   if (Object.keys(productConfig).includes(firstPathComponent)) {
     state.product = firstPathComponent;
   } else {
-    state.product = undefined;
+    state.product = 'legacy';
   }
 
   state.probeName = '';
@@ -35,12 +40,11 @@ function getDefaultState(
   state.hov = getFromQueryString('hov') || '';
   state.timeHorizon = getFromQueryString('timeHorizon') || 'MONTH';
   state.route = {};
-  state.searchProduct = state.product || 'firefox';
+  state.searchProduct = searchProducts[state.product] || 'firefox';
+
   state.aggKey = getFromQueryString('aggKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
   state.currentPage = getFromQueryString('currentPage') || '1';
-  state.legacy = getFromQueryString('legacy') || false;
-
   state.probe = {
     name: '',
     loaded: false,

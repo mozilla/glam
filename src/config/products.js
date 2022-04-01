@@ -1,15 +1,15 @@
 import FIREFOX_DESKTOP from './firefox-desktop';
-import FENIX from './fenix';
+import { FIREFOX_ON_GLEAN, FENIX } from './glean';
 
 const products = {
-  firefox: FIREFOX_DESKTOP,
-  fog: FENIX,
+  legacy: FIREFOX_DESKTOP,
+  fog: FIREFOX_ON_GLEAN,
   fenix: FENIX,
 };
 
-export const productKeys = Object.values(products).map((product) => ({
-  label: product.label,
-  key: product.key,
-}));
+export const productKeys = [
+  { key: 'firefox', label: 'Firefox Desktop' },
+  { key: 'fenix', label: 'Firefox Android' },
+];
 
 export default products;

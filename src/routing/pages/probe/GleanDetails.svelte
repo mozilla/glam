@@ -28,7 +28,7 @@
     if (willNeverExpire(item.expires)) return false;
     return new Date() > new Date(item.expires);
   };
-  $: console.log($store)
+  $: console.log($store);
 </script>
 
 <style>

@@ -134,7 +134,7 @@
               <a
                 class="probe-sm"
                 on:click={resetSearchProduct}
-                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}>
+                href={`/legacy/probe/${info.name}/explore${$currentQuery}`}>
                 <div
                   class="probe-small-multiple"
                   class:probe-small-multiple--proportion={whichSmallMultiple(

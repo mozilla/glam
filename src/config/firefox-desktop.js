@@ -106,7 +106,7 @@ export default {
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
     return {
-      product: 'firefox', // FIXME: this should probably be firefoxDesktop.
+      product: 'legacy',
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
       probe: storeValue.probeName,

@@ -91,6 +91,19 @@
     x = bounds.left;
     width = bounds.width;
   }
+  // todo: clean this up
+  const returnProducts = (result) => {
+    if (result.fog) {
+      store.setField('product', 'fog');
+      return 'fog';
+    }
+    if ($store.searchProduct === 'firefox' && !result.fog) {
+      store.setField('product', 'legacy');
+      return 'legacy';
+    }
+    store.setField('product', 'fenix');
+    return 'fenix';
+  };
 </script>
 
 <style>
@@ -135,7 +148,9 @@
     grid-column-gap: var(--space-base);
     position: relative;
   }
-
+  .fog {
+    color: var(--pantone-red-600);
+  }
   .header--loaded {
     grid-template-columns: auto;
     grid-column-gap: 0px;
@@ -196,7 +211,7 @@
     font-size: 0.8em;
     line-height: 1.4;
     outline: 1px;
-    max-height: 2.6em;
+    /* max-height: 2.6em; */
     overflow: hidden;
     color: var(--subhead-gray-02);
     font-style: italic;
@@ -221,9 +236,9 @@
         <div class="header" in:fly={{ x: -5, duration: 200 }}>
           {#if results.length}
             <div>found {results.length} probes</div>
-            {:else if results.length === 0}
+          {:else if results.length === 0}
             <div>your search produced 0 results</div>
-            {:else if results.status}
+          {:else if results.status}
             <!-- FIXME: This should be pretty. -->
             <div>
               hmm ... having trouble reaching the search service ({results.status}).
@@ -248,8 +263,10 @@
               id={searchResult.name}
               class:focused={focusedItem === i}
               on:click={() => {
-                  page.show(
-                  `/${results[focusedItem].fog ? "fog" : $store.searchProduct}/probe/${results[focusedItem].name
+                page.show(
+                  `/${returnProducts(results[focusedItem])}/probe/${results[
+                    focusedItem
+                  ].name
                     .toLowerCase()
                     .replaceAll('.', '_')}/explore${$currentQuery}`
                 );
@@ -269,6 +286,9 @@
                 </div>
               {/if}
               <div class="description body-text--short-01">
+                {#if searchResult.fog}
+                  <p class="fog">(Firefox on Glean)</p>
+                {/if}
                 <Markdown text={searchResult.description} />
               </div>
             </li>
