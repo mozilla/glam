@@ -31,6 +31,7 @@ def _create_aggregation(data=None, multiplier=1.0, model=None):
         "client_agg_type": "summed-histogram",
         "metric_type": "histogram-exponential",
         "total_users": 111 * multiplier,
+        "total_sample": 1000,
         "histogram": json.dumps(
             {
                 "0": round(10.00001111 * multiplier, 4),
@@ -321,6 +322,7 @@ class TestDesktopAggregationsApi:
             "process": "parent",
             #"total_addressable_market": 999,
             "total_users": 1110,
+            "sample_count": 1000,
             "version": 72,
         }
 
@@ -359,6 +361,7 @@ class TestDesktopAggregationsApi:
             "process": "parent",
             #"total_addressable_market": 999,
             "total_users": 1110,
+            "sample_count": 1000,
             "version": 72,
         }
 

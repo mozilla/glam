@@ -161,13 +161,6 @@
 
   $: yClientsDomain = [0, yMaxClient * MULT];
   $: ySamplesDomain = [0, yMaxSample * MULT];
-  // $: if (['total_users', 'both'].includes($store.productDimensions.countView)) {
-  //   yVals = clientCountsData.map((d) => d.totalClients);
-  //   yMax = Math.max(50, Math.max(...yVals));
-  // } else if (['sample_count', 'both'].includes($store.productDimensions.countView)){
-  //   yVals = sampleCountsData.map((d) => d.totalSample);
-  //   yMax = Math.max(50, Math.max(...yVals));
-  // }
 
   let hoverValue = {};
   let lastHoverValue = {};

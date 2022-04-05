@@ -8,7 +8,7 @@
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
-  import { kFormatter } from '../../utils/formatters';
+  import { millionFormatter } from '../../utils/formatters';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
   import TrackingLine from './TrackingLine.svelte';
@@ -54,7 +54,7 @@
         side="left"
         lineStyle="short"
         ticks={yScale.ticks(4)}
-        tickFormatter={kFormatter} />
+        tickFormatter={millionFormatter} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
