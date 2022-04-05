@@ -2,6 +2,10 @@ export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
 
+export function sampleCounts(arr) {
+  return arr.map((a) => ({ totalSample: a.sample_count, label: a.label }));
+}
+
 function uniques(d, k) {
   return Array.from(new Set(d.map((di) => di[k])));
 }

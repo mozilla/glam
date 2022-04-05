@@ -33,6 +33,7 @@
 
   .topline__client-count {
     transition: font-weight 200ms;
+    margin-left: 4em;
   }
 
   .topline__client-count--highlighted {
@@ -66,6 +67,14 @@
           </span>
           clients
         </span>
+        <span data-value={ref.sample_count}>
+          <span
+            class="topline__client-count"
+            class:topline--client-count--highlighted={hovered &&
+              hovered.sample_count < tweenValue}>
+            {formatCount(ref.sample_count)}
+          </span>
+          samples</span>
       </span>
     </ToplineRow>
     {#if dataLength > 1}
@@ -87,6 +96,13 @@
                 {formatCount(hovered.audienceSize)}
               </span>
               clients
+              <span
+                class="topline__client-count"
+                class:topline__client-count--highlighted={hovered &&
+                  hovered.sample_count > tweenValue}>
+                {formatCount(hovered.sample_count)}
+              </span>
+              samples
             {/if}
           </div>
           {#if hovered}
@@ -96,6 +112,13 @@
                 >{formatParenPercent(
                   '.0%',
                   absDiff(hovered.audienceSize, tweenValue, true),
+                  7
+                )}</span>
+              {formatSignCount(absDiff(hovered.sample_count, ref.sample_count))}
+              <span style="font-weight: 500;"
+                >{formatParenPercent(
+                  '.0%',
+                  absDiff(hovered.sample_count, ref.sample_count, true),
                   7
                 )}</span>
             </div>

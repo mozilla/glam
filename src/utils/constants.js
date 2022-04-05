@@ -17,6 +17,7 @@ const niceAggregations = {
 const niceMetricTypes = {
   percentiles: 'Percentiles',
   counts: 'Client Counts',
+  sampleCounts: 'Sample Count Volume',
   proportions: 'Proportions',
   clientVolume: 'Client Volume',
 };

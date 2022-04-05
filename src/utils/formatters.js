@@ -17,6 +17,11 @@ export const formatParenPercent = (fmt, v, pad = 0) => {
   return `${p}${f}`;
 };
 
+export const kFormatter = (num) =>
+  Math.abs(num) > 999
+    ? `${format(',d')(Math.sign(num) * (Math.abs(num) / 1000).toFixed(1))}k`
+    : Math.sign(num) * Math.abs(num);
+
 export const formatBuildIDToDateString = (b) => timeFormat('%Y-%m-%d %H')(b);
 export const ymd = timeFormat('%Y-%m-%d');
 export const timecode = timeFormat('%H:%M:%S');

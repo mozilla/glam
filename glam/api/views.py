@@ -123,6 +123,7 @@ def get_firefox_aggregations(request, **kwargs):
             "metric_key": row.metric_key,
             "metric_type": row.metric_type,
             "total_users": row.total_users,
+            "sample_count": row.total_sample,
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
         }

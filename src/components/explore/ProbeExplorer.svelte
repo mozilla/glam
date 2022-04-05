@@ -9,7 +9,10 @@
   import AggregationComparisonGraph from './AggregationComparisonGraph.svelte';
 
   import ClientVolumeOverTimeGraph from './ClientVolumeOverTimeGraph.svelte';
+  import SampleCountOverTimeGraph from './SampleCountOverTimeGraph.svelte';
+
   import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
+  import CompareSampleCountGraph from './CompareSampleCountGraph.svelte';
 
   import ComparisonSummary from './ComparisonSummary.svelte';
 
@@ -31,7 +34,7 @@
     formatMemory,
   } from '../../utils/formatters';
 
-  import { clientCounts } from '../../utils/probe-utils';
+  import { clientCounts, sampleCounts } from '../../utils/probe-utils';
 
   import { histogramSpring } from '../../utils/animation';
 
@@ -150,9 +153,21 @@
   // client counts.
   const MULT = 1.1;
   $: clientCountsData = clientCounts(data);
+  $: sampleCountsData = sampleCounts(data);
+  $: yValsSample = sampleCountsData.map((d) => d.totalSample);
   $: yVals = clientCountsData.map((d) => d.totalClients);
-  $: yMax = Math.max(50, Math.max(...yVals));
-  $: yClientsDomain = [0, yMax * MULT];
+  $: yMaxClient = Math.max(50, Math.max(...yVals));
+  $: yMaxSample = Math.max(50, Math.max(...yValsSample));
+
+  $: yClientsDomain = [0, yMaxClient * MULT];
+  $: ySamplesDomain = [0, yMaxSample * MULT];
+  // $: if (['total_users', 'both'].includes($store.productDimensions.countView)) {
+  //   yVals = clientCountsData.map((d) => d.totalClients);
+  //   yMax = Math.max(50, Math.max(...yVals));
+  // } else if (['sample_count', 'both'].includes($store.productDimensions.countView)){
+  //   yVals = sampleCountsData.map((d) => d.totalSample);
+  //   yMax = Math.max(50, Math.max(...yVals));
+  // }
 
   let hoverValue = {};
   let lastHoverValue = {};
@@ -367,13 +382,39 @@
     showDiff={data.length > 1}
     viewType={$store.viewType}
     {justOne} />
-  <div style="display: {justOne ? 'none' : 'block'}">
-    <ClientVolumeOverTimeGraph
-      title={clientVolumeOverTimeTitle}
+  {#if ['total_users', 'both'].includes($store.productDimensions.countView)}
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <ClientVolumeOverTimeGraph
+        title={clientVolumeOverTimeTitle}
+        description={clientVolumeOverTimeDescription}
+        data={clientCountsData}
+        xDomain={$domain}
+        yDomain={yClientsDomain}
+        {aggregationLevel}
+        {hovered}
+        {ref}
+        bind:hoverValue
+        on:click={() => {
+          if (hovered.datum) {
+            ref = hovered.datum;
+          }
+        }} />
+    </div>
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <CompareClientVolumeGraph
+        description={compareDescription(clientVolumeOverTimeTitle)}
+        yDomain={yClientsDomain}
+        hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
+        referenceValue={ref.audienceSize} />
+    </div>
+  {/if}
+  {#if ['sample_count', 'both'].includes($store.productDimensions.countView)}
+    <SampleCountOverTimeGraph
+      title={overTimeTitle('sampleCounts', aggregationLevel)}
       description={clientVolumeOverTimeDescription}
-      data={clientCountsData}
+      data={sampleCountsData}
       xDomain={$domain}
-      yDomain={yClientsDomain}
+      yDomain={ySamplesDomain}
       {aggregationLevel}
       {hovered}
       {ref}
@@ -383,12 +424,12 @@
           ref = hovered.datum;
         }
       }} />
-  </div>
-  <div style="display: {justOne ? 'none' : 'block'}">
-    <CompareClientVolumeGraph
-      description={compareDescription(clientVolumeOverTimeTitle)}
-      yDomain={yClientsDomain}
-      hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
-      referenceValue={ref.audienceSize} />
-  </div>
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <CompareSampleCountGraph
+        Sampleiption={compareDescription(clientVolumeOverTimeTitle)}
+        yDomain={ySamplesDomain}
+        hoverValue={hovered.datum ? hovered.datum.sample_count : 0}
+        referenceValue={ref.sample_count} />
+    </div>
+  {/if}
 </div>
