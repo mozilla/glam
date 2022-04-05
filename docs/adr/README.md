@@ -17,3 +17,5 @@ ADR,
 
 - [0000-use-madr.md](/docs/adr/0000-use-madr.md)
 - [0001-auth-via-nginx.md](/docs/adr/0001-auth-via-nginx.md)
+- [0002-data-exploration.md](/docs/adr/0002-data-exploration.md)
+- [0004-instrumentation.md](/docs/adr/0004-instrumentation.md)
