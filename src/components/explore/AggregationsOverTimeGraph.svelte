@@ -14,7 +14,7 @@
 
   import BuildIDRollover from './BuildIDRollover.svelte';
 
-  import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
+  import ReleaseVersionMarkers from '../ReleaseVersionMarkers.svelte';
 
   import { aggregationsOverTimeGraph } from '../../utils/constants';
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
@@ -358,7 +358,7 @@
           </Springable>
         </g>
       {/each}
-      <FirefoxReleaseVersionMarkers />
+      <ReleaseVersionMarkers />
     </g>
   </DataGraphic>
 </div>

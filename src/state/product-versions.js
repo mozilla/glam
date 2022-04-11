@@ -47,3 +47,7 @@ export const firefoxReleases = derived(productDetails, ($pd) => {
 export const firefoxVersionMarkers = derived(firefoxReleases, ($releases) =>
   $releases ? $releases.map((r) => ({ label: r.label, date: r.date })) : []
 );
+
+export const fenixVersionMarkers = derived(firefoxReleases, ($releases) =>
+  $releases ? $releases.map((r) => ({ label: r.label, date: r.date })) : []
+);
