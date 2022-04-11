@@ -29,6 +29,7 @@ function getDefaultState(
     fog: 'firefox',
     fenix: 'fenix',
   };
+
   if (Object.keys(productConfig).includes(firstPathComponent)) {
     state.product = firstPathComponent;
   } else {

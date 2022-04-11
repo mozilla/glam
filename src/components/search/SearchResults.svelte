@@ -91,17 +91,28 @@
     x = bounds.left;
     width = bounds.width;
   }
-  // todo: clean this up
-  const returnProducts = (result) => {
+
+  const getProductDimensions = (result) => {
     if (result.fog) {
       store.setField('product', 'fog');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: '*',
+        ping_type: '*',
+        aggregationLevel: 'build_id',
+      });
       return 'fog';
     }
     if ($store.searchProduct === 'firefox' && !result.fog) {
-      store.setField('product', 'legacy');
       return 'legacy';
     }
     store.setField('product', 'fenix');
+    store.setField('productDimensions', {
+      app_id: 'nightly',
+      os: 'Android',
+      ping_type: 'metrics',
+      aggregationLevel: 'build_id',
+    });
     return 'fenix';
   };
 </script>
@@ -148,9 +159,13 @@
     grid-column-gap: var(--space-base);
     position: relative;
   }
+
   .fog {
     color: var(--pantone-red-600);
+    font-weight: 200;
+    font-size: 0.9em;
   }
+
   .header--loaded {
     grid-template-columns: auto;
     grid-column-gap: 0px;
@@ -264,9 +279,9 @@
               class:focused={focusedItem === i}
               on:click={() => {
                 page.show(
-                  `/${returnProducts(results[focusedItem])}/probe/${results[
-                    focusedItem
-                  ].name
+                  `/${getProductDimensions(
+                    results[focusedItem]
+                  )}/probe/${results[focusedItem].name
                     .toLowerCase()
                     .replaceAll('.', '_')}/explore${$currentQuery}`
                 );
@@ -274,7 +289,11 @@
               on:mouseover={() => {
                 focusedItem = i;
               }}>
-              <div class="name body-text--short-01">{searchResult.name}</div>
+              <div class="name body-text--short-01">
+                {searchResult.name}
+                {#if searchResult.fog}<span class="fog">(GLEAN)</span>
+                {/if}
+              </div>
               {#if searchResult.active === false}
                 <div class="probe-type label label-text--01 label--inactive">
                   inactive
@@ -286,9 +305,6 @@
                 </div>
               {/if}
               <div class="description body-text--short-01">
-                {#if searchResult.fog}
-                  <p class="fog">(Firefox on Glean)</p>
-                {/if}
                 <Markdown text={searchResult.description} />
               </div>
             </li>

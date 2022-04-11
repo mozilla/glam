@@ -89,7 +89,6 @@ export const FIREFOX_ON_GLEAN = {
     });
   },
   getParamsForDataAPI(storeValue) {
-    console.log('storeValue', storeValue, storeValue.productDimensions.os);
     // These parameters are needed to request the data from the API itself
     return {
       product: storeValue.product,
