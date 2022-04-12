@@ -439,3 +439,8 @@ def random_probes(request):
         probes.append({"data": agg.histogram, "info": probe.info})
 
     return Response({"probes": probes})
+
+
+@api_view(["POST"])
+def usage(request):
+    return Response({"OKAY": "OKAY"})
