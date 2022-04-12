@@ -25,7 +25,7 @@ function getDefaultState(
   const firstPathComponent = window.location.pathname.split('/')[1];
 
   const searchProducts = {
-    legacy: 'firefox',
+    firefox: 'firefox',
     fog: 'firefox',
     fenix: 'fenix',
   };
@@ -33,7 +33,7 @@ function getDefaultState(
   if (Object.keys(productConfig).includes(firstPathComponent)) {
     state.product = firstPathComponent;
   } else {
-    state.product = 'legacy';
+    state.product = 'firefox';
   }
 
   state.probeName = '';

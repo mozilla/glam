@@ -93,7 +93,8 @@
   }
 
   const getProductDimensions = (result) => {
-    if (result.fog) {
+    if (result.glean) {
+      // we have to manually set the product dimensions for FOG and Fenix to avoid them automatically picking up the Firefox legacy dimensions
       store.setField('product', 'fog');
       store.setField('productDimensions', {
         app_id: 'nightly',
@@ -103,17 +104,17 @@
       });
       return 'fog';
     }
-    if ($store.searchProduct === 'firefox' && !result.fog) {
-      return 'legacy';
+    if ($store.searchProduct === 'fenix') {
+      store.setField('product', 'fenix');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: 'Android',
+        ping_type: 'metrics',
+        aggregationLevel: 'build_id',
+      });
+      return 'fenix';
     }
-    store.setField('product', 'fenix');
-    store.setField('productDimensions', {
-      app_id: 'nightly',
-      os: 'Android',
-      ping_type: 'metrics',
-      aggregationLevel: 'build_id',
-    });
-    return 'fenix';
+    return 'firefox';
   };
 </script>
 
@@ -160,9 +161,9 @@
     position: relative;
   }
 
-  .fog {
+  .glean {
     color: var(--pantone-red-600);
-    font-weight: 200;
+    font-weight: 300;
     font-size: 0.9em;
   }
 
@@ -226,7 +227,7 @@
     font-size: 0.8em;
     line-height: 1.4;
     outline: 1px;
-    /* max-height: 2.6em; */
+    max-height: 2.6em;
     overflow: hidden;
     color: var(--subhead-gray-02);
     font-style: italic;
@@ -291,7 +292,7 @@
               }}>
               <div class="name body-text--short-01">
                 {searchResult.name}
-                {#if searchResult.fog}<span class="fog">(GLEAN)</span>
+                {#if searchResult.glean}<span class="glean">(GLEAN)</span>
                 {/if}
               </div>
               {#if searchResult.active === false}

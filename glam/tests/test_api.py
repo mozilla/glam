@@ -247,7 +247,7 @@ class TestDesktopAggregationsApi:
         "query, missing",
         [
             (
-                {"product": "legacy", "probe": None, "aggregationLevel": None},
+                {"product": "firefox", "probe": None, "aggregationLevel": None},
                 "channel",
             ),
             ({"channel": None, "probe": None}, "aggregationLevel"),
@@ -267,7 +267,7 @@ class TestDesktopAggregationsApi:
     def test_invalid_channel_if_firefox(self, client):
         query = {
             "query": {
-                "product": "legacy",
+                "product": "firefox",
                 "channel": "ohrora",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",

@@ -57,7 +57,6 @@
           alignment="right">
           <div class="main-filter__label" slot="label">
             <span class="main-filter__label__dimension">{dimension.title}</span>
-            <!-- reorient myself here -->
             {productConfigDimensions.dimensionValueLabel(
               dimension.key,
               $store.productDimensions[dimension.key]

@@ -2,7 +2,7 @@ import FirefoxLegacyDetails from '../routing/pages/probe/FirefoxLegacyDetails.sv
 import GleanDetails from '../routing/pages/probe/GleanDetails.svelte';
 
 export default {
-  legacy: {
+  firefox: {
     details: FirefoxLegacyDetails,
   },
   fog: {

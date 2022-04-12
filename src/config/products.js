@@ -2,7 +2,7 @@ import FIREFOX_DESKTOP from './firefox-desktop';
 import { FIREFOX_ON_GLEAN, FENIX } from './glean';
 
 const products = {
-  legacy: FIREFOX_DESKTOP,
+  firefox: FIREFOX_DESKTOP,
   fog: FIREFOX_ON_GLEAN,
   fenix: FENIX,
 };

@@ -3,7 +3,7 @@ PRODUCT_FENIX = 2
 PRODUCT_FOG = 3
 
 PRODUCT_CHOICES = (
-    (PRODUCT_FIREFOX_LEGACY, "legacy"),
+    (PRODUCT_FIREFOX_LEGACY, "firefox"),
     (PRODUCT_FENIX, "fenix"),
     (PRODUCT_FOG, "fog"),
 )

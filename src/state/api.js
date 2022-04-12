@@ -76,7 +76,7 @@ export function getSearchResults(
   queryString,
   resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
 ) {
-  // use a "legacy" URL which searches for old telemetry
+  // use a "fog_and_legacy" URL which searches for old telemetry + FOG metrics
   const productId =
     searchProduct === 'firefox' ? 'fog_and_legacy' : searchProduct;
   const searchURL = getProbeSearchURL(productId, queryString, resultsLimit);
@@ -92,7 +92,7 @@ export function getProbeInfo(product, probeName) {
   // Glean Dictionary in the case of Fenix (can be extended to other glean products
   // in the future).
   const productIds = {
-    legacy: 'firefox_legacy',
+    firefox: 'firefox_legacy',
     fog: 'firefox_desktop',
     fenix: 'fenix',
   };

@@ -100,8 +100,6 @@ export const FIREFOX_ON_GLEAN = {
     };
   },
   fetchData(params, appStore) {
-    console.log('params and payload', params, appStore);
-
     // FIXME: this is (so far) identical to firefox-desktop.
     // should we just make this something in shared.js?
     return getProbeData(params).then((payload) => {
@@ -254,7 +252,6 @@ export const FENIX = {
     });
   },
   getParamsForDataAPI(storeValue) {
-    console.log('storeValue', storeValue, storeValue.productDimensions.os);
     // These parameters are needed to request the data from the API itself
     return {
       product: storeValue.product,
@@ -266,8 +263,6 @@ export const FENIX = {
     };
   },
   fetchData(params, appStore) {
-    console.log('params and payload', params, appStore);
-
     // FIXME: this is (so far) identical to firefox-desktop.
     // should we just make this something in shared.js?
     return getProbeData(params).then((payload) => {

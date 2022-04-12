@@ -106,7 +106,7 @@ export default {
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
     return {
-      product: 'legacy',
+      product: 'firefox',
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
       probe: storeValue.probeName,
