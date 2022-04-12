@@ -23,8 +23,7 @@ export default {
     replace({
       __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
-      __GLEAN_DICTIONARY_DOMAIN__:
-        'https://deploy-preview-1163--glean-dictionary-dev.netlify.app',
+      __GLEAN_DICTIONARY_DOMAIN__: 'https://dictionary.telemetry.mozilla.org',
     }),
     string({ include: 'src/**/*.tpl' }),
     svelte({

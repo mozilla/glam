@@ -114,7 +114,11 @@
       });
       return 'fenix';
     }
-    return 'firefox';
+    if ($store.searchProduct === 'firefox' && !result.glean) {
+      store.setField('product', 'firefox');
+      return 'firefox';
+    }
+    return undefined;
   };
 </script>
 

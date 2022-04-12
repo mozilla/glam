@@ -41,7 +41,7 @@ function getDefaultState(
   state.hov = getFromQueryString('hov') || '';
   state.timeHorizon = getFromQueryString('timeHorizon') || 'MONTH';
   state.route = {};
-  state.searchProduct = searchProducts[state.product] || 'firefox';
+  state.searchProduct = searchProducts[state.product];
 
   state.aggKey = getFromQueryString('aggKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
