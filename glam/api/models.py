@@ -267,3 +267,19 @@ class FirefoxBuildRevisions(models.Model):
                 fields=["channel", "build_id"],
             )
         ]
+
+
+class InstrumentationUsage(models.Model):
+    ACTION_PROBE_SEARCH = 'PROBE_SEARCH'
+    ACTIONS = [
+        (ACTION_PROBE_SEARCH, "probe_search"),
+    ]
+    id = models.AutoField(primary_key=True)
+    action_type = models.CharField(max_length=100, choices=ACTIONS)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    context = models.JSONField(null=True)
+    session_id = models.CharField(max_length=100)
+    probe_name = models.CharField(null=True, max_length=100)
+
+    class Meta:
+        db_table = "glam_instrumentation_usage"

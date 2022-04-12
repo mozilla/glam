@@ -22,6 +22,7 @@ from glam.api.models import (
     FirefoxCounts,
     LastUpdated,
     Probe,
+    InstrumentationUsage,
 )
 
 
@@ -390,6 +391,7 @@ def aggregations(request):
     if not response:
         raise NotFound("No documents found for the given parameters")
 
+    log_probe_query(request)
     return Response({"response": response})
 
 
@@ -441,6 +443,16 @@ def random_probes(request):
     return Response({"probes": probes})
 
 
+def log_probe_query(request):
+    query = request.data['query']
+    InstrumentationUsage(
+        action_type = InstrumentationUsage.ACTION_PROBE_SEARCH,
+        context = query,
+        session_id = "Eduardos",
+        probe_name = query['probe'],
+    ).save()
+
+
 @api_view(["POST"])
 def usage(request):
-    return Response({"OKAY": "OKAY"})
+    log_probe_query(request)
