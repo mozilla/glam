@@ -23,7 +23,7 @@
   import {
     explorerComparisonSmallMultiple,
     overTimeTitle,
-    clientVolumeOverTimeDescription as clientDescription,
+    volumeOverTimeDescription as clientDescription,
     compareDescription,
   } from '../../utils/constants';
 
@@ -68,8 +68,10 @@
     'clientVolume',
     aggregationLevel
   );
-  export let clientVolumeOverTimeDescription =
-    clientDescription(aggregationLevel);
+  export let volumeOverTimeDescription = clientDescription(
+    aggregationLevel,
+    $store.countView
+  );
 
   // If there isn't more than one other point to compare,
   // let's turn off the hover.
@@ -375,11 +377,11 @@
     showDiff={data.length > 1}
     viewType={$store.viewType}
     {justOne} />
-  {#if ['total_users', 'both'].includes($store.productDimensions.countView)}
+  {#if $store.countView === 'clients'}
     <div style="display: {justOne ? 'none' : 'block'}">
       <ClientVolumeOverTimeGraph
         title={clientVolumeOverTimeTitle}
-        description={clientVolumeOverTimeDescription}
+        description={clientDescription(aggregationLevel, $store.countView)}
         data={clientCountsData}
         xDomain={$domain}
         yDomain={yClientsDomain}
@@ -401,10 +403,10 @@
         referenceValue={ref.audienceSize} />
     </div>
   {/if}
-  {#if ['sample_count', 'both'].includes($store.productDimensions.countView)}
+  {#if $store.countView === 'samples'}
     <SampleCountOverTimeGraph
-      title={overTimeTitle('sampleCounts', aggregationLevel)}
-      description={clientVolumeOverTimeDescription}
+      title={overTimeTitle('sampleVolume', aggregationLevel)}
+      description={clientDescription(aggregationLevel, $store.countView)}
       data={sampleCountsData}
       xDomain={$domain}
       yDomain={ySamplesDomain}
@@ -419,7 +421,9 @@
       }} />
     <div style="display: {justOne ? 'none' : 'block'}">
       <CompareSampleCountGraph
-        Sampleiption={compareDescription(clientVolumeOverTimeTitle)}
+        description={compareDescription(
+          overTimeTitle('sampleVolume', aggregationLevel)
+        )}
         yDomain={ySamplesDomain}
         hoverValue={hovered.datum ? hovered.datum.sample_count : 0}
         referenceValue={ref.sample_count} />

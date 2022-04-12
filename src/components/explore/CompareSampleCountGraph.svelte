@@ -7,7 +7,7 @@
   import Tweenable from '../Tweenable.svelte';
   import ChartTitle from './ChartTitle.svelte';
   import { compareClientCountsGraph, tween } from '../../utils/constants';
-  import { millionFormatter } from '../../utils/formatters';
+  import { formatMillion } from '../../utils/formatters';
 
   export let description;
   export let hoverValue;
@@ -71,7 +71,7 @@
         }} />
       <Axis
         side="right"
-        tickFormatter={millionFormatter}
+        tickFormatter={formatMillion}
         ticks={yScale.ticks(4)} />
       <Axis side="bottom" ticks={['HOV.', 'REF.']} />
     </g>

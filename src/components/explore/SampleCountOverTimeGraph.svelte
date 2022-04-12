@@ -1,6 +1,7 @@
 <script>
   import { Axis } from '@graph-paper/guides';
   import { Line } from '@graph-paper/elements';
+  import { store } from '../../state/store';
 
   import Tweenable from '../Tweenable.svelte';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
@@ -8,7 +9,7 @@
   import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
-  import { millionFormatter } from '../../utils/formatters';
+  import { formatMillion } from '../../utils/formatters';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
   import TrackingLine from './TrackingLine.svelte';
@@ -34,6 +35,10 @@
     left={totalClientsGraph.left}
     right={totalClientsGraph.right}>
     {title}
+    <a
+      style="font-weight: 300; font-size: 0.7em; cursor: pointer;"
+      on:click={() => store.setField('countView', 'clients')}
+      >View Client Count</a>
   </ChartTitle>
   <DataGraphic
     yType="linear"
@@ -54,7 +59,7 @@
         side="left"
         lineStyle="short"
         ticks={yScale.ticks(4)}
-        tickFormatter={millionFormatter} />
+        tickFormatter={formatMillion} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}

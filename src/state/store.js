@@ -46,6 +46,8 @@ function getDefaultState(
   state.aggKey = getFromQueryString('aggKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
   state.currentPage = getFromQueryString('currentPage') || '1';
+  state.countView = getFromQueryString('countView') || 'clients';
+
   state.probe = {
     name: '',
     loaded: false,

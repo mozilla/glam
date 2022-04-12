@@ -61,16 +61,6 @@ export default {
       ],
       defaultValue: 'build_id',
     },
-    countView: {
-      title: 'Submission Count',
-      key: 'countView',
-      values: [
-        { key: 'total_users', label: 'User Count' },
-        { key: 'sample_count', label: 'Sample Count' },
-        { key: 'both', label: 'User and Sample Count' },
-      ],
-      defaultValue: 'total_users',
-    },
   },
   // the probeView object maps a probe type for this product
   // to one of a few options: "linear"  "log", and "categorical". Quantile type probes
