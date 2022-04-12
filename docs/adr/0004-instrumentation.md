@@ -8,14 +8,21 @@ Technical Story: https://github.com/mozilla/glam/issues/1847
 
 ## Context and Problem Statement
 
-GLAM ETL does a lot of work and takes over 12 hours to complete. We suspect that
-we can can optmize the ETL by only building probes that are likely to be
-requested. As part of a bigger scope, we also want to understand how GLAM is
-normally used: Where does it fit in a typical user's workflow (a starting point,
-an endpoint, or something in between)? In order to accomplish that we must
-gather data such as most and least looked at probes, how a typical user session
-looks like, how probe browsing behaves over short and long periods of time and
-whether it correlates with other events such as product releases.
+In order to help us with various product decisions and overall product quality,
+we want to understand how GLAM is normally used: Where does it fit in a typical
+user's workflow (a starting point, an endpoint, or something in between)?
+
+We can accomplish this by gathering data such as how a typical user session
+looks like, most and least looked at probes, how probe browsing behaves over
+short and long periods of time and whether it correlates with other events such
+as certain product releases.
+
+Additionally, as a more time-sensitive issue, GLAM ETL does a lot of work and
+takes over 12 hours to complete. We intend to reduce GLAM ETL time by finding
+the probes that are most likely to be requested by users from the aforementioned
+data and have the ETL build only those probes. This document also presents a
+plan for ad hoc probe building, which needs to happen when someone requests a
+probe that had not been pre-built by the ETL.
 
 ## Decision Drivers
 
@@ -25,28 +32,33 @@ whether it correlates with other events such as product releases.
   processing probes that are likely to be looked at
 - GLAM App should consume this service so it can trigger an ad hoc calculation
   whenever a probe that was not processed by GLAM ETL is requested
-- Ad hoc probe calculation should be independent of GLAM App because it's likely
-  to be CPU/memory intensive, with different needs in terms of scalability
+- Ad hoc probe building should be independent of GLAM App because it's likely to
+  be CPU/memory intensive, with different needs in terms of scalability
 
 ## Considered Options
 
-- 1: Collect metrics in the app's backend server, save them to a table in the
-  GLAM App Postgres DB and expose meaningful api endpoints for consumption by
-  GLAM App and and GLAM ETL, which provides flexibility to adapt to future
-  requirements and "immunity" to adblocks, but takes longer to implement
-- 2: Gleanjs for dogfooding and internal support, but can be bypassed by
-  adblockers
-- 3: Google analytics, currently available, because it's quick and easy but
-  doesn't give us the insight into e.g. session-scoped data and can also be
+- 1: Collect metrics on the front end (via a library such as Open Telemetry
+  Instrumentation or a custom-built solution) and send them to the GLAM back end
+  server to be stored in a table in the GLAM App Postgres DB. Expose meaningful
+  api endpoints for usaga data consumption by GLAM App and and GLAM ETL. This
+  provides flexibility to adapt to future requirements and "immunity" to
+  adblocks, but might be longer to implement
+- 2: Use Gleanjs, a JS library for telemetry, which would be quicker than a
+  custom implementation. It's also good because of dogfooding and internal
+  support. The downside here is it can be bypassed by adblockers, because it
+  sends data to a different endpoint
+- 3: Google analytics: currently available, it's quick and easy to implement,
+  but doesn't give us the insight into e.g. session-scoped data and can also be
   bypassed by adblockers
-- 4: Collect metrics in the app's backend and save them to a BigQuery table,
-  which makes it easy for the ETL to consume, but will most likely slow down
-  some GLAM App operations due to BigQuery's slower-than-OLTP response times
-- 5: Stackdriver + gcloud monitoring tools, which provide an interface for
-  exporting metrics and ability to create dashboards for visualizing them, but
-  since our use case also involves consumption of those metrics by the GLAM App
-  and ETL, it might get complicated to parse the response of the gcloud apis
-  compared to a custom api from e.g. Option #1
+- 4: Option #1, but instead of using GLAM's Postgres DB, save metrics to a
+  BigQuery table. This would make it easy for the ETL to consume the data, but
+  will most likely slow down some GLAM App operations due to BigQuery's
+  slower-than-OLTP response times
+- 5: Stackdriver + gcloud monitoring tools: This would provide an interface for
+  exporting metrics and the ability to create dashboards for visualizing them,
+  but since our use case also involves consumption of those metrics by the GLAM
+  App and ETL, it might get complicated to parse the response of the gcloud apis
+  compared to a custom api from Option #1
 
 ## Decision Outcome
 
@@ -55,7 +67,8 @@ whether it correlates with other events such as product releases.
 Chosen option: Option #1, because it meets all Decision Drivers criteria and
 gives the best performance and evolvability:
 
-- It's "immune" to adblocks, because it's in the backend of the app
+- It's "immune" to adblocks, because the data collector in the front end will
+  send data to GLAM's backend, in the same domain
 - API can be easily consumed by GLAM App and GLAM ETL
 - Performance: Data inserted to and fetched from Postgresql db is unlikely to
   cause any significant latency increase
@@ -64,9 +77,9 @@ gives the best performance and evolvability:
 
 ### Ad hoc probe building
 
-The solution proposed for this is the Asynchronous Request-Reply Pattern (link
-in the Links section), in which the worker is an external cloud component (tbd)
-that:
+The only solution proposed for this is the Asynchronous Request-Reply Pattern
+(link in the Links section), in which the worker is an external cloud component
+(tbd) that:
 
 - Accesses BigQuery tables for building the needed probes
 - Saves the built probes to the appropriate tables in Postgres
@@ -81,5 +94,6 @@ relevant flows, please refer to the diagram link below
 <!-- prettier-ignore -->
 - [Solution
   Diagram][https://docs.google.com/document/d/1Vchl9q9BoeZU9UFioROXCVPdi488mxnJeGy2uL-Hv4o/edit?usp=sharing]
+- [Open Telemetry Instrumentation][https://opentelemetry.io/docs/instrumentation/js/instrumentation/]
 - [Asynchronous Request-Reply
   Pattern][https://docs.microsoft.com/en-us/azure/architecture/patterns/async-request-reply]
