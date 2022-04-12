@@ -91,6 +91,35 @@
     x = bounds.left;
     width = bounds.width;
   }
+
+  const getProductDimensions = (result) => {
+    if (result.glean) {
+      // we have to manually set the product dimensions for FOG and Fenix to avoid them automatically picking up the Firefox legacy dimensions
+      store.setField('product', 'fog');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: '*',
+        ping_type: '*',
+        aggregationLevel: 'build_id',
+      });
+      return 'fog';
+    }
+    if ($store.searchProduct === 'fenix') {
+      store.setField('product', 'fenix');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: 'Android',
+        ping_type: 'metrics',
+        aggregationLevel: 'build_id',
+      });
+      return 'fenix';
+    }
+    if ($store.searchProduct === 'firefox' && !result.glean) {
+      store.setField('product', 'firefox');
+      return 'firefox';
+    }
+    return undefined;
+  };
 </script>
 
 <style>
@@ -134,6 +163,12 @@
     align-items: center;
     grid-column-gap: var(--space-base);
     position: relative;
+  }
+
+  .glean {
+    color: var(--pantone-red-600);
+    font-weight: 300;
+    font-size: 0.9em;
   }
 
   .header--loaded {
@@ -249,7 +284,9 @@
               class:focused={focusedItem === i}
               on:click={() => {
                 page.show(
-                  `/${$store.searchProduct}/probe/${results[focusedItem].name
+                  `/${getProductDimensions(
+                    results[focusedItem]
+                  )}/probe/${results[focusedItem].name
                     .toLowerCase()
                     .replaceAll('.', '_')}/explore${$currentQuery}`
                 );
@@ -257,7 +294,11 @@
               on:mouseover={() => {
                 focusedItem = i;
               }}>
-              <div class="name body-text--short-01">{searchResult.name}</div>
+              <div class="name body-text--short-01">
+                {searchResult.name}
+                {#if searchResult.glean}<span class="glean">(GLEAN)</span>
+                {/if}
+              </div>
               {#if searchResult.active === false}
                 <div class="probe-type label label-text--01 label--inactive">
                   inactive

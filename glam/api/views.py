@@ -188,8 +188,7 @@ def get_glean_aggregations(request, **kwargs):
 
     MODEL_MAP = {
         "fenix": FenixAggregationView,
-        "firefox": FOGAggregationView,
-
+        "fog": FOGAggregationView,
     }
     model = MODEL_MAP[kwargs.get("product")]
     product = kwargs.get("product")
@@ -224,16 +223,16 @@ def get_glean_aggregations(request, **kwargs):
     if aggregation_level == "version":
         if product == 'fenix':
             dimensions.append(Q(build_id="*"))
-            #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
-        if product == 'firefox':
+            # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
+        if product == 'fog':
             dimensions.append(~Q(build_id="*"))
-            #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
+            # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
 
     if aggregation_level == "build_id":
         if product == 'fenix':
             dimensions.append(~Q(build_id="*"))
             #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
-        if product == 'firefox':
+        if product == 'fog':
             dimensions.append(~Q(build_id="*"))
             #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
 
@@ -372,8 +371,8 @@ def aggregations(request):
     # separating out Glean data as the future.
 
     # Ensure that the product provided is one we support, defaulting to Firefox.
-    FIREFOX = constants.PRODUCT_NAMES[constants.PRODUCT_FIREFOX]
-    product = body["query"].get("product", FIREFOX)
+    FIREFOX_LEGACY = constants.PRODUCT_NAMES[constants.PRODUCT_FIREFOX_LEGACY]
+    product = body["query"].get("product", FIREFOX_LEGACY)
     if product not in constants.PRODUCT_IDS.keys():
         raise ValidationError(
             "Unsupported product specified. We currently support only: {}".format(
@@ -381,7 +380,7 @@ def aggregations(request):
             )
         )
 
-    if product == FIREFOX:
+    if product == FIREFOX_LEGACY:
         response = get_firefox_aggregations(request, **body["query"])
     else:  # Assume everything else is Glean-based.
         response = get_glean_aggregations(request, **body["query"])

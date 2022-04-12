@@ -72,12 +72,13 @@ function getProbeSearchURL(productId, queryString, resultsLimit) {
 }
 
 export function getSearchResults(
-  product,
+  searchProduct,
   queryString,
   resultsLimit = DEFAULT_SEARCH_RESULTS_LIMIT
 ) {
-  // use a "legacy" URL which searches for old telemetry
-  const productId = product + (product === 'firefox' ? '_legacy' : '');
+  // use a "fog_and_legacy" URL which searches for old telemetry + FOG metrics
+  const productId =
+    searchProduct === 'firefox' ? 'fog_and_legacy' : searchProduct;
   const searchURL = getProbeSearchURL(productId, queryString, resultsLimit);
 
   return fetch(searchURL).then((r) => {
@@ -90,9 +91,13 @@ export function getProbeInfo(product, probeName) {
   // this method pulls from the probe search service in the case of Firefox and the
   // Glean Dictionary in the case of Fenix (can be extended to other glean products
   // in the future).
-  const productId = product === 'firefox' ? 'firefox_legacy' : product;
+  const productIds = {
+    firefox: 'firefox_legacy',
+    fog: 'firefox_desktop',
+    fenix: 'fenix',
+  };
 
-  const url = `__GLEAN_DICTIONARY_DOMAIN__/data/${productId}/metrics/data_${probeName}.json`;
+  const url = `__GLEAN_DICTIONARY_DOMAIN__/data/${productIds[product]}/metrics/data_${probeName}.json`;
 
   return fetch(url).then((r) => {
     if (r.ok) return r.json();
