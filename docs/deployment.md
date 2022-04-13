@@ -4,8 +4,7 @@ GLAM has a 3-stage deployment:
 
 1. **Dev**: Deployments to the development server happen automatically for all
    commits that land on the `main` branch
-2. **Stage**: Deployments to the staging server happen automatically for tags of
-   the form `m<integer>` or of the [CalVer](http://calver.org/) format
+2. **Stage**: Deployments to the staging server happen automatically for tags of the [CalVer](http://calver.org/) format
    `YYYY.MM.N` where `N` is a zero-based counter for the number of tags during
    the month
 3. **Production**: File a Jira ticket with the label GLAM in Data SRE board to
