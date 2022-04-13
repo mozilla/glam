@@ -5,7 +5,7 @@
   import Tweenable from '../Tweenable.svelte';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
-  import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
+  import ReleaseVersionMarkers from '../ReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
   import { formatCount } from '../../utils/formatters';
@@ -131,6 +131,6 @@
         </Tweenable>
       {/if}
     </g>
-    <FirefoxReleaseVersionMarkers labels={false} />
+    <ReleaseVersionMarkers labels={false} />
   </DataGraphic>
 </div>
