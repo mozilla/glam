@@ -9,7 +9,10 @@
   import AggregationComparisonGraph from './AggregationComparisonGraph.svelte';
 
   import ClientVolumeOverTimeGraph from './ClientVolumeOverTimeGraph.svelte';
+  import SampleCountOverTimeGraph from './SampleCountOverTimeGraph.svelte';
+
   import CompareClientVolumeGraph from './CompareClientVolumeGraph.svelte';
+  import CompareSampleCountGraph from './CompareSampleCountGraph.svelte';
 
   import ComparisonSummary from './ComparisonSummary.svelte';
 
@@ -20,7 +23,7 @@
   import {
     explorerComparisonSmallMultiple,
     overTimeTitle,
-    clientVolumeOverTimeDescription as clientDescription,
+    volumeOverTimeDescription as clientDescription,
     compareDescription,
   } from '../../utils/constants';
 
@@ -31,7 +34,7 @@
     formatMemory,
   } from '../../utils/formatters';
 
-  import { clientCounts } from '../../utils/probe-utils';
+  import { clientCounts, sampleCounts } from '../../utils/probe-utils';
 
   import { histogramSpring } from '../../utils/animation';
 
@@ -65,8 +68,10 @@
     'clientVolume',
     aggregationLevel
   );
-  export let clientVolumeOverTimeDescription =
-    clientDescription(aggregationLevel);
+  export let volumeOverTimeDescription = clientDescription(
+    aggregationLevel,
+    $store.countView
+  );
 
   // If there isn't more than one other point to compare,
   // let's turn off the hover.
@@ -149,10 +154,16 @@
 
   // client counts.
   const MULT = 1.1;
+  const MAX_DEFAULT_VALUE = 50;
   $: clientCountsData = clientCounts(data);
+  $: sampleCountsData = sampleCounts(data);
+  $: yValsSample = sampleCountsData.map((d) => d.totalSample);
   $: yVals = clientCountsData.map((d) => d.totalClients);
-  $: yMax = Math.max(50, Math.max(...yVals));
-  $: yClientsDomain = [0, yMax * MULT];
+  $: yMaxClient = Math.max(MAX_DEFAULT_VALUE, Math.max(...yVals));
+  $: yMaxSample = Math.max(MAX_DEFAULT_VALUE, Math.max(...yValsSample));
+
+  $: yClientsDomain = [0, yMaxClient * MULT];
+  $: ySamplesDomain = [0, yMaxSample * MULT];
 
   let hoverValue = {};
   let lastHoverValue = {};
@@ -367,13 +378,39 @@
     showDiff={data.length > 1}
     viewType={$store.viewType}
     {justOne} />
-  <div style="display: {justOne ? 'none' : 'block'}">
-    <ClientVolumeOverTimeGraph
-      title={clientVolumeOverTimeTitle}
-      description={clientVolumeOverTimeDescription}
-      data={clientCountsData}
+  {#if $store.countView === 'clients'}
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <ClientVolumeOverTimeGraph
+        title={clientVolumeOverTimeTitle}
+        description={clientDescription(aggregationLevel, $store.countView)}
+        data={clientCountsData}
+        xDomain={$domain}
+        yDomain={yClientsDomain}
+        {aggregationLevel}
+        {hovered}
+        {ref}
+        bind:hoverValue
+        on:click={() => {
+          if (hovered.datum) {
+            ref = hovered.datum;
+          }
+        }} />
+    </div>
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <CompareClientVolumeGraph
+        description={compareDescription(clientVolumeOverTimeTitle)}
+        yDomain={yClientsDomain}
+        hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
+        referenceValue={ref.audienceSize} />
+    </div>
+  {/if}
+  {#if $store.countView === 'samples'}
+    <SampleCountOverTimeGraph
+      title={overTimeTitle('sampleVolume', aggregationLevel)}
+      description={clientDescription(aggregationLevel, $store.countView)}
+      data={sampleCountsData}
       xDomain={$domain}
-      yDomain={yClientsDomain}
+      yDomain={ySamplesDomain}
       {aggregationLevel}
       {hovered}
       {ref}
@@ -383,12 +420,14 @@
           ref = hovered.datum;
         }
       }} />
-  </div>
-  <div style="display: {justOne ? 'none' : 'block'}">
-    <CompareClientVolumeGraph
-      description={compareDescription(clientVolumeOverTimeTitle)}
-      yDomain={yClientsDomain}
-      hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
-      referenceValue={ref.audienceSize} />
-  </div>
+    <div style="display: {justOne ? 'none' : 'block'}">
+      <CompareSampleCountGraph
+        description={compareDescription(
+          overTimeTitle('sampleVolume', aggregationLevel)
+        )}
+        yDomain={ySamplesDomain}
+        hoverValue={hovered.datum ? hovered.datum.sample_count : 0}
+        referenceValue={ref.sample_count} />
+    </div>
+  {/if}
 </div>

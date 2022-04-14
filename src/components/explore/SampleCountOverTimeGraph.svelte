@@ -6,10 +6,10 @@
   import Tweenable from '../Tweenable.svelte';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
 
-  import ReleaseVersionMarkers from '../ReleaseVersionMarkers.svelte';
+  import FirefoxReleaseVersionMarkers from '../FirefoxReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
-  import { formatCount } from '../../utils/formatters';
+  import { formatMillion } from '../../utils/formatters';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
   import TrackingLine from './TrackingLine.svelte';
@@ -45,8 +45,8 @@
     {title}
     <a
       class="count-view"
-      on:click={() => store.setField('countView', 'samples')}
-      >View Sample Count</a>
+      on:click={() => store.setField('countView', 'clients')}
+      >View Client Count</a>
   </ChartTitle>
   <DataGraphic
     yType="linear"
@@ -67,7 +67,7 @@
         side="left"
         lineStyle="short"
         ticks={yScale.ticks(4)}
-        tickFormatter={formatCount} />
+        tickFormatter={formatMillion} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
@@ -82,7 +82,7 @@
         curve="curveLinear"
         {data}
         x="label"
-        y="totalClients"
+        y="totalSample"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
         area={true} />
@@ -96,8 +96,8 @@
           params={tween}
           value={{
             location: xScale(ref.label),
-            y: yScale(ref.audienceSize),
-            audienceSize: ref.audienceSize,
+            y: yScale(ref.sample_count),
+            sample_count: ref.sample_count,
           }}
           let:tweenValue={tv1}>
           <TrackingLine xr={tv1.location} />
@@ -111,22 +111,22 @@
           label="Hov." />
         <circle
           cx={xScale(hovered.datum.label)}
-          cy={yScale(hovered.datum.audienceSize)}
+          cy={yScale(hovered.datum.sample_count)}
           r="3"
           fill="var(--cool-gray-700)" />
       {/if}
-      {#if ref && ref.label && ref.audienceSize !== undefined}
+      {#if ref && ref.label && ref.sample_count !== undefined}
         <Tweenable
           params={tween}
           value={{
             x: xScale(ref.label),
-            y: yScale(ref.audienceSize),
-            audienceSize: ref.audienceSize,
+            y: yScale(ref.sample_count),
+            sample_count: ref.sample_count,
           }}
           from={{
             x: xScale(ref.label),
-            y: yScale(ref.audienceSize),
-            audienceSize: ref.audienceSize,
+            y: yScale(ref.sample_count),
+            sample_count: ref.sample_count,
           }}
           let:tweenValue>
           <ReferenceSymbol
@@ -144,6 +144,6 @@
         </Tweenable>
       {/if}
     </g>
-    <ReleaseVersionMarkers labels={false} />
+    <FirefoxReleaseVersionMarkers labels={false} />
   </DataGraphic>
 </div>

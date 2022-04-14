@@ -31,6 +31,7 @@ def _create_aggregation(data=None, multiplier=1.0, model=None):
         "client_agg_type": "summed-histogram",
         "metric_type": "histogram-exponential",
         "total_users": 111 * multiplier,
+        "total_sample": 1000,
         "histogram": json.dumps(
             {
                 "0": round(10.00001111 * multiplier, 4),
@@ -81,6 +82,7 @@ def _create_glean_aggregation(model, data=None, multiplier=1.0):
         "metric_key": "",
         "client_agg_type": "avg",
         "total_users": 111 * multiplier,
+        "total_sample": 1000,
         "histogram": json.dumps(
             {
                 "0": round(10.00001111 * multiplier, 4),
@@ -321,6 +323,7 @@ class TestDesktopAggregationsApi:
             "process": "parent",
             #"total_addressable_market": 999,
             "total_users": 1110,
+            "sample_count": 1000,
             "version": 72,
         }
 
@@ -359,6 +362,7 @@ class TestDesktopAggregationsApi:
             "process": "parent",
             #"total_addressable_market": 999,
             "total_users": 1110,
+            "sample_count": 1000,
             "version": 72,
         }
 
@@ -493,6 +497,7 @@ class TestGleanAggregationsApi:
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "ping_type": "*",
             "total_users": 1110,
+            "sample_count": 1000,
             "version": 2,
             #"total_addressable_market": 888,
         }

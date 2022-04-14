@@ -19,6 +19,7 @@ const niceMetricTypes = {
   counts: 'Client Counts',
   proportions: 'Proportions',
   clientVolume: 'Client Volume',
+  sampleVolume: 'Sample Count Volume',
 };
 
 export function overTimeTitle(metricType, aggregationLevel) {
@@ -56,9 +57,9 @@ export function proportionsOverTimeDescription(
   `;
 }
 
-export function clientVolumeOverTimeDescription(aggregationLevel) {
+export function volumeOverTimeDescription(aggregationLevel, countView) {
   return `
-  Shows the total volume of clients that have observed this probe for each given ${
+  Shows the total volume of ${countView} that have observed this probe for each given ${
     niceAggregations[aggregationLevel]
   }.
 
