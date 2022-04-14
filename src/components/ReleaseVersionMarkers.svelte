@@ -10,7 +10,7 @@
   const xScale = getContext('xScale');
 
   let markers = [];
-  switch ($store.product) {
+  switch ($store.searchProduct) {
     case 'firefox':
       firefoxVersionMarkers.subscribe((m) => {
         markers = m;
@@ -26,7 +26,7 @@
   }
 </script>
 
-{#if ['firefox', 'fenix'].includes($store.product)}
+{#if ['firefox', 'fenix'].includes($store.searchProduct)}
   <g class="firefox-release-version-markers">
     {#if markers && markers.length}
       {#each markers.filter((d) => d.date !== undefined && d.date >= $xScale.domain()[0] && d.date <= $xScale.domain()[1]) as { label, date }, i (date)}

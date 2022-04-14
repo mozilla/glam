@@ -28,6 +28,11 @@
     if (willNeverExpire(item.expires)) return false;
     return new Date() > new Date(item.expires);
   };
+
+  const GLEAN_DICTIONARY_PRODUCT_IDS = {
+    fog: 'firefox_desktop',
+    fenix: 'fenix',
+  };
 </script>
 
 <style>
@@ -185,7 +190,9 @@
           {@html marked($store.probe.description)}
           <a
             class="more-info-link"
-            href={`https://dictionary.telemetry.mozilla.org/apps/fenix/metrics/${$store.probeName}`}
+            href={`https://dictionary.telemetry.mozilla.org/apps/${
+              GLEAN_DICTIONARY_PRODUCT_IDS[$store.product]
+            }/metrics/${$store.probeName}`}
             target="_blank">
             more info
             <ExternalLink size="12" />
@@ -220,8 +227,11 @@
         <dd>
           {#each $store.probe.send_in_pings as ping}
             <a
-              href="https://dictionary.telemetry.mozilla.org/apps/fenix/pings/{ping}"
-              >{ping}</a>
+              href={`https://dictionary.telemetry.mozilla.org/apps/${
+                GLEAN_DICTIONARY_PRODUCT_IDS[$store.product]
+              }/metrics/${$store.probeName}`}
+              >{ping}
+            </a>
           {/each}
         </dd>
       </dl>
@@ -267,9 +277,9 @@
         Export to JSON
       </button>
       <LookerLink
-        product="fenix"
+        product="glean"
         variants={$store.probe.variants}
-        sendInPings={$store.probe.send_in_pings}
+        sendInPings={$store.productDimensions.ping_type}
         channel={$store.productDimensions.app_id} />
     </div>
   </div>
