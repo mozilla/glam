@@ -37,8 +37,12 @@ export const FIREFOX_ON_GLEAN = {
     ping_type: {
       title: 'Ping Type',
       key: 'ping_type',
-      values: [{ key: '*', label: 'All' }],
-      defaultValue: '*',
+      values: [
+        { key: '*', label: 'All' },
+        { key: 'metrics', label: 'Metrics' },
+        { key: 'baseline', label: 'Baseline' },
+      ],
+      defaultValue: 'metrics',
       isValidKey(key, probe) {
         return key === '*' ? true : probe.send_in_pings.includes(key);
       },
