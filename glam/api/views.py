@@ -1,9 +1,10 @@
 import os
 
+import dateutil.parser
 import orjson
 from django.conf import settings
 from django.core.cache import caches
-from django.db.models import Max, Q, Value
+from django.db.models import Max, Q, Value, Count
 from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
@@ -99,11 +100,11 @@ def get_firefox_aggregations(request, **kwargs):
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
-        #counts = _get_firefox_counts(channel, os, versions, by_build=False)
+        # counts = _get_firefox_counts(channel, os, versions, by_build=False)
         shas = {}
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
-        #counts = _get_firefox_counts(channel, os, versions, by_build=True)
+        # counts = _get_firefox_counts(channel, os, versions, by_build=True)
         shas = _get_firefox_shas(channel)
 
     if "process" in kwargs:
@@ -135,7 +136,7 @@ def get_firefox_aggregations(request, **kwargs):
                 data["client_agg_type"] = row.client_agg_type
 
         # Get the total distinct client IDs for this set of dimensions.
-        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
@@ -223,20 +224,20 @@ def get_glean_aggregations(request, **kwargs):
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        if product == 'fenix':
+        if product == "fenix":
             dimensions.append(Q(build_id="*"))
             # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
-        if product == 'fog':
+        if product == "fog":
             dimensions.append(~Q(build_id="*"))
             # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
 
     if aggregation_level == "build_id":
-        if product == 'fenix':
+        if product == "fenix":
             dimensions.append(~Q(build_id="*"))
-            #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
-        if product == 'fog':
+            # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
+        if product == "fog":
             dimensions.append(~Q(build_id="*"))
-            #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
+            # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
@@ -261,7 +262,7 @@ def get_glean_aggregations(request, **kwargs):
         }
 
         # Get the total distinct client IDs for this set of dimensions.
-        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
@@ -289,6 +290,7 @@ def _get_fenix_counts(app_id, versions, ping_type, os, by_build):
     }
 
     return data
+
 
 def _get_fog_counts(app_id, versions, ping_type, os, by_build):
     """
@@ -444,15 +446,58 @@ def random_probes(request):
 
 
 def log_probe_query(request):
-    query = request.data['query']
+    query = request.data["query"]
     InstrumentationUsage(
-        action_type = InstrumentationUsage.ACTION_PROBE_SEARCH,
-        context = query,
-        session_id = "Eduardos",
-        probe_name = query['probe'],
+        action_type=InstrumentationUsage.ACTION_PROBE_SEARCH,
+        context=query,
+        session_id="Eduardos",
+        probe_name=query["probe"],
     ).save()
 
 
-@api_view(["POST"])
+@api_view(["GET", "POST"])
 def usage(request):
-    log_probe_query(request)
+    if request.method == "POST":
+        return Response("Sorry we're not open yet", 405)
+    if request.method == "GET":
+        q_action_type = request.GET.get("actionType", "")
+        q_from = request.GET.get("fromDate", "")
+        q_to = request.GET.get("toDate", "")
+        q_fields = request.GET.get("fields", "")
+        q_count = request.GET.get("agg", "") == "count"
+
+        dimensions = []
+
+        if q_action_type:
+            dimensions.append(Q(action_type=q_action_type))
+        if q_from:
+            min_date = dateutil.parser.parse(q_from)
+            dimensions.append(Q(timestamp__gte=min_date))
+        if q_to:
+            max_date = dateutil.parser.parse(q_to)
+            dimensions.append(Q(timestamp__lte=max_date))
+
+        result = InstrumentationUsage.objects.filter(*dimensions)
+
+        if q_fields:
+            fields = q_fields.split(",")
+            response = result.values(*fields)
+            if q_count:
+                response = (
+                    response.annotate(total=Count("*"))
+                    .order_by(
+                        "total",
+                    )
+                    .reverse()
+                )
+        else:
+            response = []
+            for row in result:
+                data = {
+                    "action_type": row.action_type,
+                    "timestamp": row.timestamp,
+                    "probe_name": row.probe_name,
+                }
+                response.append(data)
+
+        return Response(response, 200)
