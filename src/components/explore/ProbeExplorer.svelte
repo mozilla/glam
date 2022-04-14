@@ -154,12 +154,13 @@
 
   // client counts.
   const MULT = 1.1;
+  const MAX_DEFAULT_VALUE = 50;
   $: clientCountsData = clientCounts(data);
   $: sampleCountsData = sampleCounts(data);
   $: yValsSample = sampleCountsData.map((d) => d.totalSample);
   $: yVals = clientCountsData.map((d) => d.totalClients);
-  $: yMaxClient = Math.max(50, Math.max(...yVals));
-  $: yMaxSample = Math.max(50, Math.max(...yValsSample));
+  $: yMaxClient = Math.max(MAX_DEFAULT_VALUE, Math.max(...yVals));
+  $: yMaxSample = Math.max(MAX_DEFAULT_VALUE, Math.max(...yValsSample));
 
   $: yClientsDomain = [0, yMaxClient * MULT];
   $: ySamplesDomain = [0, yMaxSample * MULT];

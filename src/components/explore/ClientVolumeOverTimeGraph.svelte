@@ -29,6 +29,14 @@
   export let hoverValue = {};
 </script>
 
+<style>
+  .count-view {
+    font-weight: 300;
+    font-size: 0.7em;
+    cursor: pointer;
+  }
+</style>
+
 <div>
   <ChartTitle
     {description}
@@ -36,7 +44,7 @@
     right={totalClientsGraph.right}>
     {title}
     <a
-      style="font-weight: 300; font-size: 0.7em; cursor: pointer;"
+      class="count-view"
       on:click={() => store.setField('countView', 'samples')}
       >View Sample Count</a>
   </ChartTitle>
