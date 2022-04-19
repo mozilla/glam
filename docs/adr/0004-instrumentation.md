@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Deciders: Christina Harlow, Linh Nguyen, Rob Miller
-- Date: [2022-04-05
+- Date: 2022-04-05
 
 Technical Story: https://github.com/mozilla/glam/issues/1847
 
