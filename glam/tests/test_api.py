@@ -321,7 +321,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            #"total_addressable_market": 999,
+            # "total_addressable_market": 999,
             "total_users": 1110,
             "sample_count": 1000,
             "version": 72,
@@ -360,7 +360,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            #"total_addressable_market": 999,
+            # "total_addressable_market": 999,
             "total_users": 1110,
             "sample_count": 1000,
             "version": 72,
@@ -499,7 +499,7 @@ class TestGleanAggregationsApi:
             "total_users": 1110,
             "sample_count": 1000,
             "version": 2,
-            #"total_addressable_market": 888,
+            # "total_addressable_market": 888,
         }
 
     def test_versions_count(self, client):
@@ -527,6 +527,72 @@ class TestGleanAggregationsApi:
         assert len(data["response"]) == 4
         versions = sorted([d["version"] for d in data["response"]])
         assert versions == sorted([6, 5, 4, 3])
+
+
+class TestUsageApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-usage")
+        cls.agg_url = reverse("v1-data")
+
+    def _search_probe(self, client, probe_name):
+        agg_query = {
+            "query": {
+                "channel": "nightly",
+                "probe": probe_name,
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        return client.post(
+            self.agg_url, data=agg_query, content_type="application/json"
+        )
+
+    def test_no_params(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_aggregation(data={"metric": "probe2"})
+
+        search_resp = self._search_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_probe(client, "probe2")
+        assert search_resp.status_code == 200
+
+        resp_usage = client.get(self.url)
+        assert resp_usage.status_code == 200
+        data = sorted(resp_usage.json(), key=lambda x: x["probe_name"])
+        assert len(data) == 2
+        assert data[0]["action_type"] == "PROBE_SEARCH"
+        assert data[0]["timestamp"]
+        assert data[0]["probe_name"] == "probe1"
+        assert data[1]["action_type"] == "PROBE_SEARCH"
+        assert data[1]["timestamp"]
+        assert data[1]["probe_name"] == "probe2"
+
+    def test_fields_count(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_aggregation(data={"metric": "probe2"})
+
+        search_resp = self._search_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_probe(client, "probe2")
+        assert search_resp.status_code == 200
+
+        query_usage = {"fields": "probe_name,action_type", "agg": "count"}
+        resp_usage = client.get(self.url, data=query_usage)
+        assert resp_usage.status_code == 200
+        data = sorted(resp_usage.json(), key=lambda x: x["probe_name"])
+        assert len(data) == 2
+        assert data[0]["action_type"] == "PROBE_SEARCH"
+        assert "timestamp" not in data[0]
+        assert data[0]["probe_name"] == "probe1"
+        assert data[0]["total"] == 2
+
+        assert data[1]["action_type"] == "PROBE_SEARCH"
+        assert "timestamp" not in data[1]
+        assert data[1]["probe_name"] == "probe2"
+        assert data[1]["total"] == 1
 
 
 class TestUpdatesApi:

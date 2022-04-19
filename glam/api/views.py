@@ -23,7 +23,7 @@ from glam.api.models import (
     FirefoxCounts,
     LastUpdated,
     Probe,
-    InstrumentationUsage,
+    UsageInstrumentation,
 )
 
 
@@ -447,10 +447,10 @@ def random_probes(request):
 
 def log_probe_query(request):
     query = request.data["query"]
-    InstrumentationUsage(
-        action_type=InstrumentationUsage.ACTION_PROBE_SEARCH,
+    UsageInstrumentation(
+        action_type=UsageInstrumentation.ACTION_PROBE_SEARCH,
         context=query,
-        session_id="Eduardos",
+        tracking_id=request.COOKIES.get("session"),
         probe_name=query["probe"],
     ).save()
 
@@ -477,7 +477,7 @@ def usage(request):
             max_date = dateutil.parser.parse(q_to)
             dimensions.append(Q(timestamp__lte=max_date))
 
-        result = InstrumentationUsage.objects.filter(*dimensions)
+        result = UsageInstrumentation.objects.filter(*dimensions)
 
         if q_fields:
             fields = q_fields.split(",")

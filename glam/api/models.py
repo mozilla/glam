@@ -269,7 +269,7 @@ class FirefoxBuildRevisions(models.Model):
         ]
 
 
-class InstrumentationUsage(models.Model):
+class UsageInstrumentation(models.Model):
     ACTION_PROBE_SEARCH = 'PROBE_SEARCH'
     ACTIONS = [
         (ACTION_PROBE_SEARCH, "probe_search"),
@@ -278,8 +278,8 @@ class InstrumentationUsage(models.Model):
     action_type = models.CharField(max_length=100, choices=ACTIONS)
     timestamp = models.DateTimeField(auto_now_add=True)
     context = models.JSONField(null=True)
-    session_id = models.CharField(max_length=100)
+    tracking_id = models.CharField(null=True, max_length=500)
     probe_name = models.CharField(null=True, max_length=100)
 
     class Meta:
-        db_table = "glam_instrumentation_usage"
+        db_table = "glam_usage_instrumentation"
