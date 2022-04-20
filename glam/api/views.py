@@ -455,10 +455,20 @@ def log_probe_query(request):
     ).save()
 
 
-@api_view(["GET", "POST"])
+@api_view(["GET"])
 def usage(request):
-    if request.method == "POST":
-        return Response("Sorry we're not open yet", 405)
+    """
+    Provides individual or aggregated (count) metrics on probe searching.
+
+    Possible query parameters are:
+    * fromDate: Date to start the search with.  Format: YYYYMMDD
+    * toDate: Date to end the search with.  Format: YYYYMMDD
+    * fields: Name of fields to return. See models.UsageInstrumentation for the full list.
+              This parameter is needed for aggregation.
+    * actionType: The type of action that triggered the metric. The only possible value now is: PROBE_SEARCH
+    * agg: The "Aggregate" flag. The only possible value now is: count. Note that if "fields" is not
+           supplied, this parameter is ignored
+    """
     if request.method == "GET":
         q_action_type = request.GET.get("actionType", "")
         q_from = request.GET.get("fromDate", "")
