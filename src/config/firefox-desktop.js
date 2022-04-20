@@ -130,6 +130,7 @@ export default {
           : 'quantile';
 
       appStore.setField('viewType', viewType);
+      appStore.setField('aggMethod', payload.response[0].client_agg_type);
 
       let data = payload.response;
 

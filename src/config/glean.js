@@ -119,7 +119,7 @@ export const FIREFOX_ON_GLEAN = {
           ? 'proportion'
           : 'quantile';
       appStore.setField('viewType', viewType);
-
+      appStore.setField('aggMethod', payload.response[0].client_agg_type);
       const data = transformAPIResponse[viewType](
         payload.response,
         aggregationLevel,

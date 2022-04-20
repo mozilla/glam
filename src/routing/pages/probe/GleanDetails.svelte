@@ -197,6 +197,10 @@
             more info
             <ExternalLink size="12" />
           </a>
+          {#if $store.aggMethod}
+            <h2 class="detail-title">aggregation method</h2>
+            <p>{$store.aggMethod}</p>
+          {/if}
         </div>
       {/if}
     </div>
