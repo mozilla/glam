@@ -1,10 +1,13 @@
+import imp
 import json
 
 import pytest
+from datetime import datetime
 from django.conf import settings
 from django.db import connection
 from django.urls import reverse
 from django.utils import timezone
+from unittest import mock
 
 from glam.api import constants
 from glam.api.models import (
@@ -529,6 +532,47 @@ class TestGleanAggregationsApi:
         assert versions == sorted([6, 5, 4, 3])
 
 
+class TestUpdatesApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-updates")
+        cls.datetime1 = timezone.datetime(year=2020, month=1, day=1).replace(
+            tzinfo=timezone.utc
+        )
+        cls.datetime2 = timezone.datetime(year=2020, month=2, day=2).replace(
+            tzinfo=timezone.utc
+        )
+
+    def _create_stamps(self):
+        LastUpdated.objects.create(product="desktop", last_updated=self.datetime1)
+        LastUpdated.objects.create(
+            product="org_mozilla_fenix", last_updated=self.datetime2
+        )
+
+    def test_no_params(self, client):
+        self._create_stamps()
+
+        resp = client.get(self.url)
+        data = resp.json()
+        assert len(data["updates"]) == 2
+        assert data["updates"]["desktop"] == self.datetime1.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )
+        assert data["updates"]["org_mozilla_fenix"] == self.datetime2.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )
+
+    def test_params(self, client):
+        self._create_stamps()
+
+        resp = client.get(self.url, data={"product": "desktop"})
+        data = resp.json()
+        assert len(data["updates"]) == 1
+        assert data["updates"]["desktop"] == self.datetime1.strftime(
+            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
+        )
+
+
 class TestUsageApi:
     @classmethod
     def setup_class(cls):
@@ -594,43 +638,53 @@ class TestUsageApi:
         assert data[1]["probe_name"] == "probe2"
         assert data[1]["total"] == 1
 
+    def test_date_range(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_aggregation(data={"metric": "probe2"})
 
-class TestUpdatesApi:
-    @classmethod
-    def setup_class(cls):
-        cls.url = reverse("v1-updates")
-        cls.datetime1 = timezone.datetime(year=2020, month=1, day=1).replace(
-            tzinfo=timezone.utc
-        )
-        cls.datetime2 = timezone.datetime(year=2020, month=2, day=2).replace(
-            tzinfo=timezone.utc
-        )
+        # day 1
+        with mock.patch("django.utils.timezone.now") as mock_now:
+            mock_now.return_value = datetime.fromisoformat("2022-01-01 00:00:01")
+            search_resp = self._search_probe(client, "probe1")
+            assert search_resp.status_code == 200
+            search_resp = self._search_probe(client, "probe1")
+            assert search_resp.status_code == 200
 
-    def _create_stamps(self):
-        LastUpdated.objects.create(product="desktop", last_updated=self.datetime1)
-        LastUpdated.objects.create(
-            product="org_mozilla_fenix", last_updated=self.datetime2
-        )
+        # day 2
+        with mock.patch("django.utils.timezone.now") as mock_now:
+            mock_now.return_value = datetime.fromisoformat("2022-01-02 00:00:01")
+            search_resp = self._search_probe(client, "probe1")
+            assert search_resp.status_code == 200
+            search_resp = self._search_probe(client, "probe2")
+            assert search_resp.status_code == 200
+            search_resp = self._search_probe(client, "probe2")
+            assert search_resp.status_code == 200
 
-    def test_no_params(self, client):
-        self._create_stamps()
+        # All metrics
+        query_usage = {"fromDate": "20220101"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 5
 
-        resp = client.get(self.url)
-        data = resp.json()
-        assert len(data["updates"]) == 2
-        assert data["updates"]["desktop"] == self.datetime1.strftime(
-            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
-        )
-        assert data["updates"]["org_mozilla_fenix"] == self.datetime2.strftime(
-            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
-        )
+        query_usage = {"toDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 5
 
-    def test_params(self, client):
-        self._create_stamps()
+        # Only day 1 metrics
+        query_usage = {"fromDate": "20220101", "toDate": "20220102"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 2
 
-        resp = client.get(self.url, data={"product": "desktop"})
-        data = resp.json()
-        assert len(data["updates"]) == 1
-        assert data["updates"]["desktop"] == self.datetime1.strftime(
-            settings.REST_FRAMEWORK["DATETIME_FORMAT"]
-        )
+        # Only day 2 metrics
+        query_usage = {"fromDate": "20220102", "toDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 3
+
+        # No metrics - future
+        query_usage = {"fromDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 0
