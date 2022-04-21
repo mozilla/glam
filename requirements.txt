@@ -123,6 +123,8 @@ pytest-cov==3.0.0
     # via -r requirements.in
 pytest-django==4.4.0
     # via -r requirements.in
+python-dateutil==2.8.2
+    # via -r requirements.in
 pytz==2021.1
     # via
     #   django
@@ -144,6 +146,7 @@ six==1.16.0
     #   google-resumable-media
     #   grpcio
     #   protobuf
+    #   python-dateutil
 sqlparse==0.4.2
     # via django
 toml==0.10.2
