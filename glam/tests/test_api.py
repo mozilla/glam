@@ -579,10 +579,26 @@ class TestUsageApi:
         cls.url = reverse("v1-usage")
         cls.agg_url = reverse("v1-data")
 
-    def _search_probe(self, client, probe_name):
+    def _search_fx_probe(self, client, probe_name):
         agg_query = {
             "query": {
+                "product": "firefox",
                 "channel": "nightly",
+                "probe": probe_name,
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        return client.post(
+            self.agg_url, data=agg_query, content_type="application/json"
+        )
+
+    def _search_glean_probe(self, client, probe_name):
+        agg_query = {
+            "query": {
+                "product": "fenix",
+                "app_id": "nightly",
+                "ping_type": "*",
                 "probe": probe_name,
                 "versions": 4,
                 "aggregationLevel": "version",
@@ -594,11 +610,11 @@ class TestUsageApi:
 
     def test_no_params(self, client):
         _create_aggregation(data={"metric": "probe1"})
-        _create_aggregation(data={"metric": "probe2"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
 
-        search_resp = self._search_probe(client, "probe1")
+        search_resp = self._search_fx_probe(client, "probe1")
         assert search_resp.status_code == 200
-        search_resp = self._search_probe(client, "probe2")
+        search_resp = self._search_glean_probe(client, "probe2")
         assert search_resp.status_code == 200
 
         resp_usage = client.get(self.url)
@@ -614,13 +630,13 @@ class TestUsageApi:
 
     def test_fields_count(self, client):
         _create_aggregation(data={"metric": "probe1"})
-        _create_aggregation(data={"metric": "probe2"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
 
-        search_resp = self._search_probe(client, "probe1")
+        search_resp = self._search_fx_probe(client, "probe1")
         assert search_resp.status_code == 200
-        search_resp = self._search_probe(client, "probe1")
+        search_resp = self._search_fx_probe(client, "probe1")
         assert search_resp.status_code == 200
-        search_resp = self._search_probe(client, "probe2")
+        search_resp = self._search_glean_probe(client, "probe2")
         assert search_resp.status_code == 200
 
         query_usage = {"fields": "probe_name,action_type", "agg": "count"}
@@ -640,24 +656,24 @@ class TestUsageApi:
 
     def test_date_range(self, client):
         _create_aggregation(data={"metric": "probe1"})
-        _create_aggregation(data={"metric": "probe2"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
 
         # day 1
         with mock.patch("django.utils.timezone.now") as mock_now:
             mock_now.return_value = datetime.fromisoformat("2022-01-01 00:00:01")
-            search_resp = self._search_probe(client, "probe1")
+            search_resp = self._search_fx_probe(client, "probe1")
             assert search_resp.status_code == 200
-            search_resp = self._search_probe(client, "probe1")
+            search_resp = self._search_fx_probe(client, "probe1")
             assert search_resp.status_code == 200
 
         # day 2
         with mock.patch("django.utils.timezone.now") as mock_now:
             mock_now.return_value = datetime.fromisoformat("2022-01-02 00:00:01")
-            search_resp = self._search_probe(client, "probe1")
+            search_resp = self._search_fx_probe(client, "probe1")
             assert search_resp.status_code == 200
-            search_resp = self._search_probe(client, "probe2")
+            search_resp = self._search_glean_probe(client, "probe2")
             assert search_resp.status_code == 200
-            search_resp = self._search_probe(client, "probe2")
+            search_resp = self._search_glean_probe(client, "probe2")
             assert search_resp.status_code == 200
 
         # All metrics

@@ -6,7 +6,7 @@
   "homepage": "https://github.com/mozilla/glam#readme",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mozilla/glam.git"
+    "url": "git@github.com:mozilla/glam.git"
   },
   "bugs": {
     "url": "https://github.com/mozilla/glam/issues"
@@ -61,11 +61,6 @@
     "svelte-loader": "3.1.2"
   },
   "dependencies": {
-    "@opentelemetry/api": "^1.0.4",
-    "@opentelemetry/context-zone": "^1.0.1",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.27.0",
-    "@opentelemetry/instrumentation-document-load": "^0.27.1",
-    "@opentelemetry/sdk-trace-web": "^1.0.1",
     "d3-array": "3.0.1",
     "d3-format": "2.0.0",
     "d3-scale": "4.0.0",
@@ -84,12 +79,5 @@
     "build-storybook": "build-storybook --static-dir ./public --config-dir .storybook",
     "test:jest": "jest test --no-cache",
     "test": "npm-run-all format:check lint test:jest"
-  },
-  "main": ".eslintrc.js",
-  "directories": {
-    "doc": "docs",
-    "test": "tests"
-  },
-  "keywords": [],
-  "author": ""
+  }
 }

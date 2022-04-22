@@ -140,6 +140,7 @@ def get_firefox_aggregations(request, **kwargs):
 
         response.append(data)
 
+    _log_probe_query(request)
     return response
 
 
@@ -266,6 +267,7 @@ def get_glean_aggregations(request, **kwargs):
 
         response.append(data)
 
+    _log_probe_query(request)
     return response
 
 
@@ -393,7 +395,6 @@ def aggregations(request):
     if not response:
         raise NotFound("No documents found for the given parameters")
 
-    log_probe_query(request)
     return Response({"response": response})
 
 
@@ -445,12 +446,14 @@ def random_probes(request):
     return Response({"probes": probes})
 
 
-def log_probe_query(request):
+def _log_probe_query(request):
     query = request.data["query"]
     UsageInstrumentation(
         action_type=UsageInstrumentation.ACTION_PROBE_SEARCH,
         context=query,
-        tracking_id=request.COOKIES.get("session"),
+        tracking_id=request.COOKIES.get(
+            "session", ""
+        ),  # FIXME this field isn't always present. We need to find a better replacement to allow for accurate analysis
         probe_name=query["probe"],
     ).save()
 
@@ -470,44 +473,26 @@ def usage(request):
            supplied, this parameter is ignored
     """
     if request.method == "GET":
-        q_action_type = request.GET.get("actionType", "")
-        q_from = request.GET.get("fromDate", "")
-        q_to = request.GET.get("toDate", "")
-        q_fields = request.GET.get("fields", "")
-        q_count = request.GET.get("agg", "") == "count"
-
         dimensions = []
 
-        if q_action_type:
+        if q_action_type := request.GET.get("actionType"):
             dimensions.append(Q(action_type=q_action_type))
-        if q_from:
+        if q_from := request.GET.get("fromDate"):
             min_date = dateutil.parser.parse(q_from)
             dimensions.append(Q(timestamp__gte=min_date))
-        if q_to:
+        if q_to := request.GET.get("toDate"):
             max_date = dateutil.parser.parse(q_to)
             dimensions.append(Q(timestamp__lte=max_date))
 
         result = UsageInstrumentation.objects.filter(*dimensions)
 
-        if q_fields:
+        if q_fields := request.GET.get("fields"):
             fields = q_fields.split(",")
             response = result.values(*fields)
-            if q_count:
-                response = (
-                    response.annotate(total=Count("*"))
-                    .order_by(
-                        "total",
-                    )
-                    .reverse()
+            if request.GET.get("agg") == "count":
+                response = response.annotate(total=Count("*")).order_by(
+                    "-total",
                 )
         else:
-            response = []
-            for row in result:
-                data = {
-                    "action_type": row.action_type,
-                    "timestamp": row.timestamp,
-                    "probe_name": row.probe_name,
-                }
-                response.append(data)
-
+            response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
