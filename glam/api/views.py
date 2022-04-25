@@ -1,9 +1,10 @@
 import os
 
+import dateutil.parser
 import orjson
 from django.conf import settings
 from django.core.cache import caches
-from django.db.models import Max, Q, Value
+from django.db.models import Max, Q, Value, Count
 from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
@@ -22,6 +23,7 @@ from glam.api.models import (
     FirefoxCounts,
     LastUpdated,
     Probe,
+    UsageInstrumentation,
 )
 
 
@@ -98,11 +100,11 @@ def get_firefox_aggregations(request, **kwargs):
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         dimensions.append(Q(build_id="*"))
-        #counts = _get_firefox_counts(channel, os, versions, by_build=False)
+        # counts = _get_firefox_counts(channel, os, versions, by_build=False)
         shas = {}
     elif aggregation_level == "build_id":
         dimensions.append(~Q(build_id="*"))
-        #counts = _get_firefox_counts(channel, os, versions, by_build=True)
+        # counts = _get_firefox_counts(channel, os, versions, by_build=True)
         shas = _get_firefox_shas(channel)
 
     if "process" in kwargs:
@@ -134,10 +136,11 @@ def get_firefox_aggregations(request, **kwargs):
                 data["client_agg_type"] = row.client_agg_type
 
         # Get the total distinct client IDs for this set of dimensions.
-        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
+    _log_probe_query(request)
     return response
 
 
@@ -222,20 +225,20 @@ def get_glean_aggregations(request, **kwargs):
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        if product == 'fenix':
+        if product == "fenix":
             dimensions.append(Q(build_id="*"))
             # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
-        if product == 'fog':
+        if product == "fog":
             dimensions.append(~Q(build_id="*"))
             # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
 
     if aggregation_level == "build_id":
-        if product == 'fenix':
+        if product == "fenix":
             dimensions.append(~Q(build_id="*"))
-            #counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
-        if product == 'fog':
+            # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=True)
+        if product == "fog":
             dimensions.append(~Q(build_id="*"))
-            #counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
+            # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=True)
 
     result = model.objects.filter(*dimensions)
 
@@ -260,10 +263,11 @@ def get_glean_aggregations(request, **kwargs):
         }
 
         # Get the total distinct client IDs for this set of dimensions.
-        #data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
 
+    _log_probe_query(request)
     return response
 
 
@@ -288,6 +292,7 @@ def _get_fenix_counts(app_id, versions, ping_type, os, by_build):
     }
 
     return data
+
 
 def _get_fog_counts(app_id, versions, ping_type, os, by_build):
     """
@@ -439,3 +444,55 @@ def random_probes(request):
         probes.append({"data": agg.histogram, "info": probe.info})
 
     return Response({"probes": probes})
+
+
+def _log_probe_query(request):
+    query = request.data["query"]
+    UsageInstrumentation(
+        action_type=UsageInstrumentation.ACTION_PROBE_SEARCH,
+        context=query,
+        tracking_id=request.COOKIES.get(
+            "session", ""
+        ),  # FIXME this field isn't always present. We need to find a better replacement to allow for accurate analysis
+        probe_name=query["probe"],
+    ).save()
+
+
+@api_view(["GET"])
+def usage(request):
+    """
+    Provides individual or aggregated (count) metrics on probe searching.
+
+    Possible query parameters are:
+    * fromDate: Date to start the search with.  Format: YYYYMMDD
+    * toDate: Date to end the search with.  Format: YYYYMMDD
+    * fields: Name of fields to return. See models.UsageInstrumentation for the full list.
+              This parameter is needed for aggregation.
+    * actionType: The type of action that triggered the metric. The only possible value now is: PROBE_SEARCH
+    * agg: The "Aggregate" flag. The only possible value now is: count. Note that if "fields" is not
+           supplied, this parameter is ignored
+    """
+    if request.method == "GET":
+        dimensions = []
+
+        if q_action_type := request.GET.get("actionType"):
+            dimensions.append(Q(action_type=q_action_type))
+        if q_from := request.GET.get("fromDate"):
+            min_date = dateutil.parser.parse(q_from)
+            dimensions.append(Q(timestamp__gte=min_date))
+        if q_to := request.GET.get("toDate"):
+            max_date = dateutil.parser.parse(q_to)
+            dimensions.append(Q(timestamp__lte=max_date))
+
+        result = UsageInstrumentation.objects.filter(*dimensions)
+
+        if q_fields := request.GET.get("fields"):
+            fields = q_fields.split(",")
+            response = result.values(*fields)
+            if request.GET.get("agg") == "count":
+                response = response.annotate(total=Count("*")).order_by(
+                    "-total",
+                )
+        else:
+            response = result.values("action_type", "timestamp", "probe_name")
+        return Response(response, 200)

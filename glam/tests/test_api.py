@@ -1,10 +1,13 @@
+import imp
 import json
 
 import pytest
+from datetime import datetime
 from django.conf import settings
 from django.db import connection
 from django.urls import reverse
 from django.utils import timezone
+from unittest import mock
 
 from glam.api import constants
 from glam.api.models import (
@@ -321,7 +324,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            #"total_addressable_market": 999,
+            # "total_addressable_market": 999,
             "total_users": 1110,
             "sample_count": 1000,
             "version": 72,
@@ -360,7 +363,7 @@ class TestDesktopAggregationsApi:
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
             "process": "parent",
-            #"total_addressable_market": 999,
+            # "total_addressable_market": 999,
             "total_users": 1110,
             "sample_count": 1000,
             "version": 72,
@@ -499,7 +502,7 @@ class TestGleanAggregationsApi:
             "total_users": 1110,
             "sample_count": 1000,
             "version": 2,
-            #"total_addressable_market": 888,
+            # "total_addressable_market": 888,
         }
 
     def test_versions_count(self, client):
@@ -568,3 +571,136 @@ class TestUpdatesApi:
         assert data["updates"]["desktop"] == self.datetime1.strftime(
             settings.REST_FRAMEWORK["DATETIME_FORMAT"]
         )
+
+
+class TestUsageApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-usage")
+        cls.agg_url = reverse("v1-data")
+
+    def _search_fx_probe(self, client, probe_name):
+        agg_query = {
+            "query": {
+                "product": "firefox",
+                "channel": "nightly",
+                "probe": probe_name,
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        return client.post(
+            self.agg_url, data=agg_query, content_type="application/json"
+        )
+
+    def _search_glean_probe(self, client, probe_name):
+        agg_query = {
+            "query": {
+                "product": "fenix",
+                "app_id": "nightly",
+                "ping_type": "*",
+                "probe": probe_name,
+                "versions": 4,
+                "aggregationLevel": "version",
+            }
+        }
+        return client.post(
+            self.agg_url, data=agg_query, content_type="application/json"
+        )
+
+    def test_no_params(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
+
+        search_resp = self._search_fx_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_glean_probe(client, "probe2")
+        assert search_resp.status_code == 200
+
+        resp_usage = client.get(self.url)
+        assert resp_usage.status_code == 200
+        data = sorted(resp_usage.json(), key=lambda x: x["probe_name"])
+        assert len(data) == 2
+        assert data[0]["action_type"] == "PROBE_SEARCH"
+        assert data[0]["timestamp"]
+        assert data[0]["probe_name"] == "probe1"
+        assert data[1]["action_type"] == "PROBE_SEARCH"
+        assert data[1]["timestamp"]
+        assert data[1]["probe_name"] == "probe2"
+
+    def test_fields_count(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
+
+        search_resp = self._search_fx_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_fx_probe(client, "probe1")
+        assert search_resp.status_code == 200
+        search_resp = self._search_glean_probe(client, "probe2")
+        assert search_resp.status_code == 200
+
+        query_usage = {"fields": "probe_name,action_type", "agg": "count"}
+        resp_usage = client.get(self.url, data=query_usage)
+        assert resp_usage.status_code == 200
+        data = sorted(resp_usage.json(), key=lambda x: x["probe_name"])
+        assert len(data) == 2
+        assert data[0]["action_type"] == "PROBE_SEARCH"
+        assert "timestamp" not in data[0]
+        assert data[0]["probe_name"] == "probe1"
+        assert data[0]["total"] == 2
+
+        assert data[1]["action_type"] == "PROBE_SEARCH"
+        assert "timestamp" not in data[1]
+        assert data[1]["probe_name"] == "probe2"
+        assert data[1]["total"] == 1
+
+    def test_date_range(self, client):
+        _create_aggregation(data={"metric": "probe1"})
+        _create_glean_aggregation(model=FenixAggregation, data={"metric": "probe2"})
+
+        # day 1
+        with mock.patch("django.utils.timezone.now") as mock_now:
+            mock_now.return_value = datetime.fromisoformat("2022-01-01 00:00:01")
+            search_resp = self._search_fx_probe(client, "probe1")
+            assert search_resp.status_code == 200
+            search_resp = self._search_fx_probe(client, "probe1")
+            assert search_resp.status_code == 200
+
+        # day 2
+        with mock.patch("django.utils.timezone.now") as mock_now:
+            mock_now.return_value = datetime.fromisoformat("2022-01-02 00:00:01")
+            search_resp = self._search_fx_probe(client, "probe1")
+            assert search_resp.status_code == 200
+            search_resp = self._search_glean_probe(client, "probe2")
+            assert search_resp.status_code == 200
+            search_resp = self._search_glean_probe(client, "probe2")
+            assert search_resp.status_code == 200
+
+        # All metrics
+        query_usage = {"fromDate": "20220101"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 5
+
+        query_usage = {"toDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 5
+
+        # Only day 1 metrics
+        query_usage = {"fromDate": "20220101", "toDate": "20220102"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 2
+
+        # Only day 2 metrics
+        query_usage = {"fromDate": "20220102", "toDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 3
+
+        # No metrics - future
+        query_usage = {"fromDate": "20220103"}
+        resp_usage = client.get(self.url, data=query_usage)
+        data = resp_usage.json()
+        assert len(data) == 0

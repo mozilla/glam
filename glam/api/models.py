@@ -81,6 +81,7 @@ class FenixAggregationView(AbstractGleanAggregation):
         managed = False
         db_table = "view_glam_fenix_aggregation"
 
+
 class FOGAggregation(AbstractGleanAggregation):
     class Meta(AbstractGleanAggregation.Meta):
         db_table = "glam_fog_aggregation"
@@ -164,7 +165,8 @@ class DesktopBetaAggregation(AbstractDesktopAggregation):
         db_table = "glam_desktop_beta_aggregation"
         constraints = [
             models.UniqueConstraint(
-                name="desktop_beta_unique_dimensions", fields=DESKTOP_CONSTRAINT_FIELDS,
+                name="desktop_beta_unique_dimensions",
+                fields=DESKTOP_CONSTRAINT_FIELDS,
             )
         ]
 
@@ -231,6 +233,8 @@ class FenixCounts(models.Model):
                 fields=["app_id", "channel", "version", "ping_type", "build_id", "os"],
             )
         ]
+
+
 class FOGCounts(models.Model):
     id = models.AutoField(primary_key=True)
     app_id = models.CharField(max_length=100)
@@ -252,7 +256,6 @@ class FOGCounts(models.Model):
         ]
 
 
-
 class FirefoxBuildRevisions(models.Model):
     id = models.AutoField(primary_key=True)
     channel = models.CharField(max_length=100, db_index=True)
@@ -267,3 +270,19 @@ class FirefoxBuildRevisions(models.Model):
                 fields=["channel", "build_id"],
             )
         ]
+
+
+class UsageInstrumentation(models.Model):
+    ACTION_PROBE_SEARCH = "PROBE_SEARCH"
+    ACTIONS = [
+        (ACTION_PROBE_SEARCH, "probe_search"),
+    ]
+    id = models.BigAutoField(primary_key=True)
+    action_type = models.CharField(max_length=100, choices=ACTIONS)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    context = models.JSONField(null=True)
+    tracking_id = models.CharField(blank=True, max_length=500)
+    probe_name = models.CharField(blank=True, max_length=100)
+
+    class Meta:
+        db_table = "glam_usage_instrumentation"
