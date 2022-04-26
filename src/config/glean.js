@@ -118,8 +118,10 @@ export const FIREFOX_ON_GLEAN = {
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
           : 'quantile';
+
       appStore.setField('viewType', viewType);
       appStore.setField('aggMethod', payload.response[0].client_agg_type);
+
       const data = transformAPIResponse[viewType](
         payload.response,
         aggregationLevel,
@@ -281,7 +283,9 @@ export const FENIX = {
         this.probeView[metricType] === 'categorical'
           ? 'proportion'
           : 'quantile';
+
       appStore.setField('viewType', viewType);
+      appStore.setField('aggMethod', payload.response[0].client_agg_type);
 
       const data = transformAPIResponse[viewType](
         payload.response,
