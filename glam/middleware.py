@@ -9,8 +9,9 @@ def dev_cors_middleware(get_response):
 
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS, POST"
-        response["Access-Control-Allow-Headers"] = (
-            "Authorization, Content-Type, X-CSRFToken")
+        response[
+            "Access-Control-Allow-Headers"
+        ] = "Authorization, Content-Type, X-CSRFToken"
         response["Access-Control-Max-Age"] = 60 * 60 * 24
 
         return response

@@ -4,19 +4,19 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     def delete_sqlite_probes(apps, scheme_editor):
-            probes_to_remove = {'sqlite_store_open', 'sqlite_store_query'}
-            target_models = {'DesktopReleaseAggregation', 'DesktopNightlyAggregation', 'DesktopBetaAggregation'}
-            for model_name in target_models:
-                model = apps.get_model('api', model_name)
-                model.objects.filter(metric__in=probes_to_remove).delete()
+        probes_to_remove = {"sqlite_store_open", "sqlite_store_query"}
+        target_models = {
+            "DesktopReleaseAggregation",
+            "DesktopNightlyAggregation",
+            "DesktopBetaAggregation",
+        }
+        for model_name in target_models:
+            model = apps.get_model("api", model_name)
+            model.objects.filter(metric__in=probes_to_remove).delete()
 
     dependencies = [
-        ('api', '0022_sample_counts'),
+        ("api", "0022_sample_counts"),
     ]
 
-    operations = [
-        migrations.RunPython(delete_sqlite_probes)
-    ]
-
+    operations = [migrations.RunPython(delete_sqlite_probes)]

@@ -7,33 +7,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0004_firefox_counts'),
+        ("api", "0004_firefox_counts"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FenixAggregation',
+            name="FenixAggregation",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('channel', models.CharField(max_length=100)),
-                ('version', models.CharField(max_length=100)),
-                ('ping_type', models.CharField(max_length=100)),
-                ('os', models.CharField(max_length=100)),
-                ('build_id', models.CharField(max_length=100)),
-                ('metric', models.CharField(max_length=200)),
-                ('metric_type', models.CharField(max_length=100)),
-                ('metric_key', models.CharField(blank=True, max_length=200)),
-                ('client_agg_type', models.CharField(blank=True, max_length=100)),
-                ('agg_type', models.CharField(max_length=100)),
-                ('total_users', models.IntegerField()),
-                ('data', django.contrib.postgres.fields.jsonb.JSONField()),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("channel", models.CharField(max_length=100)),
+                ("version", models.CharField(max_length=100)),
+                ("ping_type", models.CharField(max_length=100)),
+                ("os", models.CharField(max_length=100)),
+                ("build_id", models.CharField(max_length=100)),
+                ("metric", models.CharField(max_length=200)),
+                ("metric_type", models.CharField(max_length=100)),
+                ("metric_key", models.CharField(blank=True, max_length=200)),
+                ("client_agg_type", models.CharField(blank=True, max_length=100)),
+                ("agg_type", models.CharField(max_length=100)),
+                ("total_users", models.IntegerField()),
+                ("data", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
             options={
-                'db_table': 'glam_fenix_aggregation',
+                "db_table": "glam_fenix_aggregation",
             },
         ),
         migrations.AddConstraint(
-            model_name='fenixaggregation',
-            constraint=models.UniqueConstraint(fields=('channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type', 'agg_type'), name='fenix_unique_dimensions'),
+            model_name="fenixaggregation",
+            constraint=models.UniqueConstraint(
+                fields=(
+                    "channel",
+                    "version",
+                    "ping_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_type",
+                    "metric_key",
+                    "client_agg_type",
+                    "agg_type",
+                ),
+                name="fenix_unique_dimensions",
+            ),
         ),
     ]

@@ -12,6 +12,7 @@ whitenoise==5.3.0
 python-dateutil==2.8.2
 
 # For linting and testing.
+black
 flake8
 pytest
 pytest-blockage

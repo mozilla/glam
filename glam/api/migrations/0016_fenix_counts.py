@@ -6,29 +6,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0015_django_bump_jsonfield'),
+        ("api", "0015_django_bump_jsonfield"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FenixCounts',
+            name="FenixCounts",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('app_id', models.CharField(max_length=100)),
-                ('channel', models.CharField(max_length=100)),
-                ('version', models.CharField(max_length=100)),
-                ('ping_type', models.CharField(max_length=100)),
-                ('build_id', models.CharField(max_length=100)),
-                ('build_date', models.DateTimeField(null=True)),
-                ('os', models.CharField(max_length=100)),
-                ('total_users', models.IntegerField()),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("app_id", models.CharField(max_length=100)),
+                ("channel", models.CharField(max_length=100)),
+                ("version", models.CharField(max_length=100)),
+                ("ping_type", models.CharField(max_length=100)),
+                ("build_id", models.CharField(max_length=100)),
+                ("build_date", models.DateTimeField(null=True)),
+                ("os", models.CharField(max_length=100)),
+                ("total_users", models.IntegerField()),
             ],
             options={
-                'db_table': 'glam_fenix_counts',
+                "db_table": "glam_fenix_counts",
             },
         ),
         migrations.AddConstraint(
-            model_name='fenixcounts',
-            constraint=models.UniqueConstraint(fields=('app_id', 'channel', 'version', 'ping_type', 'build_id', 'os'), name='fenix_counts_unique_dimensions'),
+            model_name="fenixcounts",
+            constraint=models.UniqueConstraint(
+                fields=("app_id", "channel", "version", "ping_type", "build_id", "os"),
+                name="fenix_counts_unique_dimensions",
+            ),
         ),
     ]

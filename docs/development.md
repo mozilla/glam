@@ -142,10 +142,10 @@ can also configure your editor to automatically format files with Prettier upon
 save.
 
 Even with these plugins, you may want to run `npm run format` and `npm test`
-before sharing your code to be sure that you didn't miss anything. Also, be
-aware that Prettier and its plugins can rarely break existing code. You may want
-to double-check that everything works after running `npm run format` just in
-case.
+(front-end), and `make format` and `make test` (back-end), before sharing your
+code to be sure that you didn't miss anything. Also, be aware that Prettier and
+its plugins can rarely break existing code. You may want to double-check that
+everything works after running `npm run format` just in case.
 
 ## Resetting the database
 
@@ -170,6 +170,14 @@ make shell
 
 At this point you have the table schemas but no data. Run the imports, including
 the probe imports, as documented above.
+
+## Linting
+
+To test whether the code conforms to the style rules, you can run:
+
+- `npm run format` and `npm test` for front-end code
+
+- `make format` and `make test` for back-end code
 
 ## Run the tests
 

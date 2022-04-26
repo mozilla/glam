@@ -1,4 +1,3 @@
-import imp
 import json
 
 import pytest
@@ -14,7 +13,6 @@ from glam.api.models import (
     DesktopNightlyAggregation,
     FenixAggregation,
     FenixCounts,
-    FOGCounts,
     FirefoxBuildRevisions,
     FirefoxCounts,
     LastUpdated,

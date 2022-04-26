@@ -3,38 +3,53 @@
 from django.db import migrations, models
 import django.contrib.postgres.fields.jsonb
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0018_load_initial_shas'),
+        ("api", "0018_load_initial_shas"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FOGAggregation',
+            name="FOGAggregation",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('app_id', models.CharField(max_length=100)),
-                ('channel', models.CharField(max_length=100)),
-                ('version', models.CharField(max_length=100)),
-                ('ping_type', models.CharField(max_length=100)),
-                ('os', models.CharField(max_length=100)),
-                ('build_id', models.CharField(max_length=100)),
-                ('build_date', models.DateTimeField(null=True)),
-                ('metric', models.CharField(max_length=200)),
-                ('metric_type', models.CharField(max_length=100)),
-                ('metric_key', models.CharField(blank=True, max_length=200)),
-                ('client_agg_type', models.CharField(blank=True, max_length=100)),
-                ('total_users', models.IntegerField()),
-                ('histogram', models.TextField(blank=True, null=True)),
-                ('percentiles', models.TextField(blank=True, null=True)),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("app_id", models.CharField(max_length=100)),
+                ("channel", models.CharField(max_length=100)),
+                ("version", models.CharField(max_length=100)),
+                ("ping_type", models.CharField(max_length=100)),
+                ("os", models.CharField(max_length=100)),
+                ("build_id", models.CharField(max_length=100)),
+                ("build_date", models.DateTimeField(null=True)),
+                ("metric", models.CharField(max_length=200)),
+                ("metric_type", models.CharField(max_length=100)),
+                ("metric_key", models.CharField(blank=True, max_length=200)),
+                ("client_agg_type", models.CharField(blank=True, max_length=100)),
+                ("total_users", models.IntegerField()),
+                ("histogram", models.TextField(blank=True, null=True)),
+                ("percentiles", models.TextField(blank=True, null=True)),
             ],
             options={
-                'db_table': 'glam_fog_aggregation',
+                "db_table": "glam_fog_aggregation",
             },
         ),
         migrations.AddConstraint(
-            model_name='fogaggregation',
-            constraint=models.UniqueConstraint(fields=('app_id', 'channel', 'version', 'ping_type', 'os', 'build_id', 'metric', 'metric_type', 'metric_key', 'client_agg_type'), name='fog_unique_dimensions'),
+            model_name="fogaggregation",
+            constraint=models.UniqueConstraint(
+                fields=(
+                    "app_id",
+                    "channel",
+                    "version",
+                    "ping_type",
+                    "os",
+                    "build_id",
+                    "metric",
+                    "metric_type",
+                    "metric_key",
+                    "client_agg_type",
+                ),
+                name="fog_unique_dimensions",
+            ),
         ),
     ]

@@ -22,8 +22,8 @@ APP_TO_MODEL = {
 }
 
 PRODUCT_TO_MODEL = {
-    "org_mozilla_fenix" :  "api.FenixAggregation",
-    "firefox_desktop" :  "api.FOGAggregation",
+    "org_mozilla_fenix": "api.FenixAggregation",
+    "firefox_desktop": "api.FOGAggregation",
 }
 
 

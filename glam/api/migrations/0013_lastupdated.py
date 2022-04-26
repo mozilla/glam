@@ -6,16 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0012_fenix_views'),
+        ("api", "0012_fenix_views"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='LastUpdated',
+            name="LastUpdated",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('product', models.CharField(max_length=100)),
-                ('last_updated', models.DateTimeField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("product", models.CharField(max_length=100)),
+                ("last_updated", models.DateTimeField()),
             ],
         ),
     ]
