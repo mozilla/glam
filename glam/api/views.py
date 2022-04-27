@@ -451,9 +451,7 @@ def _log_probe_query(request):
     UsageInstrumentation(
         action_type=UsageInstrumentation.ACTION_PROBE_SEARCH,
         context=query,
-        tracking_id=request.COOKIES.get(
-            "session", ""
-        ),  # FIXME this field isn't always present. We need to find a better replacement to allow for accurate analysis
+        tracking_id="",  # FIXME use something that allows for accurate analysis
         probe_name=query["probe"],
     ).save()
 
