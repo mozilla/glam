@@ -39,12 +39,15 @@
       $store.productDimensions.aggregationLevel === 'build_id'
         ? 'app_build_id IS NOT NULL'
         : 'app_build_id IS NULL';
+    const processFilter = $store.productDimensions.process
+      ? `AND process="${$store.productDimensions.process}"`
+      : '';
     return _.template(desktopGlamSql)({
       metric: $store.probe.name,
       channel: $store.productDimensions.channel,
-      process: $store.productDimensions.process,
       osFilter,
       buildIdFilter,
+      processFilter,
     });
   }
 

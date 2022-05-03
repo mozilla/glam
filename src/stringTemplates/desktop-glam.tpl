@@ -17,5 +17,5 @@ WHERE
   metric="${ metric }"
   AND channel="${ channel }"
   AND ${ osFilter }
-  AND process="${ process }"
   AND ${ buildIdFilter }
+  ${ processFilter }
