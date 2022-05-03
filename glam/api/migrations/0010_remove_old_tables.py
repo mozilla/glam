@@ -8,21 +8,21 @@ from glam.api import constants
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0009_compress_json'),
+        ("api", "0009_compress_json"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Aggregation',
+            name="Aggregation",
         ),
         migrations.DeleteModel(
-            name='BetaAggregation',
+            name="BetaAggregation",
         ),
         migrations.DeleteModel(
-            name='NightlyAggregation',
+            name="NightlyAggregation",
         ),
         migrations.DeleteModel(
-            name='ReleaseAggregation',
+            name="ReleaseAggregation",
         ),
         migrations.RunSQL(
             sql=[

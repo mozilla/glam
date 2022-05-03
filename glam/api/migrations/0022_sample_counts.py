@@ -5,7 +5,7 @@ from django.db import migrations, models
 from glam.api import constants
 
 sql = []
-sql_drop =[]
+sql_drop = []
 for channel in constants.CHANNEL_NAMES.values():
     sql.extend(
         [
@@ -27,7 +27,7 @@ for channel in constants.CHANNEL_NAMES.values():
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0021_fog_counts'),
+        ("api", "0021_fog_counts"),
     ]
 
     operations = [
@@ -44,78 +44,75 @@ class Migration(migrations.Migration):
             ],
             reverse_sql=["DROP MATERIALIZED VIEW view_glam_fenix_aggregation"],
         ),
-
         migrations.RunSQL(
             [
                 "DROP MATERIALIZED VIEW view_glam_fog_aggregation",
             ],
             reverse_sql=["DROP MATERIALIZED VIEW view_glam_fog_aggregation"],
         ),
-
-    
         migrations.AddField(
-            model_name='desktopbetaaggregation',
-            name='total_sample',
+            model_name="desktopbetaaggregation",
+            name="total_sample",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopnightlyaggregation',
-            name='total_sample',
+            model_name="desktopnightlyaggregation",
+            name="total_sample",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopreleaseaggregation',
-            name='total_sample',
+            model_name="desktopreleaseaggregation",
+            name="total_sample",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='fenixaggregation',
-            name='total_sample',
+            model_name="fenixaggregation",
+            name="total_sample",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='fogaggregation',
-            name='total_sample',
+            model_name="fogaggregation",
+            name="total_sample",
             field=models.BigIntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='desktopbetaaggregation',
-            name='version',
+            model_name="desktopbetaaggregation",
+            name="version",
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='desktopnightlyaggregation',
-            name='version',
+            model_name="desktopnightlyaggregation",
+            name="version",
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='desktopreleaseaggregation',
-            name='version',
+            model_name="desktopreleaseaggregation",
+            name="version",
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='fenixaggregation',
-            name='version',
+            model_name="fenixaggregation",
+            name="version",
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='fogaggregation',
-            name='version',
+            model_name="fogaggregation",
+            name="version",
             field=models.BigIntegerField(),
         ),
         migrations.AlterField(
-            model_name='fenixcounts',
-            name='version',
+            model_name="fenixcounts",
+            name="version",
             field=models.BigIntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='firefoxcounts',
-            name='version',
+            model_name="firefoxcounts",
+            name="version",
             field=models.BigIntegerField(null=True, blank=True),
         ),
         migrations.AlterField(
-            model_name='fogcounts',
-            name='version',
+            model_name="fogcounts",
+            name="version",
             field=models.BigIntegerField(null=True, blank=True),
         ),
         migrations.RunSQL(
@@ -141,9 +138,8 @@ class Migration(migrations.Migration):
                 "CREATE UNIQUE INDEX ON view_glam_fog_aggregation (id)",
                 "CREATE INDEX ON view_glam_fog_aggregation (version)",
                 "CREATE INDEX ON view_glam_fog_aggregation (app_id)",
-                "CREATE INDEX ON view_glam_fog_aggregation USING HASH (metric)"
+                "CREATE INDEX ON view_glam_fog_aggregation USING HASH (metric)",
             ],
             reverse_sql=["DROP MATERIALIZED VIEW view_glam_fog_aggregation"],
         ),
-
     ]

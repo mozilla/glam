@@ -27,6 +27,7 @@ jobs:
             pip install -r requirements.txt
       - run:
           command: |
+            make lint
             pytest glam/
   frontend-tests:
     working_directory: ~/mozilla/glam

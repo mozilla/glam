@@ -122,9 +122,8 @@ class Command(BaseCommand):
             "bugs": latest_history["bug_numbers"],
             # active (bool): TRUE if last recorded nightly version is equal to
             # the latest nightly version.
-            "active": expiry == "never" or (
-                nightly_versions[1] and int(expiry) > int(nightly_versions[1])
-            ),
+            "active": expiry == "never"
+            or (nightly_versions[1] and int(expiry) > int(nightly_versions[1])),
             # prelease (bool): TRUE if "optout" is false on the "release"
             # channel, i.e., it's recorded by default on all channels.
             "prerelease": self.get_optout("release", probe) is False,

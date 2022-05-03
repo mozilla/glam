@@ -227,7 +227,8 @@ def get_glean_aggregations(request, **kwargs):
     if aggregation_level == "version":
         if product == "fenix":
             dimensions.append(Q(build_id="*"))
-            # counts = _get_fenix_counts(app_id, versions, ping_type, os, by_build=False)
+            # counts = _get_fenix_counts(app_id, versions, ping_type,
+            #  os, by_build=False)
         if product == "fog":
             dimensions.append(~Q(build_id="*"))
             # counts = _get_fog_counts(app_id, versions, ping_type, os, by_build=False)
@@ -464,11 +465,12 @@ def usage(request):
     Possible query parameters are:
     * fromDate: Date to start the search with.  Format: YYYYMMDD
     * toDate: Date to end the search with.  Format: YYYYMMDD
-    * fields: Name of fields to return. See models.UsageInstrumentation for the full list.
-              This parameter is needed for aggregation.
-    * actionType: The type of action that triggered the metric. The only possible value now is: PROBE_SEARCH
-    * agg: The "Aggregate" flag. The only possible value now is: count. Note that if "fields" is not
-           supplied, this parameter is ignored
+    * fields: Name of fields to return. See models.UsageInstrumentation for the full
+            list. This parameter is needed for aggregation.
+    * actionType: The type of action that triggered the metric.
+            The only possible value now is: PROBE_SEARCH
+    * agg: The "Aggregate" flag. The only possible value now is: count. Note that if
+           "fields" is not supplied, this parameter is ignored.
     """
     if request.method == "GET":
         dimensions = []

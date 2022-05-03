@@ -13,9 +13,18 @@ from glam.api import constants
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
 MAPPING = {
-    "fenix": {"model": "api.FenixCounts","schema_name":"org_mozilla_fenix", "apps": ["nightly", "beta", "release"]},
-    "fog": {"model": "api.FOGCounts", "schema_name":"firefox_desktop","apps": ["nightly", "beta", "release"]}
+    "fenix": {
+        "model": "api.FenixCounts",
+        "schema_name": "org_mozilla_fenix",
+        "apps": ["nightly", "beta", "release"],
+    },
+    "fog": {
+        "model": "api.FOGCounts",
+        "schema_name": "firefox_desktop",
+        "apps": ["nightly", "beta", "release"],
+    },
 }
+
 
 def log(message):
     print(f"{datetime.datetime.now().strftime('%x %X')} - {FILENAME} - {message}")

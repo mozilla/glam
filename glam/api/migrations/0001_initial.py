@@ -5,29 +5,31 @@ from glam.api import constants
 
 partitions = []
 for channel in constants.CHANNEL_CHOICES:
-    partitions.extend([
-        f"""
+    partitions.extend(
+        [
+            f"""
         CREATE TABLE glam_aggregation_{channel[1]}
         PARTITION OF glam_aggregation
         FOR VALUES IN ({channel[0]});
         """,
-        f"""
+            f"""
         CREATE MATERIALIZED VIEW view_glam_aggregation_{channel[1]}
         AS SELECT * FROM glam_aggregation_{channel[1]};
         """,
-        f"""
+            f"""
         CREATE UNIQUE INDEX ON view_glam_aggregation_{channel[1]} (id);
         """,
-        f"""
+            f"""
         CREATE INDEX ON view_glam_aggregation_{channel[1]} USING HASH (metric);
         """,
-        f"""
+            f"""
         CREATE INDEX ON view_glam_aggregation_{channel[1]} (version);
         """,
-        f"""
+            f"""
         CREATE INDEX ON view_glam_aggregation_{channel[1]} USING HASH (os);
         """,
-    ])
+        ]
+    )
 
 
 class Migration(migrations.Migration):
@@ -62,10 +64,10 @@ class Migration(migrations.Migration):
                     channel, version, agg_type, os, build_id, process,
                     metric, metric_key, client_agg_type);
                 """,
-            ] + partitions,
-            reverse_sql=[
-                "DROP TABLE glam_aggregation"
-            ] + [
+            ]
+            + partitions,
+            reverse_sql=["DROP TABLE glam_aggregation"]
+            + [
                 f"DROP MATERIALIZED VIEW view_glam_aggregation_{channel}"
                 for channel in constants.CHANNEL_IDS.keys()
             ],

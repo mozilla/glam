@@ -6,24 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0016_fenix_counts'),
+        ("api", "0016_fenix_counts"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FirefoxBuildRevisions',
+            name="FirefoxBuildRevisions",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('channel', models.CharField(db_index=True, max_length=100)),
-                ('build_id', models.CharField(max_length=100)),
-                ('revision', models.CharField(max_length=100)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("channel", models.CharField(db_index=True, max_length=100)),
+                ("build_id", models.CharField(max_length=100)),
+                ("revision", models.CharField(max_length=100)),
             ],
             options={
-                'db_table': 'glam_firefox_build_revisions',
+                "db_table": "glam_firefox_build_revisions",
             },
         ),
         migrations.AddConstraint(
-            model_name='firefoxbuildrevisions',
-            constraint=models.UniqueConstraint(fields=('channel', 'build_id'), name='firefox_channel_build_unique'),
+            model_name="firefoxbuildrevisions",
+            constraint=models.UniqueConstraint(
+                fields=("channel", "build_id"), name="firefox_channel_build_unique"
+            ),
         ),
     ]

@@ -9,40 +9,48 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('api', '0001_initial'),
+        ("api", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Aggregation',
+            name="Aggregation",
             fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('channel', models.IntegerField(choices=[(1, 'nightly'), (2, 'beta'), (3, 'release')])),
-                ('version', models.CharField(max_length=100)),
-                ('agg_type', models.IntegerField(choices=[(1, 'histogram'), (2, 'percentiles')])),
-                ('os', models.CharField(max_length=100)),
-                ('build_id', models.CharField(max_length=100)),
-                ('metric', models.CharField(max_length=200)),
-                ('metric_key', models.CharField(blank=True, max_length=200)),
-                ('client_agg_type', models.CharField(blank=True, max_length=100)),
-                ('metric_type', models.CharField(max_length=100)),
-                ('total_users', models.IntegerField()),
-                ('data', django.contrib.postgres.fields.jsonb.JSONField()),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                (
+                    "channel",
+                    models.IntegerField(
+                        choices=[(1, "nightly"), (2, "beta"), (3, "release")]
+                    ),
+                ),
+                ("version", models.CharField(max_length=100)),
+                (
+                    "agg_type",
+                    models.IntegerField(choices=[(1, "histogram"), (2, "percentiles")]),
+                ),
+                ("os", models.CharField(max_length=100)),
+                ("build_id", models.CharField(max_length=100)),
+                ("metric", models.CharField(max_length=200)),
+                ("metric_key", models.CharField(blank=True, max_length=200)),
+                ("client_agg_type", models.CharField(blank=True, max_length=100)),
+                ("metric_type", models.CharField(max_length=100)),
+                ("total_users", models.IntegerField()),
+                ("data", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
             options={
-                'db_table': 'glam_aggregation',
-                'managed': False,
+                "db_table": "glam_aggregation",
+                "managed": False,
             },
         ),
         migrations.CreateModel(
-            name='Probe',
+            name="Probe",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('key', models.CharField(max_length=100)),
-                ('info', django.contrib.postgres.fields.jsonb.JSONField()),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("key", models.CharField(max_length=100)),
+                ("info", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
             options={
-                'db_table': 'glam_probe',
+                "db_table": "glam_probe",
             },
         ),
     ]
