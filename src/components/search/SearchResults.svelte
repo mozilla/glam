@@ -56,9 +56,9 @@
         searchIsActive = false;
 
         page.show(
-          `/${$store.searchProduct}/probe/${results[
-            focusedItem
-          ].id.split("/")[1]}/explore${$currentQuery}`
+          `/${$store.searchProduct}/probe/${getProbeName(
+            results[focusedItem]
+          )}/explore${$currentQuery}`
         );
         focusedItem = 0; // reset focused element
       }
@@ -119,6 +119,30 @@
       return 'firefox';
     }
     return undefined;
+  };
+
+  const snakeCase = (line) => {
+    // This is a direct translation from bigquery-etl's python snake_case transformation,
+    // so probe names queried from Glam's DB are snake_cased the same as in the ETL.
+    // This is only required for scalar probes.
+    // source: https://github.com/mozilla/bigquery-etl/blob/533ec4b203716c60ca10a62c6d9c302926b052ae/bigquery_etl/util/common.py#L27
+    const pattern =
+      /\b|(?<=[a-z][A-Z])(?=\d*[A-Z])|(?<=[a-z][A-Z])(?=\d*[a-z])|(?<=[A-Z])(?=\d*[a-z])/;
+    const reg = /[^\w]|_\./;
+    function reverse(s) {
+      return s.split('').reverse().join('');
+    }
+    const subbed = reverse(line).replace(reg, ' ');
+    const words = subbed.split(pattern).filter((x) => x.trim());
+    return reverse(words.join('_').toLowerCase());
+  };
+
+  const getProbeName = (selectedProbe) => {
+    if (selectedProbe.id && selectedProbe.id.startsWith('scalar/')) {
+      return snakeCase(selectedProbe.id.split('/')[1]);
+    } else {
+      return selectedProbe.name.toLowerCase().replaceAll('.', '_');
+    }
   };
 </script>
 
@@ -284,9 +308,11 @@
               class:focused={focusedItem === i}
               on:click={() => {
                 page.show(
-                  `/${getProductDimensions(results[focusedItem])}/probe/${
-                    results[focusedItem].id.split("/")[1]
-                  }/explore${$currentQuery}`
+                  `/${getProductDimensions(
+                    results[focusedItem]
+                  )}/probe/${getProbeName(
+                    results[focusedItem]
+                  )}/explore${$currentQuery}`
                 );
               }}
               on:mouseover={() => {
