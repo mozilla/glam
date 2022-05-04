@@ -121,25 +121,11 @@
     return undefined;
   };
 
-  const snakeCase = (line) => {
-    // This is a direct translation from bigquery-etl's python snake_case transformation,
-    // so probe names queried from Glam's DB are snake_cased the same as in the ETL.
-    // This is only required for scalar probes.
-    // source: https://github.com/mozilla/bigquery-etl/blob/533ec4b203716c60ca10a62c6d9c302926b052ae/bigquery_etl/util/common.py#L27
-    const pattern =
-      /\b|(?<=[a-z][A-Z])(?=\d*[A-Z])|(?<=[a-z][A-Z])(?=\d*[a-z])|(?<=[A-Z])(?=\d*[a-z])/;
-    const reg = /[^\w]|_\./;
-    function reverse(s) {
-      return s.split('').reverse().join('');
-    }
-    const subbed = reverse(line).replace(reg, ' ');
-    const words = subbed.split(pattern).filter((x) => x.trim());
-    return reverse(words.join('_').toLowerCase());
-  };
-
   const getProbeName = (selectedProbe) => {
+    // In case of scalar probes, this adds the probeId as the probeName on the url path to treat the case of scalars and
+    // their issues with snake_casing. Please see issue #1956 for more details
     if (selectedProbe.id && selectedProbe.id.startsWith('scalar/')) {
-      return snakeCase(selectedProbe.id.split('/')[1]);
+      return selectedProbe.id.split('/')[1];
     } else {
       return selectedProbe.name.toLowerCase().replaceAll('.', '_');
     }

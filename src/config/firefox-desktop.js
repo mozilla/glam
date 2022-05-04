@@ -103,13 +103,28 @@ export default {
       ...this.dimensions,
     });
   },
+  snakeCase(line) {
+    // This is a direct translation from bigquery-etl's python snake_case transformation,
+    // so probe names queried from Glam's DB are snake_cased the same as in the ETL.
+    // This is only required for scalar probes.
+    // source: https://github.com/mozilla/bigquery-etl/blob/533ec4b203716c60ca10a62c6d9c302926b052ae/bigquery_etl/util/common.py#L27
+    const pattern =
+      /\b|(?<=[a-z][A-Z])(?=\d*[A-Z])|(?<=[a-z][A-Z])(?=\d*[a-z])|(?<=[A-Z])(?=\d*[a-z])/;
+    const reg = /[^\w]|_\./;
+    function reverse(s) {
+      return s.split('').reverse().join('');
+    }
+    const subbed = reverse(line).replace(reg, ' ');
+    const words = subbed.split(pattern).filter((x) => x.trim());
+    return reverse(words.join('_').toLowerCase());
+  },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
     return {
       product: 'firefox',
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      probe: storeValue.probeName,
+      probe: this.snakeCase(storeValue.probeName), // snake_casing here in case this probe is a scalar, in which case probeName is actually the probeId (see issue #1956 for more)
       process: storeValue.productDimensions.process,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       versions: 10,

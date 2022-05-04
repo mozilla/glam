@@ -50,7 +50,12 @@
         store.setField('probeName', probeName);
 
         // The canonical probe info fetch. (PSS)
-        getProbeInfo($store.product, probeName).then((r) => {
+        // Here the probeName is again sanitized to treat the case of scalars and
+        // their issues with snake_casing. Please see issue #1956 for more details
+        getProbeInfo(
+          $store.product,
+          probeName.replace('.', '_').toLowerCase()
+        ).then((r) => {
           let newProbe = { ...r, loaded: true };
 
           // if the product has changed,
@@ -90,7 +95,10 @@
     '/:product/:section/:probeName/explore',
     useComponent(ProbeExplore, 'explore')
   );
-  page('/:product/:section/:probeName/table', useComponent(ProbeTable, 'table'));
+  page(
+    '/:product/:section/:probeName/table',
+    useComponent(ProbeTable, 'table')
+  );
   page('*', useComponent(NotFound));
 
   page.start();
