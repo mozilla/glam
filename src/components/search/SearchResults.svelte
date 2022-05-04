@@ -58,7 +58,7 @@
         page.show(
           `/${$store.searchProduct}/probe/${results[
             focusedItem
-          ].name.toLowerCase()}/explore${$currentQuery}`
+          ].id.split("/")[1]}/explore${$currentQuery}`
         );
         focusedItem = 0; // reset focused element
       }
@@ -284,11 +284,9 @@
               class:focused={focusedItem === i}
               on:click={() => {
                 page.show(
-                  `/${getProductDimensions(
-                    results[focusedItem]
-                  )}/probe/${results[focusedItem].name
-                    .toLowerCase()
-                    .replaceAll('.', '_')}/explore${$currentQuery}`
+                  `/${getProductDimensions(results[focusedItem])}/probe/${
+                    results[focusedItem].id.split("/")[1]
+                  }/explore${$currentQuery}`
                 );
               }}
               on:mouseover={() => {

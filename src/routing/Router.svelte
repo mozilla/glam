@@ -39,15 +39,18 @@
   });
 
   function useComponent(componentToUse, view) {
-    return function handle({ params: { product, section, probeName } }) {
+    return function handle({ params: { product, section, probeId } }) {
       const storeValue = get(store);
       component = componentToUse;
+      let probeName = "";
 
       // Issue #355: Update the probe here, whenever the path changes, to ensure
       // that clicks to the back/forward buttons work as expected.
-      if (probeName) {
+      if (probeId) {
+        probeName = probeId.toLowerCase().replaceAll('.', '_');
         store.setField('probe', { loaded: false });
         store.setField('probeName', probeName);
+        store.setField('probeId', probeId);
 
         // The canonical probe info fetch. (PSS)
         getProbeInfo($store.product, probeName).then((r) => {
@@ -71,7 +74,7 @@
       store.setField('route', {
         product,
         section,
-        probeName,
+        probeId,
         view,
       });
     };
@@ -87,13 +90,10 @@
 
   page('/', useComponent(Home));
   page(
-    '/:product/:section/:probeName/explore',
+    '/:product/:section/:probeId/explore',
     useComponent(ProbeExplore, 'explore')
   );
-  page(
-    '/:product/:section/:probeName/table',
-    useComponent(ProbeTable, 'table')
-  );
+  page('/:product/:section/:probeId/table', useComponent(ProbeTable, 'table'));
   page('*', useComponent(NotFound));
 
   page.start();

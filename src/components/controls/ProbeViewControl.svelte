@@ -35,7 +35,7 @@
       level="medium"
       on:selection={(evt) => {
         page.show(
-          `/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}${$currentQuery}`
+          `/${$store.route.product}/${$store.route.section}/${$store.route.probeId}/${evt.detail.selection}${$currentQuery}`
         );
       }} />
   </div>
