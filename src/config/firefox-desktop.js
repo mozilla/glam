@@ -120,11 +120,17 @@ export default {
   },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
+
+    // In case this probe is a scalar, probeName needs to match the bigquery-etl snake_casing
+    // otherwise we won't find this probe in Glam DB (see issue #1956 for more)
+    const probeName = storeValue.probeId
+      ? this.snakeCase(storeValue.probeId)
+      : storeValue.probeName;
     return {
       product: 'firefox',
       channel: storeValue.productDimensions.channel,
       os: storeValue.productDimensions.os,
-      probe: this.snakeCase(storeValue.probeName), // snake_casing here in case this probe is a scalar, in which case probeName is actually the probeId (see issue #1956 for more)
+      probe: probeName,
       process: storeValue.productDimensions.process,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       versions: 10,

@@ -56,9 +56,9 @@
         searchIsActive = false;
 
         page.show(
-          `/${$store.searchProduct}/probe/${getProbeName(
-            results[focusedItem]
-          )}/explore${$currentQuery}`
+          `/${$store.searchProduct}/probe/${results[
+            focusedItem
+          ].name.toLowerCase()}/explore${$currentQuery}`
         );
         focusedItem = 0; // reset focused element
       }
@@ -119,16 +119,6 @@
       return 'firefox';
     }
     return undefined;
-  };
-
-  const getProbeName = (selectedProbe) => {
-    // In case of scalar probes, this adds the probeId as the probeName on the url path to treat the case of scalars and
-    // their issues with snake_casing. Please see issue #1956 for more details
-    if (selectedProbe.id && selectedProbe.id.startsWith('scalar/')) {
-      return selectedProbe.id.split('/')[1];
-    } else {
-      return selectedProbe.name.toLowerCase().replaceAll('.', '_');
-    }
   };
 </script>
 
@@ -296,9 +286,9 @@
                 page.show(
                   `/${getProductDimensions(
                     results[focusedItem]
-                  )}/probe/${getProbeName(
-                    results[focusedItem]
-                  )}/explore${$currentQuery}`
+                  )}/probe/${results[focusedItem].name
+                    .toLowerCase()
+                    .replaceAll('.', '_')}/explore${$currentQuery}`
                 );
               }}
               on:mouseover={() => {

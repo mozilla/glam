@@ -50,12 +50,7 @@
         store.setField('probeName', probeName);
 
         // The canonical probe info fetch. (PSS)
-        // Here the probeName is again sanitized to treat the case of scalars and
-        // their issues with snake_casing. Please see issue #1956 for more details
-        getProbeInfo(
-          $store.product,
-          probeName.replace('.', '_').toLowerCase()
-        ).then((r) => {
+        getProbeInfo($store.product, probeName).then((r) => {
           let newProbe = { ...r, loaded: true };
 
           // if the product has changed,
@@ -65,6 +60,14 @@
             store.setProduct(product);
           }
           store.setField('probe', newProbe);
+
+          // Scalar probes' names are snake_cased differently between the DB
+          // and Glean dictionary (see issue #1956 for more details).
+          // If this is a scalar probe then we'll need the probeId so we can
+          // snake_case it and derive a probe name whose casing matches the one in the DB.
+          if (newProbe.id && newProbe.id.startsWith('scalar/')) {
+            store.setField('probeId', newProbe.id.split('/')[1]);
+          }
 
           if (productConfig[product].transformProbeForGLAM) {
             newProbe = productConfig[product].transformProbeForGLAM(newProbe);
