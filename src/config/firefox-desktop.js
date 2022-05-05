@@ -1,4 +1,5 @@
 import produce from 'immer';
+import { snakeCase } from 'lodash';
 import sharedDefaults, { extractBucketMetadata } from './shared';
 import { stripDefaultValues } from '../utils/urls';
 import { transformAPIResponse } from '../utils/transform-data';
@@ -103,28 +104,13 @@ export default {
       ...this.dimensions,
     });
   },
-  snakeCase(line) {
-    // This is a direct translation from bigquery-etl's python snake_case transformation,
-    // so probe names queried from Glam's DB are snake_cased the same as in the ETL.
-    // This is only required for scalar probes.
-    // source: https://github.com/mozilla/bigquery-etl/blob/533ec4b203716c60ca10a62c6d9c302926b052ae/bigquery_etl/util/common.py#L27
-    const pattern =
-      /\b|(?<=[a-z][A-Z])(?=\d*[A-Z])|(?<=[a-z][A-Z])(?=\d*[a-z])|(?<=[A-Z])(?=\d*[a-z])/;
-    const reg = /[^\w]|_\./;
-    function reverse(s) {
-      return s.split('').reverse().join('');
-    }
-    const subbed = reverse(line).replace(reg, ' ');
-    const words = subbed.split(pattern).filter((x) => x.trim());
-    return reverse(words.join('_').toLowerCase());
-  },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
 
     // In case this probe is a scalar, probeName needs to match the bigquery-etl snake_casing
     // otherwise we won't find this probe in Glam DB (see issue #1956 for more)
     const probeName = storeValue.probeId
-      ? this.snakeCase(storeValue.probeId)
+      ? snakeCase(storeValue.probeId)
       : storeValue.probeName;
     return {
       product: 'firefox',
