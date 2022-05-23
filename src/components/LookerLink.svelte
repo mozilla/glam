@@ -17,6 +17,7 @@
 
     lookerURL =
       variant &&
+      variant.etl.ping_data[sendInPings] &&
       variant.etl.ping_data[sendInPings].looker &&
       variant.etl.ping_data[sendInPings].looker.metric.url;
 
