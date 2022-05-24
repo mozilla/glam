@@ -27,7 +27,7 @@ probe that had not been pre-built by the ETL.
 ## Decision Drivers
 
 - Usage metrics collection must be reliable and cannot be bypassed or influenced
-  by other systems such as browsers' adblocks
+  by other systems such as browsers' ad blockers
 - GLAM ETL should consume this service so it can optimize its work, only
   processing probes that are likely to be looked at
 - GLAM App should consume this service so it can trigger an ad hoc calculation
