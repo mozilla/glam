@@ -18,8 +18,8 @@ short and long periods of time and whether it correlates with other events such
 as certain product releases.
 
 Additionally, as a more time-sensitive issue, GLAM ETL does a lot of work and
-takes over 8 hours to complete. We intend to reduce GLAM ETL time by finding
-the probes that are most likely to be requested by users from the aforementioned
+takes over 8 hours to complete. We intend to reduce GLAM ETL time by finding the
+probes that are most likely to be requested by users from the aforementioned
 data and have the ETL build only those probes. This document also presents a
 plan for ad hoc probe building, which needs to happen when someone requests a
 probe that had not been pre-built by the ETL.
@@ -40,9 +40,9 @@ probe that had not been pre-built by the ETL.
 - 1: Collect metrics on the front end (via a library such as Open Telemetry
   Instrumentation or a custom-built solution) and send them to the GLAM back end
   server to be stored in a table in the GLAM App Postgres DB. Expose meaningful
-  api endpoints for usage data consumption by GLAM App and and GLAM ETL. This
+  api endpoints for usage data consumption by GLAM App and GLAM ETL. This
   provides flexibility to adapt to future requirements and "immunity" to
-  adblocks, but might be longer to implement
+  adblockers, but might be longer to implement
 - 2: Use Gleanjs, a JS library for telemetry, which would be quicker than a
   custom implementation. It's also good because of dogfooding and internal
   support. It can be bypassed by adblockers, but we can work around the issue by
