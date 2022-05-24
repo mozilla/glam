@@ -18,7 +18,7 @@ short and long periods of time and whether it correlates with other events such
 as certain product releases.
 
 Additionally, as a more time-sensitive issue, GLAM ETL does a lot of work and
-takes over 12 hours to complete. We intend to reduce GLAM ETL time by finding
+takes over 8 hours to complete. We intend to reduce GLAM ETL time by finding
 the probes that are most likely to be requested by users from the aforementioned
 data and have the ETL build only those probes. This document also presents a
 plan for ad hoc probe building, which needs to happen when someone requests a
