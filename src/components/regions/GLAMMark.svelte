@@ -3,6 +3,10 @@
   import Logo from '../icons/GLAMLogo.svelte';
   import Text from '../icons/GLAMText.svelte';
   import { store, currentQuery } from '../../state/store';
+
+  // GLAM logo will resize if screen size
+  // is smaller than the viewport min width
+  let viewportMinWidth = 1045;
 </script>
 
 <style>
@@ -25,7 +29,7 @@
       text: 'The Glean Aggregated Metrics Dashboard',
       distance: 16,
     }}>
-    <Logo />
-    <Text />
+    <Logo {viewportMinWidth} />
+    <Text {viewportMinWidth} />
   </h1>
 </a>
