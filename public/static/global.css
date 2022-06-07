@@ -408,10 +408,11 @@ button:focus {
 .app {
   display: grid;
   min-height: 100vh;
-  max-width: var(--app-width);
+  min-width: var(--app-width);
   grid-template-rows: max-content auto;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 10px;
 }
 
 .app--toolbar {

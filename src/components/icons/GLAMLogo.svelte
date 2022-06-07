@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
-  export let size = 24;
+  export let size;
   let mounted = false;
   onMount(() => {
     mounted = true;
@@ -10,6 +10,9 @@
   let y = 50;
   let duration = 400;
   let delay = 200;
+
+  let innerWidth = { window };
+  $: size = innerWidth < 1045 ? 22 : 24;
 </script>
 
 <style>
@@ -23,6 +26,8 @@
     stroke-miterlimit: 2;
   }
 </style>
+
+<svelte:window bind:innerWidth />
 
 {#if mounted}
   <svg
