@@ -33,7 +33,7 @@
 
   .topline__client-count {
     transition: font-weight 200ms;
-    margin-left: 4em;
+    margin-left: 1.5em;
   }
 
   .topline__client-count--highlighted {
