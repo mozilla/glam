@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
+  export let viewportMinWidth;
   export let size;
   let d = 50;
   let duration = 200;
@@ -11,7 +12,7 @@
   });
 
   let innerWidth = { window };
-  $: size = innerWidth < 1045 ? 34 : 40;
+  $: size = innerWidth < viewportMinWidth ? 34 : 40;
 </script>
 
 <svelte:window bind:innerWidth />

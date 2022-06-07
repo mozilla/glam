@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
 
+  export let viewportMinWidth;
   export let size;
   let mounted = false;
   onMount(() => {
@@ -12,7 +13,7 @@
   let delay = 200;
 
   let innerWidth = { window };
-  $: size = innerWidth < 1045 ? 22 : 24;
+  $: size = innerWidth < viewportMinWidth ? 22 : 24;
 </script>
 
 <style>
