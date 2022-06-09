@@ -81,7 +81,7 @@ percentiles AS (
     build_id,
     mozfun.hist.percentiles(
       merged_${ metric },
-      [.05, .25, .5, .75, .95]
+      [0.001, 0.01, .05, .25, .5, .75, .95, 0.99, 0.999]
     ) AS percentile_nested
   FROM
     as_struct
