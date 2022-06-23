@@ -1,0 +1,12 @@
+.circleci
+.github
+bin
+dockerfiles
+docs
+node_modules
+scripts
+.editorconfig
+.env*
+!.env-dist
+*.md
+docker-compose.yml
