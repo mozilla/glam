@@ -31,7 +31,7 @@ jobs:
           command: |
             mkdir -p /cache
             docker save -o /cache/app-frontend.tar "app-frontend:build"
-            docker save -o /cache/docker.tar "app:build"
+            docker save -o /cache/app.tar "app:build"
       - save_cache:
           key: v1-{{ .Environment.CIRCLE_SHA1 }}-{{epoch}}
           paths:
