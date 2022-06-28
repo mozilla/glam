@@ -7,6 +7,7 @@
   import FileCopy from './icons/FileCopy.svelte';
   import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
   import desktopTelemetrySql from '../stringTemplates/desktop-telemetry.tpl';
+  import desktopDistributionSql from '../stringTemplates/desktop-distribution.tpl';
   import desktopHistogramProportionsSql from '../stringTemplates/desktop-histogram-proportions.tpl';
   import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
 
@@ -51,10 +52,17 @@
     });
   }
 
-  function getTelemetrySql() {
+  function getDesktopSql(tpl = 'telemetry') {
     // TODO: Use the time horizon to date window in SQL?
     const { process } = $store.productDimensions;
-    let sqlTemplate = desktopTelemetrySql;
+
+    const templateMap = {
+      telemetry: desktopTelemetrySql,
+      distribution: desktopDistributionSql,
+    };
+
+    let sqlTemplate = templateMap[tpl];
+
     if (
       ['categorical', 'count', 'enumerated', 'flag'].includes($store.probe.kind)
     ) {
@@ -81,12 +89,15 @@
         ? `-- AND normalized_os="Windows" -- To add OS filter.`
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
+    const buildId = $store.ref;
+
     return _.template(sqlTemplate)({
       metric: $store.probe.name,
       channel: $store.productDimensions.channel,
       table,
       telemetryPath,
       osFilter,
+      buildId,
     });
   }
 
@@ -116,7 +127,12 @@
       tabs.push({
         id: 2,
         label: 'Telemetry SQL',
-        sql: getTelemetrySql,
+        sql: getDesktopSql,
+      });
+      tabs.push({
+        id: 3,
+        label: 'Distribution SQL',
+        sql: getDesktopSql,
       });
     }
   } else if ($store.product === 'fenix') {
@@ -166,7 +182,7 @@
 
   ul {
     display: grid;
-    grid-template-columns: auto auto 1fr auto;
+    grid-template-columns: auto auto auto 1fr;
     grid-column-gap: 5px;
     margin: 0;
     padding: 0;
@@ -259,7 +275,7 @@
       {#if activeTab === tab.id}
         <pre>
           <code bind:this={sqlElement}>
-            {tab.sql()}
+            {tab.label.includes("Distribution") ? tab.sql("distribution") : tab.sql("telemetry")}
           </code>
           <div class="buttons">
             <button class="copy" on:click={copySql} title="Copy to clipboard">
