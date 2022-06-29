@@ -84,7 +84,7 @@ jobs:
       - run:
           name: Test Python Code
           command: |
-            docker run which make
+            docker run apt-get update && apt-get install make
             docker run app:build make test /app/glam/
 
   test-environment:
