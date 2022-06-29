@@ -83,7 +83,9 @@ jobs:
             docker run --env DJANGO_CONFIGURATION=${DJANGO_CONFIGURATION} --env DATABASE_URL=${DATABASE_URL} app:build python3 -m black --check glam .
       - run:
           name: Test Python Code
-          command: docker run app:build make test /app/glam/
+          command: |
+            docker run which make
+            docker run app:build make test /app/glam/
 
   test-environment:
     docker:
