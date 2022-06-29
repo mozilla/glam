@@ -47,6 +47,10 @@
   export let metricKeys;
   export let yAccessor;
 
+  // set default reference point to be used in distribution sql
+  let defaultRef = data[data.length - 1]['build_id'];
+  store.setField('defaultRef', defaultRef);
+
   const pushlogUrlTemplate = _.template(
     // eslint-disable-next-line no-template-curly-in-string
     'https://hg.mozilla.org/mozilla-central/pushloghtml?fromchange=${from}&tochange=${to}'

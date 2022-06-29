@@ -89,7 +89,7 @@
         ? `-- AND normalized_os="Windows" -- To add OS filter.`
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
-    const buildId = $store.ref;
+    const buildId = $store.ref || $store.defaultRef;
 
     return _.template(sqlTemplate)({
       metric: $store.probe.name,

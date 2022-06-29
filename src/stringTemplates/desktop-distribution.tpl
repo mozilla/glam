@@ -1,7 +1,3 @@
--- Please ensure that you have selected a BUILD ID (by clicking
--- on the desired reference point) before proceeding with this
--- template in STMO.
-
 -- For more info on the tables referenced in this SQL see:
 -- https://docs.telemetry.mozilla.org/datasets/main_ping_tables.html
 
@@ -75,12 +71,11 @@ as_struct AS (
   FROM filtered
   GROUP by 
     build_id
-
 )
 
 SELECT build_id, 
-key_string as key, 
-value as bucket
-from as_struct
-CROSS JOIN
-  UNNEST(as_struct.merged_${ metric });
+  key_string as key, 
+  value as bucket
+FROM as_struct
+  CROSS JOIN
+    UNNEST(as_struct.merged_${ metric });
