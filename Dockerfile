@@ -28,6 +28,7 @@ WORKDIR /app
 COPY ./requirements.txt /app/
 RUN pip install -U pip \
     && pip install --no-cache-dir -r requirements.txt
+RUN apt-get -y install make
 
 COPY . /app/
 # END BACKEND IMAGE
