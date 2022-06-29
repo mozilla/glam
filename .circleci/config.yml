@@ -83,10 +83,8 @@ jobs:
             docker run --env DJANGO_CONFIGURATION=${DJANGO_CONFIGURATION} --env DATABASE_URL=${DATABASE_URL} app:build python3 -m black --check glam .
       - run:
           name: Test Python Code
-          command: |
-            docker run apt-get update && apt-get install make
-            docker run app:build make test /app/glam/
-
+          command:
+            docker run --env DJANGO_CONFIGURATION=${DJANGO_CONFIGURATION} --env DATABASE_URL=${DATABASE_URL} app:build pytest -s --dc=Test /app/glam/
   test-environment:
     docker:
       - image: cimg/base:2021.10
