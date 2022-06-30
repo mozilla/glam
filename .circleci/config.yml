@@ -3,8 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: docker:stable-git
-    working_directory: /dockerflow
+      - image: cimg/base:stable
     steps:
       - checkout
       - setup_remote_docker
@@ -26,32 +25,32 @@ jobs:
       - run:
           name: docker save
           command: |
-            mkdir -p /cache
-            docker save -o /cache/app-frontend.tar "app-frontend:build"
-            docker save -o /cache/app.tar "app:build"
+            mkdir -p /tmp/cache
+            docker save -o /tmp/cache/app-frontend.tar "app-frontend:build"
+            docker save -o /tmp/cache/app.tar "app:build"
       - save_cache:
           key: v1-{{ .Environment.CIRCLE_SHA1 }}-{{epoch}}
           paths:
-            - /cache/app-frontend.tar
-            - /cache/app.tar
+            - /tmp/cache/app-frontend.tar
+            - /tmp/cache/app.tar
 
   frontend-tests:
     docker:
-      - image: docker:18.02.0-ce
+      - image: cimg/base:stable
     steps:
       - setup_remote_docker
       - restore_cache:
           key: v1-{{.Environment.CIRCLE_SHA1}}
       - run:
           name: Restore Docker image cache
-          command: docker load -i /cache/app-frontend.tar
+          command: docker load -i /tmp/cache/app-frontend.tar
       - run:
           name: Test Frontend (JS) Code
           command: docker run app-frontend:build
 
   backend-tests:
     docker:
-      - image: docker:18.02.0-ce
+      - image: cimg/base:stable
     steps:
       - checkout
       - setup_remote_docker
@@ -59,7 +58,7 @@ jobs:
           key: v1-{{.Environment.CIRCLE_SHA1}}
       - run:
           name: Restore Docker image cache
-          command: docker load -i /cache/app.tar
+          command: docker load -i /tmp/cache/app.tar
       - run:
           name: Lint Python Code
           command: docker-compose -f docker-compose.test.yml run --rm server make lint
@@ -69,7 +68,7 @@ jobs:
 
   test-environment:
     docker:
-      - image: cimg/base:2021.10
+      - image: cimg/base:stable
     working_directory: ~/mozilla/glam/
     steps:
       - checkout
@@ -80,7 +79,7 @@ jobs:
 
   deploy:
     docker:
-      - image: docker:18.02.0-ce
+      - image: cimg/base:stable
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
@@ -89,7 +88,7 @@ jobs:
           key: v1-{{.Environment.CIRCLE_SHA1}}
       - run:
           name: Restore Docker image cache
-          command: docker load -i /cache/app.tar
+          command: docker load -i /tmp/cache/app.tar
       - run:
           name: Login to Dockerhub
           command: |
