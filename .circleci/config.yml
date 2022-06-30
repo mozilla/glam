@@ -4,9 +4,6 @@ jobs:
   build:
     docker:
       - image: docker:stable-git
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASSWORD
     working_directory: /dockerflow
     steps:
       - checkout
@@ -41,9 +38,6 @@ jobs:
   frontend-tests:
     docker:
       - image: docker:18.02.0-ce
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASSWORD
     steps:
       - setup_remote_docker
       - restore_cache:
@@ -58,18 +52,8 @@ jobs:
   backend-tests:
     docker:
       - image: docker:18.02.0-ce
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASSWORD
-        environment:
-          DJANGO_CONFIGURATION: Test
-          DATABASE_URL: postgresql://postgres:pass@postgres/test?sslmode=disable
-      - image: circleci/postgres:11
-        name: postgres
-        environment:
-          POSTGRES_DB: test
-          POSTGRES_PASSWORD: pass
     steps:
+      - checkout
       - setup_remote_docker
       - restore_cache:
           key: v1-{{.Environment.CIRCLE_SHA1}}
@@ -78,12 +62,10 @@ jobs:
           command: docker load -i /cache/app.tar
       - run:
           name: Lint Python Code
-          command: |
-            docker run app:build python3 -m flake8 --max-line-length 100 /app
-            docker run app:build python3 -m black --check glam .
+          command: docker-compose -f docker-compose.test.yml run --rm server make lint
       - run:
           name: Test Python Code
-          command: docker run --network host --env DJANGO_CONFIGURATION=${DJANGO_CONFIGURATION} --env DATABASE_URL=${DATABASE_URL} app:build pytest /app/glam/
+          command: docker-compose -f docker-compose.test.yml run --rm server pytest --dc=Test /app/glam/
 
   test-environment:
     docker:
@@ -103,7 +85,6 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
     steps:
-      - setup_remote_docker
       - restore_cache:
           key: v1-{{.Environment.CIRCLE_SHA1}}
       - run:
