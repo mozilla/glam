@@ -48,7 +48,7 @@
   export let yAccessor;
 
   // set default reference point to be used in distribution sql
-  let defaultRef = data[data.length - 1]['build_id'];
+  let defaultRef = data[data.length - 1].build_id;
   store.setField('defaultRef', defaultRef);
 
   const pushlogUrlTemplate = _.template(
