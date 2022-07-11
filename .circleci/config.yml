@@ -84,6 +84,7 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
     steps:
+      - setup_remote_docker
       - restore_cache:
           key: v1-{{.Environment.CIRCLE_SHA1}}
       - run:
