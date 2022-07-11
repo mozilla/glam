@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  server:
+    environment:
+      - DJANGO_SECRET_KEY=testtesttest
+    env_file:
+      - .env-dist
+    depends_on:
+      - db
+    image: app:build
+    links:
+      - db
+
+  db:
+    image: postgres:11
+    environment:
+      POSTGRES_PASSWORD: pass

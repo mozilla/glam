@@ -1,57 +1,74 @@
 version: 2.1
 
-orbs:
-  docker: circleci/docker@2.1.1
-
 jobs:
   build:
-    working_directory: ~/mozilla/glam
     docker:
-      - image: circleci/python:3.8
-        environment:
-          DJANGO_CONFIGURATION: Test
-          DATABASE_URL: postgresql://postgres:pass@postgres/test?sslmode=disable
-      - image: circleci/postgres:11
-        name: postgres
-        environment:
-          POSTGRES_DB: test
-          POSTGRES_PASSWORD: pass
+      - image: cimg/base:stable
     steps:
       - checkout
-      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - setup_remote_docker
       - run:
-          sudo chown -R circleci:circleci /usr/local/lib/python3.8/site-packages
-      - run:
+          name: Create a version.json
           command: |
-            sudo pip install -U pip
-            pip install -r requirements.txt
+            # create a version.json per https://github.com/mozilla-services/Dockerflow/blob/main/docs/version_object.md
+            printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
+            "$CIRCLE_SHA1" \
+            "$CIRCLE_TAG" \
+            "$CIRCLE_PROJECT_USERNAME" \
+            "$CIRCLE_PROJECT_REPONAME" \
+            "$CIRCLE_BUILD_URL" > version.json
       - run:
+          name: Build Docker images for $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
           command: |
-            make lint
-            pytest glam/
-  frontend-tests:
-    working_directory: ~/mozilla/glam
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
+            docker build --target frontend -t app-frontend:build .
+            docker build -t app:build .
       - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-      - run:
-          name: install-npm-wee
-          command: npm install
-      - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          name: docker save
+          command: |
+            mkdir -p /tmp/cache
+            docker save -o /tmp/cache/app-frontend.tar "app-frontend:build"
+            docker save -o /tmp/cache/app.tar "app:build"
+      - save_cache:
+          key: v1-{{ .Environment.CIRCLE_SHA1 }}-{{epoch}}
           paths:
-            - ./node_modules
-      - run: npm run build
-      - run: npm run test
+            - /tmp/cache/app-frontend.tar
+            - /tmp/cache/app.tar
+
+  frontend-tests:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - setup_remote_docker
+      - restore_cache:
+          key: v1-{{.Environment.CIRCLE_SHA1}}
+      - run:
+          name: Restore Docker image cache
+          command: docker load -i /tmp/cache/app-frontend.tar
+      - run:
+          name: Test Frontend (JS) Code
+          command: docker run app-frontend:build
+
+  backend-tests:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          key: v1-{{.Environment.CIRCLE_SHA1}}
+      - run:
+          name: Restore Docker image cache
+          command: docker load -i /tmp/cache/app.tar
+      - run:
+          name: Lint Python Code
+          command: docker-compose -f docker-compose.test.yml run --rm server make lint
+      - run:
+          name: Test Python Code
+          command: docker-compose -f docker-compose.test.yml run --rm server pytest --dc=Test /app/glam/
+
   test-environment:
     docker:
-      - image: cimg/base:2021.10
+      - image: cimg/base:stable
     working_directory: ~/mozilla/glam/
     steps:
       - checkout
@@ -59,43 +76,69 @@ jobs:
           command: | # bind {PWD} because we use it in docker-compose.yml
             cp .env-dist .env
             make build -v ${PWD}:/app
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+    steps:
+      - restore_cache:
+          key: v1-{{.Environment.CIRCLE_SHA1}}
+      - run:
+          name: Restore Docker image cache
+          command: docker load -i /tmp/cache/app.tar
+      - run:
+          name: Login to Dockerhub
+          command: |
+            echo "${DOCKER_PASSWORD}" | docker login -u="${DOCKER_USER}" --password-stdin
+      - run:
+          name: Deploy to Dockerhub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+              docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
+            elif  [ ! -z "${CIRCLE_TAG}" ]; then
+              echo "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
+              docker tag app:build "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
+            fi
+            docker images
+            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+
 workflows:
   version: 2
-  test-and-deploy:
+  build-test-deploy:
     jobs:
-      - frontend-tests:
-          filters:
-            tags:
-              only: /.*/
-      - test-environment:
-          filters:
-            tags:
-              only: /.*/
       - build:
           filters:
             tags:
               only: /.*/
-      - docker/publish:
-          name: publish-latest
+      - frontend-tests:
           requires:
-            - frontend-tests
             - build
           filters:
-            branches:
-              only: main
             tags:
-              ignore: /.*/
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          tag: $CIRCLE_SHA1,latest
-      - docker/publish:
-          name: publish-release
+              only: /.*/
+      - backend-tests:
           requires:
-            - frontend-tests
             - build
           filters:
-            branches:
-              ignore: /.*/
+            tags:
+              only: /.*/
+      - test-environment:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - frontend-tests
+            - backend-tests
+            - test-environment
+          filters:
             tags:
               only: /^\d+\.\d+\.\d+$/
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          tag: $CIRCLE_TAG
+            branches:
+              only: main
