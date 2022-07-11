@@ -10,3 +10,4 @@ scripts
 !.env-dist
 *.md
 docker-compose.yml
+.vscode
