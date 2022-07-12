@@ -5,7 +5,8 @@ const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
 const FETCH_ERROR_MESSAGES = {
   code5xx: 'Oh no! The server encountered an error.',
   code4xx: 'Oh no! Your client sent an invalid request.',
-  code404: '404: No data found for the selected dimensions.',
+  code404:
+    '404: No data found for the selected dimensions. Try changing the dimension value, or check if the probe is still active.',
   code405: '405: Method not allowed.',
 };
 
