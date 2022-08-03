@@ -98,14 +98,16 @@ jobs:
           name: Deploy to Dockerhub
           command: |
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              # tag the CI-built docker image with latest & the latest git commit SHA
               docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
               docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
+              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
+              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
             elif  [ ! -z "${CIRCLE_TAG}" ]; then
-              echo "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
+              # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
               docker tag app:build "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
+              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
             fi
-            docker images
-            docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
 
 workflows:
   version: 2
