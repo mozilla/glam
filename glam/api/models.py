@@ -107,6 +107,7 @@ class FOGAggregation(AbstractGleanAggregation):
 class FOGAggregationView(AbstractGleanAggregation):
     class Meta:
         managed = False
+        abstract = True
         db_table = "view_glam_fog_aggregation"
 
 
