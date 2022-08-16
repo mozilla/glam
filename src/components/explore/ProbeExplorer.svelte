@@ -178,6 +178,19 @@
     });
   }
 
+  let leftDensity;
+  let rightDensity = ref[densityMetricType];
+  let leftAudienceValue = hovered.datum ? hovered.datum.audienceSize : 0;
+  let rightAudienceValue = ref.audienceSize;
+  let leftSampleValue = hovered.datum ? hovered.datum.sample_count : 0;
+  let rightSampleValue = ref.sample_count;
+  let leftPoints = leftPointsForAggComparison(
+    data,
+    pointMetricType,
+    hovered.datum
+  );
+  let rightPoints = ref[pointMetricType];
+
   $: if (hoverValue.x) {
     if ($showContextMenu) {
       hovered = lastHoverValue;
@@ -189,6 +202,33 @@
         previous: data[i.previousIndex],
         next: data[i.nextIndex],
       };
+      if ($store.ref && $store.ref > hovered.datum.build_id) {
+        leftDensity = hovered.datum[densityMetricType];
+        rightDensity = ref[densityMetricType];
+        leftAudienceValue = hovered.datum.audienceSize;
+        rightAudienceValue = ref.audienceSize;
+        leftSampleValue = hovered.datum.sample_count;
+        rightSampleValue = ref.sample_count;
+        leftPoints = leftPointsForAggComparison(
+          data,
+          pointMetricType,
+          hovered.datum
+        );
+        rightPoints = ref[pointMetricType];
+      } else {
+        leftDensity = ref[densityMetricType];
+        rightDensity = hovered.datum[densityMetricType];
+        leftAudienceValue = ref.audienceSize;
+        rightAudienceValue = hovered.datum.audienceSize;
+        leftSampleValue = ref.sample_count;
+        rightSampleValue = hovered.datum.sample_count;
+        leftPoints = ref[pointMetricType];
+        rightPoints = leftPointsForAggComparison(
+          data,
+          pointMetricType,
+          hovered.datum
+        );
+      }
     }
   } else if ($showContextMenu) {
     hovered = lastHoverValue;
@@ -303,12 +343,8 @@
       : ref.label}
     colorMap={binColorMap}
     {yTickFormatter}
-    leftPoints={leftPointsForAggComparison(
-      data,
-      pointMetricType,
-      hovered.datum
-    )}
-    rightPoints={ref[pointMetricType]}
+    {leftPoints}
+    {rightPoints}
     {activeBins}
     {yDomain}
     dataVolume={data.length}
@@ -332,7 +368,7 @@
             direction={-1}
             density={data.length < 2 || !hovered.datum
               ? data[0][densityMetricType]
-              : hovered.datum[densityMetricType]}
+              : leftDensity}
             width={(explorerComparisonSmallMultiple.width -
               explorerComparisonSmallMultiple.left -
               explorerComparisonSmallMultiple.right) /
@@ -342,7 +378,7 @@
         {#if ref && ref[densityMetricType]}
           <AdHocViolin
             start={justOne ? lp : (lp + rp) / 2}
-            density={ref[densityMetricType]}
+            density={rightDensity}
             width={justOne
               ? rp - lp - VIOLIN_PLOT_OFFSET * 2
               : (explorerComparisonSmallMultiple.width -
@@ -400,8 +436,8 @@
       <CompareClientVolumeGraph
         description={compareDescription(clientVolumeOverTimeTitle)}
         yDomain={yClientsDomain}
-        hoverValue={hovered.datum ? hovered.datum.audienceSize : 0}
-        referenceValue={ref.audienceSize} />
+        {leftAudienceValue}
+        {rightAudienceValue} />
     </div>
   {/if}
   {#if $store.countView === 'samples'}
@@ -426,8 +462,8 @@
           overTimeTitle('sampleVolume', aggregationLevel)
         )}
         yDomain={ySamplesDomain}
-        hoverValue={hovered.datum ? hovered.datum.sample_count : 0}
-        referenceValue={ref.sample_count} />
+        {leftSampleValue}
+        {rightSampleValue} />
     </div>
   {/if}
 </div>

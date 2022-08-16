@@ -31,7 +31,7 @@
   export let yScaleType;
   export let key = Math.random().toString(36).substring(7);
 
-  let labelSet = ['HOV.', 'REF.'];
+  let labelSet = ['LEFT', 'RIGHT'];
 
   if (dataVolume === 1) {
     labelSet = [rightLabel];
@@ -95,7 +95,7 @@
         height={bottom - top}
         fill={explorerComparisonSmallMultiple.bgColor}
         use:tooltipAction={{
-          text: 'Shows the distribution of the currently-hovered point on the line chart',
+          text: 'Shows the distribution of the left point on the line chart',
           location: 'top',
           alignment: 'center',
         }} />
@@ -106,7 +106,7 @@
         height={bottom - top}
         fill={explorerComparisonSmallMultiple.bgColor}
         use:tooltipAction={{
-          text: 'Shows the distribution of the current reference point on the line chart',
+          text: 'Shows the distribution of the right point on the line chart',
           location: 'top',
           alignment: 'center',
         }} />

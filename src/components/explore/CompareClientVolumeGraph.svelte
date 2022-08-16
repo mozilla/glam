@@ -10,8 +10,8 @@
   import { formatCount } from '../../utils/formatters';
 
   export let description;
-  export let hoverValue;
-  export let referenceValue;
+  export let leftAudienceValue;
+  export let rightAudienceValue;
   export let yDomain;
 </script>
 
@@ -54,7 +54,7 @@
         height={bottom - top}
         fill={compareClientCountsGraph.bgColor}
         use:tooltipAction={{
-          text: 'Shows the distribution of the currently-hovered point on the line chart',
+          text: 'Shows the distribution of the left point on the line chart',
           location: 'top',
           alignment: 'center',
         }} />
@@ -65,15 +65,14 @@
         height={bottom - top}
         fill={compareClientCountsGraph.bgColor}
         use:tooltipAction={{
-          text: 'Shows the distribution of the current reference point on the line chart',
+          text: 'Shows the distribution of the right point on the line chart',
           location: 'top',
           alignment: 'center',
         }} />
       <Axis side="right" tickFormatter={formatCount} ticks={yScale.ticks(4)} />
-      <Axis side="bottom" ticks={['HOV.', 'REF.']} />
     </g>
     <g slot="body" let:top let:bottom let:xScale let:yScale>
-      <Tweenable params={tween} value={referenceValue} let:tweenValue={tw}>
+      <Tweenable params={tween} value={rightAudienceValue} let:tweenValue={tw}>
         <rect
           class="client-bar"
           x={xScale('REF.') - xScale.step() / 4}
@@ -87,19 +86,19 @@
           y1={yScale(tw)}
           y2={yScale(tw)} />
       </Tweenable>
-      {#if hoverValue}
+      {#if leftAudienceValue}
         <rect
           class="client-bar"
           x={xScale('HOV.') - xScale.step() / 4}
-          y={yScale(hoverValue)}
+          y={yScale(leftAudienceValue)}
           width={xScale.step() / 2}
-          height={bottom - yScale(hoverValue)} />
+          height={bottom - yScale(leftAudienceValue)} />
         <line
           class="client-peak"
           x1={xScale('HOV.') - xScale.step() / 4}
           x2={xScale('HOV.') + xScale.step() / 4}
-          y1={yScale(hoverValue)}
-          y2={yScale(hoverValue)} />
+          y1={yScale(leftAudienceValue)}
+          y2={yScale(leftAudienceValue)} />
       {/if}
     </g>
   </DataGraphic>
