@@ -203,7 +203,10 @@
         previous: data[i.previousIndex],
         next: data[i.nextIndex],
       };
-      if ($store.ref && $store.ref > hovered.datum.build_id) {
+      if (
+        ($store.ref && $store.ref > hovered.datum.build_id) ||
+        (!$store.ref && ref > hovered.datum.build_id)
+      ) {
         topLabels = ['HOV.', 'REF.'];
         leftDensity = hovered.datum[densityMetricType];
         rightDensity = ref[densityMetricType];
@@ -217,7 +220,8 @@
           hovered.datum
         );
         rightPoints = ref[pointMetricType];
-      } else {
+      }
+      if ($store.ref && $store.ref < hovered.datum.build_id) {
         topLabels = ['REF.', 'HOV.'];
         leftDensity = ref[densityMetricType];
         rightDensity = hovered.datum[densityMetricType];
