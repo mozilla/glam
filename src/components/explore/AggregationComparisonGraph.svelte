@@ -31,13 +31,13 @@
   export let yScaleType;
   export let key = Math.random().toString(36).substring(7);
 
-  let labelSet = ['LEFT', 'RIGHT'];
+  export let topLabels;
 
   if (dataVolume === 1) {
-    labelSet = [rightLabel];
+    topLabels = [rightLabel];
   }
 
-  export let xDomain = labelSet;
+  export let xDomain;
 
   let xScale;
   let yScale;
@@ -60,6 +60,7 @@
     dotsAndLines.setHover(leftPoints, dataVolume === 1);
   $: if (rightPoints && yScale)
     dotsAndLines.setReference(rightPoints, dataVolume === 1);
+  $: xDomain = topLabels;
 </script>
 
 <div>

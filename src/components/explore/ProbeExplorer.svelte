@@ -190,6 +190,7 @@
     hovered.datum
   );
   let rightPoints = ref[pointMetricType];
+  let topLabels = ['HOV.', 'REF.'];
 
   $: if (hoverValue.x) {
     if ($showContextMenu) {
@@ -203,6 +204,7 @@
         next: data[i.nextIndex],
       };
       if ($store.ref && $store.ref > hovered.datum.build_id) {
+        topLabels = ['HOV.', 'REF.'];
         leftDensity = hovered.datum[densityMetricType];
         rightDensity = ref[densityMetricType];
         leftAudienceValue = hovered.datum.audienceSize;
@@ -216,6 +218,7 @@
         );
         rightPoints = ref[pointMetricType];
       } else {
+        topLabels = ['REF.', 'HOV.'];
         leftDensity = ref[densityMetricType];
         rightDensity = hovered.datum[densityMetricType];
         leftAudienceValue = ref.audienceSize;
@@ -342,6 +345,7 @@
       ? formatBuildIDToDateString(ref.label)
       : ref.label}
     colorMap={binColorMap}
+    {topLabels}
     {yTickFormatter}
     {leftPoints}
     {rightPoints}
@@ -401,10 +405,12 @@
 
   <ComparisonSummary
     hovered={data.length === 1 || !!hovered.datum}
-    left={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
-    right={ref[pointMetricType]}
-    leftLabel={'HOV.'}
-    rightLabel={'REF.'}
+    left={leftPoints}
+    right={rightPoints}
+    hov={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
+    ref={ref[pointMetricType]}
+    leftLabel={topLabels[0]}
+    rightLabel={topLabels[1]}
     binLabel={summaryLabel}
     keySet={activeBins}
     colorMap={binColorMap}
