@@ -20,6 +20,8 @@
   export let showDiff = true;
   export let viewType;
   export let justOne;
+  export let hov;
+  export let ref;
 
   function percentChange(l, r) {
     return viewType === 'proportion' ? r - l : (r - l) / l;
@@ -29,15 +31,19 @@
 
   function createNewPercentiles(lVal, rVal, ks) {
     return ks.map((key) => {
+      // leftValue and rightValue are for display
       const leftValue = lVal ? lVal[key] : undefined;
       const rightValue = rVal ? rVal[key] : undefined;
+      // hovValue and refValue are used for percent change calculation
+      const hovValue = hov ? hov[key] : undefined;
+      const refValue = ref ? ref[key] : undefined;
       return {
         key,
         leftValue,
         rightValue,
         percentageChange:
           leftValue && rightValue
-            ? percentChange(leftValue, rightValue)
+            ? percentChange(hovValue, refValue)
             : undefined,
       };
     });
