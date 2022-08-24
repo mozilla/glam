@@ -29,7 +29,7 @@
 
   import {
     formatBuildIDToDateString,
-    formatCount,
+    formatMillion,
     formatFromNanoseconds,
     formatMemory,
   } from '../../utils/formatters';
@@ -50,7 +50,7 @@
   export let yScaleType;
   export let yDomain;
   export let densityMetricType;
-  export let yTickFormatter = formatCount;
+  export let yTickFormatter = formatMillion;
   if (data[0].metric_type === 'timing_distribution') {
     yTickFormatter = formatFromNanoseconds;
   } else if (data[0].metric_type === 'memory_distribution') {
