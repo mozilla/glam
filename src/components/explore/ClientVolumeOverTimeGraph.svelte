@@ -9,7 +9,7 @@
   import ReleaseVersionMarkers from '../ReleaseVersionMarkers.svelte';
 
   import { totalClientsGraph, tween } from '../../utils/constants';
-  import { formatCount } from '../../utils/formatters';
+  import { formatMillion } from '../../utils/formatters';
 
   import ReferenceSymbol from '../ReferenceSymbol.svelte';
   import TrackingLine from './TrackingLine.svelte';
@@ -67,7 +67,7 @@
         side="left"
         lineStyle="short"
         ticks={yScale.ticks(4)}
-        tickFormatter={formatCount} />
+        tickFormatter={formatMillion} />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
