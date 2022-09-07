@@ -196,21 +196,24 @@ def get_glean_aggregations(request, **kwargs):
     }
     model = MODEL_MAP[kwargs.get("product")]
     product = kwargs.get("product")
+    probe = kwargs["probe"]
 
     num_versions = kwargs.get("versions", 3)
     try:
-        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        versions = list(
+            model.objects.filter(Q(metric=probe))
+            .order_by("-version")
+            .values_list("version", flat=True)
+            .distinct("version")[:num_versions]
+        )
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
-        # This happens when `version_max` is NULL and cannot be converted to an int,
+        # This happens when `version` is NULL,
         # suggesting that we have no data for this model.
         raise NotFound("No data found for the provided parameters")
 
-    versions = list(map(str, range(max_version, max_version - num_versions, -1)))
-
     app_id = kwargs["app_id"]
-    probe = kwargs["probe"]
     ping_type = kwargs["ping_type"]
     os = kwargs.get("os", "*")
 
