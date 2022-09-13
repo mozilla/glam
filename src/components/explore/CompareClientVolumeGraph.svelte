@@ -7,7 +7,7 @@
   import Tweenable from '../Tweenable.svelte';
   import ChartTitle from './ChartTitle.svelte';
   import { compareClientCountsGraph, tween } from '../../utils/constants';
-  import { formatCount } from '../../utils/formatters';
+  import { formatMillion } from '../../utils/formatters';
 
   export let description;
   export let leftAudienceValue;
@@ -69,7 +69,10 @@
           location: 'top',
           alignment: 'center',
         }} />
-      <Axis side="right" tickFormatter={formatCount} ticks={yScale.ticks(4)} />
+      <Axis
+        side="right"
+        tickFormatter={formatMillion}
+        ticks={yScale.ticks(4)} />
     </g>
     <g slot="body" let:top let:bottom let:xScale let:yScale>
       <Tweenable params={tween} value={rightAudienceValue} let:tweenValue={tw}>
