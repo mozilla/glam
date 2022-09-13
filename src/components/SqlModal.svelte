@@ -246,10 +246,14 @@
   </div>
   <div slot="title">Explore the data...</div>
   <div>
-    <p>
-      The following SQL query can be copy/pasted and used in the BigQuery
-      console to explore this data further:
-    </p>
+    {#if $store.product === 'fog'}
+      <p>Sorry, this feature is not available for Glean metrics yet.</p>
+    {:else}
+      <p>
+        The following SQL query can be copy/pasted and used in the BigQuery
+        console to explore this data further:
+      </p>
+    {/if}
     <ul>
       {#each tabs as tab}
         <li class:active={activeTab === tab.id}>
