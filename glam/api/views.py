@@ -2,9 +2,10 @@ import os
 
 import dateutil.parser
 import orjson
+import requests
 from django.conf import settings
 from django.core.cache import caches
-from django.db.models import Max, Q, Value, Count
+from django.db.models import Q, Value, Count
 from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
@@ -25,6 +26,25 @@ from glam.api.models import (
     Probe,
     UsageInstrumentation,
 )
+
+FIREFOX_DESKTOP_PRODUCT_DETAILS = requests.get(
+    "https://product-details.mozilla.org/1.0/firefox_versions.json"
+).json()
+
+FIREFOX_MOBILE_PRODUCT_DETAILS = requests.get(
+    "https://product-details.mozilla.org/1.0/mobile_versions.json"
+).json()
+
+FIREFOX_DESKTOP_VERSION_MAP = {
+    "nightly": FIREFOX_DESKTOP_PRODUCT_DETAILS["FIREFOX_NIGHTLY"].split(".")[0],
+    "beta": FIREFOX_DESKTOP_PRODUCT_DETAILS["FIREFOX_DEVEDITION"].split(".")[0],
+    "release": FIREFOX_DESKTOP_PRODUCT_DETAILS["LATEST_FIREFOX_VERSION"].split(".")[0],
+}
+FIREFOX_ANDROID_VERSION_MAP = {
+    "nightly": FIREFOX_MOBILE_PRODUCT_DETAILS["nightly_version"].split(".")[0],
+    "beta": FIREFOX_MOBILE_PRODUCT_DETAILS["beta_version"].split(".")[0],
+    "release": FIREFOX_MOBILE_PRODUCT_DETAILS["version"].split(".")[0],
+}
 
 
 @api_view(["GET"])
@@ -74,7 +94,7 @@ def get_firefox_aggregations(request, **kwargs):
 
     num_versions = kwargs.get("versions", 3)
     try:
-        max_version = int(model.objects.aggregate(Max("version"))["version__max"])
+        max_version = int(FIREFOX_DESKTOP_VERSION_MAP[channel])
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
@@ -198,25 +218,24 @@ def get_glean_aggregations(request, **kwargs):
     product = kwargs.get("product")
     probe = kwargs["probe"]
 
-    num_versions = kwargs.get("versions", 3)
-    try:
-        versions = list(
-            model.objects.filter(Q(metric=probe))
-            .order_by("-version")
-            .values_list("version", flat=True)
-            .distinct("version")[:num_versions]
-        )
-    except (ValueError, KeyError):
-        raise ValidationError("Query version cannot be determined")
-    except TypeError:
-        # This happens when `version` is NULL,
-        # suggesting that we have no data for this model.
-        raise NotFound("No data found for the provided parameters")
-
     app_id = kwargs["app_id"]
     ping_type = kwargs["ping_type"]
     os = kwargs.get("os", "*")
 
+    num_versions = kwargs.get("versions", 3)
+    try:
+        if product == "fenix":
+            max_version = int(FIREFOX_ANDROID_VERSION_MAP[app_id])
+        elif product == "fog":
+            max_version = int(FIREFOX_DESKTOP_VERSION_MAP[app_id])
+    except (ValueError, KeyError):
+        raise ValidationError("Query version cannot be determined")
+    except TypeError:
+        # This happens when `max_version` is NULL,
+        # suggesting that we have no data for this model.
+        raise NotFound("No data found for the provided parameters")
+
+    versions = list(map(str, range(max_version, max_version - num_versions, -1)))
     dimensions = [
         Q(app_id=app_id),
         Q(metric=probe),
