@@ -246,8 +246,8 @@
   </div>
   <div slot="title">Explore the data...</div>
   <div>
-    {#if $store.product == 'fog'}
-      <p>This feature is not available for Glean metrics yet.</p>
+    {#if $store.product === 'fog'}
+      <p>Sorry, this feature is not available for Glean metrics yet.</p>
     {:else}
       <p>
         The following SQL query can be copy/pasted and used in the BigQuery
