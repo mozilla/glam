@@ -27,24 +27,26 @@ from glam.api.models import (
     UsageInstrumentation,
 )
 
-FIREFOX_DESKTOP_PRODUCT_DETAILS = requests.get(
-    "https://product-details.mozilla.org/1.0/firefox_versions.json"
-).json()
-
-FIREFOX_MOBILE_PRODUCT_DETAILS = requests.get(
-    "https://product-details.mozilla.org/1.0/mobile_versions.json"
-).json()
-
-FIREFOX_DESKTOP_VERSION_MAP = {
-    "nightly": FIREFOX_DESKTOP_PRODUCT_DETAILS["FIREFOX_NIGHTLY"].split(".")[0],
-    "beta": FIREFOX_DESKTOP_PRODUCT_DETAILS["FIREFOX_DEVEDITION"].split(".")[0],
-    "release": FIREFOX_DESKTOP_PRODUCT_DETAILS["LATEST_FIREFOX_VERSION"].split(".")[0],
+PRODUCT_DETAILS_URLS = {
+    "firefox": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+    "fog": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+    "fenix": "https://product-details.mozilla.org/1.0/mobile_versions.json",
 }
-FIREFOX_ANDROID_VERSION_MAP = {
-    "nightly": FIREFOX_MOBILE_PRODUCT_DETAILS["nightly_version"].split(".")[0],
-    "beta": FIREFOX_MOBILE_PRODUCT_DETAILS["beta_version"].split(".")[0],
-    "release": FIREFOX_MOBILE_PRODUCT_DETAILS["version"].split(".")[0],
-}
+
+
+def get_versions(product, product_details):
+    if product == "firefox" or product == "fog":
+        return {
+            "nightly": product_details["FIREFOX_NIGHTLY"].split(".")[0],
+            "beta": product_details["FIREFOX_DEVEDITION"].split(".")[0],
+            "release": product_details["LATEST_FIREFOX_VERSION"].split(".")[0],
+        }
+    elif product == "fenix":
+        return {
+            "nightly": product_details["nightly_version"].split(".")[0],
+            "beta": product_details["beta_version"].split(".")[0],
+            "release": product_details["version"].split(".")[0],
+        }
 
 
 @api_view(["GET"])
@@ -80,6 +82,8 @@ def get_firefox_aggregations(request, **kwargs):
     product = "firefox"
     channel = kwargs.get("channel")
     model_key = f"{product}-{channel}"
+    product_details = requests.get(PRODUCT_DETAILS_URLS[product]).json()
+    versions = get_versions(product, product_details)
 
     MODEL_MAP = {
         "firefox-nightly": DesktopNightlyAggregationView,
@@ -94,7 +98,7 @@ def get_firefox_aggregations(request, **kwargs):
 
     num_versions = kwargs.get("versions", 3)
     try:
-        max_version = int(FIREFOX_DESKTOP_VERSION_MAP[channel])
+        max_version = int(versions[channel])
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
@@ -223,11 +227,11 @@ def get_glean_aggregations(request, **kwargs):
     os = kwargs.get("os", "*")
 
     num_versions = kwargs.get("versions", 3)
+    product_details = requests.get(PRODUCT_DETAILS_URLS[product]).json()
+    versions = get_versions(product, product_details)
+
     try:
-        if product == "fenix":
-            max_version = int(FIREFOX_ANDROID_VERSION_MAP[app_id])
-        elif product == "fog":
-            max_version = int(FIREFOX_DESKTOP_VERSION_MAP[app_id])
+        max_version = int(versions[app_id])
     except (ValueError, KeyError):
         raise ValidationError("Query version cannot be determined")
     except TypeError:
