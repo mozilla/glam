@@ -200,7 +200,11 @@
     ) {
       // do not change yDomain when all percentiles are selected
       // (we want the graph to match the violin plot initially)
-      if ($store.visiblePercentiles.length === 5) return yDomain;
+      if (
+        $store.visiblePercentiles.length === 5 &&
+        data[0].metric_type !== 'timing_distribution'
+      )
+        return yDomain;
       visiblePercentiles.forEach((p) => {
         yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
       });
