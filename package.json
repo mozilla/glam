@@ -28,7 +28,7 @@
     "@graph-paper/menu": "0.0.0-alpha.15",
     "@graph-paper/optionmenu": "0.0.0-alpha.15",
     "@graph-paper/portal": "0.0.0-alpha.15",
-    "@rollup/plugin-commonjs": "21.0.1",
+    "@rollup/plugin-commonjs": "23.0.1",
     "@rollup/plugin-json": "5.0.0",
     "@rollup/plugin-node-resolve": "13.0.6",
     "@rollup/plugin-replace": "5.0.0",
