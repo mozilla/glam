@@ -101,6 +101,7 @@ export const FIREFOX_ON_GLEAN = {
       ping_type: storeValue.productDimensions.ping_type,
       probe: storeValue.probeName,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
+      versions: 20,
     };
   },
   fetchData(params, appStore) {
@@ -266,6 +267,7 @@ export const FENIX = {
       ping_type: storeValue.productDimensions.ping_type,
       probe: storeValue.probeName,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
+      versions: 20,
     };
   },
   fetchData(params, appStore) {
