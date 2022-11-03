@@ -1,4 +1,3 @@
-import gzip
 import json
 import re
 import urllib.request
