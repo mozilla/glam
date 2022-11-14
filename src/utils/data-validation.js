@@ -1,6 +1,5 @@
-export const noUnknownMetrics = (payload, probeViews = []) => {
+export const noUnknownMetrics = (probeViews = [], metricType) => {
   // Ensure the probe metric type is in our list of `probeView`s.
-  const metricType = payload.response[0].metric_type;
   if (!probeViews.includes(metricType)) {
     const er = new Error('This metric type is currently unsupported.');
     er.moreInformation =

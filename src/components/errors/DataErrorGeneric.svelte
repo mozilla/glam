@@ -1,8 +1,15 @@
 <script>
   import GlamErrorShapes from './GlamErrorShapes.svelte';
+  import { store } from '../../state/store';
 
   export let reason;
   export let moreInformation;
+
+  const DICTIONARY_LINKS = {
+    firefox: `https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.id}`,
+    fenix: `https://dictionary.telemetry.mozilla.org/apps/fenix/metrics/${$store.probeName}`,
+    fog: `https://dictionary.telemetry.mozilla.org/apps/firefox_desktop/metrics/${$store.probeName}`,
+  };
 </script>
 
 <style>
@@ -65,6 +72,11 @@
   <div class="data-error-msg__reason">{reason}</div>
   {#if moreInformation}
     <div class="data-error-msg__more-information">{moreInformation}</div>
+    <div class="data-error-msg__more-information">
+      For more resources, visit the <a href={DICTIONARY_LINKS[$store.product]}
+        >dictionary</a
+      >.
+    </div>
   {/if}
   <div class="data-error-msg__call-to-action">
     If you think this is a bug, report this on the
