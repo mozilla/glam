@@ -18,7 +18,12 @@
 
   const parseYMD = timeParse('%Y-%m-%d');
   const mdY = timeFormat('%b %d, %Y');
-  const toNiceDate = (dt) => mdY(parseYMD(dt));
+
+  const expiryFormat = (expiry) => {
+    const date = parseYMD(expiry);
+    // if not null / never, expiry field can be a date or a version number
+    return date ? mdY(date) : `version ${expiry}`;
+  };
 
   const willNeverExpire = (expiry) =>
     expiry === 'never' || expiry === undefined || expiry === null;
@@ -221,7 +226,7 @@
         <dd>
           {willNeverExpire($store.probe.expires)
             ? 'never'
-            : toNiceDate($store.probe.expires)}
+            : expiryFormat($store.probe.expires)}
         </dd>
       </dl>
     </div>
