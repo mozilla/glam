@@ -122,7 +122,7 @@ export default {
       const metricType = payload.response[0].metric_type;
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(p, Object.keys(this.probeView));
+        noUnknownMetrics(Object.keys(this.probeView), metricType);
       });
       const viewType =
         this.probeView[metricType] === 'categorical'

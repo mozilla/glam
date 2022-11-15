@@ -1,7 +1,8 @@
 import { transformAPIResponse } from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
-import { getProbeData } from '../state/api';
+import { getProbeData, getProbeInfo } from '../state/api';
+
 import {
   validate,
   noResponse,
@@ -104,16 +105,21 @@ export const FIREFOX_ON_GLEAN = {
       versions: 20,
     };
   },
-  fetchData(params, appStore) {
-    // FIXME: this is (so far) identical to firefox-desktop.
-    // should we just make this something in shared.js?
+  async fetchData(params, appStore) {
+    await getProbeInfo(appStore.getState().product, params.probe).then((r) => {
+      const newProbe = { ...r, loaded: true };
+      appStore.setField('probe', newProbe);
+    });
+
+    const metricType = appStore.getState().probe.type;
+    noUnknownMetrics(Object.keys(this.probeView), metricType);
+
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
-      const metricType = payload.response[0].metric_type;
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(p, Object.keys(this.probeView));
+        noUnknownMetrics(Object.keys(this.probeView), metricType);
       });
       const viewType =
         this.probeView[metricType] === 'categorical'
@@ -270,16 +276,21 @@ export const FENIX = {
       versions: 20,
     };
   },
-  fetchData(params, appStore) {
-    // FIXME: this is (so far) identical to firefox-desktop.
-    // should we just make this something in shared.js?
+  async fetchData(params, appStore) {
+    await getProbeInfo(appStore.getState().product, params.probe).then((r) => {
+      const newProbe = { ...r, loaded: true };
+      appStore.setField('probe', newProbe);
+    });
+
+    const metricType = appStore.getState().probe.type;
+    noUnknownMetrics(Object.keys(this.probeView), metricType);
+
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
-      const metricType = payload.response[0].metric_type;
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(p, Object.keys(this.probeView));
+        noUnknownMetrics(Object.keys(this.probeView), metricType);
       });
       const viewType =
         this.probeView[metricType] === 'categorical'
