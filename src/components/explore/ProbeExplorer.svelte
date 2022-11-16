@@ -31,7 +31,6 @@
     formatBuildIDToDateString,
     formatMillion,
     formatFromNanoseconds,
-    formatMemory,
   } from '../../utils/formatters';
 
   import { clientCounts, sampleCounts } from '../../utils/probe-utils';
@@ -53,8 +52,6 @@
   export let yTickFormatter = formatMillion;
   if (data[0].metric_type === 'timing_distribution') {
     yTickFormatter = formatFromNanoseconds;
-  } else if (data[0].metric_type === 'memory_distribution') {
-    yTickFormatter = formatMemory($store.probe.memory_unit);
   }
   export let summaryNumberFormatter = yTickFormatter;
   export let comparisonKeyFormatter = (v) => v;
