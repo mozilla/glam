@@ -5,11 +5,9 @@
   import Modal from './Modal.svelte';
   import Database from './icons/Database.svelte';
   import FileCopy from './icons/FileCopy.svelte';
-  import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
   import desktopTelemetrySql from '../stringTemplates/desktop-telemetry.tpl';
   import desktopDistributionSql from '../stringTemplates/desktop-distribution.tpl';
   import desktopHistogramProportionsSql from '../stringTemplates/desktop-histogram-proportions.tpl';
-  import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
 
   let sqlElement;
   let status;
@@ -29,27 +27,6 @@
       sqlElement.style.backgroundColor = '';
       sqlElement.style.transition = '';
     }, 500);
-  }
-
-  function getGlamSql() {
-    const osFilter =
-      $store.productDimensions.os === '*'
-        ? 'os IS NULL'
-        : `os="${$store.productDimensions.os}"`;
-    const buildIdFilter =
-      $store.productDimensions.aggregationLevel === 'build_id'
-        ? 'app_build_id IS NOT NULL'
-        : 'app_build_id IS NULL';
-    const processFilter = $store.productDimensions.process
-      ? `AND process="${$store.productDimensions.process}"`
-      : '';
-    return _.template(desktopGlamSql)({
-      metric: $store.probe.name,
-      channel: $store.productDimensions.channel,
-      osFilter,
-      buildIdFilter,
-      processFilter,
-    });
   }
 
   function getDesktopSql(tpl = 'telemetry') {
@@ -101,46 +78,21 @@
     });
   }
 
-  function getFenixGlamSql() {
-    const buildIdFilter =
-      $store.productDimensions.aggregationLevel === 'build_id'
-        ? 'app_build_id!="*"'
-        : 'app_build_id="*"';
-    return _.template(fenixGlamSql)({
-      app_id: $store.productDimensions.app_id,
-      metric: $store.probe.name.replace('.', '_'),
-      os: $store.productDimensions.os,
-      ping_type: $store.productDimensions.ping_type,
-      buildIdFilter,
-    });
-  }
-
   const tabs = [];
   if ($store.product === 'firefox') {
-    tabs.push({
-      id: 1,
-      label: 'GLAM SQL',
-      sql: getGlamSql,
-    });
     // Telemetry SQL only works on histograms.
     if ($store.probe.type === 'histogram') {
       tabs.push({
-        id: 2,
+        id: 1,
         label: 'Telemetry SQL',
         sql: getDesktopSql,
       });
       tabs.push({
-        id: 3,
+        id: 2,
         label: 'Distribution SQL',
         sql: getDesktopSql,
       });
     }
-  } else if ($store.product === 'fenix') {
-    tabs.push({
-      id: 1,
-      label: 'GLAM SQL',
-      sql: getFenixGlamSql,
-    });
   }
 </script>
 
