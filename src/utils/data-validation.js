@@ -1,6 +1,9 @@
-export const noUnknownMetrics = (probeViews = [], metricType) => {
+export const noUnknownMetrics = (supportedMetrics = [], metricType) => {
   // Ensure the probe metric type is in our list of `probeView`s.
-  if (!probeViews.includes(metricType)) {
+  if (
+    !supportedMetrics.includes(metricType) ||
+    !metricType.includes('custom_distribution')
+  ) {
     const er = new Error('This metric type is currently unsupported.');
     er.moreInformation =
       `GLAM doesn't yet know how to aggregate "${metricType}" type metrics. ` +

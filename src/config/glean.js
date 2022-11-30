@@ -9,6 +9,17 @@ import {
   noUnknownMetrics,
 } from '../utils/data-validation';
 
+export const SUPPORTED_METRICS = [
+  'categorical',
+  'linear',
+  'custom_distribution',
+  'labeled_counter',
+  'memory_distribution',
+  'quantity',
+  'timespan',
+  'timing_distribution',
+];
+
 export const FIREFOX_ON_GLEAN = {
   label: 'Firefox on Glean',
   key: 'fog',
@@ -119,7 +130,7 @@ export const FIREFOX_ON_GLEAN = {
 
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(Object.keys(this.probeView), metricType);
+        noUnknownMetrics(SUPPORTED_METRICS, metricType);
       });
       const viewType =
         this.probeView[metricType] === 'categorical'
@@ -283,7 +294,7 @@ export const FENIX = {
     });
 
     const metricType = appStore.getState().probe.type;
-    noUnknownMetrics(Object.keys(this.probeView), metricType);
+    noUnknownMetrics(SUPPORTED_METRICS, metricType);
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
