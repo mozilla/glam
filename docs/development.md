@@ -130,13 +130,16 @@ This will build and live reload changes as they're made while developing.
 
 ## Updating Python dependencies
 
-Python dependencies are maintained in the `requirements.in` file and “compiled” with hashes and dependencies of dependencies in the `requirements.txt`.
+Python dependencies are maintained in the `requirements.in` file and “compiled”
+with hashes and dependencies of dependencies in the `requirements.txt`.
 
-To add a new dependency, add it to the file `requirements.in` and then do `pip-compile`.
+To add a new dependency, add it to the file `requirements.in` and then do
+`pip-compile`.
 
 Then, rebuild your Docker environment with `make build`.
 
-After the image is built successfully, you can restart the Docker image with `make up` and the new dependency should be available.
+After the image is built successfully, you can restart the Docker image with
+`make up` and the new dependency should be available.
 
 ## Code quality
 
