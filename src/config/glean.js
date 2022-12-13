@@ -123,7 +123,7 @@ export const FIREFOX_ON_GLEAN = {
     });
 
     const metricType = appStore.getState().probe.type;
-    noUnknownMetrics(Object.keys(this.probeView), metricType);
+    noUnknownMetrics(SUPPORTED_METRICS, metricType);
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
@@ -301,7 +301,7 @@ export const FENIX = {
 
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(Object.keys(this.probeView), metricType);
+        noUnknownMetrics(SUPPORTED_METRICS, metricType);
       });
       const viewType =
         this.probeView[metricType] === 'categorical'
