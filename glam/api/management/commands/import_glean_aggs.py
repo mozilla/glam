@@ -1,13 +1,16 @@
 import datetime
+import io
 import os
 import re
 import tempfile
+
 
 from django.apps import apps
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.utils import timezone
 from google.cloud import storage
+from psycopg2.errors import CharacterNotInRepertoire
 
 from glam.api import constants
 from glam.api.models import LastUpdated
@@ -102,6 +105,21 @@ class Command(BaseCommand):
                 product=f"fenix-{app_id}", defaults={"last_updated": timezone.now()}
             )
 
+    def sanitize_import_file_quickfix_1804769(self, fp_name):
+        """Write and return a sanitized temp file without lines that contain invalid characters."""
+        out_fp_name = f"{fp_name}_sanitized"
+
+        with io.open(fp_name, "r", encoding="ascii") as f_in:
+            with io.open(out_fp_name, "w+", encoding="utf-8") as f_out:
+                for line in f_in:
+                    try:
+                        if b"\x00" not in line.encode("utf-8"):
+                            f_out.write(line)
+                    except UnicodeError:
+                        # Skip the line if it is not UTF-8 compatible
+                        continue
+        return out_fp_name
+
     def import_file(self, tmp_table, fp, app_id, product):
 
         model = apps.get_model(PRODUCT_TO_MODEL[product])
@@ -116,7 +134,22 @@ class Command(BaseCommand):
                 sql = f"""
                     COPY {tmp_table} ({", ".join(csv_columns)}) FROM STDIN WITH CSV
                 """
-                cursor.copy_expert(sql, tmp_file)
+                try:
+                    cursor.copy_expert(sql, tmp_file)
+                except CharacterNotInRepertoire:
+                    log(
+                        app_id,
+                        " Postgres found an invalid character while importing this file.",
+                    )
+                    log(
+                        app_id,
+                        " Attempting to sanitize file by removing invalid rows...",
+                    )
+                    sanitized_tmp_file = self.sanitize_import_file_quickfix_1804769(
+                        fp.name
+                    )
+                    with open(sanitized_tmp_file, "r") as s_temp_file:
+                        cursor.copy_expert(sql, s_temp_file)
 
         log(app_id, " Inserting data from temp table into aggregation tables.")
         with connection.cursor() as cursor:
