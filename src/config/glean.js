@@ -12,11 +12,12 @@ import {
 export const SUPPORTED_METRICS = [
   'categorical',
   'linear',
-  'custom_distribution',
+  'counter',
   'labeled_counter',
-  'memory_distribution',
   'quantity',
   'timespan',
+  'custom_distribution',
+  'memory_distribution',
   'timing_distribution',
 ];
 
