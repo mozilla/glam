@@ -4,22 +4,30 @@ from django.db import migrations, models
 
 from glam.api import constants
 
-sql = []
+sql_create = []
+sql_rename = []
 sql_drop = []
 for channel in constants.CHANNEL_NAMES.values():
-    sql.extend(
+    sql_create.extend(
         [
-            f"CREATE MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation AS SELECT * FROM glam_desktop_{channel}_aggregation;",
-            f"CREATE UNIQUE INDEX ON view_glam_desktop_{channel}_aggregation (id);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation (version);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation USING HASH (metric);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation (os);",
+            f"CREATE MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_2 AS SELECT * FROM glam_desktop_{channel}_aggregation;",
+            f"CREATE UNIQUE INDEX ON view_glam_desktop_{channel}_aggregation_2 (id);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 (version);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 USING HASH (metric);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 (os);",
+        ]
+    )
+for channel in constants.CHANNEL_NAMES.values():
+    sql_rename.extend(
+        [
+            f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation rename TO view_glam_desktop_{channel}_aggregation_old;",
+            f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_2 rename TO view_glam_desktop_{channel}_aggregation;",
         ]
     )
 for channel in constants.CHANNEL_NAMES.values():
     sql_drop.extend(
         [
-            f"DROP MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation;",
+            f"DROP MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_old;",
         ]
     )
 
@@ -30,48 +38,43 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AddField(
+            model_name='desktopbetaaggregation',
+            name='non_norm_histogram',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='desktopbetaaggregation',
+            name='non_norm_percentiles',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='desktopnightlyaggregation',
+            name='non_norm_histogram',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='desktopnightlyaggregation',
+            name='non_norm_percentiles',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='desktopreleaseaggregation',
+            name='non_norm_histogram',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.AddField(
+            model_name='desktopreleaseaggregation',
+            name='non_norm_percentiles',
+            field=models.TextField(blank=True, null=True),
+        ),
+        migrations.RunSQL(
+            sql_create,
+        ),
+        migrations.RunSQL(
+            sql_rename,
+        ),
         migrations.RunSQL(
             sql_drop,
-            reverse_sql=[
-                f"DROP MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation"
-                for channel in constants.CHANNEL_NAMES.values()
-            ],
         ),
-        migrations.AddField(
-            model_name='desktopbetaaggregation',
-            name='non_norm_histogram',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='desktopbetaaggregation',
-            name='non_norm_percentiles',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='desktopnightlyaggregation',
-            name='non_norm_histogram',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='desktopnightlyaggregation',
-            name='non_norm_percentiles',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='desktopreleaseaggregation',
-            name='non_norm_histogram',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='desktopreleaseaggregation',
-            name='non_norm_percentiles',
-            field=models.TextField(blank=True, null=True),
-        ),
-        migrations.RunSQL(
-            sql,
-            reverse_sql=[
-                f"DROP MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation"
-                for channel in constants.CHANNEL_NAMES.values()
-            ],
-        )
     ]
