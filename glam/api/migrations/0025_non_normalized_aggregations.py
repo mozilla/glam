@@ -31,41 +31,42 @@ for channel in constants.CHANNEL_NAMES.values():
         ]
     )
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0024_usageinstrumentation'),
+        ("api", "0024_usageinstrumentation"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='desktopbetaaggregation',
-            name='non_norm_histogram',
+            model_name="desktopbetaaggregation",
+            name="non_norm_histogram",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopbetaaggregation',
-            name='non_norm_percentiles',
+            model_name="desktopbetaaggregation",
+            name="non_norm_percentiles",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopnightlyaggregation',
-            name='non_norm_histogram',
+            model_name="desktopnightlyaggregation",
+            name="non_norm_histogram",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopnightlyaggregation',
-            name='non_norm_percentiles',
+            model_name="desktopnightlyaggregation",
+            name="non_norm_percentiles",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopreleaseaggregation',
-            name='non_norm_histogram',
+            model_name="desktopreleaseaggregation",
+            name="non_norm_histogram",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='desktopreleaseaggregation',
-            name='non_norm_percentiles',
+            model_name="desktopreleaseaggregation",
+            name="non_norm_percentiles",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.RunSQL(
