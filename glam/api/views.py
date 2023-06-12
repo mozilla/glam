@@ -127,9 +127,13 @@ def get_firefox_aggregations(request, **kwargs):
             "total_users": row.total_users,
             "sample_count": row.total_sample,
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
-            "non_norm_histogram": row.non_norm_histogram and orjson.loads(row.non_norm_histogram) or "",
+            "non_norm_histogram": row.non_norm_histogram
+            and orjson.loads(row.non_norm_histogram)
+            or "",
             "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
-            "non_norm_percentiles": row.non_norm_percentiles and orjson.loads(row.non_norm_percentiles) or "",
+            "non_norm_percentiles": row.non_norm_percentiles
+            and orjson.loads(row.non_norm_percentiles)
+            or "",
         }
         if row.client_agg_type:
             if row.metric_type == "boolean":
@@ -495,9 +499,7 @@ def usage(request):
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
-                response = response.annotate(total=Count("*")).order_by(
-                    "-total",
-                )
+                response = response.annotate(total=Count("*")).order_by("-total",)
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
