@@ -10,18 +10,18 @@ sql_drop = []
 for channel in constants.CHANNEL_NAMES.values():
     sql_create.extend(
         [
-            f"CREATE MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_2 AS SELECT * FROM glam_desktop_{channel}_aggregation;",
-            f"CREATE UNIQUE INDEX ON view_glam_desktop_{channel}_aggregation_2 (id);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 (version);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 USING HASH (metric);",
-            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_2 (os);",
+            f"CREATE MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_temp AS SELECT * FROM glam_desktop_{channel}_aggregation;",
+            f"CREATE UNIQUE INDEX ON view_glam_desktop_{channel}_aggregation_temp (id);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp (version);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp USING HASH (metric);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp (os);",
         ]
     )
 for channel in constants.CHANNEL_NAMES.values():
     sql_rename.extend(
         [
             f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation rename TO view_glam_desktop_{channel}_aggregation_old;",
-            f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_2 rename TO view_glam_desktop_{channel}_aggregation;",
+            f"ALTER MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation_temp rename TO view_glam_desktop_{channel}_aggregation;",
         ]
     )
 for channel in constants.CHANNEL_NAMES.values():
@@ -39,6 +39,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            sql=migrations.RunSQL.noop,
+            reverse_sql=sql_drop,
+        ),
+        migrations.RunSQL(
+            sql=migrations.RunSQL.noop,
+            reverse_sql=sql_rename,
+        ),
+        migrations.RunSQL(
+            sql=migrations.RunSQL.noop,
+            reverse_sql=sql_create,
+        ),
         migrations.AddField(
             model_name="desktopbetaaggregation",
             name="non_norm_histogram",
@@ -71,11 +83,14 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             sql_create,
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
             sql_rename,
+            reverse_sql=migrations.RunSQL.noop,
         ),
         migrations.RunSQL(
             sql_drop,
+            reverse_sql=migrations.RunSQL.noop,
         ),
     ]
