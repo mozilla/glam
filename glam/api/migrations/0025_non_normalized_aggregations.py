@@ -5,6 +5,7 @@ from django.db import migrations, models
 from glam.api import constants
 
 sql_create = []
+sql_create_rev = []
 sql_rename = []
 sql_drop = []
 for channel in constants.CHANNEL_NAMES.values():
@@ -15,6 +16,15 @@ for channel in constants.CHANNEL_NAMES.values():
             f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp (version);",
             f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp USING HASH (metric);",
             f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation_temp (os);",
+        ]
+    )
+    sql_create_rev.extend(
+        [
+            f"CREATE MATERIALIZED VIEW view_glam_desktop_{channel}_aggregation AS SELECT * FROM glam_desktop_{channel}_aggregation;",
+            f"CREATE UNIQUE INDEX ON view_glam_desktop_{channel}_aggregation (id);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation (version);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation USING HASH (metric);",
+            f"CREATE INDEX ON view_glam_desktop_{channel}_aggregation (os);",
         ]
     )
 for channel in constants.CHANNEL_NAMES.values():
@@ -41,15 +51,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             sql=migrations.RunSQL.noop,
-            reverse_sql=sql_drop,
-        ),
-        migrations.RunSQL(
-            sql=migrations.RunSQL.noop,
-            reverse_sql=sql_rename,
-        ),
-        migrations.RunSQL(
-            sql=migrations.RunSQL.noop,
-            reverse_sql=sql_create,
+            reverse_sql=sql_create_rev,
         ),
         migrations.AddField(
             model_name="desktopbetaaggregation",
