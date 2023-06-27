@@ -30,6 +30,6 @@ services:
       - server
 
   db:
-    image: postgres:11
+    image: postgres:12
     environment:
       POSTGRES_PASSWORD: pass
