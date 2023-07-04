@@ -16,7 +16,7 @@
     "npm": ">=7.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.20.2",
+    "@babel/core": "7.22.6",
     "@babel/plugin-transform-runtime": "7.19.6",
     "@babel/preset-env": "7.20.2",
     "@graph-paper/button": "0.0.0-alpha.15",
