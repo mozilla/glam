@@ -50,6 +50,23 @@ def _create_aggregation(data=None, multiplier=1.0, model=None):
                 "95": 95 * multiplier,
             }
         ),
+        "non_norm_histogram": json.dumps(
+            {
+                "0": round(10.00001111 * multiplier, 4),
+                "1": round(20.00002222 * multiplier, 4),
+                "2": round(30.00003333 * multiplier, 4),
+                "3": round(40.00004444 * multiplier, 4),
+            }
+        ),
+        "non_norm_percentiles": json.dumps(
+            {
+                "5": 5 * multiplier,
+                "25": 25 * multiplier,
+                "50": 50 * multiplier,
+                "75": 75 * multiplier,
+                "95": 95 * multiplier,
+            }
+        ),
     }
     if data:
         _data.update(data)
@@ -316,11 +333,24 @@ class TestDesktopAggregationsApi:
             "revision": "",
             "client_agg_type": "summed-histogram",
             "histogram": {"0": 100.0001, "1": 200.0002, "2": 300.0003, "3": 400.0004},
+            "non_norm_histogram": {
+                "0": 100.0001,
+                "1": 200.0002,
+                "2": 300.0003,
+                "3": 400.0004,
+            },
             "metric": "gc_ms",
             "metric_key": "",
             "metric_type": "histogram-exponential",
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
+            "non_norm_percentiles": {
+                "5": 50,
+                "25": 250,
+                "50": 500,
+                "75": 750,
+                "95": 950,
+            },
             "process": "parent",
             # "total_addressable_market": 999,
             "total_users": 1110,
@@ -355,11 +385,24 @@ class TestDesktopAggregationsApi:
             "revision": revision,
             "client_agg_type": "summed-histogram",
             "histogram": {"0": 100.0001, "1": 200.0002, "2": 300.0003, "3": 400.0004},
+            "non_norm_histogram": {
+                "0": 100.0001,
+                "1": 200.0002,
+                "2": 300.0003,
+                "3": 400.0004,
+            },
             "metric": "gc_ms",
             "metric_key": "",
             "metric_type": "histogram-exponential",
             "os": "*",
             "percentiles": {"5": 50, "25": 250, "50": 500, "75": 750, "95": 950},
+            "non_norm_percentiles": {
+                "5": 50,
+                "25": 250,
+                "50": 500,
+                "75": 750,
+                "95": 950,
+            },
             "process": "parent",
             # "total_addressable_market": 999,
             "total_users": 1110,

@@ -126,6 +126,8 @@ class AbstractDesktopAggregation(models.Model):
     histogram = models.TextField(null=True, blank=True)
     percentiles = models.TextField(null=True, blank=True)
     total_sample = models.BigIntegerField(null=True, blank=True)
+    non_norm_histogram = models.TextField(null=True, blank=True)
+    non_norm_percentiles = models.TextField(null=True, blank=True)
     # TODO: Update these fields to not allow NULLs.
 
     class Meta:
