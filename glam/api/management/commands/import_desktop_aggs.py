@@ -121,7 +121,9 @@ class Command(BaseCommand):
                     total_users = EXCLUDED.total_users,
                     histogram = EXCLUDED.histogram,
                     percentiles = EXCLUDED.percentiles,
-                    total_sample = EXCLUDED.total_sample
+                    total_sample = EXCLUDED.total_sample,
+                    non_norm_histogram = EXCLUDED.non_norm_histogram,
+                    non_norm_percentiles = EXCLUDED.non_norm_percentiles
             """
             cursor.execute(sql)
 
