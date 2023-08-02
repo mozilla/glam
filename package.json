@@ -26,7 +26,7 @@
     "@graph-paper/guides": "0.0.0-alpha.15",
     "@graph-paper/icons": "0.0.0-alpha.15",
     "@graph-paper/menu": "0.0.0-alpha.15",
-    "@graph-paper/optionmenu": "0.0.0-alpha.15",
+    "@graph-paper/optionmenu": "0.0.0-alpha.16",
     "@graph-paper/portal": "0.0.0-alpha.15",
     "@rollup/plugin-commonjs": "21.0.1",
     "@rollup/plugin-json": "5.0.1",
