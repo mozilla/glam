@@ -4,6 +4,7 @@
   import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
+  import DistributionComparisonModal from './DistributionComparisonModal.svelte';
 
   export let data;
   export let x;
@@ -194,6 +195,16 @@
         </div>
       </div>
       {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
+        <div class="option">
+          <div class="option-icon">
+            <a href={STMOComparisonLink} target="_blank">
+              <Graphs />
+            </a>
+          </div>
+          <div class="option-link">
+            <DistributionComparisonModal />
+          </div>
+        </div>
         <div class="option">
           <div class="option-icon">
             <a href={STMOComparisonLink} target="_blank">

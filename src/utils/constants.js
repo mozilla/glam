@@ -28,7 +28,7 @@ export function overTimeTitle(metricType, aggregationLevel) {
 
 export function exploreInstructionsDescription(aggregationLevel) {
   return `
-  Hover to compare to reference ⭑; click to set reference ⭑ 
+  Hover to compare to reference ⭑; click to set reference ⭑
   to hovered ${niceAggregations[aggregationLevel]} ●.
   Right-click to perform actions from reference ⭑ to hovered ●.
   `;
@@ -38,7 +38,7 @@ export function percentilesOverTimeDescription(aggregationLevel) {
   return `
   Shows the percentile values for the following probe
   aggregation by ${niceAggregations[aggregationLevel]}.
-  
+
   ${exploreInstructionsDescription(aggregationLevel)}
   `;
 }
@@ -48,7 +48,7 @@ export function proportionsOverTimeDescription(
   aggregationLevel
 ) {
   return `
-  Shows the ${overTimePointMetricType} of clients that have observed the 
+  Shows the ${overTimePointMetricType} of clients that have observed the
   following category / bin for the probe for each given ${
     niceAggregations[aggregationLevel]
   }.
@@ -143,6 +143,20 @@ export const comparisonSmallMultiple = {
 export const proportionSmallMultiple = {
   width: 80,
   height: 16,
+};
+
+export const distributionComparisonGraph = {
+  width: 145,
+  height: aggregationsOverTimeGraph.height,
+  left: 8,
+  right: 60,
+  top,
+  bottom: aggregationsOverTimeGraph.bottom,
+  borderColor: aggregationsOverTimeGraph.borderColor,
+  bgColor: BG,
+  // amount of width to add to graph when buildIDComparisonGraph is hidden
+  insufficientDataAdjustment:
+    aggregationsOverTimeGraph.insufficientDataAdjustment,
 };
 
 export const PERCENTILES = [0.1, 1, 5, 25, 50, 75, 95, 99, 99.9];

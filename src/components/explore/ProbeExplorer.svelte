@@ -37,6 +37,8 @@
 
   import { histogramSpring } from '../../utils/animation';
 
+  import DistributionComparisonModal from '../DistributionComparisonModal.svelte';
+
   export let data;
   export let key;
   export let timeHorizon;
@@ -65,6 +67,7 @@
     'clientVolume',
     aggregationLevel
   );
+
   export let volumeOverTimeDescription = clientDescription(
     aggregationLevel,
     $store.countView
@@ -286,6 +289,28 @@
     {aggregationLevel} />
   <slot name="summary" />
 </div>
+
+<DistributionComparisonModal
+  data={data}
+  {justOne}
+  {yScaleType}
+  {showViolins}
+  {binColorMap}
+  {topLabels}
+  {yTickFormatter}
+  {leftPoints}
+  {rightPoints}
+  activeBins={activeBins}
+  {yDomain}
+  {densityMetricType}
+  {ref}
+  {leftDensity}
+  {rightDensity}
+  {hovered}
+  rightLabel={aggregationLevel === 'build_id'
+      ? formatBuildIDToDateString(ref.label)
+      : ref.label}
+/>
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
   <div>
