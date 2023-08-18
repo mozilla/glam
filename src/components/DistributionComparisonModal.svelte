@@ -70,52 +70,6 @@
   </div>
   <div slot="title">Distribution view</div>
   <div class=outer>
-    <div style="transform: rotate(90deg)" class="inner">
-      <DistributionComparisonGraph
-        description={"compareDescription(aggregationsOverTimeTitle)"}
-        {justOne}
-        {yScaleType}
-        {rightLabel}
-        colorMap={binColorMap}
-        {topLabels}
-        {yTickFormatter}
-        {leftPoints}
-        {rightPoints}
-        {activeBins}
-        {yDomain}
-        dataVolume={data.length}
-        showTopAxis=false>
-        <g
-          slot="glam-body"
-          let:top
-          let:bottom
-          let:left={lp}
-          let:right={rp}
-          let:yScale>
-          {#if showViolins}
-            {#if hovered.datum}
-              <DistributionChart
-                start=0
-                direction={1}
-                density={leftDensity.toReversed()}
-                width={(distributionComparisonGraph.width -
-                  distributionComparisonGraph.left -
-                  distributionComparisonGraph.right) /
-                  2 -
-                  VIOLIN_PLOT_OFFSET} />
-            {/if}
-            {#if !justOne}
-              <line
-                x1={(lp + rp) / 2}
-                x2={(lp + rp) / 2}
-                y1={top}
-                y2={bottom}
-                stroke="var(--digital-blue-150)" />
-            {/if}
-          {/if}
-        </g>
-      </DistributionComparisonGraph>
-    </div>
     <div class="inner">
       <DistributionComparisonGraph
         description={"compareDescription(aggregationsOverTimeTitle)"}
@@ -141,24 +95,11 @@
           {#if showViolins}
             {#if ref && ref[densityMetricType]}
               <DistributionChart
-                start=0
-                density={rightDensity.toReversed()}
-                width={justOne
-                  ? rp - lp - VIOLIN_PLOT_OFFSET * 2
-                  : (distributionComparisonGraph.width -
-                      distributionComparisonGraph.left -
-                      distributionComparisonGraph.right) /
-                      2 -
-                    VIOLIN_PLOT_OFFSET}
+                start={(lp + rp) / 2}
+                density={rightDensity}
+                height={distributionComparisonGraph.height}
+                width={distributionComparisonGraph.width}
                 direction=-1/>
-            {/if}
-            {#if !justOne}
-              <line
-                x1={(lp + rp) / 2}
-                x2={(lp + rp) / 2}
-                y1={top}
-                y2={bottom}
-                stroke="var(--digital-blue-150)" />
             {/if}
           {/if}
         </g>

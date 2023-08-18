@@ -67,8 +67,9 @@
   <DataGraphic
     {xDomain}
     {yDomain}
-    yType={yScaleType}
-    xType="scalePoint"
+    yType="scalePoint"
+    xType={yScaleType}
+    width={distributionComparisonGraph.width}
     height={distributionComparisonGraph.height}
     bind:xScale
     bind:yScale
