@@ -289,28 +289,25 @@
     {aggregationLevel} />
   <slot name="summary" />
 </div>
-
-<DistributionComparisonModal
-  data={data}
-  {justOne}
-  {yScaleType}
-  {showViolins}
-  {binColorMap}
-  {topLabels}
-  {yTickFormatter}
-  {leftPoints}
-  {rightPoints}
-  activeBins={activeBins}
-  {yDomain}
-  {densityMetricType}
-  {ref}
-  {leftDensity}
-  {rightDensity}
-  {hovered}
-  rightLabel={aggregationLevel === 'build_id'
-      ? formatBuildIDToDateString(ref.label)
-      : ref.label}
-/>
+{#if ref && ref[densityMetricType]}
+  <DistributionComparisonModal
+    data={data}
+    {justOne}
+    {yScaleType}
+    {showViolins}
+    {binColorMap}
+    {yTickFormatter}
+    {leftPoints}
+    {rightPoints}
+    activeBins={activeBins}
+    {yDomain}
+    {densityMetricType}
+    {ref}
+    {leftDensity}
+    {rightDensity}
+    {hovered}
+  />
+{/if}
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
   <div>

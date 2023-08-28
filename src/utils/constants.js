@@ -146,12 +146,12 @@ export const proportionSmallMultiple = {
 };
 
 export const distributionComparisonGraph = {
-  width: 1000,
-  height: 400,
-  left: 8,
-  right: 60,
+  width: 1300,
+  height: 200,
+  left: 0,
+  right: 0,
   top: 35,
-  bottom: 1,
+  bottom: 20,
   borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,
   // amount of width to add to graph when buildIDComparisonGraph is hidden

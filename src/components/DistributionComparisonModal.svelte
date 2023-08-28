@@ -6,16 +6,9 @@
   import DistributionChart from './explore/DistributionChart.svelte';
 
   import {
-    distributionComparisonGraph,
-    overTimeTitle,
-    compareDescription,
+    distributionComparisonGraph
   } from '../utils/constants';
 
-  import {
-    formatBuildIDToDateString,
-    formatMillion,
-    formatFromNanoseconds,
-  } from '../utils/formatters';
 
   export let data;
   // If insufficient data, suppress the main graph
@@ -23,7 +16,6 @@
   export let yScaleType;
   export let showViolins;
   export let binColorMap;
-  export let topLabels;
   export let yTickFormatter;
   export let leftPoints;
   export let rightPoints;
@@ -31,13 +23,10 @@
   export let yDomain;
   export let densityMetricType;
   export let ref;
-  export let leftDensity;
   export let rightDensity;
-  export let hovered;
   export let rightLabel;
 
-  const VIOLIN_PLOT_OFFSET = 7; // this is for padding our ad hoc violin
-
+  let bins = rightDensity.map((d) => d['bin'])
 </script>
 
 <style>
@@ -61,6 +50,7 @@
   }
   .inner {
     clear:both;
+    padding: 3%;
   }
 </style>
 
@@ -77,7 +67,7 @@
         {yScaleType}
         {rightLabel}
         colorMap={binColorMap}
-        {topLabels}
+        {bins}
         {yTickFormatter}
         {leftPoints}
         {rightPoints}
@@ -95,10 +85,47 @@
           {#if showViolins}
             {#if ref && ref[densityMetricType]}
               <DistributionChart
-                start={(lp + rp) / 2}
+                offsetX={7}
+                offsetY={-20}
                 density={rightDensity}
                 height={distributionComparisonGraph.height}
                 width={distributionComparisonGraph.width}
+                direction=-1/>
+            {/if}
+          {/if}
+        </g>
+      </DistributionComparisonGraph>
+    </div>
+    <div class="inner">
+      <DistributionComparisonGraph
+        description={"compareDescription(aggregationsOverTimeTitle)"}
+        {justOne}
+        {yScaleType}
+        {rightLabel}
+        colorMap={binColorMap}
+        {bins}
+        {yTickFormatter}
+        {leftPoints}
+        {rightPoints}
+        {activeBins}
+        {yDomain}
+        dataVolume={data.length}
+        showTopAxis={!justOne}>
+        <g
+          slot="glam-body"
+          let:top
+          let:bottom
+          let:left={lp}
+          let:right={rp}
+          let:yScale>
+          {#if showViolins}
+            {#if ref && ref[densityMetricType]}
+              <DistributionChart
+                offsetX={7}
+                offsetY={-20}
+                density={rightDensity}
+                height={distributionComparisonGraph.height}
+                width={distributionComparisonGraph.width }
                 direction=-1/>
             {/if}
           {/if}

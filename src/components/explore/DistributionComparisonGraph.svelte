@@ -1,29 +1,15 @@
 <script>
   import { Axis } from '@graph-paper/guides';
-
-  import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
-
-  import ReferenceSymbol from '../ReferenceSymbol.svelte';
-
-  import ChartTitle from './ChartTitle.svelte';
-
   import { nearestBelow } from '../../utils/stats';
-
   import { twoPointSpring } from '../../utils/animation';
-
   import { distributionComparisonGraph } from '../../utils/constants';
 
-  export let description;
-  export let justOne;
-  export let rightLabel;
   export let leftPoints;
   export let rightPoints;
-  export let activeBins;
   export let dataVolume = Infinity;
-  export let showTopAxis = true;
 
-  export let yTickFormatter = (t) => t;
+  export let xTickFormatter = (t) => Intl.NumberFormat('en', { notation: 'compact' }).format(t);
   export let colorMap = () => 'black';
 
   export let yDomain;
@@ -31,11 +17,7 @@
   export let yScaleType;
   export let key = Math.random().toString(36).substring(7);
 
-  export let topLabels;
-
-  if (dataVolume === 1) {
-    topLabels = [rightLabel];
-  }
+  export let bins;
 
   export let xDomain;
 
@@ -60,7 +42,9 @@
     dotsAndLines.setHover(leftPoints, dataVolume === 1);
   $: if (rightPoints && yScale)
     dotsAndLines.setReference(rightPoints, dataVolume === 1);
-  $: xDomain = topLabels;
+  $: xDomain = yDomain;
+
+  console.log(yDomain)
 </script>
 
 <div>
@@ -92,11 +76,7 @@
       let:xScale
       let:yScale>
       <slot name="glam-body" {top} {bottom} {left} {right} {yScale} {xScale} />
-      <Axis
-        side="right"
-        lineStyle="long"
-        tickColor="var(--cool-gray-200)"
-        tickFormatter={yTickFormatter} />
+      <Axis side="bottom" ticks={bins} tickFormatter={xTickFormatter}/>
     </g>
   </DataGraphic>
 </div>
