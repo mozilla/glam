@@ -1,7 +1,6 @@
 <script>
   import { Axis } from '@graph-paper/guides';
   import { Line } from '@graph-paper/elements';
-  import { store } from '../../state/store';
 
   import Tweenable from '../Tweenable.svelte';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
@@ -43,10 +42,6 @@
     left={totalClientsGraph.left}
     right={totalClientsGraph.right}>
     {title}
-    <a
-      class="count-view"
-      on:click={() => store.setField('countView', 'clients')}
-      >View Client Count</a>
   </ChartTitle>
   <DataGraphic
     yType="linear"

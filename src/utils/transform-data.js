@@ -92,6 +92,7 @@ export function checkForTotalUsers(draft) {
 export function addProportion(draft) {
   // requires point.histogram.
   draft.proportions = { ...draft.histogram };
+  draft.non_norm_proportions = { ...draft.non_norm_histogram };
 }
 
 export function changeBooleanHistogramResponse(draft) {
@@ -142,12 +143,24 @@ export const responseHistogramToGraphicFormat = (
     bin: keyTransform(k),
     value: v,
   }));
+  const formattedNonNormalized = Object.entries(draft.non_norm_histogram).map(
+    ([k, v]) => ({
+      bin: keyTransform(k),
+      value: v,
+    })
+  );
   formatted.sort((a, b) => {
     if (a.key > b.key) return -1;
     if (a.key < b.key) return 1;
     return 0;
   });
+  formattedNonNormalized.sort((a, b) => {
+    if (a.key > b.key) return -1;
+    if (a.key < b.key) return 1;
+    return 0;
+  });
   draft.histogram = formatted;
+  draft.non_norm_histogram = formattedNonNormalized;
 };
 
 export function transformedPercentiles(draft) {
