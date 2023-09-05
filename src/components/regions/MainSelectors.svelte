@@ -51,7 +51,11 @@
     {#each Object.values(productConfig[$store.product].dimensions) as dimension}
       {#if dimension.values.some((di) => dimension.isValidKey === undefined || dimension.isValidKey(di.key, $store.probe, store))}
         <DimensionMenu
-          tooltip="Select a {dimension.title}"
+          tooltip={`${
+            dimension.title === 'Normalization'
+              ? 'Select a data normalization type (normalized by client ID means all clients are weighed equally, regardless of how many samples that client sends.'
+              : `Select a ${dimension.title}`
+          }`}
           offset={OFFSET}
           location="bottom"
           alignment="right">

@@ -30,6 +30,8 @@
     toQueryString,
   } from '../../state/store';
 
+  import { getPercentileName } from '../../config/shared';
+
   export let title;
   export let description;
   export let aggregationLevel;
@@ -189,24 +191,18 @@
     return undefined;
   };
 
-  const getYDomain = (visiblePercentiles, buckets) => {
+  const getYDomain = (visiblePercentiles, buckets, normType) => {
     let yData = [];
     let yDomainValues = [];
+    let percentileName = getPercentileName(normType);
 
     // get percentile data of linear and log graphs
     if (
       linearMetrics.includes(data[0].metric_type) ||
       yScaleType === 'scalePoint'
     ) {
-      // do not change yDomain when all percentiles are selected
-      // (we want the graph to match the violin plot initially)
-      if (
-        $store.visiblePercentiles.length === 5 &&
-        data[0].metric_type !== 'timing_distribution'
-      )
-        return yDomain;
       visiblePercentiles.forEach((p) => {
-        yData = yData.concat([...data.map((arr) => arr.percentiles[p])]);
+        yData = yData.concat([...data.map((arr) => arr[percentileName][p])]);
       });
       // use transformed data for Android metrics
       if (data[0].transformedPercentiles) {
@@ -259,8 +255,21 @@
     }
     return yDomainValues.length ? yDomainValues : yDomain;
   };
-  $: yValues = getYDomain($store.visiblePercentiles, $store.activeBuckets);
+
+  $: yValues = getYDomain(
+    $store.visiblePercentiles,
+    $store.activeBuckets,
+    $store.productDimensions.normalizationType
+  );
 </script>
+
+<style>
+  .chart-title {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+</style>
 
 {#if showContextMenu}
   <ChartContextMenu
@@ -273,12 +282,15 @@
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>
-  <ChartTitle
-    {description}
-    left={aggregationsOverTimeGraph.left}
-    right={aggregationsOverTimeGraph.right}>
-    {title}
-  </ChartTitle>
+  <div class="chart-title">
+    <ChartTitle
+      {description}
+      left={aggregationsOverTimeGraph.left}
+      right={aggregationsOverTimeGraph.right}>
+      {title}
+    </ChartTitle>
+  </div>
+
   <DataGraphic
     {xDomain}
     yDomain={yValues}

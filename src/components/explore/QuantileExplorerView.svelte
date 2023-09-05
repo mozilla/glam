@@ -12,6 +12,7 @@
     overTimeTitle,
     percentilesOverTimeDescription,
   } from '../../utils/constants';
+  import { getPercentileName, getHistogramName } from '../../config/shared';
 
   import {
     gatherProbeKeys,
@@ -134,18 +135,29 @@
               binColorMap={percentileLineColorMap}
               pointMetricType={probeType === 'log'
                 ? 'transformedPercentiles'
-                : 'percentiles'}
+                : getPercentileName($store.productDimensions.normalizationType)}
               overTimePointMetricType={probeType === 'log'
                 ? 'transformedPercentiles'
-                : 'percentiles'}
+                : getPercentileName($store.productDimensions.normalizationType)}
               densityMetricType={'histogram'}
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
               yDomain={probeType === 'log'
-                ? selectedData[0].histogram.map((d) => d.bin)
+                ? selectedData[0][
+                    getHistogramName($store.productDimensions.normalizationType)
+                  ].map((d) => d.bin)
                 : [
                     1,
-                    Math.max(...selectedData.map((d) => d.percentiles[95])),
+                    Math.max(
+                      ...selectedData.map(
+                        (d) =>
+                          d[
+                            getPercentileName(
+                              $store.productDimensions.normalizationType
+                            )
+                          ][95]
+                      )
+                    ),
                   ]} />
           </div>
         {/if}

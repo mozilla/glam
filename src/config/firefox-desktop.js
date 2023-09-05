@@ -15,6 +15,15 @@ export default {
   key: 'firefox',
   sampleRate: 0.1,
   dimensions: {
+    normalizationType: {
+      title: 'Normalization',
+      key: 'normalizationType',
+      values: [
+        { key: 'normalized', label: 'By Client ID' },
+        { key: 'non_normalized', label: 'None' },
+      ],
+      defaultValue: 'normalized',
+    },
     channel: {
       title: 'Channel',
       key: 'channel',
@@ -97,6 +106,7 @@ export default {
       ref: storeValue.ref,
       hov: storeValue.hov,
       currentPage: storeValue.currentPage,
+      normalizationType: storeValue.productDimensions.normalizationType,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,
@@ -143,6 +153,15 @@ export default {
           draft.map((point) => ({
             ...point,
             histogram: Object.entries(point.histogram).reduce(
+              (acc, [bin, value]) => {
+                if (bin in labels) {
+                  acc[labels[bin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+            non_norm_histogram: Object.entries(point.non_norm_histogram).reduce(
               (acc, [bin, value]) => {
                 if (bin in labels) {
                   acc[labels[bin]] = value;

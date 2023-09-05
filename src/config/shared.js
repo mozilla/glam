@@ -19,6 +19,14 @@ export function getBucketKeys(tr) {
   return Object.keys(latestDatapoint(tr).counts);
 }
 
+export function getPercentileName(type) {
+  return type === 'normalized' ? 'percentiles' : 'non_norm_percentiles';
+}
+
+export function getHistogramName(type) {
+  return type === 'normalized' ? 'histogram' : 'non_norm_histogram';
+}
+
 export function extractBucketMetadata(transformedData) {
   const etc = {};
   const options = getBucketKeys(transformedData);
