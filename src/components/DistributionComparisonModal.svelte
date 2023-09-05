@@ -4,44 +4,24 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
-
-  import {
-    distributionComparisonGraph
-  } from '../utils/constants';
-
-
-  export let data;
-  // If insufficient data, suppress the main graph
-  export let justOne;
-  export let yScaleType;
   export let showViolins;
-  export let binColorMap;
-  export let yTickFormatter;
-  export let leftPoints;
-  export let rightPoints;
-  export let activeBins;
-  export let yDomain;
   export let densityMetricType;
-  export let ref;
-  export let rightDensity;
-  export let rightLabel;
+  export let topChartData;
+  export let bottomChartData;
 
-  let bins = rightDensity.map((d) => d['bin'])
+  let valueSelector = 'value';
+  let binSelector = 'bin';
+  function getTopTick(rd, ld) {
+    let maxRd = rd ? Math.max(...rd.map((di) => di[valueSelector])) : 0
+    let maxLd = ld ? Math.max(...ld.map((di) => di[valueSelector])) : 0
+    let maxValue = Math.max(maxLd, maxRd)
+    let maxValPercent = Math.round(maxValue*100)
+    let topTick = (maxValPercent + (5 - maxValPercent%5))/100
+    return topTick
+  }
 </script>
 
 <style>
-  button.option-button {
-    text-transform: uppercase;
-    display: block;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--digital-blue-500);
-    font-size: var(--text-02);
-    border: none;
-    background-color: transparent;
-    padding: 0%;
-    margin: 0%;
-  }
   .outer {
     margin-left:auto;
     margin-right:auto;
@@ -50,87 +30,61 @@
   }
   .inner {
     clear:both;
-    padding: 3%;
+    padding: 2%;
+    min-width: fit-content;
   }
 </style>
+{#if (topChartData && bottomChartData)}
+  {@const topTick = getTopTick(bottomChartData[densityMetricType], topChartData[densityMetricType])}
+  {@const topChartDensity = topChartData[densityMetricType]}
+  {@const topChartSampleCount = topChartData.sample_count}
+  {@const bottomChartDensity = bottomChartData[densityMetricType]}
+  {@const bottomChartSampleCount = bottomChartData.sample_count}
+  <Modal>
+    <div slot="trigger" let:open>
+      <button on:click={open} id="dist_view" hidden>Distribution view</button>
+    </div>
+    <div slot="title">Distribution view</div>
+    <div class=outer>
+      <div class="inner">
 
-<Modal>
-  <div slot="trigger" let:open>
-    <button on:click={open} class="option-button">Distribution view</button>
-  </div>
-  <div slot="title">Distribution view</div>
-  <div class=outer>
-    <div class="inner">
-      <DistributionComparisonGraph
-        description={"compareDescription(aggregationsOverTimeTitle)"}
-        {justOne}
-        {yScaleType}
-        {rightLabel}
-        colorMap={binColorMap}
-        {bins}
-        {yTickFormatter}
-        {leftPoints}
-        {rightPoints}
-        {activeBins}
-        {yDomain}
-        dataVolume={data.length}
-        showTopAxis={!justOne}>
-        <g
-          slot="glam-body"
-          let:top
-          let:bottom
-          let:left={lp}
-          let:right={rp}
-          let:yScale>
-          {#if showViolins}
-            {#if ref && ref[densityMetricType]}
-              <DistributionChart
-                offsetX={7}
-                offsetY={-20}
-                density={rightDensity}
-                height={distributionComparisonGraph.height}
-                width={distributionComparisonGraph.width}
-                direction=-1/>
+        <DistributionComparisonGraph
+          density={topChartDensity}
+          topTick={topTick}>
+          <g
+            slot="glam-body">
+            {#if showViolins}
+              {#if bottomChartData}
+                <DistributionChart
+                  density={bottomChartDensity}
+                  topTick={topTick}
+                  sampleCount={topChartSampleCount}
+                  tooltipLocation="bottom"/>
+              {/if}
             {/if}
-          {/if}
-        </g>
-      </DistributionComparisonGraph>
-    </div>
-    <div class="inner">
-      <DistributionComparisonGraph
-        description={"compareDescription(aggregationsOverTimeTitle)"}
-        {justOne}
-        {yScaleType}
-        {rightLabel}
-        colorMap={binColorMap}
-        {bins}
-        {yTickFormatter}
-        {leftPoints}
-        {rightPoints}
-        {activeBins}
-        {yDomain}
-        dataVolume={data.length}
-        showTopAxis={!justOne}>
-        <g
-          slot="glam-body"
-          let:top
-          let:bottom
-          let:left={lp}
-          let:right={rp}
-          let:yScale>
-          {#if showViolins}
-            {#if ref && ref[densityMetricType]}
-              <DistributionChart
-                offsetX={7}
-                offsetY={-20}
-                density={rightDensity}
-                height={distributionComparisonGraph.height}
-                width={distributionComparisonGraph.width }
-                direction=-1/>
+          </g>
+        </DistributionComparisonGraph>
+      </div>
+      {#if true}
+      <div class="inner">
+        <DistributionComparisonGraph
+          density={topChartDensity}
+          topTick={topTick}>
+          <g
+            slot="glam-body">
+            {#if showViolins}
+              {#if bottomChartData}
+                <DistributionChart
+                  density={bottomChartDensity}
+                  {topTick}
+                  sampleCount={bottomChartSampleCount}
+                  tooltipLocation="top"/>
+              {/if}
             {/if}
-          {/if}
-        </g>
-      </DistributionComparisonGraph>
+          </g>
+        </DistributionComparisonGraph>
+      </div>
+      {/if}
     </div>
-  </div>
-</Modal>
+  </Modal>
+{/if}

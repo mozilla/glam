@@ -146,11 +146,11 @@ export const proportionSmallMultiple = {
 };
 
 export const distributionComparisonGraph = {
-  width: 1300,
-  height: 200,
-  left: 0,
-  right: 0,
-  top: 35,
+  width: 1500,
+  height: 250,
+  left: 50,
+  right: 50,
+  top: 20,
   bottom: 20,
   borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,

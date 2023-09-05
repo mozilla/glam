@@ -191,10 +191,14 @@
   );
   let rightPoints = ref[pointMetricType];
   let topLabels = ['HOV.', 'REF.'];
+  export let distViewTopChartData;
+  export let distViewBottomChartData;
 
   $: if (hoverValue.x) {
     if ($showContextMenu) {
-      hovered = lastHoverValue;
+      const i = get(data, hoverValue.x);
+      distViewTopChartData = ref;
+      distViewBottomChartData = data[i.currentIndex];
     } else {
       const i = get(data, hoverValue.x);
       hovered = {
@@ -291,21 +295,10 @@
 </div>
 {#if ref && ref[densityMetricType]}
   <DistributionComparisonModal
-    data={data}
-    {justOne}
-    {yScaleType}
     {showViolins}
-    {binColorMap}
-    {yTickFormatter}
-    {leftPoints}
-    {rightPoints}
-    activeBins={activeBins}
-    {yDomain}
     {densityMetricType}
-    {ref}
-    {leftDensity}
-    {rightDensity}
-    {hovered}
+    topChartData={distViewTopChartData}
+    bottomChartData={distViewBottomChartData}
   />
 {/if}
 

@@ -38,6 +38,10 @@
     store.setField('timeHorizon', 'ZOOM');
   }
 
+  function openDistributionView() {
+    document.getElementById("dist_view").click()
+  }
+
   function getDateFromPoint(p) {
     if (p) {
       const found = data.find((d) => d.build_id === p);
@@ -160,6 +164,7 @@
 <svelte:body on:click={onClickOutside} on:keydown|stopPropagation={onEscape} />
 
 {#if $showContextMenu}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     id="menu"
     style="top: {y + window.scrollY}px; left: {x + window.scrollX}px;"
@@ -202,7 +207,7 @@
             </a>
           </div>
           <div class="option-link">
-            <DistributionComparisonModal />
+            <button on:click={openDistributionView} class="option-button">Distribution view</button>
           </div>
         </div>
         <div class="option">
