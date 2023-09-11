@@ -22,7 +22,7 @@
     yType="linear"
     xType="scalePoint"
     width={distributionComparisonGraph.width}
-    height={distributionComparisonGraph.height}
+    height={distributionComparisonGraph.height/2}
     left={distributionComparisonGraph.left}
     right={distributionComparisonGraph.right}
     bottom={distributionComparisonGraph.bottom}

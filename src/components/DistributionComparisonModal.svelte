@@ -4,10 +4,12 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
+  import ComparisonSummary from './explore/ComparisonSummary.svelte';
   export let showViolins;
   export let densityMetricType;
   export let topChartData;
   export let bottomChartData;
+
 
   let valueSelector = 'value';
   let binSelector = 'bin';
@@ -22,16 +24,34 @@
 </script>
 
 <style>
-  .outer {
+  .charts {
+    display: flex;
+    flex-direction: column;
+  }
+  .outer-flex {
+    position: relative;
+    display: flex;
+    min-width: 97vw;
+    min-height: 50vh;
     margin-left:auto;
     margin-right:auto;
     height:auto;
-    width:auto;
+    flex-direction: row;
+    flex: 1;
   }
-  .inner {
+  .chart-fixed {
     clear:both;
-    padding: 2%;
+    padding: 0.7%;
     min-width: fit-content;
+  }
+  .chart-fixed > p {
+    font-size: small;
+  }
+  .percentiles {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    padding: 2%;
   }
 </style>
 {#if (topChartData && bottomChartData)}
@@ -45,46 +65,51 @@
       <button on:click={open} id="dist_view" hidden>Distribution view</button>
     </div>
     <div slot="title">Distribution view</div>
-    <div class=outer>
-      <div class="inner">
-
-        <DistributionComparisonGraph
-          density={topChartDensity}
-          topTick={topTick}>
-          <g
-            slot="glam-body">
-            {#if showViolins}
-              {#if bottomChartData}
-                <DistributionChart
-                  density={bottomChartDensity}
-                  topTick={topTick}
-                  sampleCount={topChartSampleCount}
-                  tooltipLocation="bottom"/>
+    <div class="outer-flex">
+      <div class="charts">
+        <div class="chart-fixed">
+          <p>Reference</p>
+          <DistributionComparisonGraph
+            density={topChartDensity}
+            topTick={topTick}>
+            <g
+              slot="glam-body">
+              {#if showViolins}
+                {#if bottomChartData}
+                  <DistributionChart
+                    density={bottomChartDensity}
+                    topTick={topTick}
+                    sampleCount={topChartSampleCount}
+                    tooltipLocation="bottom"/>
+                {/if}
               {/if}
-            {/if}
-          </g>
-        </DistributionComparisonGraph>
-      </div>
-      {#if true}
-      <div class="inner">
-        <DistributionComparisonGraph
-          density={topChartDensity}
-          topTick={topTick}>
-          <g
-            slot="glam-body">
-            {#if showViolins}
-              {#if bottomChartData}
-                <DistributionChart
-                  density={bottomChartDensity}
-                  {topTick}
-                  sampleCount={bottomChartSampleCount}
-                  tooltipLocation="top"/>
+            </g>
+          </DistributionComparisonGraph>
+        </div>
+        <div class="chart-fixed">
+          <p>Hovered</p>
+          <DistributionComparisonGraph
+            density={topChartDensity}
+            topTick={topTick}>
+            <g
+              slot="glam-body">
+              {#if showViolins}
+                {#if bottomChartData}
+                  <DistributionChart
+                    density={bottomChartDensity}
+                    {topTick}
+                    sampleCount={bottomChartSampleCount}
+                    tooltipLocation="top"/>
+                {/if}
               {/if}
-            {/if}
-          </g>
-        </DistributionComparisonGraph>
+            </g>
+          </DistributionComparisonGraph>
+        </div>
       </div>
-      {/if}
+      <div class="percentiles">
+        <slot name="comparisonSummary"/>
+      </div>
     </div>
+
   </Modal>
 {/if}

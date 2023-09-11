@@ -195,18 +195,18 @@
   export let distViewBottomChartData;
 
   $: if (hoverValue.x) {
+    const i = get(data, hoverValue.x);
+    hovered = {
+      ...hoverValue,
+      datum: data[i.currentIndex],
+      previous: data[i.previousIndex],
+      next: data[i.nextIndex],
+    };
+    lastHoverValue = hovered
     if ($showContextMenu) {
-      const i = get(data, hoverValue.x);
       distViewTopChartData = ref;
       distViewBottomChartData = data[i.currentIndex];
     } else {
-      const i = get(data, hoverValue.x);
-      hovered = {
-        ...hoverValue,
-        datum: data[i.currentIndex],
-        previous: data[i.previousIndex],
-        next: data[i.nextIndex],
-      };
       if (
         ($store.ref && $store.ref > hovered.datum.build_id) ||
         (!$store.ref && ref > hovered.datum.build_id)
@@ -243,8 +243,6 @@
     }
   } else if ($showContextMenu) {
     hovered = lastHoverValue;
-  } else {
-    hovered = {};
   }
 </script>
 
@@ -283,6 +281,12 @@
     color: var(--cool-gray-700);
     margin-right: 3em;
   }
+
+.dist-comp-percentile-tbl {
+  flex: 1;
+  align-items: center;
+}
+
 </style>
 
 <div class="probe-body-overview">
@@ -298,8 +302,28 @@
     {showViolins}
     {densityMetricType}
     topChartData={distViewTopChartData}
-    bottomChartData={distViewBottomChartData}
-  />
+    bottomChartData={distViewBottomChartData}>
+    <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
+      <ComparisonSummary
+        hovered={data.length === 1 || !!hovered.datum}
+        left={leftPoints}
+        right={rightPoints}
+        hov={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
+        ref={ref[pointMetricType]}
+        leftLabel={topLabels[0]}
+        rightLabel={topLabels[1]}
+        binLabel={summaryLabel}
+        keySet={activeBins}
+        colorMap={binColorMap}
+        valueFormatter={summaryNumberFormatter}
+        keyFormatter={comparisonKeyFormatter}
+        showLeft={data.length > 1}
+        showDiff={data.length > 1}
+        viewType={$store.viewType}
+        {justOne}
+      />
+    </div>
+  </DistributionComparisonModal>
 {/if}
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>

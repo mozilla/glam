@@ -146,12 +146,14 @@ export const proportionSmallMultiple = {
 };
 
 export const distributionComparisonGraph = {
-  width: 1500,
-  height: 250,
-  left: 50,
+  // eslint-disable-next-line no-restricted-globals
+  width: (window.innerWidth * 75) / 100,
+  // eslint-disable-next-line no-restricted-globals
+  height: (window.innerHeight * 60) / 100,
+  left: 30,
   right: 50,
-  top: 20,
-  bottom: 20,
+  top: 25,
+  bottom: 25,
   borderColor: aggregationsOverTimeGraph.borderColor,
   bgColor: BG,
   // amount of width to add to graph when buildIDComparisonGraph is hidden

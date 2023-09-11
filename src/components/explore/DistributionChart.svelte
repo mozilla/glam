@@ -8,7 +8,7 @@
   export let sampleCount;
   export let tooltipLocation;
 
-  let height = distributionComparisonGraph.height;
+  let height = distributionComparisonGraph.height/2;
   let color = 'var(--digital-blue-350)';
   let binSelector = 'bin';
   let offsetX = distributionComparisonGraph.left + 7;
