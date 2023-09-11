@@ -40,7 +40,7 @@
   }
 
   function openDistributionView() {
-    document.getElementById("dist_view").click()
+    document.getElementById('dist_view').click();
   }
 
   function getDateFromPoint(p) {
@@ -203,12 +203,17 @@
       {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
-            <a href='distribution-view' on:click|preventDefault={openDistributionView}>
+            <a
+              href="distribution-view"
+              on:click|preventDefault={openDistributionView}>
               <BarGraph />
             </a>
           </div>
           <div class="option-link">
-            <a href='distribution-view' on:click|preventDefault={openDistributionView} target="_blank">Distribution view</a>
+            <a
+              href="distribution-view"
+              on:click|preventDefault={openDistributionView}
+              target="_blank">Distribution view</a>
           </div>
         </div>
         <div class="option">

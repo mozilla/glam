@@ -27,7 +27,6 @@
         <rect x="192" y="250" width="40" height="170" />
         <rect x="304" y="100" width="40" height="320" />
         <rect x="416" y="200" width="40" height="220" />
-
       </g>
     </g>
   </g>

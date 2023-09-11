@@ -210,7 +210,7 @@
       previous: data[i.previousIndex],
       next: data[i.nextIndex],
     };
-    lastHoverValue = hovered
+    lastHoverValue = hovered;
     if ($showContextMenu) {
       distViewTopChartData = ref;
       distViewBottomChartData = hovered.datum;
@@ -290,11 +290,10 @@
     margin-right: 3em;
   }
 
-.dist-comp-percentile-tbl {
-  flex: 1;
-  align-items: center;
-}
-
+  .dist-comp-percentile-tbl {
+    flex: 1;
+    align-items: center;
+  }
 </style>
 
 <div class="probe-body-overview">
@@ -328,8 +327,7 @@
         showLeft={data.length > 1}
         showDiff={data.length > 1}
         viewType={$store.viewType}
-        {justOne}
-      />
+        {justOne} />
     </div>
   </DistributionComparisonModal>
 {/if}

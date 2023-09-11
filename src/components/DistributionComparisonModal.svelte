@@ -1,6 +1,5 @@
 <script>
   import _ from 'lodash';
-  import { store } from '../state/store';
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
@@ -11,8 +10,7 @@
 
 
   let valueSelector = 'value';
-  let binSelector = 'bin';
-  function getTopTick(rd, ld) {
+  const getTopTick = function(rd, ld) {
     let maxRd = rd ? Math.max(...rd.map((di) => di[valueSelector])) : 0
     let maxLd = ld ? Math.max(...ld.map((di) => di[valueSelector])) : 0
     let maxValue = Math.max(maxLd, maxRd)
