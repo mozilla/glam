@@ -194,6 +194,14 @@
   export let distViewTopChartData;
   export let distViewBottomChartData;
 
+  // initialize the normalization type if it doesn't exist
+  $: if (!$store.productDimensions.normalizationType) {
+    store.setField('productDimensions', {
+      ...$store.productDimensions,
+      normalizationType: 'normalized',
+    });
+  }
+
   $: if (hoverValue.x) {
     const i = get(data, hoverValue.x);
     hovered = {
@@ -460,7 +468,7 @@
     showDiff={data.length > 1}
     viewType={$store.viewType}
     {justOne} />
-  {#if $store.countView === 'clients'}
+  {#if $store.productDimensions.normalizationType === 'normalized'}
     <div style="display: {justOne ? 'none' : 'block'}">
       <ClientVolumeOverTimeGraph
         title={clientVolumeOverTimeTitle}
@@ -486,7 +494,7 @@
         {rightAudienceValue} />
     </div>
   {/if}
-  {#if $store.countView === 'samples'}
+  {#if $store.productDimensions.normalizationType === 'non_normalized'}
     <SampleCountOverTimeGraph
       title={overTimeTitle('sampleVolume', aggregationLevel)}
       description={clientDescription(aggregationLevel, $store.countView)}
