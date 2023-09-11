@@ -5,6 +5,7 @@
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
   import DistributionComparisonModal from './DistributionComparisonModal.svelte';
+  import BarGraph from './icons/BarGraph.svelte';
 
   export let data;
   export let x;
@@ -202,12 +203,12 @@
       {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
-            <a href={STMOComparisonLink} target="_blank">
-              <Graphs />
+            <a href='distribution-view' on:click|preventDefault={openDistributionView}>
+              <BarGraph />
             </a>
           </div>
           <div class="option-link">
-            <button on:click={openDistributionView} class="option-button">Distribution view</button>
+            <a href='distribution-view' on:click|preventDefault={openDistributionView} target="_blank">Distribution view</a>
           </div>
         </div>
         <div class="option">

@@ -4,7 +4,6 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
-  import ComparisonSummary from './explore/ComparisonSummary.svelte';
   export let showViolins;
   export let densityMetricType;
   export let topChartData;
@@ -77,7 +76,7 @@
               {#if showViolins}
                 {#if bottomChartData}
                   <DistributionChart
-                    density={bottomChartDensity}
+                    density={topChartDensity}
                     topTick={topTick}
                     sampleCount={topChartSampleCount}
                     tooltipLocation="bottom"/>
@@ -89,7 +88,7 @@
         <div class="chart-fixed">
           <p>Hovered</p>
           <DistributionComparisonGraph
-            density={topChartDensity}
+            density={bottomChartDensity}
             topTick={topTick}>
             <g
               slot="glam-body">

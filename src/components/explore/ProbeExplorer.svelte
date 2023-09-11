@@ -205,7 +205,7 @@
     lastHoverValue = hovered
     if ($showContextMenu) {
       distViewTopChartData = ref;
-      distViewBottomChartData = data[i.currentIndex];
+      distViewBottomChartData = hovered.datum;
     } else {
       if (
         ($store.ref && $store.ref > hovered.datum.build_id) ||
