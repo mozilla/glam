@@ -59,9 +59,9 @@
   {@const bottomChartSampleCount = bottomChartData.sample_count}
   <Modal>
     <div slot="trigger" let:open>
-      <button on:click={open} id="dist_view" hidden>Distribution view</button>
+      <button on:click={open} id="dist_view" hidden>Distribution comparison</button>
     </div>
-    <div slot="title">Distribution view</div>
+    <div slot="title">Distribution comparison</div>
     <div class="outer-flex">
       <div class="charts">
         <div class="chart-fixed">

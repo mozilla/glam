@@ -213,7 +213,7 @@
             <a
               href="distribution-view"
               on:click|preventDefault={openDistributionView}
-              target="_blank">Distribution view</a>
+              target="_blank">Distribution comparison</a>
           </div>
         </div>
         <div class="option">

@@ -154,11 +154,6 @@ export const distributionComparisonGraph = {
   right: 50,
   top: 25,
   bottom: 25,
-  borderColor: aggregationsOverTimeGraph.borderColor,
-  bgColor: BG,
-  // amount of width to add to graph when buildIDComparisonGraph is hidden
-  insufficientDataAdjustment:
-    aggregationsOverTimeGraph.insufficientDataAdjustment,
 };
 
 export const PERCENTILES = [0.1, 1, 5, 25, 50, 75, 95, 99, 99.9];
