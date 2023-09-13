@@ -2,8 +2,9 @@
   import { Axis } from '@graph-paper/guides';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
   import { distributionComparisonGraph } from '../../utils/constants';
-
+  import { quantile } from 'd3-array';
   export let topTick;
+  export let tickIncrement;
   export let key = Math.random().toString(36).substring(7);
 
   export let density = [];
@@ -17,9 +18,11 @@
 
   let bins = density.map((d) => d['bin']);
 
-  let ticks = Array.from(Array(topTick * 100 + 5).keys())
-    .filter((v) => v % 5 == 0)
+  let allTicks = Array.from(Array(topTick * 100 + tickIncrement).keys())
+    .filter((v) => v % tickIncrement == 0)
     .map((v) => v / 100);
+  console.log(allTicks)
+  let ticks = [0, quantile(allTicks, 0.25), quantile(allTicks, 0.5), quantile(allTicks, 0.75), quantile(allTicks, 1)]
 </script>
 
 <div>

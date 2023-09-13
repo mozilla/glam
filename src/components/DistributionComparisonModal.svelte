@@ -10,12 +10,14 @@
 
 
   let valueSelector = 'value';
+  // Change this value to adjust the minimum tick increment on the chart
+  export let tickIncrement = 2;
   const getTopTick = function(rd, ld) {
     let maxRd = rd ? Math.max(...rd.map((di) => di[valueSelector])) : 0
     let maxLd = ld ? Math.max(...ld.map((di) => di[valueSelector])) : 0
     let maxValue = Math.max(maxLd, maxRd)
     let maxValPercent = Math.round(maxValue*100)
-    let topTick = (maxValPercent + (5 - maxValPercent%5))/100
+    let topTick = (maxValPercent + (tickIncrement - maxValPercent%tickIncrement))/100
     return topTick
   }
 </script>
@@ -68,7 +70,8 @@
           <p>Reference</p>
           <DistributionComparisonGraph
             density={topChartDensity}
-            topTick={topTick}>
+            topTick={topTick}
+            {tickIncrement}>
             <g
               slot="glam-body">
               {#if showViolins}
@@ -76,6 +79,7 @@
                   <DistributionChart
                     density={topChartDensity}
                     topTick={topTick}
+                    {tickIncrement}
                     sampleCount={topChartSampleCount}
                     tooltipLocation="bottom"/>
                 {/if}
@@ -87,7 +91,8 @@
           <p>Hovered</p>
           <DistributionComparisonGraph
             density={bottomChartDensity}
-            topTick={topTick}>
+            topTick={topTick}
+            {tickIncrement}>
             <g
               slot="glam-body">
               {#if showViolins}

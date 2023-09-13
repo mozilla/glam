@@ -200,7 +200,7 @@
           </a>
         </div>
       </div>
-      {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
+      {#if $store.product === 'firefox' && $store.probe.type === 'histogram' || $store.probe.type === 'scalar'}
         <div class="option">
           <div class="option-icon">
             <a
