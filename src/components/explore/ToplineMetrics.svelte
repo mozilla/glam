@@ -49,12 +49,14 @@
 
 <div
   class="topline"
-  style="padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;">
+  style="padding-left: {toplineRefLabel.left - toplineRefLabel.icon}px;"
+>
   <Tweenable params={{ duration: 250 }} value={ref.audienceSize} let:tweenValue>
     <ToplineRow
       value={ref.label}
       {aggregationLevel}
-      description="Set the reference point ⭑ by clicking on one of the graphs below.">
+      description="Set the reference point ⭑ by clicking on one of the graphs below."
+    >
       <span slot="icon">⭑</span>
       <span slot="label"> Reference </span>
       <span slot="count">
@@ -62,7 +64,8 @@
           <span
             class="topline__client-count"
             class:topline--client-count--highlighted={hovered &&
-              hovered.audienceSize < tweenValue}>
+              hovered.audienceSize < tweenValue}
+          >
             {formatCount(tweenValue)}
           </span>
           clients
@@ -71,10 +74,12 @@
           <span
             class="topline__client-count"
             class:topline--client-count--highlighted={hovered &&
-              hovered.sample_count < tweenValue}>
+              hovered.sample_count < tweenValue}
+          >
             {formatCount(ref.sample_count)}
           </span>
-          samples</span>
+          samples</span
+        >
       </span>
     </ToplineRow>
     {#if dataLength > 1}
@@ -83,7 +88,8 @@
         value={hovered ? hovered.label : undefined}
         compare={ref.label}
         {aggregationLevel}
-        description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑.">
+        description="Hover over the graphs below to compare the hover value ● to the reference ⭑; click to set the hover ● to the reference ⭑."
+      >
         <span slot="icon">●</span>
         <span slot="label"> Hovered </span>
         <span slot="count">
@@ -92,14 +98,16 @@
               <span
                 class="topline__client-count"
                 class:topline__client-count--highlighted={hovered &&
-                  hovered.audienceSize > tweenValue}>
+                  hovered.audienceSize > tweenValue}
+              >
                 {formatCount(hovered.audienceSize)}
               </span>
               clients
               <span
                 class="topline__client-count"
                 class:topline__client-count--highlighted={hovered &&
-                  hovered.sample_count > tweenValue}>
+                  hovered.sample_count > tweenValue}
+              >
                 {formatCount(hovered.sample_count)}
               </span>
               samples
@@ -113,14 +121,16 @@
                   '.0%',
                   absDiff(hovered.audienceSize, tweenValue, true),
                   7
-                )}</span>
+                )}</span
+              >
               {formatSignCount(absDiff(hovered.sample_count, ref.sample_count))}
               <span style="font-weight: 500;"
                 >{formatParenPercent(
                   '.0%',
                   absDiff(hovered.sample_count, ref.sample_count, true),
                   7
-                )}</span>
+                )}</span
+              >
             </div>
           {/if}
         </span>

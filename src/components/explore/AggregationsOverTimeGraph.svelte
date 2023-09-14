@@ -280,7 +280,8 @@
     {data}
     {clickedRef}
     {clickedHov}
-    {distViewButtonId} />
+    {distViewButtonId}
+  />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>
@@ -288,7 +289,8 @@
     <ChartTitle
       {description}
       left={aggregationsOverTimeGraph.left}
-      right={aggregationsOverTimeGraph.right}>
+      right={aggregationsOverTimeGraph.right}
+    >
       {title}
     </ChartTitle>
   </div>
@@ -305,13 +307,15 @@
     right={aggregationsOverTimeGraph.right}
     {key}
     bind:mousePosition={hoverValue}
-    on:click>
+    on:click
+  >
     <g slot="background">
       <Axis
         side="left"
         lineStyle="short"
         tickFormatter={yTickFormatter}
-        ticks={getYTicks(yValues)} />
+        ticks={getYTicks(yValues)}
+      />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
@@ -329,7 +333,8 @@
           y="y"
           color={lineColorMap(bin)}
           curve="curveLinear"
-          lineDrawAnimation={{ duration: 500 }} />
+          lineDrawAnimation={{ duration: 500 }}
+        />
       {/each}
     </g>
     <g slot="annotation" let:xScale let:yScale>
@@ -341,7 +346,8 @@
             xr={tv1}
             align="top"
             background="white"
-            label="Ref." />
+            label="Ref."
+          />
         </Tweenable>
       {/if}
 
@@ -351,7 +357,8 @@
           x={hovered.datum.label}
           align="top"
           background="white"
-          label="Hov." />
+          label="Hov."
+        />
         {#each plotValues(hovered.datum.label, hovered.datum[yAccessor], metricKeys, xScale, yScale) as { x, y, bin }, i (bin)}
           <Springable value={[x, y]} let:springValue>
             <circle
@@ -359,13 +366,15 @@
               cy={y}
               r="3"
               stroke="none"
-              fill={lineColorMap(bin)} />
+              fill={lineColorMap(bin)}
+            />
           </Springable>
         {/each}
         {#if aggregationLevel === 'build_id'}
           <BuildIDRollover
             x={hovered.datum.label}
-            label={hovered.datum.label} />
+            label={hovered.datum.label}
+          />
         {/if}
       {/if}
 
@@ -376,7 +385,8 @@
               size={25}
               xLocation={springValue[0]}
               yLocation={springValue[1]}
-              color={lineColorMap(bin)} />
+              color={lineColorMap(bin)}
+            />
           </Springable>
         </g>
       {/each}

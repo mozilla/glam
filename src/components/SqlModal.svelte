@@ -213,7 +213,8 @@
             class="tab"
             on:click={() => {
               activeTab = tab.id;
-            }}>{tab.label}</span>
+            }}>{tab.label}</span
+          >
         </li>
       {/each}
       <li>
@@ -221,7 +222,8 @@
           <span
             contenteditable="true"
             bind:textContent={status}
-            transition:fade />
+            transition:fade
+          />
         {/if}
       </li>
       <li />
@@ -231,7 +233,9 @@
       {#if activeTab === tab.id}
         <pre>
           <code bind:this={sqlElement}>
-            {tab.label.includes("Distribution") ? tab.sql("distribution") : tab.sql("telemetry")}
+            {tab.label.includes('Distribution')
+              ? tab.sql('distribution')
+              : tab.sql('telemetry')}
           </code>
           <div class="buttons">
             <button class="copy" on:click={copySql} title="Copy to clipboard">

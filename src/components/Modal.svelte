@@ -85,7 +85,8 @@
     on:keydown|stopPropagation={keydown}
     tabindex={0}
     autofocus
-    transition:fade={{ duration: 250 }}>
+    transition:fade={{ duration: 250 }}
+  >
     <div class="gp-modal__backdrop" on:click={close} />
     <div class="gp-modal__wrapper">
       <div class="gp-modal__header">

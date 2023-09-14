@@ -55,7 +55,8 @@
       <a
         target="_blank"
         class="temporary-link-button"
-        href="https://mozilla.slack.com/archives/CB1EQ437S">
+        href="https://mozilla.slack.com/archives/CB1EQ437S"
+      >
         <SlackLogo size="1em" />feedback
       </a>
     </div>
@@ -76,7 +77,8 @@
               {#if $store.product}
                 <svelte:component
                   this={routes[$store.product].details}
-                  bla={$store.product} />
+                  bla={$store.product}
+                />
               {/if}
             </ProbeDetails>
           </div>

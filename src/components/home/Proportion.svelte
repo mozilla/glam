@@ -64,7 +64,8 @@
       top={20}
       bottom={28}
       left={16}
-      right={16}>
+      right={16}
+    >
       <g slot="body" let:xScale let:yScale let:top let:mousePosition let:bottom>
         {#each Object.keys(data) as key, i (key)}
           <rect
@@ -74,7 +75,8 @@
             height={yScale(0) - yScale(data[key])}
             fill={colorMap(key) || 'var(--cool-gray-200)'}
             stroke={colorMap(key) || 'var(--cool-gray-200)'}
-            fill-opacity=".8" />
+            fill-opacity=".8"
+          />
         {/each}
         {#if mousePosition.x}
           <rect
@@ -84,7 +86,8 @@
             width={xScale.bandwidth()}
             height={bottom - top}
             fill="var(--cool-gray-600)"
-            opacity=".3" />
+            opacity=".3"
+          />
         {/if}
       </g>
       <g
@@ -94,7 +97,8 @@
         let:top
         let:bottom
         let:left
-        let:right>
+        let:right
+      >
         {#if metricKind !== 'categorical'}
           <Axis side="bottom" {tickFormatter} />
         {:else}
@@ -102,7 +106,8 @@
             side="bottom"
             showLabels={false}
             showTicks={false}
-            {tickFormatter} />
+            {tickFormatter}
+          />
         {/if}
         <g style="font-size:11px;">
           {#if mousePosition.x}
@@ -111,7 +116,8 @@
               fill="var(--cool-gray-600)"
               x={left}
               text-anchor="start"
-              y={top - 4}>
+              y={top - 4}
+            >
               {tickFormatter(mousePosition.x)}
             </text>
             <text
@@ -119,7 +125,8 @@
               fill="var(--cool-gray-600)"
               x={right}
               text-anchor="end"
-              y={top - 4}>
+              y={top - 4}
+            >
               {formatPercent(perc(mousePosition.x))}
             </text>
           {/if}

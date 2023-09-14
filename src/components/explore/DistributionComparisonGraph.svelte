@@ -1,8 +1,9 @@
 <script>
   import { Axis } from '@graph-paper/guides';
+  import { quantile } from 'd3-array';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
   import { distributionComparisonGraph } from '../../utils/constants';
-  import { quantile } from 'd3-array';
+
   export let topTick;
   export let tickIncrement;
   export let key = Math.random().toString(36).substring(7);
@@ -16,10 +17,10 @@
       maximumFractionDigits: 2,
     }).format(t);
 
-  let bins = density.map((d) => d['bin']);
+  let bins = density.map((d) => d.bin);
 
   let allTicks = Array.from(Array(topTick * 100 + tickIncrement).keys())
-    .filter((v) => v % tickIncrement == 0)
+    .filter((v) => v % tickIncrement === 0)
     .map((v) => v / 100);
   let ticks = [
     0,
@@ -43,7 +44,8 @@
     bottom={distributionComparisonGraph.bottom}
     top={distributionComparisonGraph.top}
     borderColor={distributionComparisonGraph.borderColor}
-    {key}>
+    {key}
+  >
     <g slot="background" let:left let:bottom let:top let:right />
     <g
       slot="annotation"
@@ -52,12 +54,14 @@
       let:top
       let:bottom
       let:xScale
-      let:yScale>
+      let:yScale
+    >
       <slot name="glam-body" {top} {bottom} {left} {right} {yScale} {xScale} />
       <Axis
         side="bottom"
-        ticks={density.map((d) => d['bin'])}
-        tickFormatter={xTickFormatter} />
+        ticks={density.map((d) => d.bin)}
+        tickFormatter={xTickFormatter}
+      />
       <Axis side="left" {ticks} tickFormatter={yTickFormatter} />
     </g>
   </DataGraphic>

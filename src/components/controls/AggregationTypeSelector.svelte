@@ -91,7 +91,8 @@
   bind:this={button}
   use:tooltipAction={{
     text: 'this probe has multiple aggregation methods – select one from this menu',
-  }}>
+  }}
+>
   <button class="activating-button" on:click={toggle} class:active>
     <div>{aggregationInfo[currentAggregation].name}</div>
     <CaretDown size="16" />
@@ -105,7 +106,8 @@
     on:cancel={() => {
       active = false;
     }}
-    parent={button}>
+    parent={button}
+  >
     <MenuList on:selection={setValue}>
       {#each aggregationTypes as agg, i}
         <MenuListItem key={agg} value={agg}>
