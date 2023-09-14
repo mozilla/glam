@@ -19,7 +19,9 @@
 
   let bins = density.map((d) => d.bin);
 
-  let allTicks = Array.from(Array(topTick * 100 + tickIncrement).keys())
+  let allTicks = Array.from(
+    Array(Math.ceil(topTick * 100) + tickIncrement).keys()
+  )
     .filter((v) => v % tickIncrement === 0)
     .map((v) => v / 100);
   let ticks = [

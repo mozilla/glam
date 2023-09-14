@@ -154,7 +154,7 @@ export const distributionComparisonGraph = {
   right: 50,
   top: 25,
   bottom: 25,
-  alignOffsetX: 57,
+  alignOffsetX: 54,
 };
 
 export const PERCENTILES = [0.1, 1, 5, 25, 50, 75, 95, 99, 99.9];
