@@ -21,8 +21,14 @@
   let allTicks = Array.from(Array(topTick * 100 + tickIncrement).keys())
     .filter((v) => v % tickIncrement == 0)
     .map((v) => v / 100);
-  console.log(allTicks)
-  let ticks = [0, quantile(allTicks, 0.25), quantile(allTicks, 0.5), quantile(allTicks, 0.75), quantile(allTicks, 1)]
+  console.log(allTicks);
+  let ticks = [
+    0,
+    quantile(allTicks, 0.25),
+    quantile(allTicks, 0.5),
+    quantile(allTicks, 0.75),
+    quantile(allTicks, 1),
+  ];
 </script>
 
 <div>

@@ -4,7 +4,6 @@
   import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
-  import DistributionComparisonModal from './DistributionComparisonModal.svelte';
   import BarGraph from './icons/BarGraph.svelte';
 
   export let data;
@@ -14,6 +13,7 @@
   export let clickedHov;
   export let zoomUrl;
   export let pushlogUrl;
+  export let distViewButtonId;
 
   let elem;
 
@@ -40,7 +40,7 @@
   }
 
   function openDistributionView() {
-    document.getElementById('dist_view').click();
+    document.getElementById(distViewButtonId).click();
   }
 
   function getDateFromPoint(p) {
@@ -89,6 +89,14 @@
           : `AND normalized_os="${$store.productDimensions.os}"`,
     });
     return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
+  };
+
+  const canCompareDistributions = function () {
+    return (
+      $store.product === 'firefox' &&
+      ['histogram', 'scalar'].includes($store.probe.type) &&
+      !!document.getElementById(distViewButtonId)
+    );
   };
 
   let STMOComparisonLink;
@@ -200,7 +208,7 @@
           </a>
         </div>
       </div>
-      {#if $store.product === 'firefox' && $store.probe.type === 'histogram' || $store.probe.type === 'scalar'}
+      {#if canCompareDistributions()}
         <div class="option">
           <div class="option-icon">
             <a
@@ -216,6 +224,8 @@
               target="_blank">Distribution comparison</a>
           </div>
         </div>
+      {/if}
+      {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
             <a href={STMOComparisonLink} target="_blank">

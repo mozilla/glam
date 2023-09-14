@@ -11,7 +11,7 @@
   let height = distributionComparisonGraph.height/2;
   let color = 'var(--digital-blue-350)';
   let binSelector = 'bin';
-  let offsetX = distributionComparisonGraph.left + 7;
+  let offsetX = distributionComparisonGraph.alignOffsetX;
   let width = distributionComparisonGraph.width - distributionComparisonGraph.right - distributionComparisonGraph.left
   let maxHeight = height - distributionComparisonGraph.top
   let minHeight = distributionComparisonGraph.bottom

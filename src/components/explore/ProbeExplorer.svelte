@@ -252,6 +252,7 @@
   } else if ($showContextMenu) {
     hovered = lastHoverValue;
   }
+  const distViewButtonId = 'dist_view';
 </script>
 
 <style>
@@ -304,12 +305,12 @@
     {aggregationLevel} />
   <slot name="summary" />
 </div>
-{#if ref && ref[densityMetricType]}
+{#if showViolins && distViewTopChartData && distViewBottomChartData}
   <DistributionComparisonModal
-    {showViolins}
     {densityMetricType}
     topChartData={distViewTopChartData}
-    bottomChartData={distViewBottomChartData}>
+    bottomChartData={distViewBottomChartData}
+    {distViewButtonId}>
     <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
       <ComparisonSummary
         hovered={data.length === 1 || !!hovered.datum}
@@ -377,7 +378,8 @@
           if (hovered.datum) {
             ref = hovered.datum;
           }
-        }}>
+        }}
+        {distViewButtonId}>
         <slot name="additional-plot-elements" />
       </AggregationsOverTimeGraph>
     {/if}

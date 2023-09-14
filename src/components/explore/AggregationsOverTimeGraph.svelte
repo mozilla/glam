@@ -48,6 +48,7 @@
 
   export let metricKeys;
   export let yAccessor;
+  export let distViewButtonId;
 
   // set default reference point to be used in distribution sql
   let defaultRef = data[data.length - 1].build_id;
@@ -278,7 +279,8 @@
     {pushlogUrl}
     {data}
     {clickedRef}
-    {clickedHov} />
+    {clickedHov}
+    {distViewButtonId} />
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>

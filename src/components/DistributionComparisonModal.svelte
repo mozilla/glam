@@ -3,11 +3,10 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
-  export let showViolins;
   export let densityMetricType;
   export let topChartData;
   export let bottomChartData;
-
+  export let distViewButtonId;
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -61,7 +60,7 @@
   {@const bottomChartSampleCount = bottomChartData.sample_count}
   <Modal>
     <div slot="trigger" let:open>
-      <button on:click={open} id="dist_view" hidden>Distribution comparison</button>
+      <button on:click={open} id={distViewButtonId} hidden>Distribution comparison</button>
     </div>
     <div slot="title">Distribution comparison</div>
     <div class="outer-flex">
@@ -74,15 +73,13 @@
             {tickIncrement}>
             <g
               slot="glam-body">
-              {#if showViolins}
-                {#if bottomChartData}
-                  <DistributionChart
-                    density={topChartDensity}
-                    topTick={topTick}
-                    {tickIncrement}
-                    sampleCount={topChartSampleCount}
-                    tooltipLocation="bottom"/>
-                {/if}
+              {#if bottomChartData}
+                <DistributionChart
+                  density={topChartDensity}
+                  topTick={topTick}
+                  {tickIncrement}
+                  sampleCount={topChartSampleCount}
+                  tooltipLocation="bottom"/>
               {/if}
             </g>
           </DistributionComparisonGraph>
@@ -95,14 +92,12 @@
             {tickIncrement}>
             <g
               slot="glam-body">
-              {#if showViolins}
-                {#if bottomChartData}
-                  <DistributionChart
-                    density={bottomChartDensity}
-                    {topTick}
-                    sampleCount={bottomChartSampleCount}
-                    tooltipLocation="top"/>
-                {/if}
+              {#if bottomChartData}
+                <DistributionChart
+                  density={bottomChartDensity}
+                  {topTick}
+                  sampleCount={bottomChartSampleCount}
+                  tooltipLocation="top"/>
               {/if}
             </g>
           </DistributionComparisonGraph>
