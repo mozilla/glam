@@ -71,7 +71,7 @@
   }
   .gp-modal__content {
     padding: var(--space-2x);
-    max-height: 100vh;
+    max-height: 90vh;
     overflow: auto;
   }
 </style>
