@@ -112,19 +112,22 @@
       multi
       on:selection={(evt) => {
         store.setField('activeBuckets', evt.detail.keys);
-      }}>
+      }}
+    >
       <button
         class="select-all-button {$store.activeBuckets.length ===
           bucketOptions.length && 'inactive'}"
         disabled={$store.activeBuckets.length === bucketOptions.length}
-        on:click={handleSelectAllCategories}>
+        on:click={handleSelectAllCategories}
+      >
         SELECT ALL
       </button>
       {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
         <Option
           selected={activeBuckets.includes(importantBucket)}
           key={importantBucket}
-          label={importantBucket}>
+          label={importantBucket}
+        >
           <div class="option-menu__list-item__slot-right" slot="right">
             <ColorSwatch color={bucketColorMap(importantBucket)} />
           </div>
@@ -141,7 +144,8 @@
         <Option
           selected={false}
           key={unimportantBucket}
-          label={unimportantBucket}>
+          label={unimportantBucket}
+        >
           <div slot="right">
             <ColorSwatch color={bucketColorMap(unimportantBucket)} />
           </div>
@@ -154,6 +158,7 @@
       options={bucketOptions}
       selections={activeBuckets}
       on:selection={makeSelection()}
-      colorMap={bucketColorMap} />
+      colorMap={bucketColorMap}
+    />
   {/if}
 </div>

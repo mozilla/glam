@@ -165,7 +165,8 @@
             <a
               class="probe-type-link"
               href="https://mozilla.github.io/glean/book/user/metrics/index.html"
-              >{$store.probe.type.replace('_', ' ')}</a>
+              >{$store.probe.type.replace('_', ' ')}</a
+            >
           </dt>
         </dl>
       {/if}
@@ -173,21 +174,25 @@
         {#if !$store.probe.in_source}
           <StatusLabel
             tooltip={'This metric is no longer defined in the source code: new data will not be collected by the application.'}
-            level={'warning'}>
+            level={'warning'}
+          >
             Removed
           </StatusLabel>
         {:else if isExpired($store.probe)}
           <StatusLabel
             tooltip={'This metric has expired: new data will not be collected by the application.'}
-            level={'warning'}>Expired</StatusLabel>
+            level={'warning'}>Expired</StatusLabel
+          >
         {:else if $store.probe.disabled}
           <StatusLabel
             tooltip={'This metric is disabled. New data will not be collected by the application.'}
-            level={'warning'}>Disabled</StatusLabel>
+            level={'warning'}>Disabled</StatusLabel
+          >
         {:else}
           <StatusLabel
             tooltip={'This metric is active and collecting data.'}
-            level={'success'}>Active</StatusLabel>
+            level={'success'}>Active</StatusLabel
+          >
         {/if}
       </div>
     </div>
@@ -202,7 +207,8 @@
             href={`https://dictionary.telemetry.mozilla.org/apps/${
               GLEAN_DICTIONARY_PRODUCT_IDS[$store.product]
             }/metrics/${$store.probeName}`}
-            target="_blank">
+            target="_blank"
+          >
             more info
             <ExternalLink size="12" />
           </a>
@@ -292,7 +298,8 @@
         product="glean"
         variants={$store.probe.variants}
         sendInPings={$store.productDimensions.ping_type}
-        channel={$store.productDimensions.app_id} />
+        channel={$store.productDimensions.app_id}
+      />
     </div>
   </div>
 {/if}

@@ -158,7 +158,8 @@
           {percentiles}
           markers={$firefoxVersionMarkers}
           on:selection={handleSelection}
-          {aggregationLevel} />
+          {aggregationLevel}
+        />
       {/if}
     {/each}
   </div>

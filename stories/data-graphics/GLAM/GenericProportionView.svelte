@@ -151,7 +151,8 @@
           bucketOptions={probe[aggregationLevel].bucketOptions}
           bucketColorMap={probe[aggregationLevel].bucketColorMap}
           bucketSortOrder={probe[aggregationLevel].bucketSortOrder}
-          {aggregationLevel} />
+          {aggregationLevel}
+        />
       {/if}
     {/each}
   </div>

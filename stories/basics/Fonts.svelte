@@ -197,7 +197,8 @@
   <div class="font-section story__section inter-section">
     <h2
       class="font-title inter"
-      style="font-weight: 900; color: var(--pantone-red-500);">
+      style="font-weight: 900; color: var(--pantone-red-500);"
+    >
       Inter
     </h2>
     <div class="story__description">
@@ -226,7 +227,8 @@
     <h2
       class="font-title fira-code"
       style="font-size: 4em; font-weight: 900;
-    color: var(--blue-slate-300);">
+    color: var(--blue-slate-300);"
+    >
       Fira Code
       <b>{'<== ~~ =!= ++'}</b>
     </h2>

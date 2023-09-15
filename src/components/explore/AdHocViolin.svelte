@@ -43,6 +43,7 @@
       stroke={color}
       y={$yScale(bin) - offset[i] - 0.1}
       width={x(value)}
-      height={Math.max(2, spacing[i] + 0.2)} />
+      height={Math.max(2, spacing[i] + 0.2)}
+    />
   {/each}
 </g>

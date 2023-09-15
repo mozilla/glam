@@ -58,7 +58,8 @@
           }`}
           offset={OFFSET}
           location="bottom"
-          alignment="right">
+          alignment="right"
+        >
           <div class="main-filter__label" slot="label">
             <span class="main-filter__label__dimension">{dimension.title}</span>
             {productConfigDimensions.dimensionValueLabel(
@@ -73,12 +74,14 @@
             <MenuList
               on:selection={(event) => {
                 store.setDimension(dimension.key, event.detail.key);
-              }}>
+              }}
+            >
               {#each dimension.values.filter((di) => dimension.isValidKey === undefined || dimension.isValidKey(di.key, $store.probe, store)) as { key, label }, i (key)}
                 <MenuListItem {key} value={key}>
                   <span
                     class="story-label
-                  first" />{label}
+                  first"
+                  />{label}
                 </MenuListItem>
               {/each}
             </MenuList>

@@ -28,7 +28,8 @@
     use:tooltipAction={{
       text: 'The Glean Aggregated Metrics Dashboard',
       distance: 16,
-    }}>
+    }}
+  >
     <Logo {viewportMinWidth} />
     <Text {viewportMinWidth} />
   </h1>

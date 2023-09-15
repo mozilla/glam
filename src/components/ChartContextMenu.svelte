@@ -4,6 +4,7 @@
   import GitBranch from './icons/GitBranch.svelte';
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
+  import BarGraph from './icons/BarGraph.svelte';
 
   export let data;
   export let x;
@@ -12,6 +13,7 @@
   export let clickedHov;
   export let zoomUrl;
   export let pushlogUrl;
+  export let distViewButtonId;
 
   let elem;
 
@@ -35,6 +37,10 @@
     store.setField('ref', clickedRef);
     store.setField('hov', clickedHov);
     store.setField('timeHorizon', 'ZOOM');
+  }
+
+  function openDistributionView() {
+    document.getElementById(distViewButtonId).click();
   }
 
   function getDateFromPoint(p) {
@@ -83,6 +89,14 @@
           : `AND normalized_os="${$store.productDimensions.os}"`,
     });
     return REDASH_PROBE_COMPARISON_URL + queryParams.toString();
+  };
+
+  const canCompareDistributions = function () {
+    return (
+      $store.product === 'firefox' &&
+      ['histogram', 'scalar'].includes($store.probe.type) &&
+      !!document.getElementById(distViewButtonId)
+    );
   };
 
   let STMOComparisonLink;
@@ -159,11 +173,13 @@
 <svelte:body on:click={onClickOutside} on:keydown|stopPropagation={onEscape} />
 
 {#if $showContextMenu}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
   <div
     id="menu"
     style="top: {y + window.scrollY}px; left: {x + window.scrollX}px;"
     on:click={closeMenu}
-    bind:this={elem}>
+    bind:this={elem}
+  >
     <div class="head">
       <div class="range">
         <div class="key">Range:</div>
@@ -193,6 +209,25 @@
           </a>
         </div>
       </div>
+      {#if canCompareDistributions()}
+        <div class="option">
+          <div class="option-icon">
+            <a
+              href="distribution-view"
+              on:click|preventDefault={openDistributionView}
+            >
+              <BarGraph />
+            </a>
+          </div>
+          <div class="option-link">
+            <a
+              href="distribution-view"
+              on:click|preventDefault={openDistributionView}
+              target="_blank">Distribution comparison</a
+            >
+          </div>
+        </div>
+      {/if}
       {#if $store.product === 'firefox' && $store.probe.type === 'histogram'}
         <div class="option">
           <div class="option-icon">
@@ -202,7 +237,8 @@
           </div>
           <div class="option-link">
             <a href={STMOComparisonLink} target="_blank"
-              >View Comparison in STMO</a>
+              >View Comparison in STMO</a
+            >
           </div>
         </div>
       {/if}
