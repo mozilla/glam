@@ -12,7 +12,11 @@
     overTimeTitle,
     percentilesOverTimeDescription,
   } from '../../utils/constants';
-  import { getPercentileName, getHistogramName } from '../../config/shared';
+  import {
+    getPercentileName,
+    getHistogramName,
+    getTransformedPercentileName,
+  } from '../../config/shared';
 
   import {
     gatherProbeKeys,
@@ -56,6 +60,33 @@
   }
 
   $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
+
+  $: densityMetricType = getHistogramName(
+    $store.productDimensions.normalizationType
+  );
+
+  $: pointMetricType =
+    probeType === 'log'
+      ? getTransformedPercentileName($store.productDimensions.normalizationType)
+      : getPercentileName($store.productDimensions.normalizationType);
+
+  const getYDomain = (source, normType) => {
+    let range = filterQuantileData(source, currentAggregation, currentKey);
+    let histogramRange = range[range.length - 1][
+      getHistogramName(normType)
+    ].map((d) => d.bin);
+    let percentileRange = [
+      1,
+      Math.max(
+        ...range.map(
+          (d) =>
+            d[getPercentileName(normType)] && d[getPercentileName(normType)][95]
+        )
+      ),
+    ];
+    return probeType === 'log' ? histogramRange : percentileRange;
+  };
+  $: yDomain = getYDomain(data, $store.productDimensions.normalizationType);
 </script>
 
 <style>
@@ -136,33 +167,15 @@
               showViolins={true}
               {aggregationLevel}
               binColorMap={percentileLineColorMap}
-              pointMetricType={probeType === 'log'
-                ? 'transformedPercentiles'
-                : getPercentileName($store.productDimensions.normalizationType)}
-              overTimePointMetricType={probeType === 'log'
-                ? 'transformedPercentiles'
-                : getPercentileName($store.productDimensions.normalizationType)}
-              densityMetricType={'histogram'}
+              {pointMetricType}
+              overTimePointMetricType={pointMetricType}
+              {densityMetricType}
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
-              yDomain={probeType === 'log'
-                ? selectedData[0][
-                    getHistogramName($store.productDimensions.normalizationType)
-                  ].map((d) => d.bin)
-                : [
-                    1,
-                    Math.max(
-                      ...selectedData.map(
-                        (d) =>
-                          d[
-                            getPercentileName(
-                              $store.productDimensions.normalizationType
-                            )
-                          ][95]
-                      )
-                    ),
-                  ]}
-            />
+              {yDomain}
+              )
+              ),
+              ]} />
           </div>
         {/if}
       {/each}

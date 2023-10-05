@@ -23,6 +23,11 @@ export function getPercentileName(type) {
   return type === 'normalized' ? 'percentiles' : 'non_norm_percentiles';
 }
 
+export function getTransformedPercentileName(type) {
+  return type === 'normalized'
+    ? 'transformedPercentiles'
+    : 'transformedNonNormPercentiles';
+}
 export function getHistogramName(type) {
   return type === 'normalized' ? 'histogram' : 'non_norm_histogram';
 }
