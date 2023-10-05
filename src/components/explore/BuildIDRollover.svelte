@@ -46,7 +46,8 @@
   y={$top - 16}
   text-anchor="middle"
   font-family="var(--main-mono-font)"
-  font-size="12">
+  font-size="12"
+>
   <tspan fill="var(--cool-gray-700)" font-weight="bold">
     {parsedLabel.slice(0, 4)}-{parsedLabel.slice(4, 6)}-{parsedLabel.slice(
       6,

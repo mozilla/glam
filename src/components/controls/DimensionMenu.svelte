@@ -84,7 +84,8 @@
   <button
     use:tooltipAction={{ text: !active ? tooltip : undefined }}
     class="activating-button {variant || ''} {size || ''}"
-    on:click={toggle}>
+    on:click={toggle}
+  >
     <slot name="label" />
   </button>
 </div>
@@ -98,7 +99,8 @@
     {location}
     {alignment}
     parent={button}
-    {onParentSelect}>
+    {onParentSelect}
+  >
     <slot name="menu" />
   </FloatingMenu>
 {/if}

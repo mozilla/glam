@@ -21,4 +21,5 @@
   multi={true}
   justify={'flex-end'}
   level="low"
-  on:selection />
+  on:selection
+/>

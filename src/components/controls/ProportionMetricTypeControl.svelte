@@ -21,4 +21,5 @@
   ]}
   selected={metricType}
   level="medium"
-  on:selection />
+  on:selection
+/>

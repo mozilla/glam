@@ -80,4 +80,5 @@
   bind:selected={percentiles}
   multi={true}
   level="medium"
-  on:selection />
+  on:selection
+/>

@@ -40,7 +40,8 @@
   <ChartTitle
     {description}
     left={totalClientsGraph.left}
-    right={totalClientsGraph.right}>
+    right={totalClientsGraph.right}
+  >
     {title}
   </ChartTitle>
   <DataGraphic
@@ -56,13 +57,15 @@
     bottomBorder
     borderColor={totalClientsGraph.borderColor}
     bind:mousePosition={hoverValue}
-    on:click>
+    on:click
+  >
     <g slot="background" let:yScale>
       <Axis
         side="left"
         lineStyle="short"
         ticks={yScale.ticks(4)}
-        tickFormatter={formatMillion} />
+        tickFormatter={formatMillion}
+      />
       {#if aggregationLevel === 'build_id'}
         <Axis side="bottom" />
       {:else if xDomain.length <= 5}
@@ -80,7 +83,8 @@
         y="totalClients"
         color="var(--cool-gray-600)"
         areaColor="var(--cool-gray-200)"
-        area={true} />
+        area={true}
+      />
     </g>
     <g slot="annotation" let:top let:xScale let:yScale let:bottom let:width>
       {#if hovered && hovered.datum}
@@ -94,7 +98,8 @@
             y: yScale(ref.audienceSize),
             audienceSize: ref.audienceSize,
           }}
-          let:tweenValue={tv1}>
+          let:tweenValue={tv1}
+        >
           <TrackingLine xr={tv1.location} />
         </Tweenable>
       {/if}
@@ -103,12 +108,14 @@
           align="top"
           x={hovered.datum.label}
           background="var(--cool-gray-100)"
-          label="Hov." />
+          label="Hov."
+        />
         <circle
           cx={xScale(hovered.datum.label)}
           cy={yScale(hovered.datum.audienceSize)}
           r="3"
-          fill="var(--cool-gray-700)" />
+          fill="var(--cool-gray-700)"
+        />
       {/if}
       {#if ref && ref.label && ref.audienceSize !== undefined}
         <Tweenable
@@ -123,19 +130,22 @@
             y: yScale(ref.audienceSize),
             audienceSize: ref.audienceSize,
           }}
-          let:tweenValue>
+          let:tweenValue
+        >
           <ReferenceSymbol
             size={20}
             xLocation={tweenValue.x}
             yLocation={tweenValue.y}
-            color="var(--cool-gray-700)" />
+            color="var(--cool-gray-700)"
+          />
           <TrackingLabel
             align="bottom"
             label="Ref."
             xr={tweenValue.x}
             background={bottom - tweenValue.y < 10
               ? 'var(--cool-gray-100)'
-              : 'var(--cool-gray-200)'} />
+              : 'var(--cool-gray-200)'}
+          />
         </Tweenable>
       {/if}
     </g>

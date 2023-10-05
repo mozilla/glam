@@ -213,7 +213,8 @@
             class="tab"
             on:click={() => {
               activeTab = tab.id;
-            }}>{tab.label}</span>
+            }}>{tab.label}</span
+          >
         </li>
       {/each}
       <li>
@@ -221,7 +222,8 @@
           <span
             contenteditable="true"
             bind:textContent={status}
-            transition:fade />
+            transition:fade
+          />
         {/if}
       </li>
       <li />

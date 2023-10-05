@@ -27,7 +27,8 @@
 {#if $store.route.section === 'probe'}
   <div
     transition:fly={{ x: -5, duration: 200 }}
-    style="padding-left: var(--space-2x); padding-right: var(--space-2x);">
+    style="padding-left: var(--space-2x); padding-right: var(--space-2x);"
+  >
     <BodyControl
       {options}
       selected={$store.route.view}
@@ -37,6 +38,7 @@
         page.show(
           `/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}${$currentQuery}`
         );
-      }} />
+      }}
+    />
   </div>
 {/if}

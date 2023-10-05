@@ -69,7 +69,8 @@
       ? `${description}. Please note that currently this probe doesn't have enough data to produce a meaningful comparison yet.`
       : description}
     left={explorerComparisonSmallMultiple.left}
-    right={0}>
+    right={0}
+  >
     compare
   </ChartTitle>
   <DataGraphic
@@ -87,7 +88,8 @@
     top={explorerComparisonSmallMultiple.top}
     bottomBorder
     borderColor={explorerComparisonSmallMultiple.borderColor}
-    {key}>
+    {key}
+  >
     <g slot="background" let:left let:bottom let:top let:right>
       <rect
         x={left}
@@ -99,7 +101,8 @@
           text: 'Shows the distribution of the left point on the line chart',
           location: 'top',
           alignment: 'center',
-        }} />
+        }}
+      />
       <rect
         x={(left + right) / 2}
         y={top}
@@ -110,7 +113,8 @@
           text: 'Shows the distribution of the right point on the line chart',
           location: 'top',
           alignment: 'center',
-        }} />
+        }}
+      />
     </g>
     <g
       slot="annotation"
@@ -119,13 +123,15 @@
       let:top
       let:bottom
       let:xScale
-      let:yScale>
+      let:yScale
+    >
       <slot name="glam-body" {left} {right} {top} {bottom} {xScale} {yScale} />
       <Axis
         side="right"
         lineStyle="long"
         tickColor="var(--cool-gray-200)"
-        tickFormatter={yTickFormatter} />
+        tickFormatter={yTickFormatter}
+      />
       {#if showTopAxis}
         <Axis side="top" ticks={xDomain} />
       {/if}
@@ -141,19 +147,22 @@
             y2={$dotsAndLines[bin].rightY}
             stroke={$dotsAndLines[bin].color}
             stroke-width={dataVolume === 1 ? 1 : 2}
-            stroke-opacity={dataVolume === 1 ? 0.5 : 1} />
+            stroke-opacity={dataVolume === 1 ? 0.5 : 1}
+          />
           <circle
             cx={left}
             cy={$dotsAndLines[bin].leftY}
             r="3"
-            fill={$dotsAndLines[bin].color} />
+            fill={$dotsAndLines[bin].color}
+          />
         {/each}
       {/if}
       {#each activeBins as bin, i}
         <ReferenceSymbol
           xLocation={right}
           yLocation={$dotsAndLines[bin].rightY}
-          color={$dotsAndLines[bin].color} />
+          color={$dotsAndLines[bin].color}
+        />
       {/each}
     </g>
   </DataGraphic>

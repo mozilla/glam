@@ -178,7 +178,8 @@
     id="menu"
     style="top: {y + window.scrollY}px; left: {x + window.scrollX}px;"
     on:click={closeMenu}
-    bind:this={elem}>
+    bind:this={elem}
+  >
     <div class="head">
       <div class="range">
         <div class="key">Range:</div>
@@ -213,7 +214,8 @@
           <div class="option-icon">
             <a
               href="distribution-view"
-              on:click|preventDefault={openDistributionView}>
+              on:click|preventDefault={openDistributionView}
+            >
               <BarGraph />
             </a>
           </div>
@@ -221,7 +223,8 @@
             <a
               href="distribution-view"
               on:click|preventDefault={openDistributionView}
-              target="_blank">Distribution comparison</a>
+              target="_blank">Distribution comparison</a
+            >
           </div>
         </div>
       {/if}
@@ -234,7 +237,8 @@
           </div>
           <div class="option-link">
             <a href={STMOComparisonLink} target="_blank"
-              >View Comparison in STMO</a>
+              >View Comparison in STMO</a
+            >
           </div>
         </div>
       {/if}
