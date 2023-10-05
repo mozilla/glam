@@ -30,7 +30,10 @@
     toQueryString,
   } from '../../state/store';
 
-  import { getPercentileName } from '../../config/shared';
+  import {
+    getPercentileName,
+    getTransformedPercentileName,
+  } from '../../config/shared';
 
   export let title;
   export let description;
@@ -203,13 +206,17 @@
       yScaleType === 'scalePoint'
     ) {
       visiblePercentiles.forEach((p) => {
-        yData = yData.concat([...data.map((arr) => arr[percentileName][p])]);
+        yData = yData.concat([
+          ...data.map((arr) => arr[percentileName] && arr[percentileName][p]),
+        ]);
       });
       // use transformed data for Android metrics
-      if (data[0].transformedPercentiles) {
+      if (data[data.length - 1].transformedPercentiles) {
         visiblePercentiles.forEach((p) => {
           yData = yData.concat([
-            ...data.map((arr) => arr.transformedPercentiles[p]),
+            ...data.map(
+              (arr) => arr[getTransformedPercentileName(normType)][p]
+            ),
           ]);
         });
       }

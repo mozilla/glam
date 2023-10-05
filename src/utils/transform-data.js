@@ -160,7 +160,8 @@ export const responseHistogramToGraphicFormat = (
     return 0;
   });
   draft.histogram = formatted;
-  draft.non_norm_histogram = formattedNonNormalized;
+  if (draft.non_norm_histogram)
+    draft.non_norm_histogram = formattedNonNormalized;
 };
 
 export function transformedPercentiles(draft) {
@@ -175,6 +176,16 @@ export function transformedPercentiles(draft) {
     },
     {}
   );
+  if (draft.non_norm_percentiles)
+    draft.transformedNonNormPercentiles = Object.entries(
+      draft.non_norm_percentiles
+    ).reduce((acc, [bin, value]) => {
+      acc[bin] = nearestBelow(
+        value,
+        draft.non_norm_histogram.map((hi) => hi.bin)
+      );
+      return acc;
+    }, {});
 }
 
 export const standardProportionTransformations = [
