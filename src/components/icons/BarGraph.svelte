@@ -8,15 +8,13 @@
   viewBox="0 0 480 480"
   style="enable-background:new 0 0 480 480;"
   xml:space="preserve"
-  fill="currentColor"
->
+  fill="currentColor">
   <g>
     <g>
       <g>
         <path
           d="M16,416v-32h16v-16H16v-32h32v-16H16v-32h16v-16H16v-32h32v-16H16v-32h16v-16H16v-32h32v-16H16V96h16V80H16V48h32V32H16
-				V0H0v424c0,4.418,3.582,8,8,8h472v-16H16z"
-        />
+				V0H0v424c0,4.418,3.582,8,8,8h472v-16H16z" />
         <rect x="80" y="448" width="16" height="32" />
         <rect x="112" y="448" width="16" height="32" />
         <rect x="192" y="448" width="16" height="32" />

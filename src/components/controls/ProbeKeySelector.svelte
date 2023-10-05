@@ -64,16 +64,14 @@
     class:active
     use:tooltipAction={{
       text: 'this probe has multiple keys associated with it',
-    }}
-  >
+    }}>
     <div>
       {#each options as opt}
         <div
           style="
             visibility: {opt === currentKey ? 'visible' : 'hidden'};
             height: {opt === currentKey ? 'inherit' : 0};
-          "
-        >
+          ">
           {opt}
         </div>
       {/each}
@@ -89,8 +87,7 @@
     on:cancel={() => {
       active = false;
     }}
-    parent={button}
-  >
+    parent={button}>
     <MenuList on:selection={setValue}>
       {#each options as key, i}
         <MenuListItem {key} value={key}>

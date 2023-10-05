@@ -34,8 +34,7 @@
       top={20}
       bottom={28}
       left={16}
-      right={16}
-    >
+      right={16}>
       <g slot="body" let:bottom let:top let:yScale let:mousePosition let:xScale>
         <Violin
           rawPlacement={bottom}
@@ -46,8 +45,7 @@
           areaColor={'var(--digital-blue-400)'}
           lineColor={'var(--digital-blue-500)'}
           opacity={0.8}
-          densityRange={[0, (bottom - top) * 0.8]}
-        />
+          densityRange={[0, (bottom - top) * 0.8]} />
         {#if mousePosition.x}
           <rect
             in:fade={{ duration: 100 }}
@@ -56,8 +54,7 @@
             width={xScale.step()}
             height={bottom - top}
             fill="var(--cool-gray-600)"
-            opacity=".3"
-          />
+            opacity=".3" />
         {/if}
       </g>
       <g
@@ -67,8 +64,7 @@
         let:top
         let:bottom
         let:left
-        let:right
-      >
+        let:right>
         <Axis side="bottom" tickFormatter={formatCount} />
         <g style="font-size:11px;">
           {#if mousePosition.x}
@@ -77,8 +73,7 @@
               fill="var(--cool-gray-600)"
               x={left}
               text-anchor="start"
-              y={top - 4}
-            >
+              y={top - 4}>
               {formatCount(mousePosition.x)}
             </text>
             <text
@@ -86,8 +81,7 @@
               fill="var(--cool-gray-600)"
               x={right}
               text-anchor="end"
-              y={top - 4}
-            >
+              y={top - 4}>
               {formatPercentDecimal(data[mousePosition.x])}
               clients
             </text>

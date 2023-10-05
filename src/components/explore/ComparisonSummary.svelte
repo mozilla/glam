@@ -149,8 +149,7 @@
         }`,
         location: 'top',
       }}
-      class="data-graphic__element-title__icon"><Help size={14} /></span
-    >
+      class="data-graphic__element-title__icon"><Help size={14} /></span>
   </h3>
   <table>
     <thead>
@@ -185,8 +184,7 @@
           <td class="value-label">
             <span
               class="percentile-label-block"
-              style="background-color: {colorMap(key)};"
-            />{keyFormatter(key)}
+              style="background-color: {colorMap(key)};" />{keyFormatter(key)}
           </td>
 
           {#if showLeft}

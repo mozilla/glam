@@ -302,8 +302,7 @@
     {ref}
     hovered={hovered.datum}
     dataLength={data.length}
-    {aggregationLevel}
-  />
+    {aggregationLevel} />
   <slot name="summary" />
 </div>
 {#if showViolins && distViewTopChartData && distViewBottomChartData}
@@ -311,8 +310,7 @@
     {densityMetricType}
     topChartData={distViewTopChartData}
     bottomChartData={distViewBottomChartData}
-    {distViewButtonId}
-  >
+    {distViewButtonId}>
     <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
       <ComparisonSummary
         hovered={data.length === 1 || !!hovered.datum}
@@ -330,8 +328,7 @@
         showLeft={data.length > 1}
         showDiff={data.length > 1}
         viewType={$store.viewType}
-        {justOne}
-      />
+        {justOne} />
     </div>
   </DistributionComparisonModal>
 {/if}
@@ -382,8 +379,7 @@
             ref = hovered.datum;
           }
         }}
-        {distViewButtonId}
-      >
+        {distViewButtonId}>
         <slot name="additional-plot-elements" />
       </AggregationsOverTimeGraph>
     {/if}
@@ -404,16 +400,14 @@
     {activeBins}
     {yDomain}
     dataVolume={data.length}
-    showTopAxis={!justOne}
-  >
+    showTopAxis={!justOne}>
     <g
       slot="glam-body"
       let:top
       let:bottom
       let:left={lp}
       let:right={rp}
-      let:yScale
-    >
+      let:yScale>
       {#if showViolins}
         {#if hovered.datum && !justOne}
           <AdHocViolin
@@ -431,8 +425,7 @@
               explorerComparisonSmallMultiple.left -
               explorerComparisonSmallMultiple.right) /
               2 -
-              VIOLIN_PLOT_OFFSET}
-          />
+              VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if ref && ref[densityMetricType]}
           <AdHocViolin
@@ -444,8 +437,7 @@
                   explorerComparisonSmallMultiple.left -
                   explorerComparisonSmallMultiple.right) /
                   2 -
-                VIOLIN_PLOT_OFFSET}
-          />
+                VIOLIN_PLOT_OFFSET} />
         {/if}
         {#if !justOne}
           <line
@@ -453,8 +445,7 @@
             x2={(lp + rp) / 2}
             y1={top}
             y2={bottom}
-            stroke="var(--digital-blue-150)"
-          />
+            stroke="var(--digital-blue-150)" />
         {/if}
       {/if}
     </g>
@@ -476,8 +467,7 @@
     showLeft={data.length > 1}
     showDiff={data.length > 1}
     viewType={$store.viewType}
-    {justOne}
-  />
+    {justOne} />
   {#if $store.productDimensions.normalizationType === 'normalized'}
     <div style="display: {justOne ? 'none' : 'block'}">
       <ClientVolumeOverTimeGraph
@@ -494,16 +484,14 @@
           if (hovered.datum) {
             ref = hovered.datum;
           }
-        }}
-      />
+        }} />
     </div>
     <div style="display: {justOne ? 'none' : 'block'}">
       <CompareClientVolumeGraph
         description={compareDescription(clientVolumeOverTimeTitle)}
         yDomain={yClientsDomain}
         {leftAudienceValue}
-        {rightAudienceValue}
-      />
+        {rightAudienceValue} />
     </div>
   {/if}
   {#if $store.productDimensions.normalizationType === 'non_normalized'}
@@ -521,8 +509,7 @@
         if (hovered.datum) {
           ref = hovered.datum;
         }
-      }}
-    />
+      }} />
     <div style="display: {justOne ? 'none' : 'block'}">
       <CompareSampleCountGraph
         description={compareDescription(
@@ -530,8 +517,7 @@
         )}
         yDomain={ySamplesDomain}
         {leftSampleValue}
-        {rightSampleValue}
-      />
+        {rightSampleValue} />
     </div>
   {/if}
 </div>

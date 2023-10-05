@@ -16,5 +16,4 @@
   y1={$top}
   y2={$bottom}
   stroke="var(--cool-gray-500)"
-  stroke-dasharray="1,1"
-/>
+  stroke-dasharray="1,1" />

@@ -92,8 +92,7 @@
 <div class="big-label__label">
   <slot name="label" /><span
     use:tooltipAction={{ text: description, location: 'top' }}
-    class="data-graphic__element-title__icon"><Help size={14} /></span
-  >
+    class="data-graphic__element-title__icon"><Help size={14} /></span>
 </div>
 <div class="big-label__value">
   {#if value}
@@ -103,8 +102,7 @@
           {parsedLabel.slice(0, 4)}-{parsedLabel.slice(
             4,
             6
-          )}-{parsedLabel.slice(6, 8)}</span
-        >
+          )}-{parsedLabel.slice(6, 8)}</span>
         <span class="big-label__value__time">{parsedLabel.slice(8, 10)}:</span
         ><span class="big-label__value__time">{parsedLabel.slice(10, 12)}:</span
         ><span class="big-label__value__time">{parsedLabel.slice(12, 14)}</span>

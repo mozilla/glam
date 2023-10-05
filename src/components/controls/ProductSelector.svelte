@@ -37,8 +37,7 @@
     tooltip="Select a product"
     offset={OFFSET}
     location="bottom"
-    alignment="center"
-  >
+    alignment="center">
     <div class="main-filter__label" slot="label">
       {productKeys.filter((p) => p.key === $store.searchProduct)[0].label}
       <div class="pull-right-edge">
@@ -49,8 +48,7 @@
       <MenuList
         on:selection={(event) => {
           store.setField('searchProduct', event.detail.key);
-        }}
-      >
+        }}>
         {#each productKeys as { label, key }, i (key)}
           <MenuListItem {key} value={key}>
             <span class="story-label first" />{label}

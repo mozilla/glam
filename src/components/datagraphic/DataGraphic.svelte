@@ -400,8 +400,7 @@
 <div
   bind:this={container}
   class="data-graphic-container"
-  style="width: {$graphicWidth}px; height: {$graphicHeight}px;"
->
+  style="width: {$graphicWidth}px; height: {$graphicHeight}px;">
   <svg
     style="width: {$graphicWidth}px; height: {$graphicHeight}px;"
     bind:this={svg}
@@ -426,15 +425,13 @@
     on:click
     on:mousedown
     on:mouseup
-    on:mousemove
-  >
+    on:mousemove>
     <rect
       x={$leftPlot}
       y={$topPlot}
       width={$bodyWidth}
       height={$bodyHeight}
-      fill={backgroundColor}
-    />
+      fill={backgroundColor} />
 
     <clipPath id="graphic-body-{key}">
       <!-- this clip area determines what renders in slot=body and slot=background-body -->
@@ -442,15 +439,13 @@
         x={$leftPlot}
         y={$topPlot}
         width={$bodyWidth}
-        height={$bodyHeight}
-      />
+        height={$bodyHeight} />
     </clipPath>
 
     {#if dataGraphicMounted}
       <g
         id="graphic-body-background-{key}"
-        style="clip-path: url(#graphic-body-{key})"
-      >
+        style="clip-path: url(#graphic-body-{key})">
         <slot
           name="body-background"
           {mousePosition}
@@ -461,8 +456,7 @@
           top={$topPlot}
           bottom={$bottomPlot}
           width={$graphicWidth}
-          height={$graphicHeight}
-        />
+          height={$graphicHeight} />
       </g>
     {/if}
 
@@ -478,8 +472,7 @@
           top={$topPlot}
           bottom={$bottomPlot}
           width={$graphicWidth}
-          height={$graphicHeight}
-        />
+          height={$graphicHeight} />
       </g>
     {/if}
 
@@ -495,8 +488,7 @@
           top={$topPlot}
           bottom={$bottomPlot}
           width={$graphicWidth}
-          height={$graphicHeight}
-        />
+          height={$graphicHeight} />
       </g>
     {/if}
 
@@ -511,15 +503,13 @@
         top={$topPlot}
         bottom={$bottomPlot}
         width={$graphicWidth}
-        height={$graphicHeight}
-      />
+        height={$graphicHeight} />
     {/if}
 
     <use
       clip-path="url(#graphic-body-{key})"
       xlink:href="#graphic-body-content={key}"
-      fill="transparent"
-    />
+      fill="transparent" />
 
     <!-- Annotation layers – for additional points, comments, etc. that must sit above everything else -->
     {#if dataGraphicMounted}
@@ -533,8 +523,7 @@
         top={$topPlot}
         bottom={$bottomPlot}
         width={$graphicWidth}
-        height={$graphicHeight}
-      />
+        height={$graphicHeight} />
     {/if}
 
     <!-- data graphic borders -->
@@ -548,8 +537,7 @@
           {y2}
           stroke={color}
           stroke-width={size}
-          {opacity}
-        />
+          {opacity} />
       {/if}
     {/each}
 
@@ -564,8 +552,7 @@
         top={$topPlot}
         bottom={$bottomPlot}
         width={$graphicWidth}
-        height={$graphicHeight}
-      />
+        height={$graphicHeight} />
     {/if}
   </svg>
 </div>

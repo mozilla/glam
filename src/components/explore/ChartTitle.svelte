@@ -10,19 +10,16 @@
 
 <h3
   style="padding-left: {left}px; padding-right: {right}px"
-  class="data-graphic__element-title"
->
+  class="data-graphic__element-title">
   {#if helpIconPosition === 'start'}
     <span
       use:tooltipAction={{ text: description, location: 'top' }}
-      class="data-graphic__element-title__icon"><Help size={14} /></span
-    >
+      class="data-graphic__element-title__icon"><Help size={14} /></span>
   {/if}
   <slot />
   {#if helpIconPosition === 'end'}
     <span
       use:tooltipAction={{ text: description, location: 'top' }}
-      class="data-graphic__element-title__icon"><Help size={14} /></span
-    >
+      class="data-graphic__element-title__icon"><Help size={14} /></span>
   {/if}
 </h3>

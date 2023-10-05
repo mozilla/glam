@@ -28,8 +28,7 @@
             freezeX={i < 2}
             rightBorder={i === 1}
             header
-            size={i < 2 ? 'small' : 'tiny'}
-          >
+            size={i < 2 ? 'small' : 'tiny'}>
             {#if i < 2}
               {h}
             {:else}
@@ -58,23 +57,20 @@
                   {height}
                   xType="linear"
                   yDomain={[0]}
-                  xDomain={[0, 1]}
-                >
+                  xDomain={[0, 1]}>
                   <g slot="body" let:xScale>
                     <rect
                       x={xScale(0)}
                       y={0}
                       {width}
                       {height}
-                      fill="var(--cool-gray-100)"
-                    />
+                      fill="var(--cool-gray-100)" />
                     <rect
                       x={xScale(0)}
                       y={0}
                       width={xScale(row[key] / 1000)}
                       {height}
-                      fill="var(--cool-gray-800)"
-                    />
+                      fill="var(--cool-gray-800)" />
                   </g>
                 </DataGraphic>
               {/if}

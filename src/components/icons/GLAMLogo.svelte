@@ -40,56 +40,46 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     xml:space="preserve"
     xmlns:serif="http://www.serif.com/"
-    style="min-width: {size}px;"
-  >
+    style="min-width: {size}px;">
     <g transform="matrix(1,0,0,1,-686.333,-953.365)">
       <g transform="matrix(-0.866025,-0.5,-0.5,0.866025,2318.33,620.811)">
         <g transform="matrix(1,0,0,1,-221.703,-128)">
           <g in:fly={{ y, duration, delay }}>
             <path
               d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
-              style="fill:var(--medium);"
-            />
+              style="fill:var(--medium);" />
             <path
               d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
-              style="fill:var(--light);"
-            />
+              style="fill:var(--light);" />
             <path
               d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-              style="fill:var(--dark);"
-            />
+              style="fill:var(--dark);" />
           </g>
         </g>
         <g transform="matrix(1,0,0,1,-110.851,-64)">
           <g in:fly={{ y, duration, delay: delay * 2 }}>
             <path
               d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
-              style="fill:var(--medium);"
-            />
+              style="fill:var(--medium);" />
             <path
               d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
-              style="fill:var(--light);"
-            />
+              style="fill:var(--light);" />
             <path
               d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-              style="fill:var(--dark);"
-            />
+              style="fill:var(--dark);" />
           </g>
         </g>
         <g>
           <g in:fly={{ y, duration, delay: delay * 3 }}>
             <path
               d="M997.661,1344L1163.94,1248L1163.94,1056L997.661,1152L997.661,1344Z"
-              style="fill:var(--medium);"
-            />
+              style="fill:var(--medium);" />
             <path
               d="M997.661,1344L942.236,1312L942.236,1120L997.661,1152"
-              style="fill:var(--light);"
-            />
+              style="fill:var(--light);" />
             <path
               d="M1108.51,1024L1163.94,1056L997.661,1152L942.236,1120"
-              style="fill:var(--dark);"
-            />
+              style="fill:var(--dark);" />
           </g>
         </g>
       </g>

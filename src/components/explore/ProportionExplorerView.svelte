@@ -146,8 +146,7 @@
         <label class="body-control-set--label">Time Horizon </label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')}
-        />
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
@@ -159,8 +158,7 @@
       <label class="body-control-set--label">Metric Type</label>
       <ProportionMetricTypeControl
         {metricType}
-        on:selection={makeSelection('metricType')}
-      />
+        on:selection={makeSelection('metricType')} />
     </div>
     {#if probeKeys && probeKeys.length > 1}
       <div class="body-control-set">
@@ -207,8 +205,7 @@
                     .map((d) => Object.values(d[metricType]))
                     .flat()
                 ),
-              ]}
-            />
+              ]} />
           </div>
         {/if}
       {/each}

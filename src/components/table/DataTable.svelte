@@ -33,8 +33,7 @@
     overflow-y: {overflowY ? 'auto' : 'visible'};
     width: {width};
     height: {height};
-    "
->
+    ">
   <table class="data-table">
     <slot />
   </table>

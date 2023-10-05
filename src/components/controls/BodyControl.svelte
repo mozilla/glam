@@ -55,8 +55,7 @@
         toggled={multi ? selected.includes(value) : selected === value}
         on:click={() => {
           toggle(value);
-        }}
-      >
+        }}>
         {#if labelColor}
           <div class="body-control__color-swatch-wrapper">
             <ColorSwatch color={labelColor} />

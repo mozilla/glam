@@ -251,8 +251,7 @@
       id="telemetry-search-results"
       style="left: {x}px; width: {width}px;"
       transition:fly={{ duration: 20, y: -10 }}
-      class="telemetry-results"
-    >
+      class="telemetry-results">
       <div class="header-container">
         <div class="header" in:fly={{ x: -5, duration: 200 }}>
           {#if results.length}
@@ -277,8 +276,7 @@
         <ul
           bind:this={searchListElement}
           aria-label="probe search results"
-          activedescendent={results[focusedItem].name}
-        >
+          activedescendent={results[focusedItem].name}>
           {#each results as searchResult, i (searchResult.name)}
             <li
               role="option"
@@ -295,8 +293,7 @@
               }}
               on:mouseover={() => {
                 focusedItem = i;
-              }}
-            >
+              }}>
               <div class="name body-text--short-01">
                 {searchResult.name}
                 {#if searchResult.glean}<span class="glean">(GLEAN)</span>
@@ -308,8 +305,7 @@
                 </div>
               {:else}
                 <div
-                  class="probe-type label label-text--01 label--{searchResult.type}"
-                >
+                  class="probe-type label label-text--01 label--{searchResult.type}">
                   {searchResult.type.replace('_', ' ')}
                 </div>
               {/if}

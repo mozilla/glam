@@ -66,8 +66,7 @@
       --right-border-thickness: {rightBorderThickness ||
       'var(--border-thickness)'};
       background-color: {backgroundColor || 'var(--default-background-color)'};
-    "
-  >
+    ">
     <slot />
   </th>
 {:else}
@@ -101,8 +100,7 @@
       'var(--border-thickness)'};
       background-color: {backgroundColor || 'var(--default-background-color)'};
     "
-    use:tooltipAction={{ text: tooltip }}
-  >
+    use:tooltipAction={{ text: tooltip }}>
     <slot />
   </td>
 {/if}

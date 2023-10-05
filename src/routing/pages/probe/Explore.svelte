@@ -37,8 +37,7 @@
         bucketColorMap={data.bucketColorMap}
         bucketSortOrder={data.bucketSortOrder}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.productDimensions.aggregationLevel}
-      >
+        aggregationLevel={$store.productDimensions.aggregationLevel}>
         <ProbeTitle />
       </ProportionExplorerView>
     {:else if ['log', 'linear'].includes(probeType)}
@@ -48,8 +47,7 @@
         timeHorizon={$store.timeHorizon}
         percentiles={$store.visiblePercentiles}
         on:selection={handleBodySelectors}
-        aggregationLevel={$store.productDimensions.aggregationLevel}
-      >
+        aggregationLevel={$store.productDimensions.aggregationLevel}>
         <ProbeTitle />
       </QuantileExplorerView>
     {:else}

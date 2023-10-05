@@ -46,8 +46,7 @@
     bottom={distributionComparisonGraph.bottom}
     top={distributionComparisonGraph.top}
     borderColor={distributionComparisonGraph.borderColor}
-    {key}
-  >
+    {key}>
     <g slot="background" let:left let:bottom let:top let:right />
     <g
       slot="annotation"
@@ -56,14 +55,12 @@
       let:top
       let:bottom
       let:xScale
-      let:yScale
-    >
+      let:yScale>
       <slot name="glam-body" {top} {bottom} {left} {right} {yScale} {xScale} />
       <Axis
         side="bottom"
         ticks={density.map((d) => d.bin)}
-        tickFormatter={xTickFormatter}
-      />
+        tickFormatter={xTickFormatter} />
       <Axis side="left" {ticks} tickFormatter={yTickFormatter} />
     </g>
   </DataGraphic>

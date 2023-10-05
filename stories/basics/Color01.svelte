@@ -87,8 +87,7 @@
                             grid-column-gap: var(--space-2x);
                         "
               class="color
-                        {c.includes('light') ? '' : 'dark'}"
-            >
+                        {c.includes('light') ? '' : 'dark'}">
               <div
                 style="
                             background-color: var(--{color}-100);
@@ -97,24 +96,21 @@
                             color:var(--{color}-700);
                             border-radius: var(--space-1h);
                             font-size:12px;
-                            font-weight:900;"
-              >
+                            font-weight:900;">
                 {v}
               </div>
 
               {#if v === 100}
                 <div
                   style="
-                                    color: var(--{color}-900)"
-                >
+                                    color: var(--{color}-900)">
                   {color}
                 </div>
               {/if}
               {#if v === 900}
                 <div
                   style="
-                            color: var(--{color}-100)"
-                >
+                            color: var(--{color}-100)">
                   {color}
                 </div>
               {/if}
@@ -132,51 +128,43 @@
       <div class="description">based on UX grays above</div>
       <div
         style="background-color: var(--bg-gray-01); color: var(--body-gray-01);"
-        class="color"
-      >
+        class="color">
         bg-gray-01
       </div>
       <div
         style="background-color: var(--line-gray-01);  color: var(--body-gray-01);"
-        class="color"
-      >
+        class="color">
         line-gray-01
       </div>
       <div
         style="background-color: var(--bg-gray-02);  color: var(--body-gray-02);"
-        class="color"
-      >
+        class="color">
         bg-gray-02
       </div>
       <div
         style="background-color: var(--line-gray-02);  color: var(--body-gray-02);"
-        class="color"
-      >
+        class="color">
         line-gray-02
       </div>
       <div
         style="background-color: var(--subhead-gray-01);  color: var(--bg-gray-01);"
-        class="color dark"
-      >
+        class="color dark">
         subhead-gray-01
       </div>
       <div
         style="background-color: var(--subhead-gray-02); color: var(--bg-gray-01);"
-        class="color dark"
-      >
+        class="color dark">
         subhead-gray-02
       </div>
       <div
         style="background-color: var(--body-gray-01); color: var(--line-gray-01);"
         class="color
-                dark"
-      >
+                dark">
         body-gray-01
       </div>
       <div
         style="background-color: var(--body-gray-02); color: var(--line-gray-01);"
-        class="color dark"
-      >
+        class="color dark">
         body-gray-02
       </div>
     </div>

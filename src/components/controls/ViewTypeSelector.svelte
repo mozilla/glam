@@ -81,8 +81,7 @@
     on:cancel={() => {
       active = false;
     }}
-    parent={button}
-  >
+    parent={button}>
     <MenuList on:selection={setValue}>
       {#each Object.entries(viewInfo) as [k, v], i}
         <MenuListItem key={k} value={k}>

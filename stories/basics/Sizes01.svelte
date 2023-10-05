@@ -67,8 +67,7 @@
           x="0"
           y="0"
           height="var(--space-2x)"
-          width="var(--space-{size})"
-        />
+          width="var(--space-{size})" />
       </svg>
     {/each}
   </section>

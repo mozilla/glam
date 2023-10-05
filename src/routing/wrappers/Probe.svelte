@@ -18,8 +18,7 @@
         <ProbeTitle />
         <div in:fly={{ duration: 400, y: 10 }}>
           <DataError
-            reason={'This probe is inactive and is no longer collecting data.'}
-          />
+            reason={'This probe is inactive and is no longer collecting data.'} />
         </div>
       </div>
     {:else if $store.product === 'firefox' && !isSelectedProcessValid($store.probe.seen_in_processes, $store.productDimensions.process)}
@@ -27,8 +26,7 @@
         <ProbeTitle />
         <div in:fly={{ duration: 400, y: 10 }}>
           <DataError
-            reason={`This probe does not record in the ${$store.productDimensions.process} process.`}
-          />
+            reason={`This probe does not record in the ${$store.productDimensions.process} process.`} />
         </div>
       </div>
     {:else}

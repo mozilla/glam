@@ -45,8 +45,7 @@
     operator="dilate"
     radius="1.5"
     in="SourceGraphic"
-    result="THICKNESS"
-  />
+    result="THICKNESS" />
   <feComposite operator="out" in="THICKNESS" in2="SourceGraphic" />
 </filter>
 
@@ -56,8 +55,7 @@
   dx={$elementTw}
   y={yLocation}
   class="tracking-label"
-  style="fill:{background};"
->
+  style="fill:{background};">
   {label}
 </text>
 
@@ -66,7 +64,6 @@
   x={xp}
   dx={$elementTw}
   y={yLocation}
-  class="tracking-label"
->
+  class="tracking-label">
   {label}
 </text>

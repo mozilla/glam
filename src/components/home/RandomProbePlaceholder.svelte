@@ -31,8 +31,7 @@
     clip-rule: evenodd;
     stroke-linejoin: round;
     stroke-miterlimit: 2;
-  "
->
+  ">
   <g transform="matrix(1,0,0,1,-197,-449)">
     <g transform="matrix(1.00601,0,0,1,-3.1952,0)">
       <rect rx="8" x="199" y="449" width="333" height="103" />

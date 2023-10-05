@@ -64,16 +64,14 @@
     margin-bottom: var(--space-2x);
     padding-left: var(--space-4x);
     padding-right: var(--space-4x);
-  "
-  >
+  ">
     <Pagination
       on:page={(evt) => {
         currentPage = evt.detail.page;
         store.setField('currentPage', currentPage);
       }}
       {totalPages}
-      currentPage={Number($store.currentPage)}
-    />
+      currentPage={Number($store.currentPage)} />
   </div>
 
   {#if bucketTypeLabel === 'percentiles'}
@@ -87,8 +85,7 @@
           label="Percentile Data"
           toggled={!showHistogramData}
           level="medium"
-          compact
-        />
+          compact />
         <Button
           tooltip="Show Histogram Data"
           on:click={() => {
@@ -97,8 +94,7 @@
           label="Histogram Data"
           level="medium"
           toggled={showHistogramData}
-          compact
-        />
+          compact />
       </ButtonGroup>
     </div>
   {/if}
@@ -109,8 +105,7 @@
         {data}
         activeBuckets={$store.activeBuckets}
         bucketColorMap={colorMap}
-        {bucketOptions}
-      />
+        {bucketOptions} />
     </div>
   {/if}
 
@@ -125,8 +120,7 @@
           size="max"
           tooltip="the {aggregationLevel === 'build_id'
             ? ' build id'
-            : 'version'} associated with this row"
-        >
+            : 'version'} associated with this row">
           <span class="h">
             {#if aggregationLevel === 'build_id'}Build ID{:else}Version{/if}
           </span>
@@ -141,8 +135,7 @@
           tooltip="the total number of clients associated with this {aggregationLevel ===
           'build_id'
             ? ' build id'
-            : 'version'}"
-        >
+            : 'version'}">
           <span class="h"> Clients </span>
         </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
@@ -153,12 +146,10 @@
               size="small"
               text
               topBorder={true}
-              bottomBorderThickness="2px"
-            >
+              bottomBorderThickness="2px">
               <span
                 class="percentile-label-block"
-                style="background-color: black"
-              />
+                style="background-color: black" />
               <span class="bucket">{bucket.bin}</span>
             </Cell>
           {/each}
@@ -171,12 +162,10 @@
               size="small"
               text
               topBorder={true}
-              bottomBorderThickness="2px"
-            >
+              bottomBorderThickness="2px">
               <span
                 class="percentile-label-block"
-                style="background-color: {colorMap(bucket)}"
-              />
+                style="background-color: {colorMap(bucket)}" />
               <span class="bucket">{keyFormatter(bucket)}</span>
             </Cell>
           {/each}
@@ -221,8 +210,7 @@
                   style="color:{formatPercentDecimal(row[key][bucket]) !==
                   '0.00%'
                     ? 'var(--cool-gray-700)'
-                    : 'var(--cool-gray-200)'};"
-                >
+                    : 'var(--cool-gray-200)'};">
                   {valueFormatter(row[key][bucket])}
                 </span>
               </Cell>

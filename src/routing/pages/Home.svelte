@@ -134,24 +134,21 @@
               <a
                 class="probe-sm"
                 on:click={resetSearchProduct}
-                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}
-              >
+                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}>
                 <div
                   class="probe-small-multiple"
                   class:probe-small-multiple--proportion={whichSmallMultiple(
                     info.type,
                     info.kind
                   ) === 'proportion'}
-                  style="min-height:100px;"
-                >
+                  style="min-height:100px;">
                   {#if whichSmallMultiple(info.type, info.kind) === 'quantile'}
                     <QuantileSmallMultiple {data} />
                   {:else if whichSmallMultiple(info.type, info.kind) === 'proportion'}
                     <ProportionSmallMultiple
                       metricKind={info.kind}
                       {data}
-                      {info}
-                    />
+                      {info} />
                   {/if}
                 </div>
                 <div class="probe-overview">

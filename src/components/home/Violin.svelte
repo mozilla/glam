@@ -87,21 +87,18 @@
         d={histogramLine(plotDensities)}
         stroke={lineColor}
         {opacity}
-        fill="none"
-      />
+        fill="none" />
     {/if}
     {#if showRight}
       <path
         d={inverseHistogramArea(plotDensities)}
         fill={areaColor}
-        {opacity}
-      />
+        {opacity} />
       <path
         d={inverseHistogramLine(plotDensities)}
         stroke={lineColor}
         {opacity}
-        fill="none"
-      />
+        fill="none" />
     {/if}
   </g>
 {/if}

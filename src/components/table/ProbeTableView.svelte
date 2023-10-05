@@ -52,8 +52,7 @@
       margin-bottom: var(--space-4x);
       padding-left: var(--space-4x);
       padding-right: var(--space-4x);
-    "
-    >
+    ">
       {#if aggregationTypes && aggregationTypes.length > 1}
         <div class="body-control-set">
           <label class="body-control-set--label">Metric Type</label>
@@ -83,6 +82,7 @@
     tooltipFormatter={probeType === 'categorical'
       ? () => undefined
       : (v) => `${v}th percentile`}
-    bucketTypeLabel={probeType === 'categorical' ? 'categories' : 'percentiles'}
-  />
+    bucketTypeLabel={probeType === 'categorical'
+      ? 'categories'
+      : 'percentiles'} />
 </div>

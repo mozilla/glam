@@ -74,8 +74,7 @@
   disabled={!lookerURL}
   use:tooltipAction={{
     text: helpText,
-  }}
->
+  }}>
   <LookerLogo disabled={!lookerURL} />
   <a href={lookerURL} target="_blank">View in Looker</a>
 </button>

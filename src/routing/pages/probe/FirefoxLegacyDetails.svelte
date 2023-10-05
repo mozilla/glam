@@ -164,8 +164,7 @@
             <a
               class="probe-type-link"
               href={PROBE_TYPE_DOCS[$store.probe.type] ||
-                PROBE_TYPE_DOCS.default}
-            >
+                PROBE_TYPE_DOCS.default}>
               {$store.probe.type}
             </a>
           </dt>
@@ -180,8 +179,7 @@
             tooltip={isProbeActive
               ? 'this probe is currently active and collecting data'
               : 'this probe is inactive and is thus not collecting data'}
-            level={isProbeActive ? 'success' : 'info'}
-          >
+            level={isProbeActive ? 'success' : 'info'}>
             {isProbeActive ? 'active' : 'inactive'}
           </StatusLabel>
         </div>
@@ -190,8 +188,7 @@
     {#if $store.probe.versions[$store.productDimensions.channel]}
       <dl
         class="drawer-section probe-details-overview-left
-        probe-details-overview-left--subtle"
-      >
+        probe-details-overview-left--subtle">
         <dt>{$store.productDimensions.channel}</dt>
         <dd class="probe-details-overview-left--padded">
           {$store.probe.versions[$store.productDimensions.channel].first}
@@ -208,8 +205,7 @@
           <a
             class="more-info-link"
             href={`https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.id}`}
-            target="_blank"
-          >
+            target="_blank">
             more info
             <ExternalLink size="12" />
           </a>
@@ -227,8 +223,7 @@
           {#each $store.probe.bug_numbers as bugID, i (bugID)}
             <a
               href="https://bugzilla.mozilla.org/show_bug.cgi?id={bugID}"
-              target="_blank"
-            >
+              target="_blank">
               {bugID}
             </a>
           {/each}

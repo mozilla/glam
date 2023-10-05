@@ -41,16 +41,14 @@
       on:click={() =>
         currentPage === 1 ? undefined : changePage(currentPage - 1)}
       level="medium"
-      compact
-    >
+      compact>
       <CaretLeft size={10} />
     </Button>
     <Button
       tooltip="move forward a page"
       on:click={() => changePage(currentPage + 1)}
       level="medium"
-      compact
-    >
+      compact>
       <CaretRight size={10} />
     </Button>
   </ButtonGroup>
