@@ -3,7 +3,10 @@ export function clientCounts(arr) {
 }
 
 export function sampleCounts(arr) {
-  return arr.map((a) => ({ totalSample: a.sample_count, label: a.label }));
+  return arr.map((a) => ({
+    totalSample: a.sample_count ? a.sample_count : 0,
+    label: a.label,
+  }));
 }
 
 function uniques(d, k) {
