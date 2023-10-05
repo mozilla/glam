@@ -66,7 +66,7 @@
     return actives.map((a) => ({
       bin: a,
       series: d.map((di) => {
-        const value = di[accessor][a];
+        const value = di[accessor] && di[accessor][a];
         return {
           y: value,
           x: di.label,
@@ -215,7 +215,9 @@
         visiblePercentiles.forEach((p) => {
           yData = yData.concat([
             ...data.map(
-              (arr) => arr[getTransformedPercentileName(normType)][p]
+              (arr) =>
+                arr[getTransformedPercentileName(normType)] &&
+                arr[getTransformedPercentileName(normType)][p]
             ),
           ]);
         });
