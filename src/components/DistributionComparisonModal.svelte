@@ -2,11 +2,15 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
+  import { store } from '../state/store';
+  import { toHistogram } from '../utils/probe-utils';
 
   export let densityMetricType;
   export let topChartData;
   export let bottomChartData;
   export let distViewButtonId;
+
+  let normalized = $store.productDimensions.normalizationType === 'normalized';
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -55,14 +59,15 @@
 </style>
 
 {#if topChartData && bottomChartData}
-  {@const topTick = getTopTick(
-    bottomChartData[densityMetricType],
-    topChartData[densityMetricType]
-  )}
-  {@const topChartDensity = topChartData[densityMetricType]}
+  {@const topChartDensity = normalized
+    ? topChartData[densityMetricType]
+    : toHistogram(topChartData[densityMetricType])}
   {@const topChartSampleCount = topChartData.sample_count}
-  {@const bottomChartDensity = bottomChartData[densityMetricType]}
+  {@const bottomChartDensity = normalized
+    ? bottomChartData[densityMetricType]
+    : toHistogram(bottomChartData[densityMetricType])}
   {@const bottomChartSampleCount = bottomChartData.sample_count}
+  {@const topTick = getTopTick(bottomChartDensity, topChartDensity)}
   <Modal>
     <div slot="trigger" let:open>
       <button on:click={open} id={distViewButtonId} hidden

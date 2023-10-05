@@ -26,3 +26,8 @@ export function isSelectedProcessValid(processes, selectedProcess) {
 
   return processes.includes(process);
 }
+
+export function toHistogram(nnHist) {
+  const sum = nnHist.reduce((a, b) => a + b.value, 0);
+  return nnHist.map((a) => ({ bin: a.bin, value: a.value / sum }));
+}
