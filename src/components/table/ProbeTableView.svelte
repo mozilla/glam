@@ -19,6 +19,7 @@
   export let colorMap;
   export let visibleBuckets;
   export let bucketOptions;
+  export let densityMetricType;
 
   let currentKey = probeKeys[0];
   let currentAggregation = aggregationTypes[0];
@@ -72,6 +73,7 @@
   <TableView
     data={selectedData}
     {aggregationLevel}
+    {densityMetricType}
     colorMap={probeType === 'categorical' ? colorMap : percentileLineColorMap}
     {bucketOptions}
     visibleBuckets={probeType === 'categorical' ? visibleBuckets : PERCENTILES}

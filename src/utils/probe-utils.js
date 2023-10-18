@@ -29,3 +29,8 @@ export function isSelectedProcessValid(processes, selectedProcess) {
 
   return processes.includes(process);
 }
+
+export function convertValueToPercentage(data) {
+  const sum = data.reduce((a, b) => a + b.value, 0);
+  return data.map((a) => ({ bin: a.bin, value: a.value / sum }));
+}

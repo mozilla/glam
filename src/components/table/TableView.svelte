@@ -17,6 +17,7 @@
     timecode,
     formatPercent,
   } from '../../utils/formatters';
+  import { convertValueToPercentage } from '../../utils/probe-utils';
 
   import { backwards } from '../../utils/iterables';
   import { store } from '../../state/store';
@@ -32,6 +33,9 @@
   export let pageSize = 10;
   export let bucketTypeLabel = 'Categories';
   export let bucketOptions;
+  export let densityMetricType;
+
+  console.log('this is densitymetric', densityMetricType);
 
   let showHistogramData = false;
   let categoricalHistograms = ['categorical', 'enumerated'];
@@ -43,6 +47,15 @@
 
   let largestAudience;
   $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
+  $: updatedData =
+    data[0][densityMetricType].length > 1
+      ? data.map((d) => ({
+          ...d,
+          tableHistogramData:
+            d[densityMetricType].length > 1 &&
+            convertValueToPercentage(d[densityMetricType]),
+        }))
+      : data;
 </script>
 
 <style>
@@ -103,10 +116,10 @@
     </div>
   {/if}
 
-  {#if categoricalHistograms.includes($store.probe.kind)}
+  {#if categoricalHistograms.includes($store.probe.kind) && updatedData.length > 0}
     <div style="display: flex; justify-content: flex-end; padding: 1em;">
       <CategoricalMenu
-        {data}
+        {updatedData}
         activeBuckets={$store.activeBuckets}
         bucketColorMap={colorMap}
         {bucketOptions}
@@ -147,7 +160,7 @@
         </Cell>
         <!-- <Cell freezeX rightBorder></Cell> -->
         {#if showHistogramData}
-          {#each data[0].histogram as bucket}
+          {#each updatedData[0].tableHistogramData as bucket (bucket.bin)}
             <Cell
               backgroundColor="var(--cool-gray-subtle)"
               size="small"
@@ -184,7 +197,7 @@
       </Row>
     </thead>
     <tbody>
-      {#each [...backwards(data)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (row.version + ymd(row.label) + timecode(row.label))}
+      {#each [...backwards(updatedData)].slice(currentPage * pageSize, (currentPage + 1) * pageSize) as row, i (row.version + ymd(row.label) + timecode(row.label))}
         <Row>
           <Cell freezeX backgroundColor="white">
             <div class="build-version">
@@ -207,7 +220,7 @@
           <!-- <Cell freezeX rightBorder>
           </Cell> -->
           {#if showHistogramData}
-            {#each row.histogram as bucket}
+            {#each row.tableHistogramData as bucket}
               <Cell size="tiny" backgroundColor="white">
                 <span>
                   {formatPercent(bucket.value)}
