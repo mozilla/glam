@@ -34,7 +34,7 @@ COPY . /app/
 
 
 # FRONTEND BUILDER IMAGE
-FROM node:19 AS frontend
+FROM node:21 AS frontend
 
 RUN apt-get update || : && apt-get install python3 -y
 RUN apt-get -y install make
