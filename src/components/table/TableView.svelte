@@ -35,8 +35,6 @@
   export let bucketOptions;
   export let densityMetricType;
 
-  console.log('this is densitymetric', densityMetricType);
-
   let showHistogramData = false;
   let categoricalHistograms = ['categorical', 'enumerated'];
 
