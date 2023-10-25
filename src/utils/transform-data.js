@@ -176,7 +176,7 @@ export function transformedPercentiles(draft) {
     },
     {}
   );
-  if (draft.non_norm_percentiles)
+  if (draft.non_norm_percentiles && draft.non_norm_histogram)
     draft.transformedNonNormPercentiles = Object.entries(
       draft.non_norm_percentiles
     ).reduce((acc, [bin, value]) => {
