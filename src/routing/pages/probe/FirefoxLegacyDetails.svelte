@@ -8,6 +8,7 @@
   import Markdown from '../../../components/Markdown.svelte';
 
   import LookerLink from '../../../components/LookerLink.svelte';
+  export let showLinks = true
 
   const PROBE_TYPE_DOCS = {
     histogram:
@@ -236,14 +237,16 @@
       </div>
     {/if}
   </div>
-  <div class="probe-details-download">
-    <div class="drawer-section drawer-section--end">
-      <SqlModal />
-      <button on:click={exportData} class="docs-button">
-        <Brackets size={16} />
-        Export to JSON
-      </button>
-      <LookerLink product="firefox" />
+  {#if showLinks}
+    <div class="probe-details-download">
+      <div class="drawer-section drawer-section--end">
+        <SqlModal />
+        <button on:click={exportData} class="docs-button">
+          <Brackets size={16} />
+          Export to JSON
+        </button>
+        <LookerLink product="firefox" />
+      </div>
     </div>
-  </div>
+  {/if}
 {/if}

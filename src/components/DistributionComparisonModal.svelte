@@ -2,6 +2,9 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
+  import ProbeDetails from './regions/ProbeDetails.svelte';
+  import { store } from '../state/store';
+  import routes from '../config/routes';
 
   export let densityMetricType;
   export let topChartData;
@@ -51,6 +54,7 @@
     flex-grow: 1;
     align-items: center;
     padding: 2%;
+    flex-direction: column;
   }
 </style>
 
@@ -69,7 +73,7 @@
         >Distribution comparison</button
       >
     </div>
-    <div slot="title">Distribution comparison</div>
+    <div slot="title">Distribution comparison - {$store.probe.name}</div>
     <div class="outer-flex">
       <div class="charts">
         <div class="chart-fixed">
@@ -113,6 +117,14 @@
         </div>
       </div>
       <div class="percentiles">
+        <div class="graphic-body__details">
+          <ProbeDetails>
+            <svelte:component
+                    this={routes[$store.product].details}
+                    showLinks={false}
+                  />
+          </ProbeDetails>
+        </div>
         <slot name="comparisonSummary" />
       </div>
     </div>
