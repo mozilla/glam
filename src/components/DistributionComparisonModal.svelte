@@ -55,6 +55,10 @@
     padding: 2%;
     flex-direction: column;
   }
+
+  .dist-modal-details{
+    height: 100%;
+  }
 </style>
 
 {#if topChartData && bottomChartData}
@@ -116,8 +120,8 @@
         </div>
       </div>
       <div class="percentiles">
-        <div class="graphic-body__details">
-          <div class="drawer-section-container" style="height: 100%;">
+        <div class="drawer graphic-body__details">
+          <div class="drawer-section-container dist-modal-details">
             <h3 style="align-self: center;">{$store.probe.name}</h3>
             <svelte:component
                     this={routes[$store.product].details}
