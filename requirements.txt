@@ -139,7 +139,7 @@ pytz==2021.1
     # via
     #   django
     #   google-api-core
-requests==2.26.0
+requests==2.31.0
     # via
     #   google-api-core
     #   google-cloud-bigquery
