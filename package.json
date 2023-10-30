@@ -30,7 +30,7 @@
     "@graph-paper/portal": "0.0.0-alpha.15",
     "@rollup/plugin-commonjs": "21.0.1",
     "@rollup/plugin-json": "6.0.0",
-    "@rollup/plugin-node-resolve": "15.1.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
     "@rollup/plugin-replace": "5.0.5",
     "@storybook/svelte": "7.5.2",
     "babel-jest": "29.6.2",
