@@ -52,7 +52,6 @@
   .percentiles {
     display: flex;
     flex-grow: 1;
-    align-items: center;
     padding: 2%;
     flex-direction: column;
   }
@@ -118,13 +117,15 @@
       </div>
       <div class="percentiles">
         <div class="graphic-body__details">
-          <ProbeDetails>
+          <div class="drawer-section-container" style="height: 100%;">
+            <h3 style="align-self: center;">{$store.probe.name}</h3>
             <svelte:component
                     this={routes[$store.product].details}
                     showLinks={false}
                   />
-          </ProbeDetails>
+          </div>
         </div>
+        <div><hr></div>
         <slot name="comparisonSummary" />
       </div>
     </div>

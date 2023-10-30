@@ -221,7 +221,7 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.bug_numbers && $store.probe.bug_numbers.length}
+    {#if $store.probe.bug_numbers && $store.probe.bug_numbers.length && showLinks}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
