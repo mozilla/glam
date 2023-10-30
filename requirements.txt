@@ -156,7 +156,7 @@ six==1.16.0
     #   google-resumable-media
     #   protobuf
     #   python-dateutil
-sqlparse==0.4.2
+sqlparse==0.4.4
     # via django
 toml==0.10.2
     # via
