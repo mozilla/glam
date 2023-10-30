@@ -96,7 +96,7 @@ pluggy==0.13.1
     # via pytest
 proto-plus==1.19.0
     # via google-cloud-bigquery
-protobuf==3.17.3
+protobuf==3.18.3
     # via
     #   google-api-core
     #   google-cloud-bigquery
@@ -155,7 +155,6 @@ six==1.16.0
     #   google-cloud-storage
     #   google-resumable-media
     #   grpcio
-    #   protobuf
     #   python-dateutil
 sqlparse==0.4.2
     # via django
