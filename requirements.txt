@@ -35,7 +35,7 @@ djangorestframework==3.12.4
     # via
     #   -r requirements.in
     #   drf-orjson-renderer
-dockerflow==2021.7.0
+dockerflow==2022.8.0
     # via -r requirements.in
 drf-orjson-renderer==1.1.5
     # via -r requirements.in
