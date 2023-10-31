@@ -2,7 +2,6 @@
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
-  import ProbeDetails from './regions/ProbeDetails.svelte';
   import { store } from '../state/store';
   import routes from '../config/routes';
 
@@ -26,6 +25,7 @@
       (maxValPercent + (tickIncrement - (maxValPercent % tickIncrement))) / 100;
     return topTick;
   };
+
 </script>
 
 <style>
@@ -37,7 +37,8 @@
     position: relative;
     display: flex;
     min-width: 97vw;
-    min-height: 50vh;
+    min-height: 10vh;
+    max-height: 75vh;
     margin-left: auto;
     margin-right: auto;
     height: auto;
@@ -67,6 +68,7 @@
   bind:innerWidth
   bind:innerHeight
   />
+
 {#if topChartData && bottomChartData}
   {@const topTick = getTopTick(
     bottomChartData[densityMetricType],
