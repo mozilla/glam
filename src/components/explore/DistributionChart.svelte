@@ -3,17 +3,19 @@
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import { distributionComparisonGraph } from '../../utils/constants';
 
+  export let innerHeight;
+  export let innerWidth;
   export let density;
   export let topTick;
   export let sampleCount;
   export let tooltipLocation;
 
-  let height = distributionComparisonGraph.height / 2;
+  let height = innerHeight * distributionComparisonGraph.heightMult / 2;
   let color = 'var(--digital-blue-350)';
   let binSelector = 'bin';
   let offsetX = distributionComparisonGraph.alignOffsetX;
   let width =
-    distributionComparisonGraph.width -
+    innerWidth * distributionComparisonGraph.widthMult -
     distributionComparisonGraph.right -
     distributionComparisonGraph.left;
   let maxHeight = height - distributionComparisonGraph.top;

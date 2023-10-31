@@ -14,6 +14,9 @@
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
   export let tickIncrement = 2;
+
+  let innerHeight = window.innerHeight
+  let innerWidth = window.innerWidth
   const getTopTick = function (rd, ld) {
     let maxRd = rd ? Math.max(...rd.map((di) => di[valueSelector])) : 0;
     let maxLd = ld ? Math.max(...ld.map((di) => di[valueSelector])) : 0;
@@ -60,7 +63,10 @@
     height: 100%;
   }
 </style>
-
+<svelte:window
+  bind:innerWidth
+  bind:innerHeight
+  />
 {#if topChartData && bottomChartData}
   {@const topTick = getTopTick(
     bottomChartData[densityMetricType],
@@ -81,42 +87,58 @@
       <div class="charts">
         <div class="chart-fixed">
           <p>Reference</p>
-          <DistributionComparisonGraph
-            density={topChartDensity}
-            {topTick}
-            {tickIncrement}
-          >
-            <g slot="glam-body">
-              {#if bottomChartData}
-                <DistributionChart
-                  density={topChartDensity}
-                  {topTick}
-                  {tickIncrement}
-                  sampleCount={topChartSampleCount}
-                  tooltipLocation="bottom"
-                />
-              {/if}
-            </g>
-          </DistributionComparisonGraph>
+          {#key innerHeight}
+          {#key innerWidth}
+            <DistributionComparisonGraph
+              {innerHeight}
+              {innerWidth}
+              density={topChartDensity}
+              {topTick}
+              {tickIncrement}
+            >
+              <g slot="glam-body">
+                {#if bottomChartData}
+                  <DistributionChart
+                    {innerHeight}
+                    {innerWidth}
+                    density={topChartDensity}
+                    {topTick}
+                    {tickIncrement}
+                    sampleCount={topChartSampleCount}
+                    tooltipLocation="bottom"
+                  />
+                {/if}
+              </g>
+            </DistributionComparisonGraph>
+          {/key}
+          {/key}
         </div>
         <div class="chart-fixed">
           <p>Hovered</p>
+          {#key innerHeight}
+          {#key innerWidth}
           <DistributionComparisonGraph
-            density={bottomChartDensity}
-            {topTick}
-            {tickIncrement}
-          >
-            <g slot="glam-body">
-              {#if bottomChartData}
-                <DistributionChart
-                  density={bottomChartDensity}
-                  {topTick}
-                  sampleCount={bottomChartSampleCount}
-                  tooltipLocation="top"
-                />
-              {/if}
-            </g>
-          </DistributionComparisonGraph>
+              {innerHeight}
+              {innerWidth}
+              density={bottomChartDensity}
+              {topTick}
+              {tickIncrement}
+            >
+              <g slot="glam-body">
+                {#if bottomChartData}
+                  <DistributionChart
+                    {innerHeight}
+                    {innerWidth}
+                    density={bottomChartDensity}
+                    {topTick}
+                    sampleCount={bottomChartSampleCount}
+                    tooltipLocation="top"
+                  />
+                {/if}
+              </g>
+            </DistributionComparisonGraph>
+          {/key}
+          {/key}
         </div>
       </div>
       <div class="percentiles">

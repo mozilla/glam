@@ -146,10 +146,8 @@ export const proportionSmallMultiple = {
 };
 
 export const distributionComparisonGraph = {
-  // eslint-disable-next-line no-restricted-globals
-  width: (window.innerWidth * 75) / 100,
-  // eslint-disable-next-line no-restricted-globals
-  height: (window.innerHeight * 60) / 100,
+  widthMult: 75 / 100,
+  heightMult: 60 / 100,
   left: 50,
   right: 50,
   top: 25,
