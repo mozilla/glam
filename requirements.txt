@@ -168,7 +168,7 @@ typing-extensions==4.2.0
     # via black
 urllib3==1.26.18
     # via requests
-whitenoise==5.3.0
+whitenoise==6.6.0
     # via -r requirements.in
 
 # The following packages are considered to be unsafe in a requirements file:
