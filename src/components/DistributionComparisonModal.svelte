@@ -3,7 +3,7 @@
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
   import { store } from '../state/store';
-  import { toHistogram } from '../utils/probe-utils';
+  import { convertValueToPercentage } from '../utils/probe-utils';
 
   export let densityMetricType;
   export let topChartData;
@@ -61,11 +61,11 @@
 {#if topChartData && bottomChartData}
   {@const topChartDensity = normalized
     ? topChartData[densityMetricType]
-    : toHistogram(topChartData[densityMetricType])}
+    : convertValueToPercentage(topChartData[densityMetricType])}
   {@const topChartSampleCount = topChartData.sample_count}
   {@const bottomChartDensity = normalized
     ? bottomChartData[densityMetricType]
-    : toHistogram(bottomChartData[densityMetricType])}
+    : convertValueToPercentage(bottomChartData[densityMetricType])}
   {@const bottomChartSampleCount = bottomChartData.sample_count}
   {@const topTick = getTopTick(bottomChartDensity, topChartDensity)}
   <Modal>
