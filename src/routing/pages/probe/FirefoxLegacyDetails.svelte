@@ -6,9 +6,9 @@
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
   import Markdown from '../../../components/Markdown.svelte';
-
   import LookerLink from '../../../components/LookerLink.svelte';
-  export let showLinks = true
+
+  export let showLinks = true;
 
   const PROBE_TYPE_DOCS = {
     histogram:

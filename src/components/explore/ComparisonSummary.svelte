@@ -22,7 +22,7 @@
   export let justOne;
   export let hov;
   export let ref;
-  export let title = "Summary"
+  export let title = 'Summary';
 
   function percentChange(l, r) {
     return viewType === 'proportion' ? r - l : (r - l) / l;

@@ -7,9 +7,9 @@
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
-
   import LookerLink from '../../../components/LookerLink.svelte';
-  export let showLinks = true
+
+  export let showLinks = true;
 
   async function exportData() {
     const data = await $dataset;

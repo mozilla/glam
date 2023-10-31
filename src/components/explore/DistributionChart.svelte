@@ -10,7 +10,7 @@
   export let sampleCount;
   export let tooltipLocation;
 
-  let height = innerHeight * distributionComparisonGraph.heightMult / 2;
+  let height = (innerHeight * distributionComparisonGraph.heightMult) / 2;
   let color = 'var(--digital-blue-350)';
   let binSelector = 'bin';
   let offsetX = distributionComparisonGraph.alignOffsetX;

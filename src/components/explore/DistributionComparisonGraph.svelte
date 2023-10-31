@@ -42,7 +42,7 @@
     yType="linear"
     xType="scalePoint"
     width={innerWidth * distributionComparisonGraph.widthMult}
-    height={innerHeight * distributionComparisonGraph.heightMult / 2}
+    height={(innerHeight * distributionComparisonGraph.heightMult) / 2}
     left={distributionComparisonGraph.left}
     right={distributionComparisonGraph.right}
     bottom={distributionComparisonGraph.bottom}
