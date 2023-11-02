@@ -24,6 +24,24 @@
       (maxValPercent + (tickIncrement - (maxValPercent % tickIncrement))) / 100;
     return topTick;
   };
+
+  let topChartDensity;
+  let topChartSampleCount;
+  let bottomChartDensity;
+  let bottomChartSampleCount;
+  let topTick;
+
+  if (topChartData && bottomChartData) {
+    topChartDensity = normalized
+      ? topChartData[densityMetricType]
+      : convertValueToPercentage(topChartData[densityMetricType]);
+    topChartSampleCount = topChartData.sample_coun;
+    bottomChartDensity = normalized
+      ? bottomChartData[densityMetricType]
+      : convertValueToPercentage(bottomChartData[densityMetricType]);
+    bottomChartSampleCount = bottomChartData.sample_count;
+    topTick = getTopTick(bottomChartDensity, topChartDensity);
+  }
 </script>
 
 <style>
@@ -59,15 +77,6 @@
 </style>
 
 {#if topChartData && bottomChartData}
-  {@const topChartDensity = normalized
-    ? topChartData[densityMetricType]
-    : convertValueToPercentage(topChartData[densityMetricType])}
-  {@const topChartSampleCount = topChartData.sample_count}
-  {@const bottomChartDensity = normalized
-    ? bottomChartData[densityMetricType]
-    : convertValueToPercentage(bottomChartData[densityMetricType])}
-  {@const bottomChartSampleCount = bottomChartData.sample_count}
-  {@const topTick = getTopTick(bottomChartDensity, topChartDensity)}
   <Modal>
     <div slot="trigger" let:open>
       <button on:click={open} id={distViewButtonId} hidden
