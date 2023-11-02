@@ -4,6 +4,8 @@
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
   import { distributionComparisonGraph } from '../../utils/constants';
 
+  export let innerHeight;
+  export let innerWidth;
   export let topTick;
   export let tickIncrement;
   export let key = Math.random().toString(36).substring(7);
@@ -39,8 +41,8 @@
     yDomain={[0, topTick]}
     yType="linear"
     xType="scalePoint"
-    width={distributionComparisonGraph.width}
-    height={distributionComparisonGraph.height / 2}
+    width={innerWidth * distributionComparisonGraph.widthMult}
+    height={(innerHeight * distributionComparisonGraph.heightMult) / 2}
     left={distributionComparisonGraph.left}
     right={distributionComparisonGraph.right}
     bottom={distributionComparisonGraph.bottom}

@@ -6,8 +6,9 @@
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
   import Markdown from '../../../components/Markdown.svelte';
-
   import LookerLink from '../../../components/LookerLink.svelte';
+
+  export let showLinks = true;
 
   const PROBE_TYPE_DOCS = {
     histogram:
@@ -220,7 +221,7 @@
         </div>
       {/if}
     </div>
-    {#if $store.probe.bug_numbers && $store.probe.bug_numbers.length}
+    {#if $store.probe.bug_numbers && $store.probe.bug_numbers.length && showLinks}
       <div class="drawer-section">
         <h2 class="detail__heading--01">associated bugs</h2>
         <div class="bug-list helper-text--01">
@@ -236,14 +237,16 @@
       </div>
     {/if}
   </div>
-  <div class="probe-details-download">
-    <div class="drawer-section drawer-section--end">
-      <SqlModal />
-      <button on:click={exportData} class="docs-button">
-        <Brackets size={16} />
-        Export to JSON
-      </button>
-      <LookerLink product="firefox" />
+  {#if showLinks}
+    <div class="probe-details-download">
+      <div class="drawer-section drawer-section--end">
+        <SqlModal />
+        <button on:click={exportData} class="docs-button">
+          <Brackets size={16} />
+          Export to JSON
+        </button>
+        <LookerLink product="firefox" />
+      </div>
     </div>
-  </div>
+  {/if}
 {/if}

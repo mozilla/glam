@@ -22,6 +22,7 @@
   export let justOne;
   export let hov;
   export let ref;
+  export let title = 'Summary';
 
   function percentChange(l, r) {
     return viewType === 'proportion' ? r - l : (r - l) / l;
@@ -139,7 +140,7 @@
 
 <div class="summary">
   <h3 class="data-graphic__element-title">
-    Summary
+    {title}
     <span
       use:tooltipAction={{
         text: `Compares the numeric values of the reference ⭑ to the hovered values ●. ${
