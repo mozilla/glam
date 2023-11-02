@@ -306,7 +306,7 @@
   />
   <slot name="summary" />
 </div>
-{#if distViewTopChartData && distViewBottomChartData}
+{#if showViolins && distViewTopChartData && distViewBottomChartData}
   <DistributionComparisonModal
     {densityMetricType}
     topChartData={distViewTopChartData}
