@@ -108,9 +108,9 @@
                 class:topline__client-count--highlighted={hovered &&
                   hovered.sample_count > tweenValue}
               >
-                {formatCount(hovered.sample_count)}
+                {hovered.sample_count ? formatCount(hovered.sample_count) : ''}
               </span>
-              samples
+              {hovered.sample_count ? 'samples' : 'No sample data available'}
             {/if}
           </div>
           {#if hovered}

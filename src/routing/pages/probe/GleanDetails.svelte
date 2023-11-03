@@ -7,8 +7,9 @@
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
-
   import LookerLink from '../../../components/LookerLink.svelte';
+
+  export let showLinks = true;
 
   async function exportData() {
     const data = await $dataset;
@@ -256,7 +257,7 @@
       </dl>
     </div>
     <div class="drawer-section">
-      {#if $store.probe.bugs}
+      {#if $store.probe.bugs && showLinks}
         <dl>
           <dt>bugs</dt>
           <dd>
@@ -268,7 +269,7 @@
       {/if}
     </div>
     <div class="drawer-section">
-      {#if $store.probe.data_reviews}
+      {#if $store.probe.data_reviews && showLinks}
         <dl>
           <dt>data reviews</dt>
           <dd>
@@ -288,18 +289,20 @@
       </dd>
     </dl>
   </div>
-  <div class="probe-details-download">
-    <div class="drawer-section drawer-section--end">
-      <button on:click={exportData} class="docs-button">
-        <Brackets size={16} />
-        Export to JSON
-      </button>
-      <LookerLink
-        product="glean"
-        variants={$store.probe.variants}
-        sendInPings={$store.productDimensions.ping_type}
-        channel={$store.productDimensions.app_id}
-      />
+  {#if showLinks}
+    <div class="probe-details-download">
+      <div class="drawer-section drawer-section--end">
+        <button on:click={exportData} class="docs-button">
+          <Brackets size={16} />
+          Export to JSON
+        </button>
+        <LookerLink
+          product="glean"
+          variants={$store.probe.variants}
+          sendInPings={$store.productDimensions.ping_type}
+          channel={$store.productDimensions.app_id}
+        />
+      </div>
     </div>
-  </div>
+  {/if}
 {/if}

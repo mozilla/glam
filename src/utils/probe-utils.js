@@ -3,7 +3,10 @@ export function clientCounts(arr) {
 }
 
 export function sampleCounts(arr) {
-  return arr.map((a) => ({ totalSample: a.sample_count, label: a.label }));
+  return arr.map((a) => ({
+    totalSample: a.sample_count ? a.sample_count : 0,
+    label: a.label,
+  }));
 }
 
 function uniques(d, k) {
@@ -27,7 +30,7 @@ export function isSelectedProcessValid(processes, selectedProcess) {
   return processes.includes(process);
 }
 
-export function toHistogram(nnHist) {
-  const sum = nnHist.reduce((a, b) => a + b.value, 0);
-  return nnHist.map((a) => ({ bin: a.bin, value: a.value / sum }));
+export function convertValueToPercentage(data) {
+  const sum = data.reduce((a, b) => a + b.value, 0);
+  return data.map((a) => ({ bin: a.bin, value: a.value / sum }));
 }

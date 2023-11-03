@@ -331,6 +331,7 @@
         showDiff={data.length > 1}
         viewType={$store.viewType}
         {justOne}
+        title="Percentiles"
       />
     </div>
   </DistributionComparisonModal>
