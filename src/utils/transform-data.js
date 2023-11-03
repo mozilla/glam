@@ -143,25 +143,28 @@ export const responseHistogramToGraphicFormat = (
     bin: keyTransform(k),
     value: v,
   }));
-  const formattedNonNormalized = Object.entries(draft.non_norm_histogram).map(
-    ([k, v]) => ({
-      bin: keyTransform(k),
-      value: v,
-    })
-  );
   formatted.sort((a, b) => {
     if (a.key > b.key) return -1;
     if (a.key < b.key) return 1;
     return 0;
   });
-  formattedNonNormalized.sort((a, b) => {
-    if (a.key > b.key) return -1;
-    if (a.key < b.key) return 1;
-    return 0;
-  });
+
   draft.histogram = formatted;
-  if (draft.non_norm_histogram)
+  if (draft.non_norm_histogram) {
+    // e.g. glean probes don't have non normalized data
+    const formattedNonNormalized = Object.entries(draft.non_norm_histogram).map(
+      ([k, v]) => ({
+        bin: keyTransform(k),
+        value: v,
+      })
+    );
+    formattedNonNormalized.sort((a, b) => {
+      if (a.key > b.key) return -1;
+      if (a.key < b.key) return 1;
+      return 0;
+    });
     draft.non_norm_histogram = formattedNonNormalized;
+  }
 };
 
 export function transformedPercentiles(draft) {

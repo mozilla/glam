@@ -173,9 +173,6 @@
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
               {yDomain}
-              )
-              ),
-              ]}
             />
           </div>
         {/if}

@@ -1,5 +1,16 @@
 import { createCatColorMap } from '../utils/color-maps';
 
+const dataNormalizationNameMap = {
+  histogram: {
+    non_normalized: 'non_norm_histogram',
+    normalized: 'histogram',
+  },
+  percentiles: {
+    non_normalized: 'non_norm_percentiles',
+    normalized: 'percentiles',
+  },
+};
+
 export const numHighlightedBuckets = 10;
 
 export const makeSortOrder =
@@ -19,17 +30,26 @@ export function getBucketKeys(tr) {
   return Object.keys(latestDatapoint(tr).counts);
 }
 
-export function getPercentileName(type) {
-  return type === 'normalized' ? 'percentiles' : 'non_norm_percentiles';
+export function getPercentileName(type = 'normalized') {
+  if (!Object.hasOwn(dataNormalizationNameMap.percentiles, type)) {
+    throw new Error(`Unknown normalization type: ${type}`);
+  }
+  return dataNormalizationNameMap.percentiles[type];
 }
 
-export function getTransformedPercentileName(type) {
+export function getTransformedPercentileName(type = 'normalized') {
+  if (!Object.hasOwn(dataNormalizationNameMap.percentiles, type)) {
+    throw new Error(`Unknown normalization type: ${type}`);
+  }
   return type === 'normalized'
     ? 'transformedPercentiles'
     : 'transformedNonNormPercentiles';
 }
-export function getHistogramName(type) {
-  return type === 'normalized' ? 'histogram' : 'non_norm_histogram';
+export function getHistogramName(type = 'normalized') {
+  if (!Object.hasOwn(dataNormalizationNameMap.histogram, type)) {
+    throw new Error(`Unknown normalization type: ${type}`);
+  }
+  return dataNormalizationNameMap.histogram[type];
 }
 
 export function extractBucketMetadata(transformedData) {
