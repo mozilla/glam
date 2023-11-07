@@ -41,7 +41,8 @@
     opacity: 0;
   }
   .hovd:hover {
-    opacity: 0.3;
+    opacity: 1;
+    fill: var(--cool-gray-100);
     z-index: 999;
   }
 </style>

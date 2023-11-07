@@ -24,9 +24,7 @@
   const getXTicks = (data) => {
     // for probes with too many data points, we only want to get
     // a limited amount of ticks to avoid crowding the x axis
-    if (data.length < 20) {
-      return data;
-    }
+    if (data.length < 20) return data;
     return data.filter((value, index) => (index + 1) % 10 === 0);
   };
 
