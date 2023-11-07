@@ -95,7 +95,9 @@
   const canCompareDistributions = function () {
     return (
       ['firefox', 'fog'].includes($store.product) &&
-      ['histogram', 'scalar'].concat(GLEAN_METRICS).includes($store.probe.type) &&
+      ['histogram', 'scalar']
+        .concat(GLEAN_METRICS)
+        .includes($store.probe.type) &&
       !!document.getElementById(distViewButtonId)
     );
   };
