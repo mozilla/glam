@@ -21,6 +21,15 @@
 
   let bins = density.map((d) => d.bin);
 
+  const getXTicks = (data) => {
+    // for probes with too many data points, we only want to get
+    // a limited amount of ticks to avoid crowding the x axis
+    if (data.length < 20) {
+      return data;
+    }
+    return data.filter((value, index) => (index + 1) % 10 === 0);
+  };
+
   let allTicks = Array.from(
     Array(Math.ceil(topTick * 100) + tickIncrement).keys()
   )
@@ -63,7 +72,7 @@
       <slot name="glam-body" {top} {bottom} {left} {right} {yScale} {xScale} />
       <Axis
         side="bottom"
-        ticks={density.map((d) => d.bin)}
+        ticks={getXTicks(bins)}
         tickFormatter={xTickFormatter}
       />
       <Axis side="left" {ticks} tickFormatter={yTickFormatter} />
