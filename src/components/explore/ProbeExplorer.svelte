@@ -306,36 +306,39 @@
   />
   <slot name="summary" />
 </div>
-{#if distViewTopChartData && distViewBottomChartData}
-  <DistributionComparisonModal
-    {densityMetricType}
-    topChartData={distViewTopChartData}
-    bottomChartData={distViewBottomChartData}
-    {distViewButtonId}
-  >
-    <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
-      <ComparisonSummary
-        hovered={data.length === 1 || !!hovered.datum}
-        left={leftPoints}
-        right={rightPoints}
-        hov={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
-        ref={ref[pointMetricType]}
-        leftLabel={topLabels[0]}
-        rightLabel={topLabels[1]}
-        binLabel={summaryLabel}
-        keySet={activeBins}
-        colorMap={binColorMap}
-        valueFormatter={summaryNumberFormatter}
-        keyFormatter={comparisonKeyFormatter}
-        showLeft={data.length > 1}
-        showDiff={data.length > 1}
-        viewType={$store.viewType}
-        {justOne}
-        title="Percentiles"
-      />
-    </div>
-  </DistributionComparisonModal>
-{/if}
+{#key distViewTopChartData}
+  {#key distViewBottomChartData}
+    <DistributionComparisonModal
+      {densityMetricType}
+      topChartData={distViewTopChartData}
+      bottomChartData={distViewBottomChartData}
+      {distViewButtonId}
+    >
+      <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
+        <ComparisonSummary
+          hovered={data.length === 1 || !!hovered.datum}
+          left={leftPoints}
+          right={rightPoints}
+          hov={leftPointsForAggComparison(data, pointMetricType, hovered.datum)}
+          ref={ref[pointMetricType]}
+          leftLabel={topLabels[0]}
+          rightLabel={topLabels[1]}
+          binLabel={summaryLabel}
+          keySet={activeBins}
+          colorMap={binColorMap}
+          valueFormatter={summaryNumberFormatter}
+          keyFormatter={comparisonKeyFormatter}
+          showLeft={data.length > 1}
+          showDiff={data.length > 1}
+          viewType={$store.viewType}
+          {justOne}
+          title="Percentiles"
+        />
+      </div>
+    </DistributionComparisonModal>
+  {/key}
+{/key}
+
 
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
   <div>
