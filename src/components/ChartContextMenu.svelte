@@ -5,6 +5,7 @@
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
   import BarGraph from './icons/BarGraph.svelte';
+  import { SUPPORTED_METRICS as GLEAN_METRICS } from '../config/glean';
 
   export let data;
   export let x;
@@ -93,8 +94,10 @@
 
   const canCompareDistributions = function () {
     return (
-      $store.product === 'firefox' &&
-      ['histogram', 'scalar'].includes($store.probe.type) &&
+      ['firefox', 'fog'].includes($store.product) &&
+      ['histogram', 'scalar']
+        .concat(GLEAN_METRICS)
+        .includes($store.probe.type) &&
       !!document.getElementById(distViewButtonId)
     );
   };

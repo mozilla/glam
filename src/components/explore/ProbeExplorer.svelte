@@ -339,7 +339,6 @@
   {/key}
 {/key}
 
-
 <div class="graphic-and-summary" class:no-line-chart={justOne}>
   <div>
     {#if justOne}
