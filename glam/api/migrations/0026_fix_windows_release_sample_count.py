@@ -4,21 +4,22 @@ configs = [
     {
         "model": "desktopreleaseaggregation",
         "pretty_name": "Desktop",
-        "filter": {"os": "Windows"}
+        "filter": {"os": "Windows"},
     },
     # TODO: Leaving this here in case we need to migrate fog in the future
-    #{
+    # {
     #    "model": "fogaggregation",
     #    "pretty_name": "FOG",
     #    "filter": {"os": "Windows", "app_id": "release"}
-    #}
+    # }
 ]
 
-def do_migration(apps, fwd = True):
+
+def do_migration(apps, fwd=True):
     for config in configs:
-        model = config['model']
+        model = config["model"]
         print(f"\nMigrating {config['pretty_name']}...")
-        table = apps.get_model('api', model).objects.filter(**config['filter'])
+        table = apps.get_model("api", model).objects.filter(**config["filter"])
         total = table.count()
         table_iter = table.iterator(100000)
         for i, instance in enumerate(table_iter):
@@ -28,10 +29,15 @@ def do_migration(apps, fwd = True):
                 instance.total_sample /= 10
             instance.save()
             if i % 10000 == 0 or i + 1 == total:
-                print(f"{i} out of {total} rows migrated ({round((i+1)/total*100, 1)}%)", end='\r')
+                print(
+                    f"{i} out of {total} rows migrated ({round((i+1)/total*100, 1)}%)",
+                    end="\r",
+                )
+
 
 def multiply_sample_count_by_10(apps, schema_editor):
     do_migration(apps)
+
 
 def divide_sample_count_by_10(apps, schema_editor):
     do_migration(apps, False)
@@ -43,9 +49,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(code=multiply_sample_count_by_10, reverse_code=migrations.RunPython.noop),
-        migrations.RunSQL("REFRESH MATERIALIZED VIEW CONCURRENTLY view_glam_desktop_release_aggregation",
-                          "REFRESH MATERIALIZED VIEW CONCURRENTLY view_glam_desktop_release_aggregation"),
-        migrations.RunPython(code=migrations.RunPython.noop, reverse_code=divide_sample_count_by_10),
-
+        migrations.RunPython(
+            code=multiply_sample_count_by_10, reverse_code=migrations.RunPython.noop
+        ),
+        migrations.RunSQL(
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY view_glam_desktop_release_aggregation",
+            "REFRESH MATERIALIZED VIEW CONCURRENTLY view_glam_desktop_release_aggregation",
+        ),
+        migrations.RunPython(
+            code=migrations.RunPython.noop, reverse_code=divide_sample_count_by_10
+        ),
     ]
