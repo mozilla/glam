@@ -17,11 +17,12 @@ def do_migration(apps, fwd=True):
         total = table.count()
         table_iter = table.iterator(100000)
         for i, instance in enumerate(table_iter):
-            if fwd:
-                instance.total_users *= 10
-            else:
-                instance.total_users /= 10
-            instance.save()
+            if instance.total_users is not None:
+                if fwd:
+                    instance.total_users *= 10
+                else:
+                    instance.total_users /= 10
+                instance.save()
             if i % 10000 == 0 or i + 1 == total:
                 print(
                     f"{i} out of {total} rows migrated ({round((i+1)/total*100, 1)}%)",
