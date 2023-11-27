@@ -9,6 +9,8 @@
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
   import { PERCENTILES } from '../../utils/constants';
+  import { getPercentileName } from '../../config/shared';
+  import { store } from '../../state/store';
 
   export let data;
   export let probeType = 'categorical';
@@ -81,7 +83,9 @@
     valueFormatter={probeType === 'categorical'
       ? formatPercentDecimal
       : formatCount}
-    key={probeType === 'categorical' ? 'proportions' : 'percentiles'}
+    key={probeType === 'categorical'
+      ? 'proportions'
+      : getPercentileName($store.productDimensions.normalizationType)}
     tooltipFormatter={probeType === 'categorical'
       ? () => undefined
       : (v) => `${v}th percentile`}

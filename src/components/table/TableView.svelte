@@ -37,23 +37,28 @@
 
   let showHistogramData = false;
   let categoricalHistograms = ['categorical', 'enumerated'];
+  let largestAudience;
+  $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
 
   let totalPages = 0;
   let currentPage = 0;
-  $: if (data) currentPage = 0;
-  $: totalPages = Math.ceil(data.length / pageSize);
+  let updatedData = [];
 
-  let largestAudience;
-  $: largestAudience = Math.max(...data.map((d) => d.audienceSize));
-  $: updatedData =
-    data[0][densityMetricType].length > 1
-      ? data.map((d) => ({
-          ...d,
-          tableHistogramData:
-            d[densityMetricType].length > 1 &&
-            convertValueToPercentage(d[densityMetricType]),
-        }))
-      : data;
+  $: if ($store.productDimensions.normalizationType) {
+    // due to the way the data is structured, we need to
+    // empty non-normalized data
+    let filtered =
+      $store.productDimensions.normalizationType === 'non_normalized'
+        ? data.filter((d) => d.non_norm_histogram !== '')
+        : data;
+    updatedData = filtered.map((d) => ({
+      ...d,
+      tableHistogramData:
+        d[densityMetricType].length > 1 &&
+        convertValueToPercentage(d[densityMetricType]),
+    }));
+    totalPages = Math.ceil(updatedData.length / pageSize);
+  }
 </script>
 
 <style>
