@@ -39,7 +39,26 @@
 
   import DistributionComparisonModal from '../DistributionComparisonModal.svelte';
 
-  export let data;
+  export let normalizedData;
+
+  const filterData = (normData, normType) =>
+    // historical context: because non-normalized data
+    // is added to the etl later, there exists
+    // a time period where we don't have non-normalized
+    // data which caused the graph to break.
+    // so, we filter out these empty data points.
+    normType === 'non_normalized'
+      ? normData.filter((d) => d.non_norm_histogram !== '')
+      : normData;
+
+  let data = filterData(
+    normalizedData,
+    $store.productDimensions.normalizationType
+  );
+  $: data = filterData(
+    normalizedData,
+    $store.productDimensions.normalizationType
+  );
   export let key;
   export let timeHorizon;
   export let aggregationLevel;

@@ -186,7 +186,7 @@
                 aggregationLevel
               )}
               summaryLabel="cat."
-              data={selectedData}
+              normalizedData={selectedData}
               activeBins={activeBuckets}
               {timeHorizon}
               binColorMap={bucketColorMap}
