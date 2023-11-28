@@ -160,7 +160,7 @@
                 aggregationLevel
               )}
               summaryLabel="perc."
-              data={selectedData}
+              normalizedData={selectedData}
               activeBins={percentiles}
               {timeHorizon}
               markers={$firefoxVersionMarkers}
