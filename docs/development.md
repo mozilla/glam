@@ -96,7 +96,7 @@ make up
 
 This will launch 2 servers:
 
-- http://localhost:5000 is an nginx server configured to authenticate via
+- http://localhost:3000 is an nginx server configured to authenticate via
   Mozilla's auth0 backend and will proxy GLAM.
 - http://localhost:8000 is the Django server that contains the API endpoints and
   serves up the front-end HTML and static assets.
