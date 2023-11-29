@@ -94,7 +94,7 @@
 
   const canCompareDistributions = function () {
     return (
-      ['firefox', 'fog'].includes($store.product) &&
+      ['firefox', 'fog', 'fenix'].includes($store.product) &&
       ['histogram', 'scalar']
         .concat(GLEAN_METRICS)
         .includes($store.probe.type) &&
