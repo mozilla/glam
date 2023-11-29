@@ -9,6 +9,10 @@ const dataNormalizationNameMap = {
     non_normalized: 'non_norm_percentiles',
     normalized: 'percentiles',
   },
+  proportions: {
+    non_normalized: 'non_norm_proportions',
+    normalized: 'proportions',
+  },
 };
 
 export const numHighlightedBuckets = 10;
@@ -50,6 +54,13 @@ export function getHistogramName(type = 'normalized') {
     throw new Error(`Unknown normalization type: ${type}`);
   }
   return dataNormalizationNameMap.histogram[type];
+}
+
+export function getProportionName(type = 'proportions') {
+  if (!Object.hasOwn(dataNormalizationNameMap.proportions, type)) {
+    throw new Error(`Unknown normalization type: ${type}`);
+  }
+  return dataNormalizationNameMap.proportions[type];
 }
 
 export function extractBucketMetadata(transformedData) {

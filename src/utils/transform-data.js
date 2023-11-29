@@ -197,6 +197,7 @@ export const standardProportionTransformations = [
   toAudienceSize,
   addProportion,
   proportionsToCounts,
+  responseHistogramToGraphicFormat,
 ];
 
 export const standardQuantileTransformations = [

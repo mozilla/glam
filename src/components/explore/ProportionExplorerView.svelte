@@ -26,7 +26,7 @@
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
   import { numericStringsSort } from '../../utils/sort';
-  import { numHighlightedBuckets } from '../../config/shared';
+  import { getHistogramName, numHighlightedBuckets } from '../../config/shared';
 
   export let aggregationLevel = 'build_id';
   export let data;
@@ -121,6 +121,9 @@
       .sort(numericStringsSort);
   }
 
+  $: densityMetricType = getHistogramName(
+    $store.productDimensions.normalizationType
+  );
   $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
 </script>
 
@@ -193,6 +196,7 @@
               showViolins={false}
               {aggregationLevel}
               pointMetricType={metricType}
+              {densityMetricType}
               yTickFormatter={metricType === 'proportions'
                 ? formatPercent
                 : formatCount}
