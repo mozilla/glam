@@ -7,7 +7,7 @@
   import Tweenable from '../Tweenable.svelte';
   import ChartTitle from './ChartTitle.svelte';
   import { compareClientCountsGraph, tween } from '../../utils/constants';
-  import { formatMillion } from '../../utils/formatters';
+  import { formatLargeNumber } from '../../utils/formatters';
 
   export let description;
   export let leftSampleValue;
@@ -75,7 +75,7 @@
       />
       <Axis
         side="right"
-        tickFormatter={formatMillion}
+        tickFormatter={formatLargeNumber}
         ticks={yScale.ticks(4)}
       />
     </g>

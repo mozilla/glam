@@ -17,13 +17,18 @@ export const formatParenPercent = (fmt, v, pad = 0) => {
   return `${p}${f}`;
 };
 
-export const formatMillion = (num) =>
+export const formatLargeNumber = (num) => {
+  // format a number as '1bil' if a billion or more
+  if (Math.abs(num) >= 1000000000)
+    return `${(Math.sign(num) * (Math.abs(num) / 1000000000)).toFixed(1)}bil`;
   // format a number as '1mil' if a million or more
-  Math.abs(num) > 999999
-    ? `${format(',d')(
-        Math.sign(num) * (Math.abs(num) / 1000000).toFixed(1)
-      )}mil`
-    : format(',d')(Math.sign(num) * Math.abs(num));
+  if (Math.abs(num) >= 1000000)
+    return `${(Math.sign(num) * (Math.abs(num) / 1000000)).toFixed(1)}mil`;
+  // format a number as '1k' if a thousand or more
+  if (Math.abs(num) >= 1000)
+    return `${(Math.sign(num) * (Math.abs(num) / 1000)).toFixed(1)}k`;
+  return format(',d')(Math.sign(num) * Math.abs(num));
+};
 
 export const formatBuildIDToDateString = (b) => timeFormat('%Y-%m-%d %H')(b);
 export const ymd = timeFormat('%Y-%m-%d');

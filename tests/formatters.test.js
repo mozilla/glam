@@ -1,4 +1,7 @@
-import { formatMemory, formatFromNanoseconds } from '../src/utils/formatters';
+import {
+  formatLargeNumber,
+  formatFromNanoseconds,
+} from '../src/utils/formatters';
 
 describe('formatFromNanoseconds', () => {
   it('correctly formats nanoseconds', () => {
@@ -14,5 +17,13 @@ describe('formatFromNanoseconds', () => {
   });
   it('correctly formats to seconds', () => {
     expect(formatFromNanoseconds(12_345_678_912)).toEqual('12 s');
+  });
+});
+describe('formatLargeNumber', () => {
+  it('correctly formats large numbers', () => {
+    expect(formatLargeNumber(123)).toEqual('123');
+    expect(formatLargeNumber(1234)).toEqual('1.2k');
+    expect(formatLargeNumber(1234567)).toEqual('1.2mil');
+    expect(formatLargeNumber(1234567890)).toEqual('1.2bil');
   });
 });
