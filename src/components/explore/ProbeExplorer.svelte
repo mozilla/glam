@@ -1,4 +1,5 @@
 <script>
+  import { isEmpty } from 'lodash';
   import { writable } from 'svelte/store';
 
   import { window1D } from '@graph-paper/core/utils/window-functions';
@@ -48,7 +49,7 @@
     // data which caused the graph to break.
     // so, we filter out these empty data points.
     normType === 'non_normalized'
-      ? normData.filter((d) => d.non_norm_histogram !== '')
+      ? normData.filter((d) => !isEmpty(d.non_norm_histogram))
       : normData;
 
   let data = filterData(

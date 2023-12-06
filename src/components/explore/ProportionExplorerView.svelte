@@ -26,7 +26,12 @@
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
   import { numericStringsSort } from '../../utils/sort';
-  import { getHistogramName, numHighlightedBuckets } from '../../config/shared';
+  import {
+    getHistogramName,
+    getProportionName,
+    getCountName,
+    numHighlightedBuckets,
+  } from '../../config/shared';
 
   export let aggregationLevel = 'build_id';
   export let data;
@@ -52,20 +57,6 @@
   let currentKey = probeKeys[0];
   let currentAggregation = aggregationTypes[0];
 
-  // set the audience size when the reference updates.
-  let ref;
-  const movingAudienceSize = tweened(0, { duration: 500, easing });
-  $: if (ref) movingAudienceSize.set(ref.audienceSize);
-
-  $: if (currentKey && ref) {
-    if (data[currentKey] !== undefined) {
-      const r = data[currentKey][currentAggregation].find(
-        (d) => d.label.toString() === ref.label.toString()
-      );
-      ref = r;
-    }
-  }
-
   function filterResponseData(d, agg, key) {
     return d.filter(
       (di) => di.client_agg_type === agg && di.metric_key === key
@@ -74,6 +65,19 @@
 
   $: selectedData = filterResponseData(data, currentAggregation, currentKey);
 
+  // set the audience size when the reference updates.
+  let ref;
+  const movingAudienceSize = tweened(0, { duration: 500, easing });
+  $: if (ref) movingAudienceSize.set(ref.audienceSize);
+
+  $: if (currentKey && ref) {
+    if (selectedData[currentKey] !== undefined) {
+      const r = selectedData[currentKey][currentAggregation].find(
+        (d) => d.label.toString() === ref.label.toString()
+      );
+      ref = r;
+    }
+  }
   let showOptionMenu = false;
   let coloredBuckets = [];
   let everActiveBuckets = [];
@@ -84,7 +88,9 @@
     showOptionMenu = true;
     const lastDataset = data[data.length - 1];
 
-    coloredBuckets = Object.entries(lastDataset.counts)
+    coloredBuckets = Object.entries(
+      lastDataset[getCountName($store.productDimensions.normalizationType)]
+    )
       .sort(([bucketAName, bucketAValue], [bucketBName, bucketBValue]) => {
         const bucketValueDifference = bucketAValue - bucketBValue;
         if (bucketValueDifference === 0) {
@@ -154,7 +160,12 @@
       {/if}
     </div>
 
-    <CategoricalMenu {data} {activeBuckets} {bucketColorMap} {bucketOptions} />
+    <CategoricalMenu
+      data={selectedData}
+      {activeBuckets}
+      {bucketColorMap}
+      {bucketOptions}
+    />
   </div>
 
   <div class="body-control-row  body-control-row--stretch">
@@ -195,7 +206,9 @@
               binColorMap={bucketColorMap}
               showViolins={false}
               {aggregationLevel}
-              pointMetricType={metricType}
+              pointMetricType={getProportionName(
+                $store.productDimensions.normalizationType
+              )}
               {densityMetricType}
               yTickFormatter={metricType === 'proportions'
                 ? formatPercent
@@ -208,7 +221,19 @@
                 0,
                 Math.max(
                   ...selectedData
-                    .map((d) => Object.values(d[metricType]))
+                    .map((d) =>
+                      Object.values(
+                        d[
+                          metricType === 'proportions'
+                            ? getProportionName(
+                                $store.productDimensions.normalizationType
+                              )
+                            : getCountName(
+                                $store.productDimensions.normalizationType
+                              )
+                        ]
+                      )
+                    )
                     .flat()
                 ),
               ]}

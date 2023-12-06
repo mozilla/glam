@@ -33,6 +33,8 @@
   import {
     getPercentileName,
     getTransformedPercentileName,
+    getProportionName,
+    getCountName,
   } from '../../config/shared';
 
   export let title;
@@ -233,12 +235,26 @@
       if ($store.activeBuckets.length === 10) return yDomain;
       if ($store.proportionMetricType === 'proportions') {
         buckets.forEach((bucket) => {
-          yData = yData.concat([...data.map((arr) => arr.proportions[bucket])]);
+          yData = yData.concat([
+            ...data.map(
+              (arr) =>
+                arr[
+                  getProportionName($store.productDimensions.normalizationType)
+                ][bucket]
+            ),
+          ]);
         });
       }
       if ($store.proportionMetricType === 'counts') {
         buckets.forEach((bucket) => {
-          yData = yData.concat([...data.map((arr) => arr.counts[bucket])]);
+          yData = yData.concat([
+            ...data.map(
+              (arr) =>
+                arr[getCountName($store.productDimensions.normalizationType)][
+                  bucket
+                ]
+            ),
+          ]);
         });
       }
     }

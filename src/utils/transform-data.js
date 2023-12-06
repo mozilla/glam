@@ -17,6 +17,7 @@ Some transform functions are checks that, if they fail, throw an error.
 import produce from 'immer';
 import { fullBuildIDToDate, buildDateStringToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
+import { convertValueToProportions } from './probe-utils';
 
 const errors = {
   MISSING_PERCENTILES: {
@@ -92,7 +93,12 @@ export function checkForTotalUsers(draft) {
 export function addProportion(draft) {
   // requires point.histogram.
   draft.proportions = { ...draft.histogram };
-  draft.non_norm_proportions = { ...draft.non_norm_histogram };
+
+  // draft.non_norm_histogram is not in proportion format
+  // like draft.histogram so we need to convert it here
+  draft.non_norm_proportions = convertValueToProportions(
+    draft.non_norm_histogram
+  );
 }
 
 export function changeBooleanHistogramResponse(draft) {
@@ -108,6 +114,11 @@ export function proportionsToCounts(draft) {
   draft.counts = {};
   Object.keys(draft.proportions).forEach((p) => {
     draft.counts[p] = draft.proportions[p] * draft.total_users;
+  });
+  draft.non_norm_counts = {};
+  Object.keys(draft.non_norm_proportions).forEach((p) => {
+    draft.non_norm_counts[p] =
+      draft.non_norm_proportions[p] * draft.total_users;
   });
 }
 
