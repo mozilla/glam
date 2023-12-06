@@ -13,6 +13,10 @@ const dataNormalizationNameMap = {
     non_normalized: 'non_norm_proportions',
     normalized: 'proportions',
   },
+  counts: {
+    non_normalized: 'non_norm_counts',
+    normalized: 'counts',
+  },
 };
 
 export const numHighlightedBuckets = 10;
@@ -61,6 +65,13 @@ export function getProportionName(type = 'proportions') {
     throw new Error(`Unknown normalization type: ${type}`);
   }
   return dataNormalizationNameMap.proportions[type];
+}
+
+export function getCountName(type = 'counts') {
+  if (!Object.hasOwn(dataNormalizationNameMap.counts, type)) {
+    throw new Error(`Unknown normalization type: ${type}`);
+  }
+  return dataNormalizationNameMap.counts[type];
 }
 
 export function extractBucketMetadata(transformedData) {

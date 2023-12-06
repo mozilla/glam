@@ -1,6 +1,6 @@
 <script>
   import { Button, ButtonGroup } from '@graph-paper/button';
-
+  import { isEmpty } from 'lodash';
   import DataTable from './DataTable.svelte';
   import Row from './Row.svelte';
   import Cell from './Cell.svelte';
@@ -49,7 +49,7 @@
     // empty non-normalized data
     let filtered =
       $store.productDimensions.normalizationType === 'non_normalized'
-        ? data.filter((d) => d.non_norm_histogram !== '')
+        ? data.filter((d) => !isEmpty(d.non_norm_histogram))
         : data;
     updatedData = filtered.map((d) => ({
       ...d,
