@@ -1,4 +1,4 @@
-import os
+from datetime import datetime, timezone
 
 import dateutil.parser
 import orjson
@@ -179,6 +179,108 @@ def _get_firefox_shas(channel):
             "build_id", "revision"
         )
     )
+
+def get_glean_aggregations_from_bq(request, **kwargs):
+    from google.cloud import bigquery
+    REQUIRED_QUERY_PARAMETERS = [
+        "aggregationLevel",
+        "app_id",
+        "ping_type",
+        "probe",
+        "product",
+    ]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    TABLE_MAP = {
+        "fenix": "org_mozilla_fenix_glam",
+        "fog": "firefox_desktop_glam",
+    }
+
+    channel = kwargs["app_id"]
+    product = kwargs.get("product")
+    probe = kwargs["probe"]
+    num_versions = kwargs.get("versions", 3)
+    ping_type = kwargs["ping_type"]
+    os = kwargs.get("os", "*")
+    aggregation_level = kwargs["aggregationLevel"]
+
+    project_id = "moz-fx-data-glam-prod-fca7"
+    dataset_id = "glam_etl"
+    table_id = f"{TABLE_MAP[product]}_{channel}__extract_probe_counts_v1"
+
+    # Initialize a BigQuery client
+    client = bigquery.Client(project=project_id)
+    if aggregation_level == "version" and product == "fenix":
+        build_id_filter = 'AND build_id = "*"'
+    else:
+        build_id_filter ='AND build_id != "*"'
+    # Build the SQL query with parameters
+    query = f"""
+        WITH versions AS (
+            SELECT
+                ARRAY_AGG(DISTINCT version
+                ORDER BY
+                version DESC
+                LIMIT
+                {num_versions}) AS selected_versions
+            FROM
+                `{project_id}.{dataset_id}.{table_id}`
+            WHERE
+                metric = @metric
+            )
+            SELECT
+            * EXCEPT(selected_versions)
+            FROM
+                `{project_id}.{dataset_id}.{table_id}`,
+                versions
+            WHERE
+                metric = @metric
+                AND ping_type = @ping_type
+                AND os = @os
+                {build_id_filter}
+                AND version IN UNNEST([122, 121, 120, 119, 118]) --UNNEST(versions.selected_versions) TODO: temporary solution to avoid 1024 version and others
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("metric", "STRING", probe),
+            bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
+            bigquery.ScalarQueryParameter("os", "STRING", os),
+        ]
+    )
+    query_job = client.query(query, job_config=job_config)
+
+
+    response = []
+
+    for row in query_job:
+
+        data = {
+            "version": row.version,
+            "ping_type": row.ping_type,
+            "os": row.os,
+            "build_id": row.build_id,
+            "build_date": datetime.fromisoformat(row.build_date).replace(tzinfo=timezone.utc),
+            "metric": row.metric,
+            "metric_type": row.metric_type,
+            "metric_key": row.metric_key,
+            "client_agg_type": row.client_agg_type,
+            "total_users": row.total_users,
+            "sample_count": row.total_sample,
+            "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
+        }
+
+        # Get the total distinct client IDs for this set of dimensions.
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+
+        response.append(data)
+    return response
+
 
 
 def get_glean_aggregations(request, **kwargs):
@@ -400,7 +502,7 @@ def aggregations(request):
     if product == FIREFOX_LEGACY:
         response = get_firefox_aggregations(request, **body["query"])
     else:  # Assume everything else is Glean-based.
-        response = get_glean_aggregations(request, **body["query"])
+        response = get_glean_aggregations_from_bq(request, **body["query"])
 
     if not response:
         raise NotFound("No documents found for the given parameters")
