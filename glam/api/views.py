@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+import os
 import dateutil.parser
 import orjson
 from django.conf import settings
@@ -9,6 +10,8 @@ from django.db.models.functions import Concat
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
+from google.cloud import bigquery
+
 
 from glam.api import constants
 from glam.api.models import (
@@ -45,6 +48,115 @@ def updates(request):
         }
     )
 
+def get_firefox_aggregations_from_bq(request, **kwargs):
+    # TODO: When glam starts sending "product", make it required.
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    # Ensure that the product provided is one we support, defaulting to Firefox.
+    product = "firefox"
+    project_id = "moz-fx-data-glam-prod-fca7"
+
+    num_versions = kwargs.get("versions", 3)
+
+    # Initialize a BigQuery client
+    client = bigquery.Client(project=project_id)
+
+    channel = kwargs.get("channel")
+    aggregation_level = kwargs["aggregationLevel"]
+    # Whether to pull aggregations by version or build_id.
+    if aggregation_level == "version":
+        build_id_filter = 'AND app_build_id = "*"'
+        # counts = _get_firefox_counts(channel, os, versions, by_build=False)
+        shas = {}
+    else:
+        build_id_filter ='AND app_build_id != "*"'
+        # counts = _get_firefox_counts(channel, os, versions, by_build=True)
+        shas = _get_firefox_shas(channel)
+
+    labels_cache = caches["probe-labels"]
+    if labels_cache.get("__labels__") is None:
+        Probe.populate_labels_cache()
+
+    query_parameters=[
+            bigquery.ScalarQueryParameter("metric", "STRING", kwargs["probe"]),
+            bigquery.ScalarQueryParameter("os", "STRING", kwargs.get("os", "*")),
+        ]
+
+    if "process" in kwargs:
+        query_parameters.append(bigquery.ScalarQueryParameter("process", "STRING", kwargs["process"]))
+
+    table = f"glam_extract_firefox_{channel}_v1"
+    query = f"""
+        WITH versions AS (
+            SELECT
+                ARRAY_AGG(DISTINCT app_version
+                ORDER BY
+                app_version DESC
+                LIMIT
+                {num_versions}) AS selected_versions
+            FROM
+                `moz-fx-data-shared-prod.telemetry_derived.{table}`
+            WHERE
+                metric = @metric
+            )
+            SELECT
+            * EXCEPT(selected_versions)
+            FROM
+                `moz-fx-data-shared-prod.telemetry_derived.{table}`,
+                versions
+            WHERE
+                metric = @metric
+                AND os = @os
+                {build_id_filter}
+                AND app_version IN UNNEST([122, 121, 120, 119, 118, 117, 116]) --UNNEST(versions.selected_versions) TODO: temporary solution to avoid 1024 version and others
+    """
+    job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
+    query_job = client.query(query, job_config=job_config)
+
+    response = []
+
+    for row in query_job:
+
+        data = {
+            "version": row.app_version,
+            "os": row.os,
+            "build_id": row.app_build_id,
+            "revision": shas.get(row.app_build_id, ""),
+            "process": row.process,
+            "metric": row.metric,
+            "metric_key": row.key,
+            "metric_type": row.metric_type,
+            "total_users": row.total_users,
+            "sample_count": row.total_sample,
+            "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "non_norm_histogram": row.non_norm_histogram
+            and orjson.loads(row.non_norm_histogram)
+            or "",
+            "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
+            "non_norm_percentiles": row.non_norm_percentiles
+            and orjson.loads(row.non_norm_percentiles)
+            or "",
+        }
+        if row.client_agg_type:
+            if row.metric_type == "boolean":
+                data["client_agg_type"] = "boolean-histogram"
+            else:
+                data["client_agg_type"] = row.client_agg_type
+
+        # Get the total distinct client IDs for this set of dimensions.
+        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
+
+        response.append(data)
+
+    #_log_probe_query(request)
+    return response
+
 
 def get_firefox_aggregations(request, **kwargs):
     # TODO: When glam starts sending "product", make it required.
@@ -59,7 +171,7 @@ def get_firefox_aggregations(request, **kwargs):
     # Ensure that the product provided is one we support, defaulting to Firefox.
     product = "firefox"
     channel = kwargs.get("channel")
-    model_key = f"{product}-{channel}"
+    table_key = f"{product}-{channel}"
 
     MODEL_MAP = {
         "firefox-nightly": DesktopNightlyAggregationView,
@@ -68,7 +180,7 @@ def get_firefox_aggregations(request, **kwargs):
     }
 
     try:
-        model = MODEL_MAP[model_key]
+        model = MODEL_MAP[table_key]
     except KeyError:
         raise ValidationError("Product not currently supported.")
 
@@ -181,7 +293,6 @@ def _get_firefox_shas(channel):
     )
 
 def get_glean_aggregations_from_bq(request, **kwargs):
-    from google.cloud import bigquery
     REQUIRED_QUERY_PARAMETERS = [
         "aggregationLevel",
         "app_id",
@@ -500,7 +611,7 @@ def aggregations(request):
         )
 
     if product == FIREFOX_LEGACY:
-        response = get_firefox_aggregations(request, **body["query"])
+        response = get_firefox_aggregations_from_bq(request, **body["query"])
     else:  # Assume everything else is Glean-based.
         response = get_glean_aggregations_from_bq(request, **body["query"])
 
