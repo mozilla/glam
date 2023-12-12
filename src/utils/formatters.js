@@ -17,13 +17,8 @@ export const formatParenPercent = (fmt, v, pad = 0) => {
   return `${p}${f}`;
 };
 
-export const formatMillion = (num) =>
-  // format a number as '1mil' if a million or more
-  Math.abs(num) > 999999
-    ? `${format(',d')(
-        Math.sign(num) * (Math.abs(num) / 1000000).toFixed(1)
-      )}mil`
-    : format(',d')(Math.sign(num) * Math.abs(num));
+export const formatCompact = (t) =>
+  Intl.NumberFormat('en', { notation: 'compact' }).format(t);
 
 export const formatBuildIDToDateString = (b) => timeFormat('%Y-%m-%d %H')(b);
 export const ymd = timeFormat('%Y-%m-%d');
