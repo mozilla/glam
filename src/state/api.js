@@ -10,7 +10,7 @@ const FETCH_ERROR_MESSAGES = {
   code405: '405: Method not allowed.',
 };
 
-const DEFAULT_SEARCH_RESULTS_LIMIT = 30; // maximum number of results to show
+const DEFAULT_SEARCH_RESULTS_LIMIT = 100; // maximum number of results to show
 
 export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
