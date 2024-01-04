@@ -2,6 +2,7 @@
   import { scaleLinear } from 'd3-scale';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import { distributionComparisonGraph } from '../../utils/constants';
+  import { formatCompact } from '../../utils/formatters';
 
   export let innerHeight;
   export let innerWidth;
@@ -25,8 +26,6 @@
       style: 'percent',
       maximumFractionDigits: 2,
     }).format(t);
-  let formatCompact = (t) =>
-    Intl.NumberFormat('en', { notation: 'compact' }).format(t);
 
   $: y = scaleLinear().domain([0, topTick]).range([minHeight, maxHeight]);
 

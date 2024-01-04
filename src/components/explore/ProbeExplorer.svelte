@@ -30,7 +30,7 @@
 
   import {
     formatBuildIDToDateString,
-    formatMillion,
+    formatCompact,
     formatFromNanoseconds,
   } from '../../utils/formatters';
 
@@ -71,7 +71,7 @@
   export let yScaleType;
   export let yDomain;
   export let densityMetricType;
-  export let yTickFormatter = formatMillion;
+  export let yTickFormatter = formatCompact;
   if (data[0].metric_type === 'timing_distribution') {
     yTickFormatter = formatFromNanoseconds;
   }

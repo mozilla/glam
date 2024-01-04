@@ -226,7 +226,9 @@
             {#each row.tableHistogramData as bucket}
               <Cell size="tiny" backgroundColor="white">
                 <span>
-                  {formatPercent(bucket.value)}
+                  {formatCount(bucket.value * row.audienceSize)} ({formatPercent(
+                    bucket.value
+                  )})
                 </span>
               </Cell>
             {/each}
