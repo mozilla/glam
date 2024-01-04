@@ -71,11 +71,11 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
-        build_id_filter = 'AND app_build_id = "*"'
+        build_id_filter = 'AND build_id = "*"'
         # counts = _get_firefox_counts(channel, os, versions, by_build=False)
         shas = {}
     else:
-        build_id_filter ='AND app_build_id != "*"'
+        build_id_filter ='AND build_id != "*"'
         # counts = _get_firefox_counts(channel, os, versions, by_build=True)
         shas = _get_firefox_shas(channel)
 
@@ -88,52 +88,56 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
             bigquery.ScalarQueryParameter("os", "STRING", kwargs.get("os", "*")),
         ]
 
+    process_filter = ""
     if "process" in kwargs:
         query_parameters.append(bigquery.ScalarQueryParameter("process", "STRING", kwargs["process"]))
+        process_filter = "AND process = @process"
 
-    table = f"glam_extract_firefox_{channel}_v1"
+    table = f"live_desktop_{channel}"
     query = f"""
         WITH versions AS (
             SELECT
-                ARRAY_AGG(DISTINCT app_version
+                ARRAY_AGG(DISTINCT version
                 ORDER BY
-                app_version DESC
+                version DESC
                 LIMIT
                 {num_versions}) AS selected_versions
             FROM
-                `moz-fx-data-shared-prod.telemetry_derived.{table}`
+                `glam_etl.{table}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `moz-fx-data-shared-prod.telemetry_derived.{table}`,
+                `glam_etl.{table}`,
                 versions
             WHERE
                 metric = @metric
                 AND os = @os
+                {process_filter}
                 {build_id_filter}
-                AND app_version IN UNNEST([122, 121, 120, 119, 118, 117, 116]) --UNNEST(versions.selected_versions) TODO: temporary solution to avoid 1024 version and others
+                AND version IN UNNEST(versions.selected_versions)
     """
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
     query_job = client.query(query, job_config=job_config)
+
 
     response = []
 
     for row in query_job:
 
         data = {
-            "version": row.app_version,
+            "version": row.version,
             "os": row.os,
-            "build_id": row.app_build_id,
-            "revision": shas.get(row.app_build_id, ""),
+            "build_id": row.build_id,
+            "revision": shas.get(row.build_id, ""),
             "process": row.process,
             "metric": row.metric,
-            "metric_key": row.key,
+            "metric_key": row.metric_key,
             "metric_type": row.metric_type,
-            "total_users": row.total_users,
-            "sample_count": row.total_sample,
+            "total_users": int(row.total_users), # Casting, otherwise this BIGNUMERIC column is read as a string
+            "sample_count": int(row.total_sample), # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "non_norm_histogram": row.non_norm_histogram
             and orjson.loads(row.non_norm_histogram)
@@ -308,8 +312,8 @@ def get_glean_aggregations_from_bq(request, **kwargs):
         )
 
     TABLE_MAP = {
-        "fenix": "org_mozilla_fenix_glam",
-        "fog": "firefox_desktop_glam",
+        "fenix": "live_fenix",
+        "fog": "live_fog",
     }
 
     channel = kwargs["app_id"]
@@ -322,7 +326,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
 
     project_id = "moz-fx-data-glam-prod-fca7"
     dataset_id = "glam_etl"
-    table_id = f"{TABLE_MAP[product]}_{channel}__extract_probe_counts_v1"
+    table_id = f"{TABLE_MAP[product]}_{channel}"
 
     # Initialize a BigQuery client
     client = bigquery.Client(project=project_id)
@@ -354,7 +358,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
                 AND ping_type = @ping_type
                 AND os = @os
                 {build_id_filter}
-                AND version IN UNNEST([122, 121, 120, 119, 118]) --UNNEST(versions.selected_versions) TODO: temporary solution to avoid 1024 version and others
+                AND version IN UNNEST(versions.selected_versions)
     """
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
@@ -369,19 +373,20 @@ def get_glean_aggregations_from_bq(request, **kwargs):
     response = []
 
     for row in query_job:
-
+        if not row.build_date:
+            continue
         data = {
             "version": row.version,
             "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
-            "build_date": datetime.fromisoformat(row.build_date).replace(tzinfo=timezone.utc),
+            "build_date": datetime.fromisoformat(row.build_date[:-3]).replace(tzinfo=timezone.utc), # Remove extra +00
             "metric": row.metric,
             "metric_type": row.metric_type,
             "metric_key": row.metric_key,
             "client_agg_type": row.client_agg_type,
-            "total_users": row.total_users,
-            "sample_count": row.total_sample,
+            "total_users": int(row.total_users), # Casting, otherwise this BIGNUMERIC column is read as a string
+            "sample_count": int(row.total_sample), # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
         }
