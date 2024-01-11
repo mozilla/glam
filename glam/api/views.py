@@ -93,7 +93,7 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
         query_parameters.append(bigquery.ScalarQueryParameter("process", "STRING", kwargs["process"]))
         process_filter = "AND process = @process"
 
-    table = f"live_desktop_{channel}"
+    table = f"glam_desktop_{channel}_aggregates_v1"
     query = f"""
         WITH versions AS (
             SELECT
@@ -136,8 +136,8 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
             "metric": row.metric,
             "metric_key": row.metric_key,
             "metric_type": row.metric_type,
-            "total_users": int(row.total_users), # Casting, otherwise this BIGNUMERIC column is read as a string
-            "sample_count": int(row.total_sample), # Casting, otherwise this BIGNUMERIC column is read as a string
+            "total_users": int(row.total_users)if row.total_users else None, # Casting, otherwise this BIGNUMERIC column is read as a string
+            "sample_count": int(row.total_sample) if row.total_sample else None, # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "non_norm_histogram": row.non_norm_histogram
             and orjson.loads(row.non_norm_histogram)
@@ -326,7 +326,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
 
     project_id = "moz-fx-data-glam-prod-fca7"
     dataset_id = "glam_etl"
-    table_id = f"{TABLE_MAP[product]}_{channel}"
+    table_id = f"glam_{product}_{channel}_aggregates_v1"
 
     # Initialize a BigQuery client
     client = bigquery.Client(project=project_id)
