@@ -7,7 +7,7 @@
   import QuantileSmallMultiple from '../../components/home/Quantile.svelte';
   import ProportionSmallMultiple from '../../components/home/Proportion.svelte';
   import RandomProbePlaceholder from '../../components/home/RandomProbePlaceholder.svelte';
-  import { store, currentQuery } from '../../state/store';
+  import { store } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
 
   // TODO: add this to the upcoming config.js
@@ -134,7 +134,7 @@
               <a
                 class="probe-sm"
                 on:click={resetSearchProduct}
-                href={`/firefox/probe/${info.name}/explore${$currentQuery}`}
+                href={`/firefox/probe/${info.name}/explore?`}
               >
                 <div
                   class="probe-small-multiple"
