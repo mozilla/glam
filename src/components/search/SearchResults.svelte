@@ -58,7 +58,7 @@
         page.show(
           `/${$store.searchProduct}/probe/${results[
             focusedItem
-          ].name.toLowerCase()}/explore${$currentQuery}`
+          ].name.toLowerCase()}/explore?`
         );
         focusedItem = 0; // reset focused element
       }
@@ -119,6 +119,21 @@
       return 'firefox';
     }
     return undefined;
+  };
+
+  const onClick = () => {
+    // we need to clear the query state here, otherwise the query
+    // will persist into another probe which could break the page
+    store.reset(true);
+    store.setField('ref', '');
+
+    page.show(
+      `/${getProductDimensions(results[focusedItem])}/probe/${results[
+        focusedItem
+      ].name
+        .toLowerCase()
+        .replaceAll('.', '_')}/explore${$currentQuery}`
+    );
   };
 </script>
 
@@ -284,15 +299,7 @@
               role="option"
               id={searchResult.name}
               class:focused={focusedItem === i}
-              on:click={() => {
-                page.show(
-                  `/${getProductDimensions(
-                    results[focusedItem]
-                  )}/probe/${results[focusedItem].name
-                    .toLowerCase()
-                    .replaceAll('.', '_')}/explore${$currentQuery}`
-                );
-              }}
+              on:click={onClick}
               on:mouseover={() => {
                 focusedItem = i;
               }}

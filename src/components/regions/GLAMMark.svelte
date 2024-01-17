@@ -2,7 +2,7 @@
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import Logo from '../icons/GLAMLogo.svelte';
   import Text from '../icons/GLAMText.svelte';
-  import { store, currentQuery } from '../../state/store';
+  import { store } from '../../state/store';
 
   // GLAM logo will resize if screen size
   // is smaller than the viewport min width
@@ -23,7 +23,7 @@
   }
 </style>
 
-<a href={`/${$currentQuery}`} on:click={store.reset}>
+<a href={`/`} on:click={store.reset}>
   <h1
     use:tooltipAction={{
       text: 'The Glean Aggregated Metrics Dashboard',
