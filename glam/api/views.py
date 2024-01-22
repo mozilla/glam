@@ -26,6 +26,18 @@ from glam.api.models import (
 )
 
 
+class GlamBigQueryClient:
+    """Holds a singleton BigQuery client for GLAM prod."""
+
+    _instance = None
+
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super(GlamBigQueryClient, cls).__new__(cls)
+            cls._instance.client = bigquery.Client(project="moz-fx-data-glam-prod-fca7")
+        return cls._instance.client
+
+
 @api_view(["GET"])
 def updates(request):
     product = request.GET.get("product")
@@ -55,13 +67,8 @@ def get_firefox_aggregations(request, **kwargs):
             "Missing required query parameters: {}".format(", ".join(sorted(missing)))
         )
 
-    # Ensure that the product provided is one we support, defaulting to Firefox.
-    project_id = "moz-fx-data-glam-prod-fca7"
-
     num_versions = kwargs.get("versions", 3)
-
-    # Initialize a BigQuery client
-    client = bigquery.Client(project=project_id)
+    client = GlamBigQueryClient()
 
     channel = kwargs.get("channel")
     aggregation_level = kwargs["aggregationLevel"]
@@ -217,12 +224,9 @@ def get_glean_aggregations(request, **kwargs):
     os = kwargs.get("os", "*")
     aggregation_level = kwargs["aggregationLevel"]
 
-    project_id = "moz-fx-data-glam-prod-fca7"
-    dataset_id = "glam_etl"
     table_id = f"glam_{product}_{channel}_aggregates_v1"
 
-    # Initialize a BigQuery client
-    client = bigquery.Client(project=project_id)
+    client = GlamBigQueryClient()
     if aggregation_level == "version" and product == "fenix":
         build_id_filter = 'AND build_id = "*"'
     else:
@@ -237,14 +241,14 @@ def get_glean_aggregations(request, **kwargs):
                 LIMIT
                 {num_versions}) AS selected_versions
             FROM
-                `{project_id}.{dataset_id}.{table_id}`
+                `glam_etl.{table_id}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `{project_id}.{dataset_id}.{table_id}`,
+                `glam_etl.{table_id}`,
                 versions
             WHERE
                 metric = @metric
@@ -514,9 +518,7 @@ def usage(request):
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
-                response = response.annotate(total=Count("*")).order_by(
-                    "-total",
-                )
+                response = response.annotate(total=Count("*")).order_by("-total",)
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
