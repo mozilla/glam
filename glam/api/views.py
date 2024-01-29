@@ -60,6 +60,7 @@ def updates(request):
         }
     )
 
+
 def get_firefox_aggregations(source, request, **kwargs):
     if source == "BigQuery":
         return get_firefox_aggregations_from_bq(request, **kwargs)
@@ -321,6 +322,7 @@ def get_glean_aggregations(source, request, **kwargs):
     else:
         return get_glean_aggregations_from_pg(request, **kwargs)
 
+
 def get_glean_aggregations_from_pg(request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = [
         "aggregationLevel",
@@ -419,7 +421,6 @@ def get_glean_aggregations_from_pg(request, **kwargs):
 
     _log_probe_query(request)
     return response
-
 
 
 def get_glean_aggregations_from_bq(request, **kwargs):
@@ -742,7 +743,9 @@ def usage(request):
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
-                response = response.annotate(total=Count("*")).order_by("-total",)
+                response = response.annotate(total=Count("*")).order_by(
+                    "-total",
+                )
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
