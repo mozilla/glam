@@ -638,7 +638,7 @@ def aggregations(request):
             )
         )
 
-    data_source = "BigQuery"
+    data_source = body.get("data_source", "BigQuery")
     # Uncomment the next line to rollback to PostgreSQL
     # data_source = "Postgres"
     if product == FIREFOX_LEGACY:
