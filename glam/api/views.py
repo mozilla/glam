@@ -749,9 +749,7 @@ def usage(request):
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
-                response = response.annotate(total=Count("*")).order_by(
-                    "-total",
-                )
+                response = response.annotate(total=Count("*")).order_by("-total",)
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
