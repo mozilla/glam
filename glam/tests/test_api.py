@@ -254,11 +254,12 @@ class TestDesktopAggregationsApi:
     def test_empty_data(self, client):
         # Test no data doesn't trigger a 500.
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 404
@@ -286,12 +287,13 @@ class TestDesktopAggregationsApi:
 
     def test_invalid_channel_if_firefox(self, client):
         query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "firefox",
                 "channel": "ohrora",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 400
@@ -302,6 +304,7 @@ class TestDesktopAggregationsApi:
             self.url,
             data={
                 "query": {
+                    "data_source": "Postgres",
                     "product": "feenicks",
                     "probe": "gc_ms",
                     "aggregationLevel": "version",
@@ -318,11 +321,12 @@ class TestDesktopAggregationsApi:
         _create_aggregation(data={"os": "Windows"}, multiplier=1.5)
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -370,11 +374,12 @@ class TestDesktopAggregationsApi:
         )
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "aggregationLevel": "build_id",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -414,12 +419,13 @@ class TestDesktopAggregationsApi:
         _create_aggregation()
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "versions": 1,
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -435,12 +441,13 @@ class TestDesktopAggregationsApi:
         _create_aggregation({"version": 97})
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "probe": "gc_ms",
                 "versions": 4,
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -454,13 +461,14 @@ class TestDesktopAggregationsApi:
         _create_aggregation({"process": "content"})
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "channel": "nightly",
                 "process": "content",
                 "probe": "gc_ms",
                 "versions": 2,
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -478,13 +486,14 @@ class TestGleanAggregationsApi:
     def test_empty_data(self, client):
         # Test no data doesn't trigger a 500.
         query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "fenix",
                 "app_id": "nightly",
                 "ping_type": "baseline",
                 "probe": "gc_ms",
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 404
@@ -517,13 +526,14 @@ class TestGleanAggregationsApi:
         )
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "fenix",
                 "app_id": "nightly",
                 "probe": "events_total_uri_count",
                 "ping_type": "*",
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -556,6 +566,7 @@ class TestGleanAggregationsApi:
         _create_glean_aggregation(model=FenixAggregation, data={"version": 1})
 
         query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "fenix",
                 "app_id": "nightly",
@@ -563,7 +574,7 @@ class TestGleanAggregationsApi:
                 "probe": "events_total_uri_count",
                 "versions": 4,
                 "aggregationLevel": "version",
-            }
+            },
         }
         resp = client.post(self.url, data=query, content_type="application/json")
         assert resp.status_code == 200
@@ -622,13 +633,14 @@ class TestUsageApi:
 
     def _search_fx_probe(self, client, probe_name):
         agg_query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "firefox",
                 "channel": "nightly",
                 "probe": probe_name,
                 "versions": 4,
                 "aggregationLevel": "version",
-            }
+            },
         }
         return client.post(
             self.agg_url, data=agg_query, content_type="application/json"
@@ -636,6 +648,7 @@ class TestUsageApi:
 
     def _search_glean_probe(self, client, probe_name):
         agg_query = {
+            "data_source": "Postgres",
             "query": {
                 "product": "fenix",
                 "app_id": "nightly",
@@ -643,7 +656,7 @@ class TestUsageApi:
                 "probe": probe_name,
                 "versions": 4,
                 "aggregationLevel": "version",
-            }
+            },
         }
         return client.post(
             self.agg_url, data=agg_query, content_type="application/json"
