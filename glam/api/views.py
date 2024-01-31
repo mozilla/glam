@@ -29,23 +29,7 @@ from glam.api.models import (
     UsageInstrumentation,
 )
 
-
-class GlamBigQueryClient:
-    """Holds a singleton BigQuery client for GLAM prod."""
-
-    _instance = None
-
-    def __new__(cls):
-        if not cls._instance:
-            cls._instance = super(GlamBigQueryClient, cls).__new__(cls)
-            cls._instance.client = bigquery.Client(project="moz-fx-data-glam-prod-fca7")
-        return cls._instance.client
-
-    def __enter__(self):
-        return self._instance.client
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        pass
+GLAM_BQ_PROD_PROJECT = "moz-fx-data-glam-prod-fca7"
 
 
 @api_view(["GET"])
@@ -245,7 +229,7 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
                 AND version IN UNNEST(versions.selected_versions)
     """
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
-    with GlamBigQueryClient() as client:
+    with bigquery.Client(project=GLAM_BQ_PROD_PROJECT) as client:
         query_job = client.query(query, job_config=job_config)
 
     response = []
@@ -491,7 +475,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
             bigquery.ScalarQueryParameter("os", "STRING", os),
         ]
     )
-    with GlamBigQueryClient() as client:
+    with bigquery.Client(project=GLAM_BQ_PROD_PROJECT) as client:
         query_job = client.query(query, job_config=job_config)
 
     response = []
