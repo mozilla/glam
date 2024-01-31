@@ -41,6 +41,12 @@ class GlamBigQueryClient:
             cls._instance.client = bigquery.Client(project="moz-fx-data-glam-prod-fca7")
         return cls._instance.client
 
+    def __enter__(self):
+        return self._instance.client
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        pass
+
 
 @api_view(["GET"])
 def updates(request):
@@ -183,7 +189,6 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
         )
 
     num_versions = kwargs.get("versions", 3)
-    client = GlamBigQueryClient()
 
     channel = kwargs.get("channel")
     aggregation_level = kwargs["aggregationLevel"]
@@ -240,7 +245,8 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
                 AND version IN UNNEST(versions.selected_versions)
     """
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
-    query_job = client.query(query, job_config=job_config)
+    with GlamBigQueryClient() as client:
+        query_job = client.query(query, job_config=job_config)
 
     response = []
 
@@ -448,7 +454,6 @@ def get_glean_aggregations_from_bq(request, **kwargs):
 
     table_id = f"glam_{product}_{channel}_aggregates_v1"
 
-    client = GlamBigQueryClient()
     if aggregation_level == "version" and product == "fenix":
         build_id_filter = 'AND build_id = "*"'
     else:
@@ -486,7 +491,8 @@ def get_glean_aggregations_from_bq(request, **kwargs):
             bigquery.ScalarQueryParameter("os", "STRING", os),
         ]
     )
-    query_job = client.query(query, job_config=job_config)
+    with GlamBigQueryClient() as client:
+        query_job = client.query(query, job_config=job_config)
 
     response = []
 
