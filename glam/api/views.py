@@ -664,6 +664,40 @@ def probes(request):
     )
 
 
+def _get_random_probes(data_source, random_percentage, limit):
+    # Get a random list of `limit` probes from the Desktop nightly table.
+    query_template = """
+        SELECT {} metric, histogram
+        FROM {}
+        WHERE
+            build_id='*'
+            AND os='*'
+            AND metric_key=''
+            AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
+            AND {} < {}
+        LIMIT {}
+    """
+
+    if data_source == "BigQuery":
+        table_name = (
+            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates_v1`"
+        )
+        with bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT) as client:
+            aggs = client.query(
+                query_template.format(
+                    "", table_name, "RAND()", random_percentage, limit
+                )
+            )
+    else:
+        table_name = "view_glam_desktop_nightly_aggregation"
+        aggs = DesktopNightlyAggregationView.objects.raw(
+            query_template.format(
+                "id,", table_name, "RANDOM()", random_percentage, limit
+            )
+        )
+    return aggs
+
+
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
@@ -672,27 +706,14 @@ def random_probes(request):
     except ValueError:
         n = 3
 
-    probes = []
-
+    data_source = "BigQuery"
     random_percentage = 0.1
     if os.environ.get("DJANGO_CONFIGURATION") == "Test":
         random_percentage = 1.0
+        data_source = "Postgres"
+    aggs = _get_random_probes(data_source, random_percentage, n)
 
-    # Get a random list of `n` probes from the Desktop nightly table.
-    query = f"""
-        SELECT metric, histogram
-        FROM `{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates_v1`
-        WHERE
-            build_id='*'
-            AND os='*'
-            AND metric_key=''
-            AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
-            AND RAND() < {random_percentage}
-        LIMIT {n}
-    """
-    with bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT) as client:
-        aggs = client.query(query)
-
+    probes = []
     for agg in aggs:
         try:
             probe = Probe.objects.get(info__name=agg.metric)

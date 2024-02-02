@@ -280,7 +280,8 @@ class TestDesktopAggregationsApi:
     )
     def test_required_params(self, client, query, missing):
         resp = client.post(
-            self.url, data={"query": query}, content_type="application/json"
+            self.url, data={"data_source": "Postgres", "query": query},
+            content_type="application/json"
         )
         assert resp.status_code == 400
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
@@ -513,7 +514,8 @@ class TestGleanAggregationsApi:
     def test_required_glean_params(self, client, query, missing):
         query["product"] = "fenix"
         resp = client.post(
-            self.url, data={"query": query}, content_type="application/json"
+            self.url, data={"data_source": "Postgres", "query": query},
+            content_type="application/json"
         )
         assert resp.status_code == 400
         assert resp.json()[0] == f"Missing required query parameters: {missing}"
