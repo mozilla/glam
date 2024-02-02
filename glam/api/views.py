@@ -29,7 +29,19 @@ from glam.api.models import (
     UsageInstrumentation,
 )
 
+# Data will be read from tables in this project
 GLAM_BQ_PROD_PROJECT = "moz-fx-data-glam-prod-fca7"
+
+# Read jobs will be created from this project
+GLAM_BQ_PROJECT_ACCOUNT = (
+    GLAM_BQ_PROD_PROJECT
+    if os.environ.get("env") == "Prod"
+    else "moz-fx-data-glam-nonprod-7d0f"
+)
+
+
+def get_bq_client():
+    return bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT)
 
 
 @api_view(["GET"])
@@ -53,7 +65,8 @@ def updates(request):
 
 def get_firefox_aggregations(source, request, **kwargs):
     if source == "BigQuery":
-        return get_firefox_aggregations_from_bq(request, **kwargs)
+        bqClient = get_bq_client()
+        return get_firefox_aggregations_from_bq(bqClient, request, **kwargs)
     else:
         return get_firefox_aggregations_from_pg(request, **kwargs)
 
@@ -162,7 +175,7 @@ def get_firefox_aggregations_from_pg(request, **kwargs):
     return response
 
 
-def get_firefox_aggregations_from_bq(request, **kwargs):
+def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
     # TODO: When glam starts sending "product", make it required.
     REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
@@ -212,14 +225,14 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
                 LIMIT
                 {num_versions}) AS selected_versions
             FROM
-                `glam_etl.{table}`
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `glam_etl.{table}`,
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table}`,
                 versions
             WHERE
                 metric = @metric
@@ -229,7 +242,7 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
                 AND version IN UNNEST(versions.selected_versions)
     """
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
-    with bigquery.Client(project=GLAM_BQ_PROD_PROJECT) as client:
+    with bqClient as client:
         query_job = client.query(query, job_config=job_config)
 
     response = []
@@ -271,7 +284,7 @@ def get_firefox_aggregations_from_bq(request, **kwargs):
 
         response.append(data)
 
-    # _log_probe_query(request)
+    _log_probe_query(request)
     return response
 
 
@@ -308,7 +321,8 @@ def _get_firefox_shas(channel):
 
 def get_glean_aggregations(source, request, **kwargs):
     if source == "BigQuery":
-        return get_glean_aggregations_from_bq(request, **kwargs)
+        bqClient = bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT)
+        return get_glean_aggregations_from_bq(bqClient, request, **kwargs)
     else:
         return get_glean_aggregations_from_pg(request, **kwargs)
 
@@ -413,7 +427,7 @@ def get_glean_aggregations_from_pg(request, **kwargs):
     return response
 
 
-def get_glean_aggregations_from_bq(request, **kwargs):
+def get_glean_aggregations_from_bq(bqClient, request, **kwargs):
     REQUIRED_QUERY_PARAMETERS = [
         "aggregationLevel",
         "app_id",
@@ -452,14 +466,14 @@ def get_glean_aggregations_from_bq(request, **kwargs):
                 LIMIT
                 {num_versions}) AS selected_versions
             FROM
-                `glam_etl.{table_id}`
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `glam_etl.{table_id}`,
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`,
                 versions
             WHERE
                 metric = @metric
@@ -475,7 +489,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
             bigquery.ScalarQueryParameter("os", "STRING", os),
         ]
     )
-    with bigquery.Client(project=GLAM_BQ_PROD_PROJECT) as client:
+    with bqClient as client:
         query_job = client.query(query, job_config=job_config)
 
     response = []
@@ -509,6 +523,7 @@ def get_glean_aggregations_from_bq(request, **kwargs):
         # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
+    _log_probe_query(request)
     return response
 
 
@@ -649,6 +664,40 @@ def probes(request):
     )
 
 
+def _get_random_probes(data_source, random_percentage, limit):
+    # Get a random list of `limit` probes from the Desktop nightly table.
+    query_template = """
+        SELECT {} metric, histogram
+        FROM {}
+        WHERE
+            build_id='*'
+            AND os='*'
+            AND metric_key=''
+            AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
+            AND {} < {}
+        LIMIT {}
+    """
+
+    if data_source == "BigQuery":
+        table_name = (
+            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates_v1`"
+        )
+        with bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT) as client:
+            aggs = client.query(
+                query_template.format(
+                    "", table_name, "RAND()", random_percentage, limit
+                )
+            )
+    else:
+        table_name = "view_glam_desktop_nightly_aggregation"
+        aggs = DesktopNightlyAggregationView.objects.raw(
+            query_template.format(
+                "id,", table_name, "RANDOM()", random_percentage, limit
+            )
+        )
+    return aggs
+
+
 @api_view(["POST"])
 def random_probes(request):
     n = request.data.get("n", 3)
@@ -657,28 +706,14 @@ def random_probes(request):
     except ValueError:
         n = 3
 
-    probes = []
-
+    data_source = "BigQuery"
     random_percentage = 0.1
     if os.environ.get("DJANGO_CONFIGURATION") == "Test":
         random_percentage = 1.0
+        data_source = "Postgres"
+    aggs = _get_random_probes(data_source, random_percentage, n)
 
-    # Get a random list of `n` probes from the Desktop nightly table.
-    aggs = DesktopNightlyAggregationView.objects.raw(
-        """
-        SELECT id, metric, histogram
-        FROM view_glam_desktop_nightly_aggregation
-        WHERE
-            build_id='*'
-            AND os='*'
-            AND metric_key=''
-            AND metric_type NOT IN ('boolean', 'histogram-boolean', 'scalar')
-            AND RANDOM() < %s
-        LIMIT %s
-    """,
-        [random_percentage, n],
-    )
-
+    probes = []
     for agg in aggs:
         try:
             probe = Probe.objects.get(info__name=agg.metric)
