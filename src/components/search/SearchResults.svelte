@@ -122,9 +122,9 @@
   };
 
   const onClick = () => {
-    // we need to clear the query state here, otherwise the query
-    // will persist into another probe which could break the page
-    store.reset(true);
+    // clearing the ref field to avoid the probe explorer
+    // from trying to load a probe from the URL
+
     store.setField('ref', '');
 
     page.show(
