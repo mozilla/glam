@@ -30,18 +30,11 @@ from glam.api.models import (
 )
 
 # Data will be read from tables in this project
-GLAM_BQ_PROD_PROJECT = "moz-fx-data-glam-prod-fca7"
-
-# Read jobs will be created from this project
-GLAM_BQ_PROJECT_ACCOUNT = (
-    GLAM_BQ_PROD_PROJECT
-    if os.environ.get("env") == "Prod"
-    else "moz-fx-data-glam-nonprod-7d0f"
-)
+GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
 
 
 def get_bq_client():
-    return bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT)
+    return bigquery.Client()
 
 
 @api_view(["GET"])
@@ -321,7 +314,7 @@ def _get_firefox_shas(channel):
 
 def get_glean_aggregations(source, request, **kwargs):
     if source == "BigQuery":
-        bqClient = bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT)
+        bqClient = bigquery.Client()
         return get_glean_aggregations_from_bq(bqClient, request, **kwargs)
     else:
         return get_glean_aggregations_from_pg(request, **kwargs)
@@ -682,7 +675,7 @@ def _get_random_probes(data_source, random_percentage, limit):
         table_name = (
             f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates_v1`"
         )
-        with bigquery.Client(project=GLAM_BQ_PROJECT_ACCOUNT) as client:
+        with bigquery.Client() as client:
             aggs = client.query(
                 query_template.format(
                     "", table_name, "RAND()", random_percentage, limit
