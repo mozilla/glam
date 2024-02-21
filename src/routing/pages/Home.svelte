@@ -7,6 +7,7 @@
   import QuantileSmallMultiple from '../../components/home/Quantile.svelte';
   import ProportionSmallMultiple from '../../components/home/Proportion.svelte';
   import RandomProbePlaceholder from '../../components/home/RandomProbePlaceholder.svelte';
+  import CookieBanner from '../../components/CookieBanner.svelte';
   import { store } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
 
@@ -109,7 +110,9 @@
   }
 </style>
 
+
 <div class="graphic-body__content">
+  <CookieBanner />
   <div>
     <MarketingBlock />
     <div class="random-probe-view">
