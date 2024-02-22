@@ -208,7 +208,7 @@ def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
         )
         process_filter = "AND process = @process"
 
-    table = f"glam_desktop_{channel}_aggregates_v1"
+    table = f"glam_desktop_{channel}_aggregates"
     query = f"""
         WITH versions AS (
             SELECT
@@ -443,7 +443,7 @@ def get_glean_aggregations_from_bq(bqClient, request, **kwargs):
     os = kwargs.get("os", "*")
     aggregation_level = kwargs["aggregationLevel"]
 
-    table_id = f"glam_{product}_{channel}_aggregates_v1"
+    table_id = f"glam_{product}_{channel}_aggregates"
 
     if aggregation_level == "version" and product == "fenix":
         build_id_filter = 'AND build_id = "*"'
@@ -673,7 +673,7 @@ def _get_random_probes(data_source, random_percentage, limit):
 
     if data_source == "BigQuery":
         table_name = (
-            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates_v1`"
+            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
         )
         with bigquery.Client() as client:
             aggs = client.query(
