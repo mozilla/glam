@@ -110,7 +110,6 @@
   }
 </style>
 
-
 <div class="graphic-body__content">
   <CookieBanner />
   <div>
