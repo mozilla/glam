@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  docker: circleci/docker@2.2.0
+
 jobs:
   build:
     docker:
@@ -114,6 +117,65 @@ jobs:
               docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
             fi
 
+  proxy-build:
+    executor: docker/machine
+    steps:
+      - checkout
+      - run:
+          name: Generate build version.json
+          command: >
+            printf
+            '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n'
+            "$CIRCLE_SHA1" "$CIRCLE_TAG" "$CIRCLE_PROJECT_USERNAME"
+            "$CIRCLE_PROJECT_REPONAME" "$CIRCLE_BUILD_URL"
+            > version.json
+      - run:
+          name: Output version.json
+          command: cat version.json
+      - docker/build:
+          path: dockerfiles/proxy
+          image: ${CIRCLE_PROJECT_REPONAME}-auth0-proxy
+          tag: ${CIRCLE_SHA1:0:9}
+      - run:
+          name: docker save
+          command: |
+            mkdir -p /tmp/cache
+            docker save -o /tmp/cache/auth0-proxy.tar "auth0-proxy:build"
+      - persist_to_workspace:
+          root: /tmp/cache
+          paths:
+            - auth0-proxy.tar
+
+  proxy-publish:
+    docker:
+        - image: cimg/base:stable
+          auth:
+            username: $DOCKER_USER
+            password: $DOCKER_PASSWORD
+      steps:
+        - setup_remote_docker
+        - restore_cache:
+          key: v1-{{.Environment.CIRCLE_SHA1}}
+        - run:
+          name: Restore Docker image cache
+          command: docker load -i /tmp/cache/auth0-proxy.tar
+        - run:
+          name: Login to GAR
+          command: |
+            echo $GAR_SERVICE_KEY | base64 -d > creds.json
+            gcloud auth activate-service-account --key-file creds.json
+            gcloud auth configure-docker us-docker.pkg.dev
+        - run:
+          name: Deploy to GAR
+          command: |
+            if  [ ! -z "${CIRCLE_TAG}" ]; then
+              # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
+              docker tag auth0-proxy:build gcr.io/moz-fx-dataops-images-global/auth0-proxy:latest
+              docker tag auth0-proxy:build "gcr.io/moz-fx-dataops-images-global/auth0-proxy:${CIRCLE_TAG}"
+              docker push gcr.io/moz-fx-dataops-images-global/auth0-proxy:${CIRCLE_TAG}
+              docker push gcr.io/moz-fx-dataops-images-global/auth0-proxy:latest
+            fi
+
 workflows:
   version: 2
   build-test-deploy:
@@ -122,6 +184,10 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - proxy-build:
+          filters:
+            tags:
+              only: /proxy-.*/
       - frontend-tests:
           requires:
             - build
@@ -148,5 +214,11 @@ workflows:
           filters:
             tags:
               only: /^\d+\.\d+\.\d+$/
+            branches:
+              only: main
+      - proxy-publish:
+          filters:
+            tags:
+              only: /proxy-.*/
             branches:
               only: main
