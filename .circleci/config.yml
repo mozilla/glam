@@ -148,24 +148,24 @@ jobs:
 
   proxy-publish:
     docker:
-        - image: cimg/base:stable
-          auth:
-            username: $DOCKER_USER
-            password: $DOCKER_PASSWORD
-      steps:
-        - setup_remote_docker
-        - restore_cache:
+      - image: cimg/base:stable
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASSWORD
+    steps:
+      - setup_remote_docker
+      - restore_cache:
           key: v1-{{.Environment.CIRCLE_SHA1}}
-        - run:
+      - run:
           name: Restore Docker image cache
           command: docker load -i /tmp/cache/auth0-proxy.tar
-        - run:
+      - run:
           name: Login to GAR
           command: |
             echo $GAR_SERVICE_KEY | base64 -d > creds.json
             gcloud auth activate-service-account --key-file creds.json
             gcloud auth configure-docker us-docker.pkg.dev
-        - run:
+      - run:
           name: Deploy to GAR
           command: |
             if  [ ! -z "${CIRCLE_TAG}" ]; then
