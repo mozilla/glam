@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@2.2.0
+  gcp-gcr: circleci/gcp-gcr@0.16.2
 
 jobs:
   build:
@@ -117,10 +117,14 @@ jobs:
               docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
             fi
 
-  proxy-build-publish:
-    executor: docker/machine
+  proxy-build-and-publish:
+    executor: gcp-gcr/default
+    environment:
+      GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
     steps:
       - checkout
+      - gcp-gcr/gcr-auth
+
       - run:
           name: Generate build version.json
           command: >
@@ -132,24 +136,16 @@ jobs:
       - run:
           name: Output version.json
           command: cat version.json
-      - docker/build:
-          path: dockerfiles/proxy
-          image: ${CIRCLE_PROJECT_REPONAME}-auth0-proxy
-          tag: ${CIRCLE_SHA1:0:9}
-      - run:
-          name: Login to GCR
-          command: |
-            echo $GAR_SERVICE_KEY | base64 -d > creds.json
-            gcloud auth activate-service-account --key-file creds.json
-            gcloud auth configure-docker us-docker.pkg.dev
-      - run:
-          name: Deploy to GCR
-          command: |
-            if  [ ! -z "${CIRCLE_TAG}" ]; then
-              # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
-              docker tag auth0-proxy:build "gcr.io/moz-fx-dataops-images-global/auth0-proxy:${CIRCLE_TAG}"
-              docker push gcr.io/moz-fx-dataops-images-global/auth0-proxy:${CIRCLE_TAG}
-            fi
+      - gcp-gcr/build-image:
+          workspace-root: dockerfiles/proxy
+          image: auth0-proxy
+          tag: test
+          registry-url: gcr.io
+      - gcp-gcr/push-image:
+          image:  auth0-proxy
+          registry-url: gcr.io
+          tag: test
+          google-project-id: GOOGLE_PROJECT_ID
 
 workflows:
   version: 2
@@ -187,9 +183,10 @@ workflows:
               only: /^\d+\.\d+\.\d+$/
             branches:
               only: main
-      - proxy-build-publish:
+      - proxy-build-and-publish:
           filters:
             tags:
-              only: /authproxy.*/
-            branches:
-              only: main
+            #  only: /authproxy.*/
+              only: /.*/
+            #branches:
+            #  only: main
