@@ -80,11 +80,11 @@
   {/if}
   <div class="data-error-msg__call-to-action">
     If you think this is a bug, report this on the <a
-      href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a
+      href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
     >
-    or
-    <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a>
-    channel on Mozilla's Slack instance or in the
+    channel on Mozilla's internal Slack, or
+    <a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on
+    Mozilla's Matrix or in the
     <a href="https://github.com/mozilla/glam/issues/new"
       >GLAM github repository</a
     >.

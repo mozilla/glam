@@ -36,7 +36,12 @@
       Currently serving: Firefox Desktop, Firefox Android.
     </div>
     <div class="marketing-block__ask-us">
-      Questions? Bugs? Requests? Find us at #datatools on Mozilla's Matrix.
+      Questions? Bugs? Requests? Find us at <a
+        href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
+      >
+      on Mozilla's internal Slack, or
+      <a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on Mozilla's
+      Matrix.
     </div>
   </div>
 </div>
