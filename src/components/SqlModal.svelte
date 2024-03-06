@@ -84,12 +84,12 @@
     if ($store.probe.type === 'histogram') {
       tabs.push({
         id: 1,
-        label: 'Telemetry SQL',
+        label: 'Distribution SQL',
         sql: getDesktopSql,
       });
       tabs.push({
         id: 2,
-        label: 'Distribution SQL',
+        label: 'Telemetry SQL',
         sql: getDesktopSql,
       });
     }
@@ -202,8 +202,9 @@
       <p>Sorry, this feature is not available for Glean metrics yet.</p>
     {:else}
       <p>
-        The following SQL query can be copy/pasted and used in the BigQuery
-        console to explore this data further:
+        The following SQL query can be copied and used in the BigQuery console
+        to explore further. Please note that you need internal access to our
+        analysis tooling to query the data.
       </p>
     {/if}
     <ul>
@@ -232,8 +233,8 @@
     {#each tabs as tab}
       {#if activeTab === tab.id}
         <pre>
-          <code bind:this={sqlElement}>
-            {tab.label.includes('Distribution')
+          <code bind:this={sqlElement}
+            >{tab.label.includes('Distribution')
               ? tab.sql('distribution')
               : tab.sql('telemetry')}
           </code>

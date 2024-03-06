@@ -7,7 +7,6 @@
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
-  import LookerLink from '../../../components/LookerLink.svelte';
 
   export let showLinks = true;
 
@@ -296,12 +295,6 @@
           <Brackets size={16} />
           Export to JSON
         </button>
-        <LookerLink
-          product="glean"
-          variants={$store.probe.variants}
-          sendInPings={$store.productDimensions.ping_type}
-          channel={$store.productDimensions.app_id}
-        />
       </div>
     </div>
   {/if}
