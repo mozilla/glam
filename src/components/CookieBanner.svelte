@@ -74,8 +74,8 @@
 {#if !consentGiven}
   <div class="cookie-banner">
     <p>
-      We use cookies to enhance your experience, by continuing to visit this
-      site you agree to our use of cookies. <a
+      We use cookies to analyze our traffic, by continuing to visit this site
+      you agree to our use of cookies. <a
         href="https://www.mozilla.org/en-US/privacy/websites/#cookies"
         target="_blank">Learn More</a
       >.
