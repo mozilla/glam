@@ -54,10 +54,12 @@ To gather the probe data that populates the probe API, run the following:
 ./manage.py import_probes
 ```
 
-Once you start GLAM locally it will read data directly from BigQuery views in the moz-fx-data-shared-prod GCP project.
-If you need proper authorization, please ask in the #glam Slack channel.
+Once you start GLAM locally it will read data directly from BigQuery views in
+the moz-fx-data-shared-prod GCP project. If you need proper authorization,
+please ask in the #glam Slack channel.
 
-First, log in to GCP (outside of the Docker container) and refresh the application default credentials by running:
+First, log in to GCP (outside of the Docker container) and refresh the
+application default credentials by running:
 
 ```
 gcloud auth login --update-adc
