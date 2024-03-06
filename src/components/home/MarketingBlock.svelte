@@ -36,7 +36,7 @@
       Currently serving: Firefox Desktop, Firefox Android.
     </div>
     <div class="marketing-block__ask-us">
-      Questions? Bugs? Requests? Find us at #GLAM on Slack.
+      Questions? Bugs? Requests? Find us at #datatools on Mozilla's Matrix.
     </div>
   </div>
 </div>

@@ -5,7 +5,6 @@
   import Search from '../../components/search/Search.svelte';
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
-  import SlackLogo from '../../components/icons/SlackLogo.svelte';
   import ProductSelector from '../../components/controls/ProductSelector.svelte';
 
   import { store } from '../../state/store';
@@ -55,9 +54,10 @@
       <a
         target="_blank"
         class="temporary-link-button"
-        href="https://mozilla.slack.com/archives/CB1EQ437S"
+        href="https://matrix.to/#/#datatools:mozilla.org"
       >
-        <SlackLogo size="1em" />feedback
+        <img src="/static/logo.svg" width="18" height="18" alt="Mozilla logo" />
+        feedback
       </a>
     </div>
   </header>

@@ -376,7 +376,10 @@
             >.
           </p>
           <p class="detail-title">
-            Please reach out in
+            Please reach out in <a
+              href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a
+            >
+            or
             <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a> if you
             need more help.
           </p>
