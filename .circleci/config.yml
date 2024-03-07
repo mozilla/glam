@@ -139,12 +139,12 @@ jobs:
       - gcp-gcr/build-image:
           workspace-root: dockerfiles/proxy
           image: auth0-proxy
-          tag: test
+          tag: $CIRCLE_TAG
           registry-url: gcr.io
       - gcp-gcr/push-image:
           image:  auth0-proxy
           registry-url: gcr.io
-          tag: test
+          tag: $CIRCLE_TAG
           google-project-id: GOOGLE_PROJECT_ID
 
 workflows:
