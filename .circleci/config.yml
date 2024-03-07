@@ -183,6 +183,8 @@ workflows:
               only: /^\d+\.\d+\.\d+$/
             branches:
               only: main
+  proxy-build-and-publish:
+    jobs:
       - proxy-build-and-publish:
           filters:
             tags:
