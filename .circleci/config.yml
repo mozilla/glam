@@ -187,5 +187,3 @@ workflows:
           filters:
             tags:
               only: /authproxy.*/
-            branches:
-              only: main
