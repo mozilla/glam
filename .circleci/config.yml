@@ -186,6 +186,6 @@ workflows:
       - proxy-build-and-publish:
           filters:
             tags:
-              only: /authproxy.*/
+              only: /^authproxy.*/
             branches:
-              only: main
+              ignore: /.*/
