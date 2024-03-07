@@ -14,11 +14,7 @@ const DEFAULT_SEARCH_RESULTS_LIMIT = 100; // maximum number of results to show
 
 export async function getRandomProbes(numProbes, process) {
   const data = await fetch(randomProbeURL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ n: numProbes, process }),
+    method: 'GET',
   })
     .then((response) => response.json())
     .then((d) => {
