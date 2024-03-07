@@ -187,3 +187,5 @@ workflows:
           filters:
             tags:
               only: /^authproxy.*/
+            branches:
+              ignore: /.*/
