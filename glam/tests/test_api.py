@@ -201,13 +201,11 @@ class TestRandomProbesApi:
         _create_aggregation(data={"metric": "foo"})
         _create_aggregation(data={"metric": "fum"})
 
-        resp = client.post(self.url, content_type="application/json").json()
+        resp = client.get(self.url).json()
         assert len(resp["probes"]) == 3
 
         # Test that a non-integer defaults to 3
-        resp = client.post(
-            self.url, data={"n": "abc"}, content_type="application/json"
-        ).json()
+        resp = client.get(self.url + "?n=abc").json()
         assert len(resp["probes"]) == 3
 
     def test_response_with_n(self, client):
@@ -232,9 +230,7 @@ class TestRandomProbesApi:
         _create_aggregation(data={"metric": "fee"})
         _create_aggregation(data={"metric": "fii"})
 
-        resp = client.post(
-            self.url, data={"n": 1}, content_type="application/json"
-        ).json()
+        resp = client.get(self.url + "?n=1").json()
         assert len(resp["probes"]) == 1
 
 

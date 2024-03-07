@@ -767,7 +767,12 @@ def random_probes(request):
         data_source = "Postgres"
         aggs = _get_random_probes(data_source, random_percentage, n)
     else:
-        aggs = _get_fx_most_used_probes()
+        n = request.GET.get("n")
+        try:
+            n = int(n)
+        except ValueError:
+            n = 3
+        aggs = _get_fx_most_used_probes(limit=n)
 
     probes = []
     for agg in aggs:

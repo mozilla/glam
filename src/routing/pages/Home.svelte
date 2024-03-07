@@ -12,9 +12,9 @@
 
   // TODO: add this to the upcoming config.js
   const NUMBER_OF_RANDOM_PROBES = 9;
-  let randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+  let randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES);
   function refresh() {
-    randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+    randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES);
   }
   // FIXME: the search product must be set to firefox for now, since
   // the random probes don't quite work with non-firefox probes.

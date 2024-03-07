@@ -1,5 +1,5 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
-const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random/';
+const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random?';
 
 // We could eventually make a constants.js, this is low priority.
 const FETCH_ERROR_MESSAGES = {
@@ -12,10 +12,8 @@ const FETCH_ERROR_MESSAGES = {
 
 const DEFAULT_SEARCH_RESULTS_LIMIT = 100; // maximum number of results to show
 
-export async function getRandomProbes(numProbes, process) {
-  const data = await fetch(randomProbeURL, {
-    method: 'GET',
-  })
+export async function getRandomProbes(number) {
+  const data = await fetch(randomProbeURL + new URLSearchParams({n: number}))
     .then((response) => response.json())
     .then((d) => {
       d.probes.forEach((di) => {
