@@ -691,6 +691,7 @@ def _get_random_probes(data_source, random_percentage, limit):
         )
     return aggs
 
+
 def _get_fx_most_used_probes(days=30, limit=9):
     """Retrieve most used probes from BQ
 
@@ -705,11 +706,15 @@ def _get_fx_most_used_probes(days=30, limit=9):
     dimensions.append(Q(timestamp__lte=today))
 
     result = UsageInstrumentation.objects.filter(*dimensions)
-    most_used_probes = result.values("probe_name").annotate(total=Count("*")).order_by("-total",)
+    most_used_probes = (
+        result.values("probe_name").annotate(total=Count("*")).order_by("-total",)
+    )
     probe_names = [f'"{p["probe_name"]}"' for p in most_used_probes]
 
-    legacy_table_name = (f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`")
-    fog_table_name = (f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`")
+    legacy_table_name = (
+        f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
+    )
+    fog_table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
 
     query = f"""
         WITH fx_metrics AS (
@@ -762,16 +767,16 @@ def _get_fx_most_used_probes(days=30, limit=9):
 @cache_page(60 * 60 * 24, cache="pg")
 def random_probes(request):
 
+    n = request.GET.get("n")
+    try:
+        n = int(n)
+    except ValueError:
+        n = 3
     if os.environ.get("DJANGO_CONFIGURATION") == "Test":
         random_percentage = 1.0
         data_source = "Postgres"
         aggs = _get_random_probes(data_source, random_percentage, n)
     else:
-        n = request.GET.get("n")
-        try:
-            n = int(n)
-        except ValueError:
-            n = 3
         aggs = _get_fx_most_used_probes(limit=n)
 
     probes = []

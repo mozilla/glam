@@ -13,7 +13,7 @@ const FETCH_ERROR_MESSAGES = {
 const DEFAULT_SEARCH_RESULTS_LIMIT = 100; // maximum number of results to show
 
 export async function getRandomProbes(number) {
-  const data = await fetch(randomProbeURL + new URLSearchParams({n: number}))
+  const data = await fetch(randomProbeURL + new URLSearchParams({ n: number }))
     .then((response) => response.json())
     .then((d) => {
       d.probes.forEach((di) => {

@@ -3,17 +3,17 @@
 from django.db import migrations
 from django.core.management import call_command
 
+
 def create_cache(apps, schema_editor):
-    call_command('createcachetable', 'django_cache')
+    call_command("createcachetable", "django_cache")
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-            ('api', '0027_fix_fog_user_count_after_sampling'),
-        ]
+        ("api", "0027_fix_fog_user_count_after_sampling"),
+    ]
 
     operations = [
-        migrations.RunPython(
-            code=create_cache, reverse_code=migrations.RunPython.noop
-        )
+        migrations.RunPython(code=create_cache, reverse_code=migrations.RunPython.noop)
     ]
