@@ -138,6 +138,8 @@ jobs:
           command: cat version.json
       - gcp-gcr/build-image:
           workspace-root: dockerfiles/proxy
+          path: dockerfiles/proxy
+          docker-context: dockerfiles/proxy
           image: auth0-proxy
           tag: $CIRCLE_TAG
           registry-url: gcr.io
