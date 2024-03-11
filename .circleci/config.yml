@@ -149,6 +149,19 @@ jobs:
           tag: $CIRCLE_TAG
           google-project-id: GOOGLE_PROJECT_ID
 
+  proxy-rollback-auth:
+    executor: gcp-gcr/default
+    environment:
+      GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
+    steps:
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/tag-image:
+          image: auth0-proxy
+          registry-url: gcr.io
+          source-tag: 0.0.4
+          target-tag: authproxy-dev
+          google-project-id: GOOGLE_PROJECT_ID
+
 workflows:
   version: 2
   build-test-deploy:
@@ -191,5 +204,14 @@ workflows:
           filters:
             tags:
               only: /^authproxy.*/
+            branches:
+              ignore: /.*/
+
+  proxy-rollback-auth:
+    jobs:
+      - proxy-rollback-auth:
+          filters:
+            tags:
+              only: /^rollback-authproxy.*/
             branches:
               ignore: /.*/
