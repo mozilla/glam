@@ -7,6 +7,8 @@
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
+  import LookerLink from '../../../components/LookerLink.svelte';
+  import SqlModal from '../../../components/SqlModal.svelte';
 
   export let showLinks = true;
 
@@ -291,6 +293,7 @@
   {#if showLinks}
     <div class="probe-details-download">
       <div class="drawer-section drawer-section--end">
+        <SqlModal />
         <button on:click={exportData} class="docs-button">
           <Brackets size={16} />
           Export to JSON
