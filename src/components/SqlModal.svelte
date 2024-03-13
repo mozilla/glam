@@ -125,7 +125,7 @@
     if ($store.probe.type === 'histogram') {
       tabs.push({
         id: 1,
-        label: 'Distribution SQL',
+        label: 'Telemetry SQL',
         sql: getDesktopSql,
       });
     }

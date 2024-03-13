@@ -7,7 +7,6 @@
   import { getBugURL, getBugLinkTitle } from '../../../utils/urls';
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
-  import LookerLink from '../../../components/LookerLink.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
 
   export let showLinks = true;
