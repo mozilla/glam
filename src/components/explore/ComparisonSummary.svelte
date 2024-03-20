@@ -44,7 +44,7 @@
         rightValue,
         percentageChange:
           leftValue && rightValue
-            ? percentChange(hovValue, refValue)
+            ? percentChange(refValue, hovValue)
             : undefined,
       };
     });
