@@ -131,6 +131,10 @@ class Base(Core):
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
             "LOCATION": "probe-labels",
         },
+        "pg": {
+            "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+            "LOCATION": "django_cache",
+        },
     }
 
     LOGGING_USE_JSON = values.BooleanValue(False)
