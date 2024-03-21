@@ -79,7 +79,7 @@ mccabe==0.6.1
     # via flake8
 mypy-extensions==0.4.3
     # via black
-orjson==3.6.0
+orjson==3.9.15
     # via drf-orjson-renderer
 packaging==21.0
     # via
