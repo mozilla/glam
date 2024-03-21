@@ -131,8 +131,7 @@ jobs:
             printf
             '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n'
             "$CIRCLE_SHA1" "$CIRCLE_TAG" "$CIRCLE_PROJECT_USERNAME"
-            "$CIRCLE_PROJECT_REPONAME" "$CIRCLE_BUILD_URL"
-            > version.json
+            "$CIRCLE_PROJECT_REPONAME" "$CIRCLE_BUILD_URL" > version.json
       - run:
           name: Output version.json
           command: cat version.json
@@ -144,7 +143,7 @@ jobs:
           tag: $CIRCLE_TAG
           registry-url: gcr.io
       - gcp-gcr/push-image:
-          image:  auth0-proxy
+          image: auth0-proxy
           registry-url: gcr.io
           tag: $CIRCLE_TAG
           google-project-id: GOOGLE_PROJECT_ID
