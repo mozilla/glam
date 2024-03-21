@@ -707,7 +707,11 @@ def _get_fx_most_used_probes(days=30, limit=9):
 
     result = UsageInstrumentation.objects.filter(*dimensions)
     most_used_probes = (
-        result.values("probe_name").annotate(total=Count("*")).order_by("-total",)
+        result.values("probe_name")
+        .annotate(total=Count("*"))
+        .order_by(
+            "-total",
+        )
     )
     probe_names = [f'"{p["probe_name"]}"' for p in most_used_probes]
 
@@ -767,7 +771,7 @@ def _get_fx_most_used_probes(days=30, limit=9):
 @cache_page(60 * 60 * 24, cache="pg")
 def random_probes(request):
 
-    n = request.GET.get("n")
+    n = request.GET.get("n", 3)
     try:
         n = int(n)
     except ValueError:
