@@ -771,7 +771,7 @@ def _get_fx_most_used_probes(days=30, limit=9):
 @cache_page(60 * 60 * 24, cache="pg")
 def random_probes(request):
 
-    n = request.GET.get("n")
+    n = request.GET.get("n", 3)
     try:
         n = int(n)
     except ValueError:
