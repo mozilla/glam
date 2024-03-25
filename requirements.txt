@@ -19,9 +19,7 @@ charset-normalizer==2.0.4
 click==8.1.2
     # via black
 coverage[toml]==5.5
-    # via
-    #   coverage
-    #   pytest-cov
+    # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
 django==3.1.13
@@ -31,7 +29,7 @@ django==3.1.13
     #   drf-orjson-renderer
 django-configurations==2.2
     # via -r requirements.in
-djangorestframework==3.12.4
+djangorestframework==3.15.1
     # via
     #   -r requirements.in
     #   drf-orjson-renderer
