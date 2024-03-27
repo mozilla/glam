@@ -1,5 +1,6 @@
 <script>
   import { Button, ButtonGroup } from '@graph-paper/button';
+  import SliderSwitch from '../components/controls/SliderSwitch.svelte'
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
@@ -38,18 +39,17 @@
   }
 
   const makeCumulative = function(density) {
-    let values = density.map((d) => d[valueSelector])
-    console.log(values)
-    let cumulative = []
-    values.reduce((prev, curr, i) => cumulative[i] = Math.min(roundVal(prev + curr), 1), 0)
-    let cumulDensity = []
-    cumulative.map((val, idx) => cumulDensity[idx] = {"bin": density[idx]["bin"], "value": val})
-    return cumulDensity
+    let values = density.map((d) => d[valueSelector]);
+    let cumulative = [];
+    values.reduce((prev, curr, i) => cumulative[i] = Math.min(roundVal(prev + curr), 1), 0);
+    let cumulDensity = [];
+    cumulative.map((val, idx) => cumulDensity[idx] = {"bin": density[idx]["bin"], "value": val});
+    return cumulDensity;
   }
 
   const buildDensity = function(chartData) {
-    let density = normalized ? chartData[densityMetricType] : convertValueToPercentage(chartData[densityMetricType])
-    return cumulative ? makeCumulative(density) : density
+    let density = normalized ? chartData[densityMetricType] : convertValueToPercentage(chartData[densityMetricType]);
+    return cumulative ? makeCumulative(density) : density;
   }
 </script>
 
@@ -108,18 +108,7 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          <ButtonGroup>
-            <Button
-              tooltip="Toggle Cumulative"
-              on:click={() => {
-                cumulative = !cumulative;
-              }}
-              label="Toggle Cumulative"
-              toggled={cumulative}
-              level="medium"
-              compact
-            />
-          </ButtonGroup>
+          <SliderSwitch bind:checked={cumulative} label="Cumulative mode: " design="slider" />
         </div>
         <div class="chart-fixed">
           <p>Reference</p>
