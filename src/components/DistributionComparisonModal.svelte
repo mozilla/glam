@@ -33,10 +33,15 @@
     return Math.min(topTick, 1);
   };
 
+  const roundVal = function(val) {
+    return Math.round(val * 10000)/10000;
+  }
+
   const makeCumulative = function(density) {
     let values = density.map((d) => d[valueSelector])
+    console.log(values)
     let cumulative = []
-    values.reduce((prev, curr, i) => cumulative[i] = Math.min(prev + curr, 1), values[0])
+    values.reduce((prev, curr, i) => cumulative[i] = Math.min(roundVal(prev + curr), 1), 0)
     let cumulDensity = []
     cumulative.map((val, idx) => cumulDensity[idx] = {"bin": density[idx]["bin"], "value": val})
     return cumulDensity
