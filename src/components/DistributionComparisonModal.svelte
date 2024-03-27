@@ -1,5 +1,5 @@
 <script>
-  import SliderSwitch from './controls/SliderSwitch.svelte'
+  import SliderSwitch from './controls/SliderSwitch.svelte';
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
@@ -33,21 +33,27 @@
     return Math.min(topTick, 1);
   };
 
-  const roundVal = function(val) {
-    return Math.round(val * 10000)/10000;
-  }
+  const roundVal = function (val) {
+    return Math.round(val * 10000) / 10000;
+  };
 
-  const makeCumulative = function(density) {
+  const makeCumulative = function (density) {
     let values = density.map((d) => d[valueSelector]);
-    let cumulVals = []
-    values.reduce((acc, curr) => { let sum = Math.min(roundVal(acc + curr), 1); cumulVals.push(sum); return sum }, 0);
-    return cumulVals.map((val, idx) => ({"bin": density[idx].bin, "value": val}));;
-  }
+    let cumulVals = [];
+    values.reduce((acc, curr) => {
+      let sum = Math.min(roundVal(acc + curr), 1);
+      cumulVals.push(sum);
+      return sum;
+    }, 0);
+    return cumulVals.map((val, idx) => ({ bin: density[idx].bin, value: val }));
+  };
 
-  const buildDensity = function(chartData) {
-    let density = normalized ? chartData[densityMetricType] : convertValueToPercentage(chartData[densityMetricType]);
+  const buildDensity = function (chartData) {
+    let density = normalized
+      ? chartData[densityMetricType]
+      : convertValueToPercentage(chartData[densityMetricType]);
     return cumulative ? makeCumulative(density) : density;
-  }
+  };
 </script>
 
 <style>
@@ -105,7 +111,11 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          <SliderSwitch bind:checked={cumulative} label="Cumulative mode: " design="slider" />
+          <SliderSwitch
+            bind:checked={cumulative}
+            label="Cumulative mode: "
+            design="slider"
+          />
         </div>
         <div class="chart-fixed">
           <p>Reference</p>
