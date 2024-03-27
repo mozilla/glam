@@ -1,6 +1,5 @@
 <script>
-  import { Button, ButtonGroup } from '@graph-paper/button';
-  import SliderSwitch from '../components/controls/SliderSwitch.svelte'
+  import SliderSwitch from './controls/SliderSwitch.svelte'
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
@@ -40,11 +39,9 @@
 
   const makeCumulative = function(density) {
     let values = density.map((d) => d[valueSelector]);
-    let cumulative = [];
-    values.reduce((prev, curr, i) => cumulative[i] = Math.min(roundVal(prev + curr), 1), 0);
-    let cumulDensity = [];
-    cumulative.map((val, idx) => cumulDensity[idx] = {"bin": density[idx]["bin"], "value": val});
-    return cumulDensity;
+    let cumulVals = []
+    values.reduce((acc, curr) => { let sum = Math.min(roundVal(acc + curr), 1); cumulVals.push(sum); return sum }, 0);
+    return cumulVals.map((val, idx) => ({"bin": density[idx].bin, "value": val}));;
   }
 
   const buildDensity = function(chartData) {

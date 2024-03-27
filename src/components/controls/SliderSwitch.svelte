@@ -1,5 +1,4 @@
 <script>
-
   export let label;
   export let fontSize = 16;
   export let value = 'on';
@@ -10,17 +9,14 @@
   const uniqueID = Math.floor(Math.random() * 100)
 
   function handleClick(event){
-      const target = event.target
+      const {target} = event
 
       const state = target.getAttribute('aria-checked')
 
-      checked = state === 'true' ? false : true
+      checked = state !== 'true'
 
       value = checked === true ? 'on' : 'off'
   }
-
-  const slugify = (str = "") =>
-  str.toLowerCase().replace(/ /g, "-").replace(/\./g, "");
 
 </script>
 <div class="s s--slider" style="font-size:{fontSize}px">
