@@ -1,4 +1,5 @@
 <script>
+  import SliderSwitch from './controls/SliderSwitch.svelte';
   import Modal from './Modal.svelte';
   import DistributionComparisonGraph from './explore/DistributionComparisonGraph.svelte';
   import DistributionChart from './explore/DistributionChart.svelte';
@@ -12,6 +13,7 @@
   export let distViewButtonId;
 
   let normalized = $store.productDimensions.normalizationType === 'normalized';
+  let cumulative = false;
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -28,7 +30,29 @@
     let maxValPercent = Math.round(maxValue * 100);
     let topTick =
       (maxValPercent + (tickIncrement - (maxValPercent % tickIncrement))) / 100;
-    return topTick;
+    return Math.min(topTick, 1);
+  };
+
+  const roundVal = function (val) {
+    return Math.round(val * 10000) / 10000;
+  };
+
+  const makeCumulative = function (density) {
+    let values = density.map((d) => d[valueSelector]);
+    let cumulVals = [];
+    values.reduce((acc, curr) => {
+      let sum = Math.min(roundVal(acc + curr), 1);
+      cumulVals.push(sum);
+      return sum;
+    }, 0);
+    return cumulVals.map((val, idx) => ({ bin: density[idx].bin, value: val }));
+  };
+
+  const buildDensity = function (chartData) {
+    let density = normalized
+      ? chartData[densityMetricType]
+      : convertValueToPercentage(chartData[densityMetricType]);
+    return cumulative ? makeCumulative(density) : density;
   };
 </script>
 
@@ -72,13 +96,9 @@
 <svelte:window bind:innerWidth bind:innerHeight />
 
 {#if topChartData && bottomChartData}
-  {@const topChartDensity = normalized
-    ? topChartData[densityMetricType]
-    : convertValueToPercentage(topChartData[densityMetricType])}
+  {@const topChartDensity = buildDensity(topChartData)}
   {@const topChartSampleCount = topChartData.sample_count}
-  {@const bottomChartDensity = normalized
-    ? bottomChartData[densityMetricType]
-    : convertValueToPercentage(bottomChartData[densityMetricType])}
+  {@const bottomChartDensity = buildDensity(bottomChartData)}
   {@const bottomChartSampleCount = bottomChartData.sample_count}
   {@const topTick = getTopTick(bottomChartDensity, topChartDensity)}
   <Modal>
@@ -90,58 +110,69 @@
     <div slot="title">Distribution comparison - {$store.probe.name}</div>
     <div class="outer-flex">
       <div class="charts">
+        <div style="display: flex; padding: 1em;">
+          <SliderSwitch
+            bind:checked={cumulative}
+            label="Cumulative mode: "
+            design="slider"
+          />
+        </div>
         <div class="chart-fixed">
           <p>Reference</p>
-          {#key innerHeight}
-            {#key innerWidth}
-              <DistributionComparisonGraph
-                {innerHeight}
-                {innerWidth}
-                density={topChartDensity}
-                {topTick}
-                {tickIncrement}
-              >
-                <g slot="glam-body">
-                  {#if bottomChartData}
-                    <DistributionChart
-                      {innerHeight}
-                      {innerWidth}
-                      density={topChartDensity}
-                      {topTick}
-                      {tickIncrement}
-                      sampleCount={topChartSampleCount}
-                      tooltipLocation="bottom"
-                    />
-                  {/if}
-                </g>
-              </DistributionComparisonGraph>
+          {#key cumulative}
+            {#key innerHeight}
+              {#key innerWidth}
+                <DistributionComparisonGraph
+                  {innerHeight}
+                  {innerWidth}
+                  density={topChartDensity}
+                  {topTick}
+                  {tickIncrement}
+                >
+                  <g slot="glam-body">
+                    {#if bottomChartData}
+                      <DistributionChart
+                        {innerHeight}
+                        {innerWidth}
+                        density={topChartDensity}
+                        {topTick}
+                        {tickIncrement}
+                        sampleCount={topChartSampleCount}
+                        tooltipLocation="bottom"
+                      />
+                    {/if}
+                  </g>
+                </DistributionComparisonGraph>
+              {/key}
             {/key}
           {/key}
         </div>
         <div class="chart-fixed">
           <p>Hovered</p>
-          {#key innerHeight}
-            {#key innerWidth}
-              <DistributionComparisonGraph
-                {innerHeight}
-                {innerWidth}
-                density={bottomChartDensity}
-                {topTick}
-                {tickIncrement}
-              >
-                <g slot="glam-body">
-                  {#if bottomChartData}
-                    <DistributionChart
-                      {innerHeight}
-                      {innerWidth}
-                      density={bottomChartDensity}
-                      {topTick}
-                      sampleCount={bottomChartSampleCount}
-                      tooltipLocation="top"
-                    />
-                  {/if}
-                </g>
-              </DistributionComparisonGraph>
+          {#key cumulative}
+            {#key innerHeight}
+              {#key innerWidth}
+                <DistributionComparisonGraph
+                  {innerHeight}
+                  {innerWidth}
+                  density={bottomChartDensity}
+                  {topTick}
+                  {tickIncrement}
+                >
+                  <g slot="glam-body">
+                    {#if bottomChartData}
+                      <DistributionChart
+                        {innerHeight}
+                        {innerWidth}
+                        density={bottomChartDensity}
+                        {topTick}
+                        sampleCount={bottomChartSampleCount}
+                        tooltipLocation="top"
+                      />
+                    {/if}
+                  </g>
+                </DistributionComparisonGraph>
+              {/key}
             {/key}
           {/key}
         </div>
