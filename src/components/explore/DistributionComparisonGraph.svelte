@@ -3,6 +3,7 @@
   import { quantile } from 'd3-array';
   import DataGraphic from '../datagraphic/DataGraphic.svelte';
   import { distributionComparisonGraph } from '../../utils/constants';
+  import { store } from '../../state/store';
 
   export let innerHeight;
   export let innerWidth;
@@ -11,15 +12,19 @@
   export let key = Math.random().toString(36).substring(7);
 
   export let density = [];
+
+  let probeKind = $store.probe.details.kind;
+  let categoricalProbeLabels = probeKind !== "categorical" ? [] : $store.probe.details.labels.filter((l) => $store.activeBuckets.includes(l));
+  let bins = probeKind === "categorical" ? categoricalProbeLabels : density.map((d) => d.bin);
+
   export let xTickFormatter = (t) =>
-    Intl.NumberFormat('en', { notation: 'compact' }).format(t);
+    probeKind !== 'categorical' ? Intl.NumberFormat('en', { notation: 'compact' }).format(t) : t;
   export let yTickFormatter = (t) =>
     Intl.NumberFormat('en-US', {
       style: 'percent',
       maximumFractionDigits: 2,
     }).format(t);
 
-  let bins = density.map((d) => d.bin);
 
   const getXTicks = (data) => {
     // for probes with too many data points, we only want to get

@@ -13,6 +13,8 @@
   export let distViewButtonId;
 
   let normalized = $store.productDimensions.normalizationType === 'normalized';
+  let probeType = $store.probe.type;
+  let probeKind = $store.probe.details.kind;
   let cumulative = false;
 
   let valueSelector = 'value';
@@ -49,9 +51,10 @@
   };
 
   const buildDensity = function (chartData) {
-    let density = normalized
-      ? chartData[densityMetricType]
-      : convertValueToPercentage(chartData[densityMetricType]);
+    let density = chartData[densityMetricType]
+    if(probeType === "scalar" || !normalized) {
+      density = convertValueToPercentage(chartData[densityMetricType]);
+    }
     return cumulative ? makeCumulative(density) : density;
   };
 </script>
@@ -111,11 +114,13 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          <SliderSwitch
-            bind:checked={cumulative}
-            label="Cumulative mode: "
-            design="slider"
-          />
+          {#if probeKind !== "categorical"}
+            <SliderSwitch
+              bind:checked={cumulative}
+              label="Cumulative mode: "
+              design="slider"
+            />
+          {/if}
         </div>
         <div class="chart-fixed">
           <p>Reference</p>

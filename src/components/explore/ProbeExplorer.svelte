@@ -333,6 +333,7 @@
       topChartData={distViewTopChartData}
       bottomChartData={distViewBottomChartData}
       {distViewButtonId}
+      keySet={activeBins}
     >
       <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
         <ComparisonSummary
