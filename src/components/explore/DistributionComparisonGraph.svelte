@@ -10,12 +10,12 @@
   export let topTick;
   export let tickIncrement;
   export let key = Math.random().toString(36).substring(7);
+  export let activeCategoricalProbeLabels;
 
   export let density = [];
 
   let probeKind = $store.probe.details.kind;
-  let categoricalProbeLabels = probeKind !== "categorical" ? [] : $store.probe.details.labels.filter((l) => $store.activeBuckets.includes(l));
-  let bins = probeKind === "categorical" ? categoricalProbeLabels : density.map((d) => d.bin);
+  let bins = probeKind === "categorical" ? activeCategoricalProbeLabels : density.map((d) => d.bin);
 
   export let xTickFormatter = (t) =>
     probeKind !== 'categorical' ? Intl.NumberFormat('en', { notation: 'compact' }).format(t) : t;

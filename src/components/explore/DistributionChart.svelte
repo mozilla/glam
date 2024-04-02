@@ -11,6 +11,7 @@
   export let topTick;
   export let sampleCount;
   export let tooltipLocation;
+  export let activeCategoricalProbeLabels;
 
   let height = (innerHeight * distributionComparisonGraph.heightMult) / 2;
   let color = 'var(--digital-blue-350)';
@@ -23,28 +24,26 @@
   let maxHeight = height - distributionComparisonGraph.top;
   let minHeight = distributionComparisonGraph.bottom;
   let probeKind = $store.probe.details.kind;
-  let categoricalProbeLabels = probeKind !== "categorical" ? [] : $store.probe.details.labels.filter((l) => $store.activeBuckets.includes(l));
   let formatPercent = (t) =>
     Intl.NumberFormat('en-US', {
       style: 'percent',
       maximumFractionDigits: 2,
     }).format(t);
-  let activeDensity = probeKind !== "categorical" ? density : density.filter((v, i) => { if($store.activeBuckets.includes(categoricalProbeLabels[i])) return v} )
 
   $: y = scaleLinear().domain([0, topTick]).range([minHeight, maxHeight]);
 
-  const bucketWidth = (width * 1.0101) / activeDensity.length;
+  const bucketWidth = (width * 1.0101) / density.length;
   const spaceBetweenBars = bucketWidth / 10;
   const barOffsetX = spaceBetweenBars / 2;
   const barWidth = bucketWidth - spaceBetweenBars;
 
   const buildBucketTxt = (index, bin) => {
     if(probeKind === "categorical") {
-      return categoricalProbeLabels[index]
+      return activeCategoricalProbeLabels[index]
     } else {
-      return index === activeDensity.length - 1
+      return index === density.length - 1
         ? `sample value ≥ ${bin}`
-        : `${bin} ≤ sample value ≤ ${activeDensity[index + 1][binSelector]}`
+        : `${bin} ≤ sample value ≤ ${density[index + 1][binSelector]}`
     }
   }
 </script>
@@ -61,7 +60,7 @@
 </style>
 
 <g style="fill: {color};">
-  {#each activeDensity as { bin, value }, i}
+  {#each density as { bin, value }, i}
     <rect
       stroke={color}
       x={offsetX + i * bucketWidth + barOffsetX}
@@ -73,7 +72,7 @@
 </g>
 
 <g style="fill: {'#fafafa'};">
-  {#each activeDensity as { bin, value }, i}
+  {#each density as { bin, value }, i}
     {@const bucketTxt = buildBucketTxt(i, bin)}
     {@const valTxt = `  |  ${formatPercent(value)} of samples (${formatCompact(
       sampleCount * value

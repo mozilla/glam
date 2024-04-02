@@ -16,6 +16,7 @@
   let probeType = $store.probe.type;
   let probeKind = $store.probe.details.kind;
   let cumulative = false;
+  let activeCategoricalProbeLabels = probeKind === "categorical" ? $store.probe.details.labels.filter((l) => $store.activeBuckets.includes(l)) : [];
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -49,9 +50,12 @@
     }, 0);
     return cumulVals.map((val, idx) => ({ bin: density[idx].bin, value: val }));
   };
-
   const buildDensity = function (chartData) {
     let density = chartData[densityMetricType]
+    if(probeKind === "categorical") {
+      let categoricalProbeLabels = $store.probe.details.labels;
+      density = density.filter((v, i) => { if($store.activeBuckets.includes(categoricalProbeLabels[i])) return v})
+    }
     if(probeType === "scalar" || !normalized) {
       density = convertValueToPercentage(chartData[densityMetricType]);
     }
@@ -133,6 +137,7 @@
                   density={topChartDensity}
                   {topTick}
                   {tickIncrement}
+                  {activeCategoricalProbeLabels}
                 >
                   <g slot="glam-body">
                     {#if bottomChartData}
@@ -144,6 +149,7 @@
                         {tickIncrement}
                         sampleCount={topChartSampleCount}
                         tooltipLocation="bottom"
+                        {activeCategoricalProbeLabels}
                       />
                     {/if}
                   </g>
@@ -163,6 +169,7 @@
                   density={bottomChartDensity}
                   {topTick}
                   {tickIncrement}
+                  {activeCategoricalProbeLabels}
                 >
                   <g slot="glam-body">
                     {#if bottomChartData}
@@ -173,6 +180,7 @@
                         {topTick}
                         sampleCount={bottomChartSampleCount}
                         tooltipLocation="top"
+                        {activeCategoricalProbeLabels}
                       />
                     {/if}
                   </g>
