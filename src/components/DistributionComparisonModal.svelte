@@ -13,7 +13,15 @@
   export let distViewButtonId;
 
   let normalized = $store.productDimensions.normalizationType === 'normalized';
+  let probeType = $store.probe.type;
+  let probeKind = $store.probe.details.kind;
   let cumulative = false;
+  let activeCategoricalProbeLabels =
+    probeKind === 'categorical'
+      ? $store.probe.details.labels.filter((l) =>
+          $store.activeBuckets.includes(l)
+        )
+      : [];
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -49,9 +57,16 @@
   };
 
   const buildDensity = function (chartData) {
-    let density = normalized
-      ? chartData[densityMetricType]
-      : convertValueToPercentage(chartData[densityMetricType]);
+    let density = chartData[densityMetricType];
+    if (probeKind === 'categorical') {
+      let categoricalProbeLabels = $store.probe.details.labels;
+      density = density.filter((v, i) =>
+        $store.activeBuckets.includes(categoricalProbeLabels[i])
+      );
+    }
+    if (probeType === 'scalar' || !normalized) {
+      density = convertValueToPercentage(chartData[densityMetricType]);
+    }
     return cumulative ? makeCumulative(density) : density;
   };
 </script>
@@ -111,11 +126,13 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          <SliderSwitch
-            bind:checked={cumulative}
-            label="Cumulative mode: "
-            design="slider"
-          />
+          {#if probeKind !== 'categorical'}
+            <SliderSwitch
+              bind:checked={cumulative}
+              label="Cumulative mode: "
+              design="slider"
+            />
+          {/if}
         </div>
         <div class="chart-fixed">
           <p>Reference</p>
@@ -128,6 +145,7 @@
                   density={topChartDensity}
                   {topTick}
                   {tickIncrement}
+                  {activeCategoricalProbeLabels}
                 >
                   <g slot="glam-body">
                     {#if bottomChartData}
@@ -139,6 +157,7 @@
                         {tickIncrement}
                         sampleCount={topChartSampleCount}
                         tooltipLocation="bottom"
+                        {activeCategoricalProbeLabels}
                       />
                     {/if}
                   </g>
@@ -158,6 +177,7 @@
                   density={bottomChartDensity}
                   {topTick}
                   {tickIncrement}
+                  {activeCategoricalProbeLabels}
                 >
                   <g slot="glam-body">
                     {#if bottomChartData}
@@ -168,6 +188,7 @@
                         {topTick}
                         sampleCount={bottomChartSampleCount}
                         tooltipLocation="top"
+                        {activeCategoricalProbeLabels}
                       />
                     {/if}
                   </g>

@@ -3,6 +3,7 @@
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import { distributionComparisonGraph } from '../../utils/constants';
   import { formatCompact } from '../../utils/formatters';
+  import { store } from '../../state/store';
 
   export let innerHeight;
   export let innerWidth;
@@ -10,6 +11,7 @@
   export let topTick;
   export let sampleCount;
   export let tooltipLocation;
+  export let activeCategoricalProbeLabels;
 
   let height = (innerHeight * distributionComparisonGraph.heightMult) / 2;
   let color = 'var(--digital-blue-350)';
@@ -21,6 +23,7 @@
     distributionComparisonGraph.left;
   let maxHeight = height - distributionComparisonGraph.top;
   let minHeight = distributionComparisonGraph.bottom;
+  let probeKind = $store.probe.details.kind;
   let formatPercent = (t) =>
     Intl.NumberFormat('en-US', {
       style: 'percent',
@@ -33,6 +36,15 @@
   const spaceBetweenBars = bucketWidth / 10;
   const barOffsetX = spaceBetweenBars / 2;
   const barWidth = bucketWidth - spaceBetweenBars;
+
+  const buildBucketTxt = (index, bin) => {
+    if (probeKind === 'categorical') {
+      return activeCategoricalProbeLabels[index];
+    }
+    return index === density.length - 1
+      ? `sample value ≥ ${bin}`
+      : `${bin} ≤ sample value ≤ ${density[index + 1][binSelector]}`;
+  };
 </script>
 
 <style>
@@ -60,10 +72,7 @@
 
 <g style="fill: {'#fafafa'};">
   {#each density as { bin, value }, i}
-    {@const bucketTxt =
-      i === density.length - 1
-        ? `sample value ≥ ${bin}`
-        : `${bin} ≤ sample value ≤ ${density[i + 1][binSelector]}`}
+    {@const bucketTxt = buildBucketTxt(i, bin)}
     {@const valTxt = `  |  ${formatPercent(value)} of samples (${formatCompact(
       sampleCount * value
     )})`}
