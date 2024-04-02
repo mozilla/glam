@@ -38,14 +38,13 @@
   const barWidth = bucketWidth - spaceBetweenBars;
 
   const buildBucketTxt = (index, bin) => {
-    if(probeKind === "categorical") {
-      return activeCategoricalProbeLabels[index]
-    } else {
-      return index === density.length - 1
-        ? `sample value ≥ ${bin}`
-        : `${bin} ≤ sample value ≤ ${density[index + 1][binSelector]}`
+    if (probeKind === 'categorical') {
+      return activeCategoricalProbeLabels[index];
     }
-  }
+    return index === density.length - 1
+      ? `sample value ≥ ${bin}`
+      : `${bin} ≤ sample value ≤ ${density[index + 1][binSelector]}`;
+  };
 </script>
 
 <style>

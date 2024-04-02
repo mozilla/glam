@@ -16,7 +16,12 @@
   let probeType = $store.probe.type;
   let probeKind = $store.probe.details.kind;
   let cumulative = false;
-  let activeCategoricalProbeLabels = probeKind === "categorical" ? $store.probe.details.labels.filter((l) => $store.activeBuckets.includes(l)) : [];
+  let activeCategoricalProbeLabels =
+    probeKind === 'categorical'
+      ? $store.probe.details.labels.filter((l) =>
+          $store.activeBuckets.includes(l)
+        )
+      : [];
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -50,13 +55,16 @@
     }, 0);
     return cumulVals.map((val, idx) => ({ bin: density[idx].bin, value: val }));
   };
+
   const buildDensity = function (chartData) {
-    let density = chartData[densityMetricType]
-    if(probeKind === "categorical") {
+    let density = chartData[densityMetricType];
+    if (probeKind === 'categorical') {
       let categoricalProbeLabels = $store.probe.details.labels;
-      density = density.filter((v, i) => { if($store.activeBuckets.includes(categoricalProbeLabels[i])) return v})
+      density = density.filter((v, i) =>
+        $store.activeBuckets.includes(categoricalProbeLabels[i])
+      );
     }
-    if(probeType === "scalar" || !normalized) {
+    if (probeType === 'scalar' || !normalized) {
       density = convertValueToPercentage(chartData[densityMetricType]);
     }
     return cumulative ? makeCumulative(density) : density;
@@ -118,7 +126,7 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          {#if probeKind !== "categorical"}
+          {#if probeKind !== 'categorical'}
             <SliderSwitch
               bind:checked={cumulative}
               label="Cumulative mode: "
