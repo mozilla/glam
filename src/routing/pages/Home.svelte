@@ -7,14 +7,15 @@
   import QuantileSmallMultiple from '../../components/home/Quantile.svelte';
   import ProportionSmallMultiple from '../../components/home/Proportion.svelte';
   import RandomProbePlaceholder from '../../components/home/RandomProbePlaceholder.svelte';
+  import CookieBanner from '../../components/CookieBanner.svelte';
   import { store } from '../../state/store';
   import { getRandomProbes } from '../../state/api';
 
   // TODO: add this to the upcoming config.js
   const NUMBER_OF_RANDOM_PROBES = 9;
-  let randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+  let randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES);
   function refresh() {
-    randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES, 'parent');
+    randomProbes = getRandomProbes(NUMBER_OF_RANDOM_PROBES);
   }
   // FIXME: the search product must be set to firefox for now, since
   // the random probes don't quite work with non-firefox probes.
@@ -110,6 +111,7 @@
 </style>
 
 <div class="graphic-body__content">
+  <CookieBanner />
   <div>
     <MarketingBlock />
     <div class="random-probe-view">

@@ -16,9 +16,9 @@
     "npm": ">=7.0.0"
   },
   "devDependencies": {
-    "@babel/core": "7.23.9",
+    "@babel/core": "7.24.4",
     "@babel/plugin-transform-runtime": "7.23.9",
-    "@babel/preset-env": "7.23.9",
+    "@babel/preset-env": "7.24.4",
     "@graph-paper/button": "0.0.0-alpha.15",
     "@graph-paper/core": "0.0.0-alpha.15",
     "@graph-paper/datagraphic": "0.0.0-alpha.15",
@@ -40,7 +40,7 @@
     "eslint-config-prettier": "8.9.0",
     "eslint-import-resolver-alias": "1.1.2",
     "eslint-plugin-import": "2.28.0",
-    "eslint-plugin-jest": "27.9.0",
+    "eslint-plugin-jest": "28.2.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-svelte3": "3.4.1",
     "immer": "9.0.5",
@@ -55,16 +55,16 @@
     "rollup-plugin-css-only": "4.3.0",
     "rollup-plugin-livereload": "2.0.5",
     "rollup-plugin-string": "^3.0.0",
-    "rollup-plugin-svelte": "7.1.6",
+    "rollup-plugin-svelte": "7.2.0",
     "rollup-plugin-terser": "7.0.2",
     "svelte": "3.59.2",
-    "svelte-loader": "3.1.4"
+    "svelte-loader": "3.2.0"
   },
   "dependencies": {
     "d3-array": "3.2.4",
     "d3-format": "2.0.0",
     "d3-scale": "4.0.2",
-    "d3-scale-chromatic": "3.0.0",
+    "d3-scale-chromatic": "3.1.0",
     "d3-shape": "3.2.0",
     "d3-time-format": "3.0.0",
     "page": "1.11.6"

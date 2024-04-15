@@ -333,6 +333,7 @@
       topChartData={distViewTopChartData}
       bottomChartData={distViewBottomChartData}
       {distViewButtonId}
+      keySet={activeBins}
     >
       <div slot="comparisonSummary" class="dist-comp-percentile-tbl">
         <ComparisonSummary
@@ -376,9 +377,12 @@
             >.
           </p>
           <p class="detail-title">
-            Please reach out in
-            <a href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a> if you
-            need more help.
+            Please reach out in the <a
+              href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
+            >
+            channel on Mozilla's internal Slack, or
+            <a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on
+            Mozilla's Matrix if you need more help.
           </p>
         </div>
       </div>

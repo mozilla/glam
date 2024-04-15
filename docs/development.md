@@ -32,8 +32,12 @@ container with `make shell`:
 python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
-Reach out to someone on the #glam Slack channel for the values of the
-`GOOGLE_CLOUD_PROJECT` and `OIDC_CLIENT_ID` variables.
+Reach out to someone on the <a
+        href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
+      > channel on Mozilla's internal Slack, or
+<a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on Mozilla's
+Matrix for the values of the `GOOGLE_CLOUD_PROJECT` and `OIDC_CLIENT_ID`
+variables.
 
 ## Initial Setup
 
@@ -54,10 +58,30 @@ To gather the probe data that populates the probe API, run the following:
 ./manage.py import_probes
 ```
 
-Once you start GLAM locally it will read data directly from BigQuery views in the moz-fx-data-shared-prod GCP project.
-If you need proper authorization, please ask in the #glam Slack channel.
+The next step requires viewer permissions in the non-prod GCP project, please
+reach out to someone on the <a
+        href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
+      > channel on Mozilla's internal Slack, or
+<a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on Mozilla's
+Matrix if you need the proper authorization. First, log in to GCP or
+reauthenticate via
+[gcloud](https://cloud.google.com/sdk/gcloud/reference/auth/application-default/login)
+(outside of the Docker container):
 
-First, log in to GCP (outside of the Docker container) and refresh the application default credentials by running:
+```
+gcloud auth application-default login
+```
+
+Then, populate the aggregation tables with data from desktop Firefox:
+
+```bash
+./manage.py import_desktop_aggs <CHANNEL>
+```
+
+where `CHANNEL` is one of `nightly`, `beta`, or `release`.
+
+You can also import data from a custom bucket using the bucket argument.
+Remember to set the project accordingly:
 
 ```
 gcloud auth login --update-adc

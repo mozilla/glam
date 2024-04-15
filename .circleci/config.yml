@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  gcp-gcr: circleci/gcp-gcr@0.16.2
+
 jobs:
   build:
     docker:
@@ -114,6 +117,50 @@ jobs:
               docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
             fi
 
+  proxy-build-and-publish:
+    executor: gcp-gcr/default
+    environment:
+      GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
+    steps:
+      - checkout
+      - gcp-gcr/gcr-auth
+
+      - run:
+          name: Generate build version.json
+          command: >
+            printf
+            '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n'
+            "$CIRCLE_SHA1" "$CIRCLE_TAG" "$CIRCLE_PROJECT_USERNAME"
+            "$CIRCLE_PROJECT_REPONAME" "$CIRCLE_BUILD_URL" > version.json
+      - run:
+          name: Output version.json
+          command: cat version.json
+      - gcp-gcr/build-image:
+          workspace-root: dockerfiles/proxy
+          path: dockerfiles/proxy
+          docker-context: dockerfiles/proxy
+          image: auth0-proxy
+          tag: $CIRCLE_TAG
+          registry-url: gcr.io
+      - gcp-gcr/push-image:
+          image: auth0-proxy
+          registry-url: gcr.io
+          tag: $CIRCLE_TAG
+          google-project-id: GOOGLE_PROJECT_ID
+
+  proxy-rollback-auth:
+    executor: gcp-gcr/default
+    environment:
+      GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
+    steps:
+      - gcp-gcr/gcr-auth
+      - gcp-gcr/tag-image:
+          image: auth0-proxy
+          registry-url: gcr.io
+          source-tag: 0.0.4
+          target-tag: authproxy-dev
+          google-project-id: GOOGLE_PROJECT_ID
+
 workflows:
   version: 2
   build-test-deploy:
@@ -150,3 +197,20 @@ workflows:
               only: /^\d+\.\d+\.\d+$/
             branches:
               only: main
+  proxy-build-and-publish:
+    jobs:
+      - proxy-build-and-publish:
+          filters:
+            tags:
+              only: /^authproxy.*/
+            branches:
+              ignore: /.*/
+
+  proxy-rollback-auth:
+    jobs:
+      - proxy-rollback-auth:
+          filters:
+            tags:
+              only: /^rollback-authproxy.*/
+            branches:
+              ignore: /.*/

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import os
 import dateutil.parser
@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.cache import caches
 from django.db.models import Max, Q, Value, Count
 from django.db.models.functions import Concat
+from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
@@ -691,20 +692,96 @@ def _get_random_probes(data_source, random_percentage, limit):
     return aggs
 
 
-@api_view(["POST"])
+def _get_fx_most_used_probes(days=30, limit=9):
+    """Retrieve most used probes from BQ
+
+    :param int days: The amount of days to consider for recency
+    :param int limit: The max amount of probes to retrieve
+    """
+
+    dimensions = []
+    today = datetime.now()
+    min_date = today - timedelta(days=days)
+    dimensions.append(Q(timestamp__gte=min_date))
+    dimensions.append(Q(timestamp__lte=today))
+
+    result = UsageInstrumentation.objects.filter(*dimensions)
+    most_used_probes = (
+        result.values("probe_name")
+        .annotate(total=Count("*"))
+        .order_by(
+            "-total",
+        )
+    )
+    probe_names = [f'"{p["probe_name"]}"' for p in most_used_probes]
+
+    legacy_table_name = (
+        f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
+    )
+    fog_table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
+
+    query = f"""
+        WITH fx_metrics AS (
+            SELECT * EXCEPT(
+                    non_norm_histogram,
+                    non_norm_percentiles)
+                FROM
+                    {legacy_table_name}
+            UNION ALL (
+                SELECT * EXCEPT(
+                    app_id,
+                    channel,
+                    ping_type)
+                FROM
+                    {fog_table_name})),
+        selected_version AS (
+            SELECT
+                ARRAY_AGG(DISTINCT version
+                    ORDER BY version DESC
+                    LIMIT 2)[SAFE_OFFSET(1)] # Second most recent version has more data
+                AS v
+            FROM
+                fx_metrics
+            WHERE
+                version < 1000) # Avoids the 1024 version
+        SELECT
+            distinct metric,
+            ARRAY_AGG(histogram)[SAFE_OFFSET(0)] AS histogram
+        FROM
+            fx_metrics,
+            selected_version
+        WHERE
+            build_id='*'
+            AND os='*'
+            AND metric_key=''
+            AND metric_type NOT IN ('boolean',
+                'histogram-boolean',
+                'scalar')
+            AND metric IN ({", ".join(probe_names)})
+            AND version = selected_version.v
+        GROUP BY metric
+        LIMIT {limit}"""
+
+    with bigquery.Client() as client:
+        aggs = client.query(query)
+    return aggs
+
+
+@api_view(["GET"])
+@cache_page(60 * 60 * 24, cache="pg")
 def random_probes(request):
-    n = request.data.get("n", 3)
+
+    n = request.GET.get("n", 3)
     try:
         n = int(n)
     except ValueError:
         n = 3
-
-    data_source = "BigQuery"
-    random_percentage = 0.1
     if os.environ.get("DJANGO_CONFIGURATION") == "Test":
         random_percentage = 1.0
         data_source = "Postgres"
-    aggs = _get_random_probes(data_source, random_percentage, n)
+        aggs = _get_random_probes(data_source, random_percentage, n)
+    else:
+        aggs = _get_fx_most_used_probes(limit=n)
 
     probes = []
     for agg in aggs:
@@ -761,9 +838,7 @@ def usage(request):
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
-                response = response.annotate(total=Count("*")).order_by(
-                    "-total",
-                )
+                response = response.annotate(total=Count("*")).order_by("-total")
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)

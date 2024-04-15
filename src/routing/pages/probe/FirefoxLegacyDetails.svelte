@@ -6,7 +6,6 @@
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
   import Markdown from '../../../components/Markdown.svelte';
-  import LookerLink from '../../../components/LookerLink.svelte';
 
   export let showLinks = true;
 
@@ -245,7 +244,6 @@
           <Brackets size={16} />
           Export to JSON
         </button>
-        <LookerLink product="firefox" />
       </div>
     </div>
   {/if}
