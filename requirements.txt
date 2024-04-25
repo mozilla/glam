@@ -6,7 +6,7 @@
 #
 asgiref==3.4.1
     # via django
-black==22.3.0
+black==24.4.1
     # via -r requirements.in
 cachetools==4.2.2
     # via google-auth
@@ -90,8 +90,9 @@ mypy-extensions==0.4.3
     # via black
 orjson==3.9.15
     # via drf-orjson-renderer
-packaging==21.0
+packaging==24.0
     # via
+    #   black
     #   google-cloud-bigquery
     #   gunicorn
     #   pytest
@@ -120,8 +121,6 @@ pycparser==2.20
     # via cffi
 pyflakes==2.4.0
     # via flake8
-pyparsing==2.4.7
-    # via packaging
 pytest==8.1.1
     # via
     #   -r requirements.in
