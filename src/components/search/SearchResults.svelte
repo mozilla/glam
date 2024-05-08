@@ -47,6 +47,35 @@
     }
   };
 
+  const getProductDimensions = (result) => {
+    if (result.glean) {
+      // we have to manually set the product dimensions for FOG and Fenix to avoid them automatically picking up the Firefox legacy dimensions
+      store.setField('product', 'fog');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: '*',
+        ping_type: '*',
+        aggregationLevel: 'build_id',
+      });
+      return 'fog';
+    }
+    if ($store.searchProduct === 'fenix') {
+      store.setField('product', 'fenix');
+      store.setField('productDimensions', {
+        app_id: 'nightly',
+        os: 'Android',
+        ping_type: 'metrics',
+        aggregationLevel: 'build_id',
+      });
+      return 'fenix';
+    }
+    if ($store.searchProduct === 'firefox' && !result.glean) {
+      store.setField('product', 'firefox');
+      return 'firefox';
+    }
+    return undefined;
+  };
+
   const handleKeypress = (event) => {
     const { key } = event;
     if (results && searchIsActive && results.length >= 1) {
@@ -56,9 +85,11 @@
         searchIsActive = false;
 
         page.show(
-          `/${$store.searchProduct}/probe/${results[
+          `/${getProductDimensions(results[focusedItem])}/probe/${results[
             focusedItem
-          ].name.toLowerCase()}/explore?`
+          ].name
+            .toLowerCase()
+            .replaceAll('.', '_')}/explore${$currentQuery}`
         );
         focusedItem = 0; // reset focused element
       }
@@ -91,35 +122,6 @@
     x = bounds.left;
     width = bounds.width;
   }
-
-  const getProductDimensions = (result) => {
-    if (result.glean) {
-      // we have to manually set the product dimensions for FOG and Fenix to avoid them automatically picking up the Firefox legacy dimensions
-      store.setField('product', 'fog');
-      store.setField('productDimensions', {
-        app_id: 'nightly',
-        os: '*',
-        ping_type: '*',
-        aggregationLevel: 'build_id',
-      });
-      return 'fog';
-    }
-    if ($store.searchProduct === 'fenix') {
-      store.setField('product', 'fenix');
-      store.setField('productDimensions', {
-        app_id: 'nightly',
-        os: 'Android',
-        ping_type: 'metrics',
-        aggregationLevel: 'build_id',
-      });
-      return 'fenix';
-    }
-    if ($store.searchProduct === 'firefox' && !result.glean) {
-      store.setField('product', 'firefox');
-      return 'firefox';
-    }
-    return undefined;
-  };
 
   const onClick = () => {
     // clearing the ref field to avoid the probe explorer
