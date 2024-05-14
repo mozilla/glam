@@ -14,14 +14,14 @@
 
   let normalized = $store.productDimensions.normalizationType === 'normalized';
   let probeType = $store.probe.type;
-  let isCategoricalProbe = $store.probe.details && $store.probe.details.kind === 'categorical';
+  let isCategoricalProbe =
+    $store.probe.details && $store.probe.details.kind === 'categorical';
   let cumulative = false;
-  let activeCategoricalProbeLabels =
-    isCategoricalProbe
-      ? $store.probe.details.labels.filter((l) =>
-          $store.activeBuckets.includes(l)
-        )
-      : [];
+  let activeCategoricalProbeLabels = isCategoricalProbe
+    ? $store.probe.details.labels.filter((l) =>
+        $store.activeBuckets.includes(l)
+      )
+    : [];
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart

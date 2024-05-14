@@ -23,7 +23,8 @@
     distributionComparisonGraph.left;
   let maxHeight = height - distributionComparisonGraph.top;
   let minHeight = distributionComparisonGraph.bottom;
-  let isCategoricalProbe = $store.probe.details && $store.probe.details.kind === 'categorical';
+  let isCategoricalProbe =
+    $store.probe.details && $store.probe.details.kind === 'categorical';
   let formatPercent = (t) =>
     Intl.NumberFormat('en-US', {
       style: 'percent',

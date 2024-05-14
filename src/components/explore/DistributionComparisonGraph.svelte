@@ -14,11 +14,11 @@
 
   export let density = [];
 
-  let isCategoricalProbe = $store.probe.details && $store.probe.details.kind === 'categorical';
-  let bins =
-    isCategoricalProbe
-      ? activeCategoricalProbeLabels
-      : density.map((d) => d.bin);
+  let isCategoricalProbe =
+    $store.probe.details && $store.probe.details.kind === 'categorical';
+  let bins = isCategoricalProbe
+    ? activeCategoricalProbeLabels
+    : density.map((d) => d.bin);
 
   export let xTickFormatter = (t) =>
     !isCategoricalProbe
