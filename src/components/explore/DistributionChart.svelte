@@ -23,7 +23,8 @@
     distributionComparisonGraph.left;
   let maxHeight = height - distributionComparisonGraph.top;
   let minHeight = distributionComparisonGraph.bottom;
-  let probeKind = $store.probe.details.kind;
+  let isCategoricalProbe =
+    $store.probe.details && $store.probe.details.kind === 'categorical';
   let formatPercent = (t) =>
     Intl.NumberFormat('en-US', {
       style: 'percent',
@@ -38,7 +39,7 @@
   const barWidth = bucketWidth - spaceBetweenBars;
 
   const buildBucketTxt = (index, bin) => {
-    if (probeKind === 'categorical') {
+    if (isCategoricalProbe) {
       return activeCategoricalProbeLabels[index];
     }
     return index === density.length - 1

@@ -14,14 +14,14 @@
 
   let normalized = $store.productDimensions.normalizationType === 'normalized';
   let probeType = $store.probe.type;
-  let probeKind = $store.probe.details.kind;
+  let isCategoricalProbe =
+    $store.probe.details && $store.probe.details.kind === 'categorical';
   let cumulative = false;
-  let activeCategoricalProbeLabels =
-    probeKind === 'categorical'
-      ? $store.probe.details.labels.filter((l) =>
-          $store.activeBuckets.includes(l)
-        )
-      : [];
+  let activeCategoricalProbeLabels = isCategoricalProbe
+    ? $store.probe.details.labels.filter((l) =>
+        $store.activeBuckets.includes(l)
+      )
+    : [];
 
   let valueSelector = 'value';
   // Change this value to adjust the minimum tick increment on the chart
@@ -58,7 +58,7 @@
 
   const buildDensity = function (chartData) {
     let density = chartData[densityMetricType];
-    if (probeKind === 'categorical') {
+    if (isCategoricalProbe) {
       let categoricalProbeLabels = $store.probe.details.labels;
       density = density.filter((v, i) =>
         $store.activeBuckets.includes(categoricalProbeLabels[i])
@@ -126,7 +126,7 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          {#if probeKind !== 'categorical'}
+          {#if isCategoricalProbe}
             <SliderSwitch
               bind:checked={cumulative}
               label="Cumulative mode: "
