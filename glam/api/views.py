@@ -78,13 +78,17 @@ def validate_request_legacy(**kwargs):
         raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
 
     if validated_data["aggregation_level"] not in ["version", "build_id"]:
-        raise ValidationError("Invalid aggregation level: {}".format(validated_data["aggregation_level"]))
+        raise ValidationError(
+            "Invalid aggregation level: {}".format(validated_data["aggregation_level"])
+        )
 
     if validated_data["os"] not in ["Windows", "Darwin", "Mac", "Linux", "*"]:
         raise ValidationError("Invalid os: {}".format(validated_data["os"]))
 
     if not isinstance(validated_data["num_versions"], int):
-        raise ValidationError("Invalid versions: {}".format(validated_data["num_versions"]))
+        raise ValidationError(
+            "Invalid versions: {}".format(validated_data["num_versions"])
+        )
 
     return validated_data
 
@@ -120,13 +124,24 @@ def validate_request_glean(**kwargs):
         raise ValidationError("Invalid product: {}".format(validated_data["product"]))
 
     if validated_data["aggregation_level"] not in ["version", "build_id"]:
-        raise ValidationError("Invalid aggregation level: {}".format(validated_data["aggregation_level"]))
+        raise ValidationError(
+            "Invalid aggregation level: {}".format(validated_data["aggregation_level"])
+        )
 
-    if validated_data["os"] not in ["Windows", "Darwin", "Mac", "Linux", "*", "Android"]:
+    if validated_data["os"] not in [
+        "Windows",
+        "Darwin",
+        "Mac",
+        "Linux",
+        "*",
+        "Android",
+    ]:
         raise ValidationError("Invalid os: {}".format(validated_data["os"]))
 
     if not isinstance(validated_data["num_versions"], int):
-        raise ValidationError("Invalid versions: {}".format(validated_data["num_versions"]))
+        raise ValidationError(
+            "Invalid versions: {}".format(validated_data["num_versions"])
+        )
 
     return validated_data
 
@@ -264,7 +279,9 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
     query_parameters = [
         bigquery.ScalarQueryParameter("metric", "STRING", req_data["metric"]),
         bigquery.ScalarQueryParameter("os", "STRING", req_data["os"]),
-        bigquery.ScalarQueryParameter("num_versions", "INT64", req_data["num_versions"]),
+        bigquery.ScalarQueryParameter(
+            "num_versions", "INT64", req_data["num_versions"]
+        ),
     ]
 
     process_filter = ""
