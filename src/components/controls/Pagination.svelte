@@ -39,7 +39,7 @@
     <Button
       tooltip="move back a page"
       on:click={() =>
-        currentPage === 1 ? undefined : changePage(currentPage - 1)}
+        currentPage === 0 ? undefined : changePage(currentPage - 1)}
       level="medium"
       compact
     >
@@ -55,7 +55,7 @@
     </Button>
   </ButtonGroup>
   page
-  {currentPage < 9 ? '0' : ''}{currentPage}
+  {currentPage < 9 ? '0' : ''}{Number(currentPage) + 1}
   of
   {totalPages < 9 ? '0' : ''}{totalPages}
 </div>
