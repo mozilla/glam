@@ -57,10 +57,100 @@ def updates(request):
     )
 
 
+def validate_request_legacy(**kwargs):
+    # TODO: When glam starts sending "product", make it required.
+    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+    validated_data = {}
+    validated_data["channel"] = kwargs.get("channel")
+    validated_data["aggregation_level"] = kwargs.get("aggregationLevel")
+    validated_data["metric"] = kwargs.get("probe")
+    validated_data["os"] = kwargs.get("os", "*")
+    validated_data["num_versions"] = kwargs.get("versions", 3)
+    validated_data["process"] = kwargs.get("process")
+
+    if validated_data["channel"] not in ["beta", "nightly", "release"]:
+        raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
+
+    if validated_data["aggregation_level"] not in ["version", "build_id"]:
+        raise ValidationError(
+            "Invalid aggregation level: {}".format(validated_data["aggregation_level"])
+        )
+
+    if validated_data["os"] not in ["Windows", "Darwin", "Mac", "Linux", "*"]:
+        raise ValidationError("Invalid os: {}".format(validated_data["os"]))
+
+    if not isinstance(validated_data["num_versions"], int):
+        raise ValidationError(
+            "Invalid versions: {}".format(validated_data["num_versions"])
+        )
+
+    return validated_data
+
+
+def validate_request_glean(**kwargs):
+    REQUIRED_QUERY_PARAMETERS = [
+        "aggregationLevel",
+        "app_id",
+        "ping_type",
+        "probe",
+        "product",
+    ]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        # Figure out which query parameter is missing.
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    validated_data = {}
+    validated_data["channel"] = kwargs.get("app_id")
+    validated_data["product"] = kwargs.get("product")
+    validated_data["aggregation_level"] = kwargs.get("aggregationLevel")
+    validated_data["probe"] = kwargs.get("probe")
+    validated_data["os"] = kwargs.get("os", "*")
+    validated_data["num_versions"] = kwargs.get("versions", 3)
+    validated_data["ping_type"] = kwargs.get("ping_type")
+
+    if validated_data["channel"] not in ["beta", "nightly", "release"]:
+        raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
+
+    if validated_data["product"] not in ["fog", "fenix"]:
+        raise ValidationError("Invalid product: {}".format(validated_data["product"]))
+
+    if validated_data["aggregation_level"] not in ["version", "build_id"]:
+        raise ValidationError(
+            "Invalid aggregation level: {}".format(validated_data["aggregation_level"])
+        )
+
+    if validated_data["os"] not in [
+        "Windows",
+        "Darwin",
+        "Mac",
+        "Linux",
+        "*",
+        "Android",
+    ]:
+        raise ValidationError("Invalid os: {}".format(validated_data["os"]))
+
+    if not isinstance(validated_data["num_versions"], int):
+        raise ValidationError(
+            "Invalid versions: {}".format(validated_data["num_versions"])
+        )
+
+    return validated_data
+
+
 def get_firefox_aggregations(source, request, **kwargs):
     if source == "BigQuery":
         bqClient = get_bq_client()
-        return get_firefox_aggregations_from_bq(bqClient, request, **kwargs)
+        req_data = validate_request_legacy(**kwargs)
+        return get_firefox_aggregations_from_bq(bqClient, request, req_data)
     else:
         return get_firefox_aggregations_from_pg(request, **kwargs)
 
@@ -169,20 +259,9 @@ def get_firefox_aggregations_from_pg(request, **kwargs):
     return response
 
 
-def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
-    # TODO: When glam starts sending "product", make it required.
-    REQUIRED_QUERY_PARAMETERS = ["channel", "probe", "aggregationLevel"]
-    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
-        # Figure out which query parameter is missing.
-        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
-        raise ValidationError(
-            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
-        )
-
-    num_versions = kwargs.get("versions", 3)
-
-    channel = kwargs.get("channel")
-    aggregation_level = kwargs["aggregationLevel"]
+def get_firefox_aggregations_from_bq(bqClient, request, req_data):
+    channel = req_data["channel"]
+    aggregation_level = req_data["aggregation_level"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
         build_id_filter = 'AND build_id = "*"'
@@ -198,14 +277,17 @@ def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
         Probe.populate_labels_cache()
 
     query_parameters = [
-        bigquery.ScalarQueryParameter("metric", "STRING", kwargs["probe"]),
-        bigquery.ScalarQueryParameter("os", "STRING", kwargs.get("os", "*")),
+        bigquery.ScalarQueryParameter("metric", "STRING", req_data["metric"]),
+        bigquery.ScalarQueryParameter("os", "STRING", req_data["os"]),
+        bigquery.ScalarQueryParameter(
+            "num_versions", "INT64", req_data["num_versions"]
+        ),
     ]
 
     process_filter = ""
-    if "process" in kwargs:
+    if "process" in req_data:
         query_parameters.append(
-            bigquery.ScalarQueryParameter("process", "STRING", kwargs["process"])
+            bigquery.ScalarQueryParameter("process", "STRING", req_data["process"])
         )
         process_filter = "AND process = @process"
 
@@ -217,7 +299,7 @@ def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
                 ORDER BY
                 version DESC
                 LIMIT
-                {num_versions}) AS selected_versions
+                @num_versions) AS selected_versions
             FROM
                 `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table}`
             WHERE
@@ -235,6 +317,7 @@ def get_firefox_aggregations_from_bq(bqClient, request, **kwargs):
                 {build_id_filter}
                 AND version IN UNNEST(versions.selected_versions)
     """
+
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
     with bqClient as client:
         query_job = client.query(query, job_config=job_config)
@@ -316,7 +399,8 @@ def _get_firefox_shas(channel):
 def get_glean_aggregations(source, request, **kwargs):
     if source == "BigQuery":
         bqClient = bigquery.Client()
-        return get_glean_aggregations_from_bq(bqClient, request, **kwargs)
+        req_data = validate_request_glean(**kwargs)
+        return get_glean_aggregations_from_bq(bqClient, request, req_data)
     else:
         return get_glean_aggregations_from_pg(request, **kwargs)
 
@@ -421,28 +505,15 @@ def get_glean_aggregations_from_pg(request, **kwargs):
     return response
 
 
-def get_glean_aggregations_from_bq(bqClient, request, **kwargs):
-    REQUIRED_QUERY_PARAMETERS = [
-        "aggregationLevel",
-        "app_id",
-        "ping_type",
-        "probe",
-        "product",
-    ]
-    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
-        # Figure out which query parameter is missing.
-        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
-        raise ValidationError(
-            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
-        )
+def get_glean_aggregations_from_bq(bqClient, request, req_data):
 
-    channel = kwargs["app_id"]
-    product = kwargs.get("product")
-    probe = kwargs["probe"]
-    num_versions = kwargs.get("versions", 3)
-    ping_type = kwargs["ping_type"]
-    os = kwargs.get("os", "*")
-    aggregation_level = kwargs["aggregationLevel"]
+    channel = req_data["channel"]
+    product = req_data["product"]
+    probe = req_data["probe"]
+    num_versions = req_data["num_versions"]
+    ping_type = req_data["ping_type"]
+    os = req_data["os"]
+    aggregation_level = req_data["aggregation_level"]
 
     table_id = f"glam_{product}_{channel}_aggregates"
 
@@ -458,7 +529,7 @@ def get_glean_aggregations_from_bq(bqClient, request, **kwargs):
                 ORDER BY
                 version DESC
                 LIMIT
-                {num_versions}) AS selected_versions
+                @num_versions) AS selected_versions
             FROM
                 `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
             WHERE
@@ -481,6 +552,7 @@ def get_glean_aggregations_from_bq(bqClient, request, **kwargs):
             bigquery.ScalarQueryParameter("metric", "STRING", probe),
             bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
             bigquery.ScalarQueryParameter("os", "STRING", os),
+            bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
         ]
     )
     with bqClient as client:
