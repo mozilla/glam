@@ -85,7 +85,7 @@
     <Pagination
       on:page={(evt) => {
         currentPage = evt.detail.page;
-        store.setField('currentPage', currentPage);
+        store.setField('currentPage', currentPage || 0);
       }}
       {totalPages}
       currentPage={Number($store.currentPage)}
