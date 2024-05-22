@@ -790,22 +790,19 @@ def _get_fx_most_used_probes(days=30, limit=9):
     legacy_table_name = (
         f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
     )
-    fog_table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
 
     query = f"""
         WITH fx_metrics AS (
-            SELECT * EXCEPT(
-                    non_norm_histogram,
-                    non_norm_percentiles)
-                FROM
-                    {legacy_table_name}
-            UNION ALL (
-                SELECT * EXCEPT(
-                    app_id,
-                    channel,
-                    ping_type)
-                FROM
-                    {fog_table_name})),
+            SELECT
+                metric,
+                metric_key,
+                metric_type,
+                version,
+                os,
+                build_id,
+                histogram
+            FROM
+                {legacy_table_name}),
         selected_version AS (
             SELECT
                 ARRAY_AGG(DISTINCT version
