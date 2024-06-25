@@ -582,7 +582,13 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 row.total_sample
             ),  # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "non_norm_histogram": row.non_norm_histogram
+            and orjson.loads(row.non_norm_histogram)
+            or "",
             "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
+            "non_norm_percentiles": row.non_norm_percentiles
+            and orjson.loads(row.non_norm_percentiles)
+            or "",
         }
 
         # Get the total distinct client IDs for this set of dimensions.
