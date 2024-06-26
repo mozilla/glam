@@ -83,7 +83,7 @@
     }
 
     let telemetryPath;
-    const histogramType = $store.aggKey ? "keyed_histograms" : "histograms"
+    const histogramType = $store.aggKey ? 'keyed_histograms' : 'histograms';
     const table =
       $store.productDimensions.channel === 'nightly'
         ? 'main_nightly'
@@ -104,7 +104,8 @@
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
     const buildId = $store.ref || $store.defaultRef;
-    const normalized = $store.productDimensions.normalizationType === "normalized";
+    const normalized =
+      $store.productDimensions.normalizationType === 'normalized';
 
     return _.template(sqlTemplate)({
       metric: $store.probe.name,
