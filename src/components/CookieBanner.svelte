@@ -1,9 +1,11 @@
 <script>
   import { onMount } from 'svelte';
 
+  let consentAsked = false;
   let consentGiven = false;
 
   onMount(() => {
+    consentAsked = localStorage.getItem('cookieConsentAsked') === 'true';
     consentGiven = localStorage.getItem('cookieConsent') === 'true';
   });
 
@@ -27,12 +29,16 @@
   /* eslint-enable */
 
   function giveConsent() {
+    localStorage.setItem('cookieConsentAsked', 'true');
     localStorage.setItem('cookieConsent', 'true');
+    consentAsked = true;
     consentGiven = true;
   }
 
   function rejectCookies() {
+    localStorage.setItem('cookieConsentAsked', 'true');
     localStorage.setItem('cookieConsent', 'false');
+    consentAsked = true;
     consentGiven = false;
   }
 
@@ -71,7 +77,7 @@
   }
 </style>
 
-{#if !consentGiven}
+{#if !consentAsked}
   <div class="cookie-banner">
     <p>
       We use cookies to analyze our traffic, by continuing to visit this site
