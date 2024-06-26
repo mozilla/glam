@@ -103,6 +103,7 @@
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
     const buildId = $store.ref || $store.defaultRef;
+    const normalized = $store.productDimensions.normalizationType === "normalized";
 
     return _.template(sqlTemplate)({
       metric: $store.probe.name,
@@ -111,6 +112,7 @@
       telemetryPath,
       osFilter,
       buildId,
+      normalized,
     });
   }
 
