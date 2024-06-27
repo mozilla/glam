@@ -39,7 +39,7 @@ drf-orjson-renderer==1.1.5
     # via -r requirements.in
 exceptiongroup==1.2.0
     # via pytest
-flake8==4.0.1
+flake8==7.1.0
     # via -r requirements.in
 google-api-core[grpc]==2.17.1
     # via
@@ -84,7 +84,7 @@ idna==3.7
     # via requests
 iniconfig==1.1.1
     # via pytest
-mccabe==0.6.1
+mccabe==0.7.0
     # via flake8
 mypy-extensions==0.4.3
     # via black
@@ -114,11 +114,11 @@ pyasn1==0.4.8
     #   rsa
 pyasn1-modules==0.2.8
     # via google-auth
-pycodestyle==2.8.0
+pycodestyle==2.12.0
     # via flake8
 pycparser==2.20
     # via cffi
-pyflakes==2.4.0
+pyflakes==3.2.0
     # via flake8
 pyparsing==2.4.7
     # via packaging
