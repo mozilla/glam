@@ -517,7 +517,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
 
     table_id = f"glam_{product}_{channel}_aggregates"
 
-    if aggregation_level == "version" and product == "fenix":
+    if aggregation_level == "version":
         build_id_filter = 'AND build_id = "*"'
     else:
         build_id_filter = 'AND build_id != "*"'
@@ -561,16 +561,23 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     response = []
 
     for row in query_job:
-        if not row.build_date:
+        if aggregation_level != "version" and not row.build_date:
             continue
+        else:
+            # Remove extra +00
+            build_date = (
+                None
+                if aggregation_level == "version"
+                else datetime.fromisoformat(row.build_date[:-3]).replace(
+                    tzinfo=timezone.utc
+                )
+            )
         data = {
             "version": row.version,
             "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
-            "build_date": datetime.fromisoformat(row.build_date[:-3]).replace(
-                tzinfo=timezone.utc
-            ),  # Remove extra +00
+            "build_date": build_date,
             "metric": row.metric,
             "metric_type": row.metric_type,
             "metric_key": row.metric_key,
