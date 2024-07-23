@@ -83,18 +83,19 @@
     }
 
     let telemetryPath;
+    const histogramType = $store.aggKey ? 'keyed_histograms' : 'histograms';
     const table =
       $store.productDimensions.channel === 'nightly'
         ? 'main_nightly'
         : 'main_1pct';
     if ($store.probe.type === 'histogram') {
       if (['main', 'parent'].includes(process)) {
-        telemetryPath = `payload.histograms.${$store.probe.name}`;
+        telemetryPath = `payload.${histogramType}.${$store.probe.name}`;
       } else {
-        telemetryPath = `payload.processes.${process}.histograms.${$store.probe.name}`;
+        telemetryPath = `payload.processes.${process}.${histogramType}.${$store.probe.name}`;
       }
       if ($store.aggKey) {
-        telemetryPath = `mozfun.map.get_key(${telemetryPath}, ${$store.aggKey})`;
+        telemetryPath = `mozfun.map.get_key(${telemetryPath}, "${$store.aggKey}")`;
       }
     }
     const osFilter =
@@ -103,6 +104,8 @@
         : `AND normalized_os="${$store.productDimensions.os}"`;
 
     const buildId = $store.ref || $store.defaultRef;
+    const normalized =
+      $store.productDimensions.normalizationType === 'normalized';
 
     return _.template(sqlTemplate)({
       metric: $store.probe.name,
@@ -111,6 +114,7 @@
       telemetryPath,
       osFilter,
       buildId,
+      normalized,
     });
   }
 

@@ -517,7 +517,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
 
     table_id = f"glam_{product}_{channel}_aggregates"
 
-    if aggregation_level == "version" and product == "fenix":
+    if aggregation_level == "version":
         build_id_filter = 'AND build_id = "*"'
     else:
         build_id_filter = 'AND build_id != "*"'
@@ -561,16 +561,23 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     response = []
 
     for row in query_job:
-        if not row.build_date:
+        if aggregation_level != "version" and not row.build_date:
             continue
+        else:
+            # Remove extra +00
+            build_date = (
+                None
+                if aggregation_level == "version"
+                else datetime.fromisoformat(row.build_date[:-3]).replace(
+                    tzinfo=timezone.utc
+                )
+            )
         data = {
             "version": row.version,
             "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
-            "build_date": datetime.fromisoformat(row.build_date[:-3]).replace(
-                tzinfo=timezone.utc
-            ),  # Remove extra +00
+            "build_date": build_date,
             "metric": row.metric,
             "metric_type": row.metric_type,
             "metric_key": row.metric_key,
@@ -582,7 +589,13 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 row.total_sample
             ),  # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
+            "non_norm_histogram": row.non_norm_histogram
+            and orjson.loads(row.non_norm_histogram)
+            or "",
             "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
+            "non_norm_percentiles": row.non_norm_percentiles
+            and orjson.loads(row.non_norm_percentiles)
+            or "",
         }
 
         # Get the total distinct client IDs for this set of dimensions.
@@ -790,22 +803,19 @@ def _get_fx_most_used_probes(days=30, limit=9):
     legacy_table_name = (
         f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
     )
-    fog_table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
 
     query = f"""
         WITH fx_metrics AS (
-            SELECT * EXCEPT(
-                    non_norm_histogram,
-                    non_norm_percentiles)
-                FROM
-                    {legacy_table_name}
-            UNION ALL (
-                SELECT * EXCEPT(
-                    app_id,
-                    channel,
-                    ping_type)
-                FROM
-                    {fog_table_name})),
+            SELECT
+                metric,
+                metric_key,
+                metric_type,
+                version,
+                os,
+                build_id,
+                histogram
+            FROM
+                {legacy_table_name}),
         selected_version AS (
             SELECT
                 ARRAY_AGG(DISTINCT version

@@ -26,6 +26,15 @@ export const FIREFOX_ON_GLEAN = {
   key: 'fog',
   sampleRate: 1,
   dimensions: {
+    normalizationType: {
+      title: 'Normalization',
+      key: 'normalizationType',
+      values: [
+        { key: 'normalized', label: 'By Client ID' },
+        { key: 'non_normalized', label: 'None' },
+      ],
+      defaultValue: 'normalized',
+    },
     app_id: {
       title: 'App',
       key: 'app_id',
@@ -99,6 +108,7 @@ export const FIREFOX_ON_GLEAN = {
       aggKey: storeValue.aggKey,
       aggType: storeValue.aggType,
       currentPage: storeValue.currentPage,
+      normalizationType: storeValue.productDimensions.normalizationType,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,
@@ -200,6 +210,15 @@ export const FENIX = {
   key: 'fenix',
   sampleRate: 1,
   dimensions: {
+    normalizationType: {
+      title: 'Normalization',
+      key: 'normalizationType',
+      values: [
+        { key: 'normalized', label: 'By Client ID' },
+        { key: 'non_normalized', label: 'None' },
+      ],
+      defaultValue: 'normalized',
+    },
     app_id: {
       title: 'App',
       key: 'app_id',
@@ -270,6 +289,7 @@ export const FENIX = {
       aggKey: storeValue.aggKey,
       aggType: storeValue.aggType,
       currentPage: storeValue.currentPage,
+      normalizationType: storeValue.productDimensions.normalizationType,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,

@@ -8,7 +8,7 @@ WITH per_build_client_day AS (
   SELECT
     PARSE_DATETIME("%Y%m%d%H%M%S", application.build_id) AS build_id,
     client_id,
-    mozfun.hist.normalize(
+    <% if(normalized) { %>mozfun.hist.normalize(
       mozfun.hist.merge(
         ARRAY_AGG(
           mozfun.hist.extract(
@@ -16,9 +16,15 @@ WITH per_build_client_day AS (
           ) IGNORE NULLS
         )
       )
-  ) AS  ${ metric }
+    )<% } else { %>mozfun.hist.merge(
+      ARRAY_AGG(
+        mozfun.hist.extract(
+          ${ telemetryPath }
+        ) IGNORE NULLS
+      )
+    )<% } %> AS ${ metric }
   FROM
-    telemetry.${ table }
+    moz-fx-data-shared-prod.telemetry.${ table }
   WHERE
     normalized_channel = '${ channel }'
     ${ osFilter }
@@ -69,12 +75,12 @@ as_struct AS (
     build_id,
     ARRAY_AGG(STRUCT(key_string, value))AS merged_${ metric }
   FROM filtered
-  GROUP by 
+  GROUP by
     build_id
 )
 
-SELECT build_id, 
-  key_string as key, 
+SELECT build_id,
+  key_string as key,
   value as bucket
 FROM as_struct
   CROSS JOIN
