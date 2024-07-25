@@ -26,6 +26,14 @@
     searchIsActive = false;
   }
 
+  function filteredResults(rawResults) {
+    const regex =
+      /search_counts|browser_search|event_counts|browser_engagement_navigation|manager_message_size|dropped_frames_proportion/;
+    const filtered = rawResults.filter((item) => !regex.test(item.name));
+
+    return filtered;
+  }
+
   async function onKeypress({ key }) {
     if (searchIsActive) {
       if (key === 'Escape') {
@@ -43,7 +51,7 @@
   const handleSearchInput = debounce((value) => {
     query = value;
     getSearchResults($store.searchProduct, query).then((r) => {
-      results = r;
+      results = filteredResults(r);
       searchWaiting = false;
     });
     searchIsActive = true;
