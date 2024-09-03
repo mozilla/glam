@@ -126,7 +126,7 @@
     <div class="outer-flex">
       <div class="charts">
         <div style="display: flex; padding: 1em;">
-          {#if isCategoricalProbe}
+          {#if !isCategoricalProbe}
             <SliderSwitch
               bind:checked={cumulative}
               label="Cumulative mode: "
