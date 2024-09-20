@@ -22,7 +22,7 @@ coverage[toml]==5.5
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.1.13
+django==3.2.25
     # via
     #   -r requirements.in
     #   djangorestframework
@@ -58,7 +58,7 @@ google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==2.17.0
+google-cloud-storage==2.16.0
     # via -r requirements.in
 google-crc32c==1.1.2
     # via
