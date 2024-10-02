@@ -10,6 +10,9 @@
   import desktopHistogramProportionsSql from '../stringTemplates/desktop-histogram-proportions.tpl';
   import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
   import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
+  import fogTelemetrySql from '../stringTemplates/fog-telemetry.tpl';
+  import notSupportedMsg from '../stringTemplates/not-supported.tpl';
+
 
   let sqlElement;
   let status;
@@ -118,6 +121,32 @@
     });
   }
 
+  function getFogSql(tpl = 'telemetry') {
+    const supportedMetricTypes = ["timing_distribution", "memory_distribution", "custom_distribution"]
+    const appId = $store.productDimensions.app_id;
+    const metric = $store.probe.name.replaceAll('.', '_');
+    const os = $store.productDimensions.os;
+    const pingType = $store.productDimensions.ping_type;
+    const metricType = $store.probe.type;
+    const template = supportedMetricTypes.includes(metricType) ? fogTelemetrySql : notSupportedMsg;
+    const sampleMult = appId == "release" ? 100 : 1;
+    const sampleSize = appId == "release" ? 0 : 99;
+    const normalized =
+      $store.productDimensions.normalizationType === 'normalized';
+    return _.template(template)(
+      {
+        metric_name: metric,
+        metric_type: metricType,
+        channel: appId,
+        ping_type: pingType,
+        os: os,
+        sample_mult: sampleMult,
+        sample_size: sampleSize,
+        normalized
+      }
+    )
+  }
+
   const tabs = [];
   if ($store.product === 'firefox') {
     tabs.push({
@@ -139,6 +168,12 @@
       label: 'GLAM SQL',
       sql: getFenixGlamSql,
     });
+  } else if ($store.product === 'fog') {
+    tabs.push({
+      id: 1,
+      label: 'Telemetry SQL',
+      sql: getFogSql,
+    })
   }
 </script>
 
@@ -244,15 +279,11 @@
   </div>
   <div slot="title">Explore the data...</div>
   <div>
-    {#if $store.product === 'fog'}
-      <p>Sorry, this feature is not available for Glean metrics yet.</p>
-    {:else}
       <p>
         The following SQL query can be copied and used in the BigQuery console
         to explore further. Please note that you need internal access to our
         analysis tooling to query the data.
       </p>
-    {/if}
     <ul>
       {#each tabs as tab}
         <li class:active={activeTab === tab.id}>
