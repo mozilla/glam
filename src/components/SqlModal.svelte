@@ -14,7 +14,6 @@
   import fenixTelemetrySql from '../stringTemplates/fenix-telemetry.tpl';
   import notSupportedMsg from '../stringTemplates/not-supported.tpl';
 
-
   let sqlElement;
   let status;
   let activeTab = 1;
@@ -123,31 +122,39 @@
   }
 
   function getGleanSql(tpl = 'telemetry') {
-    const supportedMetricTypes = ["timing_distribution", "memory_distribution", "custom_distribution"]
+    const supportedMetricTypes = [
+      'timing_distribution',
+      'memory_distribution',
+      'custom_distribution',
+    ];
     const appId = $store.productDimensions.app_id;
     const metric = $store.probe.name.replaceAll('.', '_');
     const os = $store.productDimensions.os;
     const pingType = $store.productDimensions.ping_type;
     const metricType = $store.probe.type;
-    const productTemplateMap = {'fog': fogTelemetrySql, 'fenix': fenixTelemetrySql};
-    const template = supportedMetricTypes.includes(metricType) ? productTemplateMap[$store.product] : notSupportedMsg;
-    const sampleMult = appId == "release" ? 100 : 1;
-    const sampleSize = appId == "release" ? 0 : 99;
-    const dataset = $store.product == "fog" ? "firefox_desktop" : "org_mozilla_fenix"
+    const productTemplateMap = {
+      fog: fogTelemetrySql,
+      fenix: fenixTelemetrySql,
+    };
+    const template = supportedMetricTypes.includes(metricType)
+      ? productTemplateMap[$store.product]
+      : notSupportedMsg;
+    const sampleMult = appId == 'release' ? 100 : 1;
+    const sampleSize = appId == 'release' ? 0 : 99;
+    const dataset =
+      $store.product == 'fog' ? 'firefox_desktop' : 'org_mozilla_fenix';
     const normalized =
       $store.productDimensions.normalizationType === 'normalized';
-    return _.template(template)(
-      {
-        metric_name: metric,
-        metric_type: metricType,
-        channel: appId,
-        ping_type: pingType,
-        os: os,
-        sample_mult: sampleMult,
-        sample_size: sampleSize,
-        normalized
-      }
-    )
+    return _.template(template)({
+      metric_name: metric,
+      metric_type: metricType,
+      channel: appId,
+      ping_type: pingType,
+      os: os,
+      sample_mult: sampleMult,
+      sample_size: sampleSize,
+      normalized,
+    });
   }
 
   const tabs = [];
@@ -166,16 +173,18 @@
       });
     }
   } else if ($store.product === 'fenix') {
-    tabs.push({
-      id: 1,
-      label: 'Telemetry SQL',
-      sql: getGleanSql,
-    },
-    {
-      id: 2,
-      label: 'GLAM SQL',
-      sql: getFenixGlamSql,
-    });
+    tabs.push(
+      {
+        id: 1,
+        label: 'Telemetry SQL',
+        sql: getGleanSql,
+      },
+      {
+        id: 2,
+        label: 'GLAM SQL',
+        sql: getFenixGlamSql,
+      }
+    );
   } else if ($store.product === 'fog') {
     tabs.push({
       id: 1,
@@ -287,11 +296,11 @@
   </div>
   <div slot="title">Explore the data...</div>
   <div>
-      <p>
-        The following SQL query can be copied and used in the BigQuery console
-        to explore further. Please note that you need internal access to our
-        analysis tooling to query the data.
-      </p>
+    <p>
+      The following SQL query can be copied and used in the BigQuery console to
+      explore further. Please note that you need internal access to our analysis
+      tooling to query the data.
+    </p>
     <ul>
       {#each tabs as tab}
         <li class:active={activeTab === tab.id}>
@@ -299,8 +308,7 @@
             class="tab"
             on:click={() => {
               activeTab = tab.id;
-            }}>{tab.label}</span
-          >
+            }}>{tab.label}</span>
         </li>
       {/each}
       <li>
@@ -308,8 +316,7 @@
           <span
             contenteditable="true"
             bind:textContent={status}
-            transition:fade
-          />
+            transition:fade />
         {/if}
       </li>
       <li />
