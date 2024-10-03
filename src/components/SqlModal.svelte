@@ -11,6 +11,7 @@
   import fenixGlamSql from '../stringTemplates/fenix-glam.tpl';
   import desktopGlamSql from '../stringTemplates/desktop-glam.tpl';
   import fogTelemetrySql from '../stringTemplates/fog-telemetry.tpl';
+  import fenixTelemetrySql from '../stringTemplates/fenix-telemetry.tpl';
   import notSupportedMsg from '../stringTemplates/not-supported.tpl';
 
 
@@ -121,16 +122,18 @@
     });
   }
 
-  function getFogSql(tpl = 'telemetry') {
+  function getGleanSql(tpl = 'telemetry') {
     const supportedMetricTypes = ["timing_distribution", "memory_distribution", "custom_distribution"]
     const appId = $store.productDimensions.app_id;
     const metric = $store.probe.name.replaceAll('.', '_');
     const os = $store.productDimensions.os;
     const pingType = $store.productDimensions.ping_type;
     const metricType = $store.probe.type;
-    const template = supportedMetricTypes.includes(metricType) ? fogTelemetrySql : notSupportedMsg;
+    const productTemplateMap = {'fog': fogTelemetrySql, 'fenix': fenixTelemetrySql};
+    const template = supportedMetricTypes.includes(metricType) ? productTemplateMap[$store.product] : notSupportedMsg;
     const sampleMult = appId == "release" ? 100 : 1;
     const sampleSize = appId == "release" ? 0 : 99;
+    const dataset = $store.product == "fog" ? "firefox_desktop" : "org_mozilla_fenix"
     const normalized =
       $store.productDimensions.normalizationType === 'normalized';
     return _.template(template)(
@@ -165,6 +168,11 @@
   } else if ($store.product === 'fenix') {
     tabs.push({
       id: 1,
+      label: 'Telemetry SQL',
+      sql: getGleanSql,
+    },
+    {
+      id: 2,
       label: 'GLAM SQL',
       sql: getFenixGlamSql,
     });
@@ -172,8 +180,8 @@
     tabs.push({
       id: 1,
       label: 'Telemetry SQL',
-      sql: getFogSql,
-    })
+      sql: getGleanSql,
+    });
   }
 </script>
 
