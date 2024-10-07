@@ -3,6 +3,7 @@
   import { Help } from '@graph-paper/icons';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
   import { formatToBuildID } from '../../utils/formatters';
+  import BuildIdFormattedToDate from './BuildIdFormattedToDate.svelte';
 
   export let value;
   export let compare;
@@ -66,15 +67,6 @@
     width: var(--space-32x);
   }
 
-  .big-label__value__date {
-    font-weight: bold;
-    color: var(--cool-gray-700);
-  }
-
-  .big-label__value__time {
-    color: var(--cool-gray-600);
-  }
-
   .big-label__value__compare {
     color: var(--cool-gray-600);
   }
@@ -92,22 +84,13 @@
 <div class="big-label__label">
   <slot name="label" /><span
     use:tooltipAction={{ text: description, location: 'top' }}
-    class="data-graphic__element-title__icon"><Help size={14} /></span
-  >
+    class="data-graphic__element-title__icon"><Help size={14} /></span>
 </div>
 <div class="big-label__value">
   {#if value}
     <div>
       {#if aggregationLevel === 'build_id'}
-        <span class="big-label__value__date">
-          {parsedLabel.slice(0, 4)}-{parsedLabel.slice(
-            4,
-            6
-          )}-{parsedLabel.slice(6, 8)}</span
-        >
-        <span class="big-label__value__time">{parsedLabel.slice(8, 10)}:</span
-        ><span class="big-label__value__time">{parsedLabel.slice(10, 12)}:</span
-        ><span class="big-label__value__time">{parsedLabel.slice(12, 14)}</span>
+        <BuildIdFormattedToDate buildIdHour={parsedLabel} />
       {:else}{value}{/if}
     </div>
   {/if}
