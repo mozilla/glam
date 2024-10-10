@@ -42,6 +42,10 @@
 
   export let normalizedData;
 
+  export let smoothnessLevel;
+  export let pointMetricType;
+  export let overTimePointMetricType = pointMetricType;
+
   const filterData = (normData, normType) =>
     // historical context: because non-normalized data
     // is added to the etl later, there exists
@@ -52,11 +56,42 @@
       ? normData.filter((d) => !isEmpty(d.non_norm_histogram))
       : normData;
 
-  let data = filterData(
+
+  function smoothenData(data, accessor, level) {
+    // Interpolates percentiles values by applying a Moving Average.
+    if (!level) {
+      return data;
+    }
+    const windowSize = data.length/100;
+    const dataField = data[0][accessor];
+    const keys = Object.keys(dataField);
+
+    return data.map((item, idx) => {
+      const windowData = data.slice(Math.max(0, idx - windowSize + 1), idx + 1);
+
+      const smoothedValues = keys.reduce((acc, key) => {
+        const sum = windowData.reduce((total, wItem) => total + wItem[accessor][key], 0);
+        acc[key] = sum / windowData.length;
+        return acc;
+      }, {});
+      const { [accessor]: _, ...rest } = item;
+      return {
+        ...rest,
+        [accessor]: smoothedValues,
+      };
+    });
+  }
+
+  function filterAndSmoothenData(data, normalizationType) {
+    const filtered = filterData(data, normalizationType);
+    return smoothenData(filtered, overTimePointMetricType, smoothnessLevel)
+  }
+
+  let data = filterAndSmoothenData(
     normalizedData,
     $store.productDimensions.normalizationType
   );
-  $: data = filterData(
+  $: data = filterAndSmoothenData(
     normalizedData,
     $store.productDimensions.normalizationType
   );
@@ -66,8 +101,6 @@
   export let activeBins = [50];
   export let showViolins = true;
   export let binColorMap;
-  export let pointMetricType;
-  export let overTimePointMetricType = pointMetricType;
   export let yScaleType;
   export let yDomain;
   export let densityMetricType;
@@ -387,6 +420,7 @@
         </div>
       </div>
     {:else}
+      <slot name="smoother" />
       <AggregationsOverTimeGraph
         title={aggregationsOverTimeTitle}
         description={aggregationsOverTimeDescription}
@@ -410,6 +444,7 @@
           }
         }}
         {distViewButtonId}
+        {smoothnessLevel}
       >
         <slot name="additional-plot-elements" />
       </AggregationsOverTimeGraph>

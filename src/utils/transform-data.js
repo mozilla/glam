@@ -162,7 +162,7 @@ export const responseHistogramToGraphicFormat = (
 
   draft.histogram = formatted;
   if (draft.non_norm_histogram) {
-    // e.g. glean probes don't have non normalized data
+    // e.g. older builds don't have non normalized data
     const formattedNonNormalized = Object.entries(draft.non_norm_histogram).map(
       ([k, v]) => ({
         bin: keyTransform(k),
