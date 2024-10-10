@@ -23,6 +23,8 @@
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
   import { store } from '../../state/store';
+  import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
+  import { Help } from '@graph-paper/icons';
 
   const dispatch = createEventDispatcher();
 
@@ -44,6 +46,8 @@
     : $store.aggType;
 
   let aggregationInfo;
+
+  let smoothnessLevel = false; // Only on/off now but intention is to be a gradient.
 
   setContext('probeType', probeType);
 
@@ -101,6 +105,23 @@
   .small-multiple {
     margin-bottom: var(--space-8x);
   }
+
+  .interpolator {
+    display: flex;
+    align-items: initial;
+    padding-bottom: 10px;
+    place-content: center;
+  }
+
+  .interpolator input {
+    margin-right: 5px;
+    margin-bottom: 0px;
+  }
+
+  .interpolator label {
+    color: var(--cool-gray-700);
+    margin-right: 5px;
+  }
 </style>
 
 <div class="body-content">
@@ -112,8 +133,7 @@
         <label class="body-control-set--label">Time Horizon</label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')}
-        />
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
@@ -121,8 +141,7 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        on:selection={makeSelection('percentiles')}
-      />
+        on:selection={makeSelection('percentiles')} />
     </div>
   </div>
 
@@ -134,8 +153,7 @@
         <AggregationTypeSelector
           bind:aggregationInfo
           bind:currentAggregation
-          {aggregationTypes}
-        />
+          {aggregationTypes} />
       </div>
     {/if}
     {#if probeKeys && probeKeys.length > 1}
@@ -145,36 +163,53 @@
       </div>
     {/if}
   </div>
-
   <div class="data-graphics">
     {#each probeKeys as key, i (key)}
       {#each aggregationTypes as aggType, i (aggType + timeHorizon + key)}
         {#if key === currentKey && aggType === currentAggregation}
-          <div class="small-multiple">
-            <ProbeExplorer
-              aggregationsOverTimeTitle={overTimeTitle(
-                'percentiles',
-                aggregationLevel
-              )}
-              aggregationsOverTimeDescription={percentilesOverTimeDescription(
-                aggregationLevel
-              )}
-              summaryLabel="perc."
-              normalizedData={selectedData}
-              activeBins={percentiles}
-              {timeHorizon}
-              markers={$firefoxVersionMarkers}
-              showViolins={true}
-              {aggregationLevel}
-              binColorMap={percentileLineColorMap}
-              {pointMetricType}
-              overTimePointMetricType={pointMetricType}
-              {densityMetricType}
-              comparisonKeyFormatter={(perc) => `${perc}%`}
-              yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
-              {yDomain}
-            />
-          </div>
+          {#key smoothnessLevel}
+            <div class="small-multiple">
+              <ProbeExplorer
+                aggregationsOverTimeTitle={overTimeTitle(
+                  'percentiles',
+                  aggregationLevel
+                )}
+                aggregationsOverTimeDescription={percentilesOverTimeDescription(
+                  aggregationLevel
+                )}
+                summaryLabel="perc."
+                normalizedData={selectedData}
+                activeBins={percentiles}
+                {timeHorizon}
+                markers={$firefoxVersionMarkers}
+                showViolins={true}
+                {aggregationLevel}
+                binColorMap={percentileLineColorMap}
+                {pointMetricType}
+                overTimePointMetricType={pointMetricType}
+                {densityMetricType}
+                comparisonKeyFormatter={(perc) => `${perc}%`}
+                yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
+                {yDomain}
+                {smoothnessLevel}>
+                <div slot="smoother" class="interpolator">
+                  <input
+                    id="toggleSmooth"
+                    type="checkbox"
+                    bind:checked={smoothnessLevel} />
+                  <label for="toggleSmooth">Interpolate</label>
+                  <span
+                    use:tooltipAction={{
+                      text: 'Applies a moving average to smooth out short-term fluctuations on percentile values.',
+                      location: 'top',
+                    }}
+                    class="data-graphic__element-title__icon"
+                    ><Help size={14} />
+                  </span>
+                </div>
+              </ProbeExplorer>
+            </div>
+          {/key}
         {/if}
       {/each}
     {/each}
