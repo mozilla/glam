@@ -112,8 +112,7 @@
         <label class="body-control-set--label">Time Horizon</label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')}
-        />
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
@@ -121,8 +120,7 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        on:selection={makeSelection('percentiles')}
-      />
+        on:selection={makeSelection('percentiles')} />
     </div>
   </div>
 
@@ -134,8 +132,7 @@
         <AggregationTypeSelector
           bind:aggregationInfo
           bind:currentAggregation
-          {aggregationTypes}
-        />
+          {aggregationTypes} />
       </div>
     {/if}
     {#if probeKeys && probeKeys.length > 1}
@@ -172,8 +169,7 @@
               {densityMetricType}
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
-              {yDomain}
-            />
+              {yDomain} />
           </div>
         {/if}
       {/each}
