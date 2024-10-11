@@ -56,13 +56,12 @@
       ? normData.filter((d) => !isEmpty(d.non_norm_histogram))
       : normData;
 
-
   function smoothenData(data, accessor, level) {
     // Interpolates percentiles values by applying a Moving Average.
     if (!level) {
       return data;
     }
-    const windowSize = data.length/100;
+    const windowSize = data.length / 100;
     const dataField = data[0][accessor];
     const keys = Object.keys(dataField);
 
@@ -70,7 +69,10 @@
       const windowData = data.slice(Math.max(0, idx - windowSize + 1), idx + 1);
 
       const smoothedValues = keys.reduce((acc, key) => {
-        const sum = windowData.reduce((total, wItem) => total + wItem[accessor][key], 0);
+        const sum = windowData.reduce(
+          (total, wItem) => total + wItem[accessor][key],
+          0
+        );
         acc[key] = sum / windowData.length;
         return acc;
       }, {});
@@ -84,7 +86,7 @@
 
   function filterAndSmoothenData(data, normalizationType) {
     const filtered = filterData(data, normalizationType);
-    return smoothenData(filtered, overTimePointMetricType, smoothnessLevel)
+    return smoothenData(filtered, overTimePointMetricType, smoothnessLevel);
   }
 
   let data = filterAndSmoothenData(

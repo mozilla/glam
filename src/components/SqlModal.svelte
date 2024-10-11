@@ -121,7 +121,7 @@
     });
   }
 
-  function getGleanSql(tpl = 'telemetry') {
+  function getGleanSql() {
     const supportedMetricTypes = [
       'timing_distribution',
       'memory_distribution',
@@ -129,7 +129,7 @@
     ];
     const appId = $store.productDimensions.app_id;
     const metric = $store.probe.name.replaceAll('.', '_');
-    const os = $store.productDimensions.os;
+    const { os } = $store.productDimensions;
     const pingType = $store.productDimensions.ping_type;
     const metricType = $store.probe.type;
     const productTemplateMap = {
@@ -139,10 +139,8 @@
     const template = supportedMetricTypes.includes(metricType)
       ? productTemplateMap[$store.product]
       : notSupportedMsg;
-    const sampleMult = appId == 'release' ? 100 : 1;
-    const sampleSize = appId == 'release' ? 0 : 99;
-    const dataset =
-      $store.product == 'fog' ? 'firefox_desktop' : 'org_mozilla_fenix';
+    const sampleMult = appId === 'release' ? 100 : 1;
+    const sampleSize = appId === 'release' ? 0 : 99;
     const normalized =
       $store.productDimensions.normalizationType === 'normalized';
     return _.template(template)({
@@ -150,7 +148,7 @@
       metric_type: metricType,
       channel: appId,
       ping_type: pingType,
-      os: os,
+      os,
       sample_mult: sampleMult,
       sample_size: sampleSize,
       normalized,
@@ -308,7 +306,8 @@
             class="tab"
             on:click={() => {
               activeTab = tab.id;
-            }}>{tab.label}</span>
+            }}>{tab.label}</span
+          >
         </li>
       {/each}
       <li>
@@ -316,7 +315,8 @@
           <span
             contenteditable="true"
             bind:textContent={status}
-            transition:fade />
+            transition:fade
+          />
         {/if}
       </li>
       <li />
