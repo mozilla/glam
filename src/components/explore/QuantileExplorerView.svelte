@@ -1,6 +1,8 @@
 <script>
   import { setContext, createEventDispatcher } from 'svelte';
 
+  import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
+  import { Help } from '@graph-paper/icons';
   import { percentileLineColorMap } from '../../utils/color-maps';
   import ProbeExplorer from './ProbeExplorer.svelte';
   import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
@@ -23,8 +25,6 @@
     gatherAggregationTypes,
   } from '../../utils/probe-utils';
   import { store } from '../../state/store';
-  import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
-  import { Help } from '@graph-paper/icons';
 
   const dispatch = createEventDispatcher();
 
@@ -133,7 +133,8 @@
         <label class="body-control-set--label">Time Horizon</label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')} />
+          on:selection={makeSelection('timeHorizon')}
+        />
       {/if}
     </div>
 
@@ -141,7 +142,8 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        on:selection={makeSelection('percentiles')} />
+        on:selection={makeSelection('percentiles')}
+      />
     </div>
   </div>
 
@@ -153,7 +155,8 @@
         <AggregationTypeSelector
           bind:aggregationInfo
           bind:currentAggregation
-          {aggregationTypes} />
+          {aggregationTypes}
+        />
       </div>
     {/if}
     {#if probeKeys && probeKeys.length > 1}
@@ -191,12 +194,14 @@
                 comparisonKeyFormatter={(perc) => `${perc}%`}
                 yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
                 {yDomain}
-                {smoothnessLevel}>
+                {smoothnessLevel}
+              >
                 <div slot="smoother" class="interpolator">
                   <input
                     id="toggleSmooth"
                     type="checkbox"
-                    bind:checked={smoothnessLevel} />
+                    bind:checked={smoothnessLevel}
+                  />
                   <label for="toggleSmooth">Interpolate</label>
                   <span
                     use:tooltipAction={{
