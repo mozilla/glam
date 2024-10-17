@@ -388,12 +388,16 @@ def _get_firefox_counts(channel, os, versions, by_build):
     return data
 
 
-def _get_firefox_shas(channel):
-    return dict(
+def _get_firefox_shas(channel, hourly=False):
+    shas_full = dict(
         FirefoxBuildRevisions.objects.filter(channel=channel).values_list(
             "build_id", "revision"
         )
     )
+    if not hourly:
+        return shas_full
+    else:
+        return {build[:10]: revision for build, revision in shas_full.items()}
 
 
 def get_glean_aggregations(source, request, **kwargs):
@@ -516,10 +520,12 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     aggregation_level = req_data["aggregation_level"]
 
     table_id = f"glam_{product}_{channel}_aggregates"
-
+    shas = {}
     if aggregation_level == "version":
         build_id_filter = 'AND build_id = "*"'
     else:
+        if product == "fog":
+            shas = _get_firefox_shas(channel, hourly=True)
         build_id_filter = 'AND build_id != "*"'
     # Build the SQL query with parameters
     query = f"""
@@ -577,6 +583,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             "ping_type": row.ping_type,
             "os": row.os,
             "build_id": row.build_id,
+            "revision": shas.get(row.build_id, ""),
             "build_date": build_date,
             "metric": row.metric,
             "metric_type": row.metric_type,
