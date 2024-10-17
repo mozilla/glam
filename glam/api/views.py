@@ -361,7 +361,9 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
 
         response.append(data)
 
-    _log_probe_query(request)
+    if response:
+        _log_probe_query(request)
+
     return response
 
 
@@ -504,7 +506,6 @@ def get_glean_aggregations_from_pg(request, **kwargs):
         # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
-
     _log_probe_query(request)
     return response
 
@@ -609,7 +610,8 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
         # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
 
         response.append(data)
-    _log_probe_query(request)
+    if response:
+        _log_probe_query(request)
     return response
 
 
@@ -846,13 +848,19 @@ def _get_fx_most_used_probes(days=30, limit=9):
             AND metric_type NOT IN ('boolean',
                 'histogram-boolean',
                 'scalar')
-            AND metric IN ({", ".join(probe_names)})
+            AND metric IN UNNEST(@probe_names)
             AND version = selected_version.v
         GROUP BY metric
         LIMIT {limit}"""
 
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ArrayQueryParameter("probe_names", "STRING", probe_names),
+        ]
+    )
+
     with bigquery.Client() as client:
-        aggs = client.query(query)
+        aggs = client.query(query, job_config=job_config)
     return aggs
 
 
