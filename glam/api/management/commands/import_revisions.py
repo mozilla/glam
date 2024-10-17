@@ -10,6 +10,7 @@ from glam.api import constants
 # For logging
 FILENAME = os.path.basename(__file__).split(".")[0]
 
+
 def log(channel, message):
     print(
         f"{datetime.datetime.now().strftime('%x %X')} - "
@@ -22,6 +23,7 @@ class Command(BaseCommand):
     help = "Imports builds SHA revisions"
 
     channel_choices = list(constants.CHANNEL_IDS.keys()) + ["all"]
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--channel",
@@ -32,7 +34,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.bq_client = bigquery.Client()
-        channels = [options["channel"]] if options["channel"] != "all" else ["nightly", "beta", "release"]
+        channels = (
+            [options["channel"]]
+            if options["channel"] != "all"
+            else ["nightly", "beta", "release"]
+        )
         for channel in channels:
             self.import_revisions(channel)
 
