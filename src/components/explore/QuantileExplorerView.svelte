@@ -196,13 +196,15 @@
                 {yDomain}
                 {smoothnessLevel}
               >
-                <div slot="smoother"class="interpolator">
+                <div slot="smoother" class="interpolator">
                   <input
                     id="toggleSmooth"
                     type="checkbox"
                     bind:checked={smoothnessLevel}
                   />
-                  <h3 for="toggleSmooth" class="data-graphic__element-title">Interpolate</h3>
+                  <h3 for="toggleSmooth" class="data-graphic__element-title">
+                    Interpolate
+                  </h3>
                   <span
                     use:tooltipAction={{
                       text: 'Applies a moving average to smooth out short-term fluctuations on percentile values.',
