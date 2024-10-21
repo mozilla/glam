@@ -291,6 +291,7 @@
 
 <style>
   .chart-title {
+    flex: 1;
     display: flex;
     justify-content: space-between;
     padding: 0 1rem;
@@ -310,14 +311,17 @@
 {/if}
 
 <div on:contextmenu|preventDefault={onRightClick}>
-  <div class="chart-title">
-    <ChartTitle
-      {description}
-      left={aggregationsOverTimeGraph.left}
-      right={aggregationsOverTimeGraph.right}
-    >
-      {title}
-    </ChartTitle>
+  <div style="display: flex;">
+    <div class="chart-title">
+      <ChartTitle
+        {description}
+        left={aggregationsOverTimeGraph.left}
+        right={aggregationsOverTimeGraph.right}
+      >
+        {title}
+      </ChartTitle>
+    </div>
+    <slot name="smoother" />
   </div>
 
   <DataGraphic
