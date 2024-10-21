@@ -422,7 +422,6 @@
         </div>
       </div>
     {:else}
-      <slot name="smoother" />
       <AggregationsOverTimeGraph
         title={aggregationsOverTimeTitle}
         description={aggregationsOverTimeDescription}
@@ -449,6 +448,7 @@
         {smoothnessLevel}
       >
         <slot name="additional-plot-elements" />
+        <div slot="smoother"><slot name="smoother" /></div>
       </AggregationsOverTimeGraph>
     {/if}
   </div>
