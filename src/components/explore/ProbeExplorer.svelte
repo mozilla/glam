@@ -115,9 +115,10 @@
 
     return data.map((item) => {
       const histogram = item[histogramAccessor];
-      const interpVals = histogram
-        ? getInterpPercBtnRanksForHistogram(histogram, percentiles)
-        : percentiles;
+      const interpVals =
+        histogram && histogram.length
+          ? getInterpPercBtnRanksForHistogram(histogram, percentiles)
+          : percentiles;
       const { [percentileAccessor]: _, ...rest } = item;
       return {
         ...rest,
