@@ -42,7 +42,7 @@
 
   export let normalizedData;
 
-  export let smoothnessLevel;
+  export let interpolate;
   export let pointMetricType;
   export let overTimePointMetricType = pointMetricType;
 
@@ -56,11 +56,63 @@
       ? normData.filter((d) => !isEmpty(d.non_norm_histogram))
       : normData;
 
-  function smoothenData(data, accessor, level) {
-    // Interpolates percentiles values by applying a Moving Average.
-    if (!level) {
-      return data;
+
+  function getInterpPercBtnRanksForHistogram(histogram, percentiles) {
+    // Compute cumulative frequencies
+    var cumFreq = [];
+    var totalFreq = 0;
+    for (var i = 0; i < histogram.length; i++) {
+      totalFreq += histogram[i].value;
+      cumFreq.push({ bin: histogram[i].bin, cumFreq: totalFreq });
     }
+    const normalizer = cumFreq.at(-1).cumFreq
+    if (normalizer != 1) {
+      cumFreq = cumFreq.map((item) => {return {bin: item.bin, cumFreq: item.cumFreq/normalizer}})
+    }
+
+    // Find the interval where each percentile falls and interpolate
+    const percentileValues = {}
+    for (const percentile of percentiles) {
+      var targetFreq = percentile / 100;
+      if (targetFreq <= cumFreq[0].cumFreq) {
+        percentileValues[percentile] = cumFreq[0].bin;
+      }
+      if (targetFreq >= cumFreq.at(-1).cumFreq) {
+        percentileValues[percentile] = cumFreq[cumFreq.length - 1].bin;
+      }
+      for (var i = 0; i < cumFreq.length - 1; i++) {
+        if (cumFreq[i].cumFreq <= targetFreq && cumFreq[i + 1].cumFreq >= targetFreq) {
+          var x0 = cumFreq[i].cumFreq;
+          var x1 = cumFreq[i + 1].cumFreq;
+          var y0 = cumFreq[i].bin;
+          var y1 = cumFreq[i + 1].bin;
+          // Linear interpolation formula
+          var percentileValue = y0 + ((targetFreq - x0) * (y1 - y0)) / (x1 - x0);
+          percentileValues[percentile] = percentileValue;
+        }
+      }
+    }
+    return percentileValues;
+  }
+
+  function getInterpolatedPercentilesBtnRanks(data, percentileAccessor, normalizationType) {
+    // Generates percentiles using the Interpolation Between Closest Ranks method.
+    const histogramAccessor = normalizationType == "normalized" ? "histogram" : "non_norm_histogram";
+    const percentiles = Object.keys(data[0][percentileAccessor]);
+
+    return data.map((item, idx) => {
+      const histogram = item[histogramAccessor];
+      const interpVals = histogram ? getInterpPercBtnRanksForHistogram(histogram, percentiles) : percentiles;
+      const { [percentileAccessor]: _, ...rest } = item;
+      return {
+        ...rest,
+        [percentileAccessor]: interpVals,
+      };
+    });
+  }
+
+  function interpolatePercentilesMovingAvg(data, accessor) {
+    // Interpolates existing percentile values by applying a Moving Average.
     const windowSize = data.length / 100;
     const dataField = data[0][accessor];
     const keys = Object.keys(dataField);
@@ -68,7 +120,7 @@
     return data.map((item, idx) => {
       const windowData = data.slice(Math.max(0, idx - windowSize + 1), idx + 1);
 
-      const smoothedValues = keys.reduce((acc, key) => {
+      const interpVals = keys.reduce((acc, key) => {
         const sum = windowData.reduce(
           (total, wItem) => total + wItem[accessor][key],
           0
@@ -79,14 +131,14 @@
       const { [accessor]: _, ...rest } = item;
       return {
         ...rest,
-        [accessor]: smoothedValues,
+        [accessor]: interpVals,
       };
     });
   }
 
   function filterAndSmoothenData(data, normalizationType) {
     const filtered = filterData(data, normalizationType);
-    return smoothenData(filtered, overTimePointMetricType, smoothnessLevel);
+    return interpolate ? getInterpolatedPercentilesBtnRanks(filtered, overTimePointMetricType, normalizationType) : filtered;
   }
 
   let data = filterAndSmoothenData(
@@ -445,7 +497,6 @@
           }
         }}
         {distViewButtonId}
-        {smoothnessLevel}
       >
         <slot name="additional-plot-elements" />
         <div slot="smoother"><slot name="smoother" /></div>
