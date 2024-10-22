@@ -58,9 +58,9 @@
 
   function getInterpPercBtnRanksForHistogram(histogram, percentiles) {
     // Compute cumulative frequencies
-    var cumFreq = [];
-    var totalFreq = 0;
-    for (var i = 0; i < histogram.length; i++) {
+    let cumFreq = [];
+    let totalFreq = 0;
+    for (let i = 0; i < histogram.length; i++) {
       totalFreq += histogram[i].value;
       cumFreq.push({ bin: histogram[i].bin, cumFreq: totalFreq });
     }
@@ -74,24 +74,24 @@
     // Find the interval where each percentile falls and interpolate
     const percentileValues = {};
     for (const percentile of percentiles) {
-      var targetFreq = percentile / 100;
+      let targetFreq = percentile / 100;
       if (targetFreq <= cumFreq[0].cumFreq) {
         percentileValues[percentile] = cumFreq[0].bin;
       }
       if (targetFreq >= cumFreq.at(-1).cumFreq) {
         percentileValues[percentile] = cumFreq[cumFreq.length - 1].bin;
       }
-      for (var i = 0; i < cumFreq.length - 1; i++) {
+      for (let i = 0; i < cumFreq.length - 1; i++) {
         if (
           cumFreq[i].cumFreq <= targetFreq &&
           cumFreq[i + 1].cumFreq >= targetFreq
         ) {
-          var x0 = cumFreq[i].cumFreq;
-          var x1 = cumFreq[i + 1].cumFreq;
-          var y0 = cumFreq[i].bin;
-          var y1 = cumFreq[i + 1].bin;
+          let x0 = cumFreq[i].cumFreq;
+          let x1 = cumFreq[i + 1].cumFreq;
+          let y0 = cumFreq[i].bin;
+          let y1 = cumFreq[i + 1].bin;
           // Linear interpolation formula
-          var percentileValue =
+          let percentileValue =
             y0 + ((targetFreq - x0) * (y1 - y0)) / (x1 - x0);
           percentileValues[percentile] = percentileValue;
         }
