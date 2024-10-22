@@ -206,7 +206,7 @@
                   </h3>
                   <span
                     use:tooltipAction={{
-                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. This can show an innacurate representation of the data if the underlying distribution is not continuous and/or the data between bins is not uniformly distributed.',
+                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. This can show an inaccurate representation of the data if the underlying distribution is not continuous and/or the data within bins is not uniformly distributed.',
                       location: 'top',
                     }}
                     class="data-graphic__element-title__icon"
