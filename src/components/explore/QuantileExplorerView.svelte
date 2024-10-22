@@ -47,7 +47,7 @@
 
   let aggregationInfo;
 
-  let smoothnessLevel = false; // Only on/off now but intention is to be a gradient.
+  let interpolate = false;
 
   setContext('probeType', probeType);
 
@@ -118,9 +118,8 @@
     margin-bottom: 0px;
   }
 
-  .interpolator label {
-    color: var(--cool-gray-700);
-    margin-right: 5px;
+  .interpolator h3 {
+    padding-right: 5px;
   }
 </style>
 
@@ -170,7 +169,7 @@
     {#each probeKeys as key, i (key)}
       {#each aggregationTypes as aggType, i (aggType + timeHorizon + key)}
         {#if key === currentKey && aggType === currentAggregation}
-          {#key smoothnessLevel}
+          {#key interpolate}
             <div class="small-multiple">
               <ProbeExplorer
                 aggregationsOverTimeTitle={overTimeTitle(
@@ -194,20 +193,20 @@
                 comparisonKeyFormatter={(perc) => `${perc}%`}
                 yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
                 {yDomain}
-                {smoothnessLevel}
+                {interpolate}
               >
                 <div slot="smoother" class="interpolator">
                   <input
                     id="toggleSmooth"
                     type="checkbox"
-                    bind:checked={smoothnessLevel}
+                    bind:checked={interpolate}
                   />
                   <h3 for="toggleSmooth" class="data-graphic__element-title">
-                    Interpolate
+                    Interpolated
                   </h3>
                   <span
                     use:tooltipAction={{
-                      text: 'Applies a moving average to smooth out short-term fluctuations on percentile values.',
+                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. This can show an innacurate representation of the data if the underlying distribution is not continuous and/or the data between bins is not uniformly distributed.',
                       location: 'top',
                     }}
                     class="data-graphic__element-title__icon"
