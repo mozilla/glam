@@ -56,7 +56,6 @@
       ? normData.filter((d) => !isEmpty(d.non_norm_histogram))
       : normData;
 
-
   function getInterpPercBtnRanksForHistogram(histogram, percentiles) {
     // Compute cumulative frequencies
     var cumFreq = [];
@@ -65,13 +64,15 @@
       totalFreq += histogram[i].value;
       cumFreq.push({ bin: histogram[i].bin, cumFreq: totalFreq });
     }
-    const normalizer = cumFreq.at(-1).cumFreq
-    if (normalizer != 1) {
-      cumFreq = cumFreq.map((item) => {return {bin: item.bin, cumFreq: item.cumFreq/normalizer}})
+    // Normalize so we can find percentiles appropriately
+    if (totalFreq != 1) {
+      cumFreq = cumFreq.map((item) => {
+        return { bin: item.bin, cumFreq: item.cumFreq / totalFreq };
+      });
     }
 
     // Find the interval where each percentile falls and interpolate
-    const percentileValues = {}
+    const percentileValues = {};
     for (const percentile of percentiles) {
       var targetFreq = percentile / 100;
       if (targetFreq <= cumFreq[0].cumFreq) {
@@ -81,13 +82,17 @@
         percentileValues[percentile] = cumFreq[cumFreq.length - 1].bin;
       }
       for (var i = 0; i < cumFreq.length - 1; i++) {
-        if (cumFreq[i].cumFreq <= targetFreq && cumFreq[i + 1].cumFreq >= targetFreq) {
+        if (
+          cumFreq[i].cumFreq <= targetFreq &&
+          cumFreq[i + 1].cumFreq >= targetFreq
+        ) {
           var x0 = cumFreq[i].cumFreq;
           var x1 = cumFreq[i + 1].cumFreq;
           var y0 = cumFreq[i].bin;
           var y1 = cumFreq[i + 1].bin;
           // Linear interpolation formula
-          var percentileValue = y0 + ((targetFreq - x0) * (y1 - y0)) / (x1 - x0);
+          var percentileValue =
+            y0 + ((targetFreq - x0) * (y1 - y0)) / (x1 - x0);
           percentileValues[percentile] = percentileValue;
         }
       }
@@ -95,14 +100,21 @@
     return percentileValues;
   }
 
-  function getInterpolatedPercentilesBtnRanks(data, percentileAccessor, normalizationType) {
+  function getInterpolatedPercentilesBtnRanks(
+    data,
+    percentileAccessor,
+    normalizationType
+  ) {
     // Generates percentiles using the Interpolation Between Closest Ranks method.
-    const histogramAccessor = normalizationType == "normalized" ? "histogram" : "non_norm_histogram";
+    const histogramAccessor =
+      normalizationType == 'normalized' ? 'histogram' : 'non_norm_histogram';
     const percentiles = Object.keys(data[0][percentileAccessor]);
 
     return data.map((item, idx) => {
       const histogram = item[histogramAccessor];
-      const interpVals = histogram ? getInterpPercBtnRanksForHistogram(histogram, percentiles) : percentiles;
+      const interpVals = histogram
+        ? getInterpPercBtnRanksForHistogram(histogram, percentiles)
+        : percentiles;
       const { [percentileAccessor]: _, ...rest } = item;
       return {
         ...rest,
@@ -138,7 +150,13 @@
 
   function filterAndSmoothenData(data, normalizationType) {
     const filtered = filterData(data, normalizationType);
-    return interpolate ? getInterpolatedPercentilesBtnRanks(filtered, overTimePointMetricType, normalizationType) : filtered;
+    return interpolate
+      ? getInterpolatedPercentilesBtnRanks(
+          filtered,
+          overTimePointMetricType,
+          normalizationType
+        )
+      : filtered;
   }
 
   let data = filterAndSmoothenData(
