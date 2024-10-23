@@ -206,7 +206,7 @@
                   </h3>
                   <span
                     use:tooltipAction={{
-                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. WARNING: ONLY USE THIS WHEN THE PROBE DISTRIBUTION IS CONTINUOUS AND THE DATA WITHIN BUCKETS IS UNIFORMLY DISTRIBUTED. OTHERWISE THIS CAN SHOW INNACURATE OR MISLEADING RESULTS.',
+                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. WARNING: ONLY USE THIS WHEN THE PROBE DISTRIBUTION IS CONTINUOUS AND THE DATA WITHIN BUCKETS IS UNIFORMLY DISTRIBUTED. OTHERWISE THIS CAN SHOW INACCURATE OR MISLEADING RESULTS.',
                       location: 'top',
                     }}
                     class="data-graphic__element-title__icon"
