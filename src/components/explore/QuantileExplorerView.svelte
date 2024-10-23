@@ -2,7 +2,7 @@
   import { setContext, createEventDispatcher } from 'svelte';
 
   import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
-  import { Help } from '@graph-paper/icons';
+  import { Warning } from '@graph-paper/icons';
   import { percentileLineColorMap } from '../../utils/color-maps';
   import ProbeExplorer from './ProbeExplorer.svelte';
   import PercentileSelectionControl from '../controls/PercentileSelectionControl.svelte';
@@ -206,11 +206,11 @@
                   </h3>
                   <span
                     use:tooltipAction={{
-                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. This can show an inaccurate representation of the data if the underlying distribution is not continuous and/or the data within bins is not uniformly distributed.',
+                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. WARNING: ONLY USE THIS WHEN THE PROBE DISTRIBUTION IS CONTINUOUS AND THE DATA WITHIN BUCKETS IS UNIFORMLY DISTRIBUTED. OTHERWISE THIS CAN SHOW INNACURATE OR MISLEADING RESULTS.',
                       location: 'top',
                     }}
                     class="data-graphic__element-title__icon"
-                    ><Help size={14} />
+                    ><Warning size={14} />
                   </span>
                 </div>
               </ProbeExplorer>
