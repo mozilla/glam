@@ -807,7 +807,7 @@ def _get_fx_most_used_probes(days=30, limit=9):
             "-total",
         )
     )
-    probe_names = [f'"{p["probe_name"]}"' for p in most_used_probes]
+    probe_names = [f'{p["probe_name"]}' for p in most_used_probes]
 
     legacy_table_name = (
         f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
