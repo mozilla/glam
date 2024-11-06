@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  gcp-cli: circleci/gcp-cli@3.1.1
   gcp-gcr: circleci/gcp-gcr@0.16.2
 
 jobs:
@@ -98,11 +99,11 @@ jobs:
       - run:
           name: Restore Docker image cache
           command: docker load -i /tmp/cache/app.tar
-      - run:
+      - run: # TODO: remove this step after migration
           name: Login to Dockerhub
           command: |
             echo "${DOCKER_PASSWORD}" | docker login -u="${DOCKER_USER}" --password-stdin
-      - run:
+      - run: # TODO: remove this step after migration
           name: Deploy to Dockerhub
           command: |
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
@@ -116,8 +117,28 @@ jobs:
               docker tag app:build "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
               docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
             fi
+      - run:
+          name: Prepare environment variables for OIDC authentication
+          command: |
+            echo 'export GOOGLE_PROJECT_ID="moz-fx-experimenter-prod-6cd5"' >> "$BASH_ENV"
+            echo "export OIDC_WIP_ID=$GCPV2_WORKLOAD_IDENTITY_POOL_ID" >> "$BASH_ENV"
+            echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
+            echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
+            echo "export OIDC_SERVICE_ACCOUNT_EMAIL=$GCP_SERVICE_ACCOUNT_EMAIL" >> "$BASH_ENV"
+      - gcp-cli/setup:
+          use_oidc: true
+      - run:
+          name: Deploy to Google Artifact Registry
+          command: |
+            gcloud auth configure-docker us-docker.pkg.dev --quiet
+            DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-experimenter-prod-6cd5/experimenter-prod/experimenter"
+            docker tag experimenter:deploy ${DOCKER_IMAGE}:latest
+            docker push "${DOCKER_IMAGE}:latest"
+            GIT_SHA=$(git rev-parse --short HEAD)
+            docker tag experimenter:deploy ${DOCKER_IMAGE}:${GIT_SHA}
+            docker push ${DOCKER_IMAGE}:${GIT_SHA}
 
-  proxy-build-and-publish:
+  proxy-build-and-publish: # TODO move this to shared openresty repo
     executor: gcp-gcr/default
     environment:
       GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
