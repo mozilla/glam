@@ -85,6 +85,31 @@ jobs:
           command: | # bind {PWD} because we use it in docker-compose.yml
             cp .env-dist .env
             make build -v ${PWD}:/app
+  gar_test:
+    machine:
+      image: ubuntu-2004:2023.10.1
+      docker_layer_caching: true
+    steps:
+      - run:
+          name: Prepare environment variables for OIDC authentication
+          command: |
+            echo 'export GOOGLE_PROJECT_ID="moz-fx-glam-prod"' >> "$BASH_ENV"
+            echo "export OIDC_WIP_ID=$GCPV2_WORKLOAD_IDENTITY_POOL_ID" >> "$BASH_ENV"
+            echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
+            echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
+            echo "export OIDC_SERVICE_ACCOUNT_EMAIL=$GCP_SERVICE_ACCOUNT_EMAIL" >> "$BASH_ENV"
+      - gcp-cli/setup:
+          use_oidc: true
+      - run:
+          name: Deploy to Google Artifact Registry
+          command: |
+            gcloud auth configure-docker us-docker.pkg.dev --quiet
+            DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-experimenter-prod-6cd5/experimenter-prod/experimenter"
+            docker tag experimenter:deploy ${DOCKER_IMAGE}:latest
+            docker push "${DOCKER_IMAGE}:latest"
+            GIT_SHA=$(git rev-parse --short HEAD)
+            docker tag experimenter:deploy ${DOCKER_IMAGE}:${GIT_SHA}
+            docker push ${DOCKER_IMAGE}:${GIT_SHA}
 
   deploy:
     docker:
@@ -120,7 +145,7 @@ jobs:
       - run:
           name: Prepare environment variables for OIDC authentication
           command: |
-            echo 'export GOOGLE_PROJECT_ID="moz-fx-experimenter-prod-6cd5"' >> "$BASH_ENV"
+            echo 'export GOOGLE_PROJECT_ID="moz-fx-glam-prod"' >> "$BASH_ENV"
             echo "export OIDC_WIP_ID=$GCPV2_WORKLOAD_IDENTITY_POOL_ID" >> "$BASH_ENV"
             echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
             echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
@@ -186,6 +211,7 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
+      - gar_test
       - build:
           filters:
             tags:
