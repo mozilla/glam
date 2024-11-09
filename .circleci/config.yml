@@ -147,6 +147,7 @@ jobs:
     executor: gcp-gcr/default
     environment:
       GOOGLE_PROJECT_ID: moz-fx-dataops-images-global
+      GLAM_PROJECT_ID: moz-fx-glam-prod
     steps:
       - checkout
       - gcp-gcr/gcr-auth
@@ -185,22 +186,23 @@ jobs:
             echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
             echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
             echo "export OIDC_SERVICE_ACCOUNT_EMAIL=$GCP_SERVICE_ACCOUNT_EMAIL" >> "$BASH_ENV"
+
       - gcp-cli/setup:
           use_oidc: true
-          
+
       - gcp-gcr/build-image:
           workspace-root: dockerfiles/proxy
           path: dockerfiles/proxy
           docker-context: dockerfiles/proxy
           registry-url: us-docker.pkg.dev
-          google-project-id: moz-fx-glam-prod
+          google-project-id: GLAM_PROJECT_ID
           repository: glam-prod
           image: auth0-proxy
           tag: $CIRCLE_SHA1
 
       - gcp-gcr/push-image:
           registry-url: us-docker.pkg.dev
-          google-project-id: moz-fx-glam-prod
+          google-project-id: GLAM_PROJECT_ID
           repository: glam-prod
           image: auth0-proxy
           tag: $CIRCLE_SHA1
