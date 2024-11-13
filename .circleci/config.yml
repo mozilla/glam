@@ -131,17 +131,17 @@ jobs:
           name: Deploy to Google Artifact Registry
           command: |
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam"
-            docker tag app:build ${DOCKER_IMAGE}:${CIRCLE_SHA1}
-            docker tag app:build ${DOCKER_IMAGE}:${CIRCLE_BRANCH}
+            docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
+            docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
               # tag the CI-built docker image with latest & the latest git commit SHA
-              docker tag ${DOCKER_IMAGE}:${CIRCLE_SHA1} ${DOCKER_IMAGE}:latest
+              docker tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" "${DOCKER_IMAGE}:latest"
             elif  [ ! -z "${CIRCLE_TAG}" ]; then
               # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
-              docker tag ${DOCKER_IMAGE}:${CIRCLE_SHA1} ${DOCKER_IMAGE}:${CIRCLE_TAG}"
+              docker tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             fi
             # push all tags associated with the image
-            docker push -a ${DOCKER_IMAGE}:${CIRCLE_SHA1}
+            docker push -a "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
 
   proxy-build-and-publish: # TODO move this to shared openresty repo
     executor: gcp-gcr/default
@@ -206,7 +206,6 @@ jobs:
           repository: glam-prod
           image: auth0-proxy
           tag: $CIRCLE_SHA1
-
 
   proxy-rollback-auth:
     executor: gcp-gcr/default
