@@ -138,7 +138,7 @@ jobs:
               docker tag ${DOCKER_IMAGE}:${CIRCLE_SHA1} ${DOCKER_IMAGE}:latest
             elif  [ ! -z "${CIRCLE_TAG}" ]; then
               # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
-              docker tag ${DOCKER_IMAGE}:${CIRCLE_SHA1} ${DOCKER_IMAGE}:${CIRCLE_TAG}"
+              docker tag ${DOCKER_IMAGE}:${CIRCLE_SHA1} ${DOCKER_IMAGE}:${CIRCLE_TAG}
             fi
             # push all tags associated with the image
             docker push -a ${DOCKER_IMAGE}:${CIRCLE_SHA1}
