@@ -11,11 +11,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - restore_cache:
-          key: v1-{{.Environment.CIRCLE_SHA1}}
-      - run:
-          name: Restore Docker image cache
-          command: docker load -i /tmp/cache/app.tar
       - run:
           name: Create a version.json
           command: |
