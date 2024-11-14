@@ -10,7 +10,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Create a version.json
           command: |
@@ -47,12 +48,8 @@ jobs:
           username: $DOCKER_USER
           password: $DOCKER_PASSWORD
     steps:
-      - setup_remote_docker
-      - restore_cache:
-          key: v1-{{.Environment.CIRCLE_SHA1}}
-      - run:
-          name: Restore Docker image cache
-          command: docker load -i /tmp/cache/app.tar
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Prepare environment variables for OIDC authentication
           command: |
