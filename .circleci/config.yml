@@ -141,7 +141,7 @@ jobs:
               docker tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             fi
             # push all tags associated with the image
-            docker push -a "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
+            docker push -a "${DOCKER_IMAGE}"
 
   proxy-build-and-publish: # TODO move this to shared openresty repo
     executor: gcp-gcr/default
