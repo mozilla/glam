@@ -242,6 +242,8 @@ workflows:
             tags:
               only: /.*/
       - gar-upload:
+          context:
+            - gcpv2-workload-identity
           requires:
             - build
       - frontend-tests:
