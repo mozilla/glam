@@ -72,7 +72,7 @@ jobs:
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam";
             [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
             [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
-            [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
+            [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
 
             # push all tags associated with the image
