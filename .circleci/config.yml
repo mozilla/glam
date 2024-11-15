@@ -70,15 +70,11 @@ jobs:
           command: |
             gcloud auth configure-docker us-docker.pkg.dev --quiet
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam"
-            docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
-            docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
-              # tag the CI-built docker image with latest & the latest git commit SHA
-              docker tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" "${DOCKER_IMAGE}:latest"
-            elif  [ ! -z "${CIRCLE_TAG}" ]; then
-              # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
-              docker tag "${DOCKER_IMAGE}:${CIRCLE_SHA1}" "${DOCKER_IMAGE}:${CIRCLE_TAG}"
-            fi
+            [ ! -z "${CIRCLE_SHA1" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
+            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
+            [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
+            [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
+
             # push all tags associated with the image
             docker push -a "${DOCKER_IMAGE}"
 
