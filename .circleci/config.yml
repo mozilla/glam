@@ -68,6 +68,7 @@ jobs:
       - run:
           name: Deploy to Google Artifact Registry
           command: |
+            gcloud auth configure-docker us-docker.pkg.dev --quiet
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam"
             docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
             docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
