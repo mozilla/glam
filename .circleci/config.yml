@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Restore Docker image cache
           command: docker load -i /tmp/cache/app.tar
-      - run: 'echo "Authenticating as ${echo $GCP_SERVICE_ACCOUNT_EMAIL | sed -e "s/@/ at /gi"}"'
+      - run: echo "Authenticating as $(echo $GCP_SERVICE_ACCOUNT_EMAIL | sed -e 's/@/ at /gi')"
       - run:
           name: Prepare environment variables for OIDC authentication
           command: |
