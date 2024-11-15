@@ -249,6 +249,9 @@ workflows:
             - gcpv2-workload-identity
           requires:
             - build
+          filters:
+            tags:
+              only: /.*/
       - frontend-tests:
           requires:
             - build
