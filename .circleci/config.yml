@@ -69,13 +69,18 @@ jobs:
       - run:
           name: Deploy to Google Artifact Registry
           command: | #shell
+            
+            # Exit w/ error if non-main branch is tagged with format 0.0.0
+            # per discssion w/ dev team we expect non-main branches to have alpha, beta, rc (etc) tags for stage release
+            [ ! "${CIRCLE_BRANCH}" == "main" ] && [[ "${CIRCLE_TAG}" =~ ^(?:[0-9]+\.?){1,3}$ ]] && echo "Non main branch tagged as prod release which is not allowed" && exit 1;
+
             gcloud auth configure-docker us-docker.pkg.dev --quiet;
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam";
-            [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
-            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
+            [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:commit-${CIRCLE_SHA1}"
+            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:branch-${CIRCLE_BRANCH}"
             [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
-
+          
             # push all tags associated with the image
             docker push -a "${DOCKER_IMAGE}"
 
