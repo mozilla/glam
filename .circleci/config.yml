@@ -14,7 +14,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Create a version.json
-          command: |
+          command: | #shell
             # create a version.json per https://github.com/mozilla-services/Dockerflow/blob/main/docs/version_object.md
             printf '{"commit":"%s","version":"%s","source":"https://github.com/%s/%s","build":"%s"}\n' \
             "$CIRCLE_SHA1" \
@@ -26,12 +26,12 @@ jobs:
           name:
             Build Docker images for
             $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
-          command: |
+          command: | #shell
             docker build --target frontend -t app-frontend:build .
             docker build -t app:build .
       - run:
           name: docker save
-          command: |
+          command: | #shell
             mkdir -p /tmp/cache
             docker save -o /tmp/cache/app-frontend.tar "app-frontend:build"
             docker save -o /tmp/cache/app.tar "app:build"
@@ -54,27 +54,33 @@ jobs:
       - run:
           name: Restore Docker image cache
           command: docker load -i /tmp/cache/app.tar
-      # - run: echo "Authenticating as $(echo $GCP_SERVICE_ACCOUNT_EMAIL | sed -e 's/@/ at /gi')"
       - run:
           name: Prepare environment variables for OIDC authentication
-          command: |
+          command: | #shell
             echo 'export GOOGLE_PROJECT_ID="moz-fx-glam-prod"' >> "$BASH_ENV"
             echo "export OIDC_WIP_ID=$GCPV2_WORKLOAD_IDENTITY_POOL_ID" >> "$BASH_ENV"
             echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
             echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
             echo "export OIDC_SERVICE_ACCOUNT_EMAIL=$GCP_SERVICE_ACCOUNT_EMAIL" >> "$BASH_ENV"
+
       - gcp-cli/setup:
           use_oidc: true
+
       - run:
           name: Deploy to Google Artifact Registry
-          command: |
+          command: | #shell
+            
+            # Exit w/ error if non-main branch is tagged with format 0.0.0
+            # per discssion w/ dev team we expect non-main branches to have alpha, beta, rc (etc) tags for stage release
+            [ ! "${CIRCLE_BRANCH}" == "main" ] && [[ "${CIRCLE_TAG}" =~ ^(?:[0-9]+\.?){1,3}$ ]] && echo "Non main branch tagged as prod release which is not allowed" && exit 1;
+
             gcloud auth configure-docker us-docker.pkg.dev --quiet;
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam";
-            [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_SHA1}"
-            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_BRANCH}"
+            [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:commit-${CIRCLE_SHA1}"
+            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:branch-${CIRCLE_BRANCH}"
             [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
-
+          
             # push all tags associated with the image
             docker push -a "${DOCKER_IMAGE}"
 
@@ -105,7 +111,7 @@ jobs:
           command: docker load -i /tmp/cache/app.tar
       - run:
           name: Lint Python Code
-          command:
+          command: 
             docker-compose -f docker-compose.test.yml run --rm server make lint
       - run:
           name: Test Python Code
@@ -139,11 +145,11 @@ jobs:
           command: docker load -i /tmp/cache/app.tar
       - run: # TODO: remove this step after migration
           name: Login to Dockerhub
-          command: |
+          command: | #shell
             echo "${DOCKER_PASSWORD}" | docker login -u="${DOCKER_USER}" --password-stdin
       - run: # TODO: remove this step after migration
           name: Deploy to Dockerhub
-          command: |
+          command: | #shell
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
               # tag the CI-built docker image with latest & the latest git commit SHA
               docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
@@ -194,7 +200,7 @@ jobs:
       # /moz-fx-glam-prod/glam-prod/glam@sha256:705f53c5511c5803c6ea58896a93a97a30dc8defdef19c5d2243c3171a13be25
       - run:
           name: Prepare environment variables for OIDC authentication
-          command: |
+          command: | #shell
             echo 'export GOOGLE_PROJECT_ID="moz-fx-experimenter-prod-6cd5"' >> "$BASH_ENV"
             echo "export OIDC_WIP_ID=$GCPV2_WORKLOAD_IDENTITY_POOL_ID" >> "$BASH_ENV"
             echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
