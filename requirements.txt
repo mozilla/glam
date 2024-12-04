@@ -58,7 +58,7 @@ google-cloud-core==2.4.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==2.17.0
+google-cloud-storage==2.16.0
     # via -r requirements.in
 google-crc32c==1.1.2
     # via
@@ -106,7 +106,7 @@ protobuf==4.25.3
     #   google-api-core
     #   googleapis-common-protos
     #   grpcio-status
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.10
     # via -r requirements.in
 pyasn1==0.4.8
     # via
