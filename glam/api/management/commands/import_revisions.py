@@ -56,7 +56,7 @@ class Command(BaseCommand):
         log(channel, f"We currently have {len(known_builds) - 1} known SHAs")
 
         aggregates_table = (
-            f"moz-fx-data-shared-prod.glam_etl.glam_desktop_{channel}_aggregates"
+            f"moz-fx-data-glam-prod.glam_etl.glam_desktop_{channel}_aggregates"
         )
         new_builds_query = f"""
             SELECT ARRAY_AGG(DISTINCT(build_id)) AS builds

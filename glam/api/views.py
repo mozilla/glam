@@ -31,7 +31,7 @@ from glam.api.models import (
 )
 
 # Data will be read from tables in this project
-GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
+GLAM_BQ_PROD_PROJECT = "moz-fx-data-glam-prod"
 
 
 def get_bq_client():
