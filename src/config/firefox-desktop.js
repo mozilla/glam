@@ -182,11 +182,11 @@ export default {
       };
     });
   },
-  updateStoreAfterDataIsReceived(data, appStore) {
+  updateStoreAfterDataIsReceived(data, probeType, appStore) {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
-    const viewType = this.probeView[data[0].metric_type];
+    const viewType = probeType;
 
     const isCategoricalTypeProbe = viewType === 'categorical';
     let etc = {};
