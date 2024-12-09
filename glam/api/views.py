@@ -335,12 +335,12 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
             "metric": row.metric,
             "metric_key": row.metric_key,
             "metric_type": row.metric_type,
-            "total_users": int(row.total_users)
-            if row.total_users
-            else None,  # Casting, otherwise this BIGNUMERIC column is read as a string
-            "sample_count": int(row.total_sample)
-            if row.total_sample
-            else None,  # Casting, otherwise this BIGNUMERIC column is read as a string
+            "total_users": (
+                int(row.total_users) if row.total_users else None
+            ),  # Casting, otherwise this BIGNUMERIC column is read as a string
+            "sample_count": (
+                int(row.total_sample) if row.total_sample else None
+            ),  # Casting, otherwise this BIGNUMERIC column is read as a string
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "non_norm_histogram": row.non_norm_histogram
             and orjson.loads(row.non_norm_histogram)
@@ -568,6 +568,8 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     response = []
 
     for row in query_job:
+        if not row.total_sample:
+            print(row)
         if aggregation_level != "version" and not row.build_date:
             continue
         else:
@@ -593,9 +595,14 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             "total_users": int(
                 row.total_users
             ),  # Casting, otherwise this BIGNUMERIC column is read as a string
-            "sample_count": int(
-                row.total_sample
-            ),  # Casting, otherwise this BIGNUMERIC column is read as a string
+            "sample_count": (
+                # Casting, otherwise this BIGNUMERIC column is read as a string.
+                # Fallback to zero as temp workaround for missing total_sample
+                # on labeled_distributions.
+                int(row.total_sample)
+                if row.total_sample
+                else 0
+            ),
             "histogram": row.histogram and orjson.loads(row.histogram) or "",
             "non_norm_histogram": row.non_norm_histogram
             and orjson.loads(row.non_norm_histogram)

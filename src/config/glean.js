@@ -19,6 +19,8 @@ export const SUPPORTED_METRICS = [
   'custom_distribution',
   'memory_distribution',
   'timing_distribution',
+  'labeled_custom_distribution',
+  'labeled_timing_distribution',
 ];
 
 export const FIREFOX_ON_GLEAN = {
@@ -80,7 +82,7 @@ export const FIREFOX_ON_GLEAN = {
     },
   },
   // FIXME: these are guesses at the moment
-  probeView: {
+  probeViewMap: {
     boolean: 'categorical',
     counter: 'linear',
     custom_distribution_exponential: 'log',
@@ -90,6 +92,10 @@ export const FIREFOX_ON_GLEAN = {
     quantity: 'linear',
     timespan: 'log',
     timing_distribution: 'log',
+  },
+  probeViewFromHistogramTypeMap: {
+    exponential: 'log',
+    linear: 'linear',
   },
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
@@ -134,6 +140,10 @@ export const FIREFOX_ON_GLEAN = {
     });
 
     const metricType = appStore.getState().probe.type;
+    const histogramType = appStore.getState().probe.histogram_type;
+    const probeView = this.probeViewMap[metricType]
+      ? this.probeViewMap[metricType]
+      : this.probeViewFromHistogramTypeMap[histogramType];
     noUnknownMetrics(SUPPORTED_METRICS, metricType);
 
     return getProbeData(params).then((payload) => {
@@ -143,10 +153,7 @@ export const FIREFOX_ON_GLEAN = {
         noResponse(p);
         noUnknownMetrics(SUPPORTED_METRICS, metricType);
       });
-      const viewType =
-        this.probeView[metricType] === 'categorical'
-          ? 'proportion'
-          : 'quantile';
+      const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
 
       appStore.setField('viewType', viewType);
       appStore.setField('aggMethod', payload.response[0].client_agg_type);
@@ -158,16 +165,16 @@ export const FIREFOX_ON_GLEAN = {
       );
       return {
         data,
-        probeType: this.probeView[metricType],
+        probeType: probeView,
       };
     });
   },
 
-  updateStoreAfterDataIsReceived(data, appStore) {
+  updateStoreAfterDataIsReceived(data, probeType, appStore) {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
-    const viewType = this.probeView[data[0].metric_type];
+    const viewType = probeType;
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
@@ -261,7 +268,7 @@ export const FENIX = {
     },
   },
   // FIXME: these are guesses at the moment
-  probeView: {
+  probeViewMap: {
     boolean: 'categorical',
     counter: 'linear',
     custom_distribution_exponential: 'log',
@@ -271,6 +278,10 @@ export const FENIX = {
     quantity: 'linear',
     timespan: 'log',
     timing_distribution: 'log',
+  },
+  probeViewFromHistogramTypeMap: {
+    exponential: 'log',
+    linear: 'linear',
   },
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
@@ -315,6 +326,10 @@ export const FENIX = {
     });
 
     const metricType = appStore.getState().probe.type;
+    const histogramType = appStore.getState().probe.histogram_type;
+    const probeView = this.probeViewMap[metricType]
+      ? this.probeViewMap[metricType]
+      : this.probeViewFromHistogramTypeMap[histogramType];
     noUnknownMetrics(SUPPORTED_METRICS, metricType);
 
     return getProbeData(params).then((payload) => {
@@ -324,11 +339,7 @@ export const FENIX = {
         noResponse(p);
         noUnknownMetrics(SUPPORTED_METRICS, metricType);
       });
-      const viewType =
-        this.probeView[metricType] === 'categorical'
-          ? 'proportion'
-          : 'quantile';
-
+      const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
       appStore.setField('viewType', viewType);
       appStore.setField('aggMethod', payload.response[0].client_agg_type);
 
@@ -339,16 +350,15 @@ export const FENIX = {
       );
       return {
         data,
-        probeType: this.probeView[metricType],
+        probeType: probeView,
       };
     });
   },
 
-  updateStoreAfterDataIsReceived(data, appStore) {
+  updateStoreAfterDataIsReceived(data, probeType, appStore) {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
-    const viewType = this.probeView[data[0].metric_type];
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
@@ -357,12 +367,12 @@ export const FENIX = {
       data = data.filter((di) => di.client_agg_type === '');
     }
 
-    if (viewType === 'categorical') {
+    if (probeType === 'categorical') {
       etc = extractBucketMetadata(data);
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
 
-    return { data, viewType, ...etc };
+    return { data, probeType, ...etc };
   },
   transformProbeForGLAM(probe) {
     const pr = { ...probe };
