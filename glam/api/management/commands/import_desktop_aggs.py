@@ -31,7 +31,6 @@ def log(channel, message):
 class Command(BaseCommand):
 
     help = "Imports aggregation data"
-    bq_job_projects = list(GCP_NON_PROD_PROJECT, GCP_PROD_PROJECT)
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -43,11 +42,6 @@ class Command(BaseCommand):
             help="The bucket location for the exported aggregates",
             default=constants.GCS_BUCKET,
         )
-        parser.add_argument(
-            "--bq_job_project",
-            choices=self.bq_job_project,
-            required=True
-        )
 
     def handle(self, bucket, *args, **options):
 
@@ -55,7 +49,7 @@ class Command(BaseCommand):
         model = apps.get_model(CHANNEL_TO_MODEL[channel])
 
         self.gcs_client = storage.Client()
-        self.bq_client = bigquery.Client( project=options["bq_job_project"] )
+        self.bq_client = bigquery.Client()
 
         blobs = self.gcs_client.list_blobs(bucket)
         blobs = list(
