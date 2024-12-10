@@ -46,3 +46,7 @@ PROCESS_NAMES = dict(PROCESS_CHOICES)
 PROCESS_IDS = {v: k for k, v in PROCESS_NAMES.items()}
 
 GCS_BUCKET = "moz-fx-glam-prod-etl-data"
+
+GCP_PROD_PROJECT = "moz-fx-glam-prod"
+GCP_NON_PROD_PROJECT = "moz-fx-glam-nonprod"
+GCP_PROJECT_CHOICES = list(GCP_NON_PROD_PROJECT, GCP_PROD_PROJECT)
