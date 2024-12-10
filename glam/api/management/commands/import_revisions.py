@@ -23,6 +23,7 @@ class Command(BaseCommand):
     help = "Imports builds SHA revisions"
 
     channel_choices = list(constants.CHANNEL_IDS.keys()) + ["all"]
+    bq_job_projects = list(GCP_NON_PROD_PROJECT, GCP_PROD_PROJECT)
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -32,13 +33,22 @@ class Command(BaseCommand):
             required=False,
         )
 
+        parser.add_argument(
+            "--bq_job_project",
+            choices=self.bq_job_project,
+            required=True
+        )
+
     def handle(self, *args, **options):
-        self.bq_client = bigquery.Client()
+
         channels = (
             [options["channel"]]
             if options["channel"] != "all"
             else ["nightly", "beta", "release"]
         )
+
+        self.bq_client = bigquery.Client( project=options["bq_job_project"] )
+
         for channel in channels:
             self.import_revisions(channel)
 
