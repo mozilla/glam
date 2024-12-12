@@ -568,8 +568,6 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     response = []
 
     for row in query_job:
-        if not row.total_sample:
-            print(row)
         if aggregation_level != "version" and not row.build_date:
             continue
         else:
