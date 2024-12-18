@@ -221,12 +221,8 @@ export const dataset = derived([store], ([$store], set) => {
   if (previousQuery !== qs) {
     previousQuery = qs;
     set(
-      cache[qs].then(({ data, probeType }) =>
-        activeProductConfig.updateStoreAfterDataIsReceived(
-          data,
-          probeType,
-          store
-        )
+      cache[qs].then(({ data }) =>
+        activeProductConfig.updateStoreAfterDataIsReceived(data, store)
       )
     );
   }
