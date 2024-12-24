@@ -359,6 +359,7 @@ export const FENIX = {
     // This function is called directly after the response has been received by
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
+    const viewType = probeType;
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
@@ -367,12 +368,12 @@ export const FENIX = {
       data = data.filter((di) => di.client_agg_type === '');
     }
 
-    if (probeType === 'categorical') {
+    if (viewType === 'categorical') {
       etc = extractBucketMetadata(data);
       appStore.setField('activeBuckets', etc.initialBuckets);
     }
 
-    return { data, probeType, ...etc };
+    return { data, viewType, ...etc };
   },
   transformProbeForGLAM(probe) {
     const pr = { ...probe };
