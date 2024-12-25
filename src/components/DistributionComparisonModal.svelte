@@ -6,6 +6,8 @@
   import { store } from '../state/store';
   import routes from '../config/routes';
   import { convertValueToPercentage } from '../utils/probe-utils';
+  import { formatToBuildID } from '../utils/formatters';
+  import BuildIdFormattedToDate from './explore/BuildIdFormattedToDate.svelte';
 
   export let densityMetricType;
   export let topChartData;
@@ -119,8 +121,7 @@
   <Modal>
     <div slot="trigger" let:open>
       <button on:click={open} id={distViewButtonId} hidden
-        >Distribution comparison</button
-      >
+        >Distribution comparison</button>
     </div>
     <div slot="title">Distribution comparison - {$store.probe.name}</div>
     <div class="outer-flex">
@@ -130,12 +131,14 @@
             <SliderSwitch
               bind:checked={cumulative}
               label="Cumulative mode: "
-              design="slider"
-            />
+              design="slider" />
           {/if}
         </div>
         <div class="chart-fixed">
-          <p>Reference</p>
+          <p>
+            Reference - <BuildIdFormattedToDate
+              buildIdHour={topChartData.build_id} />
+          </p>
           {#key cumulative}
             {#key innerHeight}
               {#key innerWidth}
@@ -145,8 +148,7 @@
                   density={topChartDensity}
                   {topTick}
                   {tickIncrement}
-                  {activeCategoricalProbeLabels}
-                >
+                  {activeCategoricalProbeLabels}>
                   <g slot="glam-body">
                     {#if bottomChartData}
                       <DistributionChart
@@ -157,8 +159,7 @@
                         {tickIncrement}
                         sampleCount={topChartSampleCount}
                         tooltipLocation="bottom"
-                        {activeCategoricalProbeLabels}
-                      />
+                        {activeCategoricalProbeLabels} />
                     {/if}
                   </g>
                 </DistributionComparisonGraph>
@@ -167,7 +168,10 @@
           {/key}
         </div>
         <div class="chart-fixed">
-          <p>Hovered</p>
+          <p>
+            Hovered - <BuildIdFormattedToDate
+              buildIdHour={bottomChartData.build_id} />
+          </p>
           {#key cumulative}
             {#key innerHeight}
               {#key innerWidth}
@@ -177,8 +181,7 @@
                   density={bottomChartDensity}
                   {topTick}
                   {tickIncrement}
-                  {activeCategoricalProbeLabels}
-                >
+                  {activeCategoricalProbeLabels}>
                   <g slot="glam-body">
                     {#if bottomChartData}
                       <DistributionChart
@@ -188,8 +191,7 @@
                         {topTick}
                         sampleCount={bottomChartSampleCount}
                         tooltipLocation="top"
-                        {activeCategoricalProbeLabels}
-                      />
+                        {activeCategoricalProbeLabels} />
                     {/if}
                   </g>
                 </DistributionComparisonGraph>
@@ -204,8 +206,7 @@
             <h3 style="align-self: center;">{$store.probe.name}</h3>
             <svelte:component
               this={routes[$store.product].details}
-              showLinks={false}
-            />
+              showLinks={false} />
           </div>
         </div>
         <div><hr /></div>
