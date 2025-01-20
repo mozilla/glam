@@ -2,36 +2,33 @@
 
 GLAM has a 3-stage deployment:
 
-1. **Dev**: Deployments to the development server happen automatically for all
+1. **Dev**: Deployments to the development environment happen automatically for all
    commits that land on the `main` branch
-2. **Stage**: Deployments to the staging server happen automatically for tags of
-   the [CalVer](http://calver.org/) format `YYYY.MM.N` where `N` is a zero-based
-   counter for the number of tags during the month
-3. **Production**: File a Jira ticket with the label GLAM in Data SRE board to
-   deploy to production. See example ticket:
-   https://mozilla-hub.atlassian.net/browse/DSRE-8
+2. **Stage**: Deployments to the staging environment happen automatically for tags of
+   the [SemVer](http://semver.org/) format `vYYYY.MM-rcN` where `N` is a zero-based
+   counter for the number of tags during the month. e.g.: `v2025.01-rc0` means this
+   is the first release candidate of Jan 2025.
+3. **Production**: Deployments to the production environment happen automatically for
+   tags of the [SemVer](http://semver.org/) format `vYYYY.MM.N` where `N` is a zero-based
+   counter for the number of tags during the month. e.g.: `v2025-01.0` means this
+   is the first release of Jan 2025.
+
+   Notice that the `N` in Production tags is not necessarily the same
+   as in the Stage tags, as there might be, for example, five release candidates
+   and in a month and only one relese, which would make their latest tags `2025.01-rc4`
+   and `2025.01.0`, respectively.
 
 ## Tagging for release
 
 The steps for tagging a release for the staging server are as follows:
 
-1. Ensure that the development server is working as intended
-2. Update the `CHANGELOG.md` file:
-
-- Update any changelog entries based on git history:
-  - View git history since the last tag either by using compare link or via git
-    locally:
-    - `git log $(git describe --tags --abbrev=0)..HEAD --oneline`
-- Copy/paste the "unreleased" header for editing, leaving an unreleased header
-  for future updates
-- Update the pasted "unreleased" header with the following:
-  - Add the appropriate tag name
-  - Update the Github compare link replacing "HEAD" with the tag being created
-  - Include the date that the tag was created
-- Update the top "unreleased" header to compare from tag being made to HEAD
-
-3. Tag a release locally in git via: `git tag <tag>`
-4. Push the tag to github via: `git push origin --tags`
+1. Ensure that the development server is working as intended by testing it in dev first
+2. Tag a release locally in git via: `git tag <tag>` or use the [github releases functionality]
+(https://github.com/mozilla/glam/releases) to create a tag at the same time as a release
+4. If you created a tag locally, push the tag to github via: `git push origin --tags` and create a
+release from that tag using the [github releases functionality] (https://github.com/mozilla/glam/releases)
+5. **Important** make sure to generate release notes.
+6. Ask someone or follow the pattern in the most recent releases on the repo in case of doubt :)
 
 ## Logs
 
