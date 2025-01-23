@@ -6,8 +6,8 @@ https://github.com/mozilla/glam
 
 To install a local copy of GLAM, you need:
 
-- [Python](https://www.python.org/) (version 3.8+)
-- [node.js](https://nodejs.org/) (version 12+)
+- [Python](https://www.python.org/) (version 3.9+)
+- [node.js](https://nodejs.org/) (version 22+)
 - [npm](https://docs.npmjs.com/cli/v7/commands/npm) (v7+): run
   `npm install -g npm@latest` to upgrade to the latest npm
 - [Docker](https://www.docker.com/): GLAM uses Docker for local development and
@@ -58,7 +58,8 @@ To gather the probe data that populates the probe API, run the following:
 ./manage.py import_probes
 ```
 
-The next step requires viewer permissions in the non-prod GCP project, please
+## Starting the server
+This step requires read permissions in the prod GCP project, please
 reach out to someone on the <a
         href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
       > channel on Mozilla's internal Slack, or
@@ -72,23 +73,6 @@ reauthenticate via
 gcloud auth application-default login
 ```
 
-Then, populate the aggregation tables with data from desktop Firefox:
-
-```bash
-./manage.py import_desktop_aggs <CHANNEL>
-```
-
-where `CHANNEL` is one of `nightly`, `beta`, or `release`.
-
-You can also import data from a custom bucket using the bucket argument.
-Remember to set the project accordingly:
-
-```
-gcloud auth login --update-adc
-```
-
-## Starting the server
-
 To start the application, run:
 
 ```
@@ -97,14 +81,14 @@ make up
 
 This will launch 2 servers:
 
-- http://localhost:3000 is an nginx server configured to authenticate via
+- http://localhost:3000 is an nginx server configured to authenticate select endpoints via
   Mozilla's auth0 backend and will proxy GLAM.
 - http://localhost:8000 is the Django server that contains the API endpoints and
   serves up the front-end HTML and static assets.
 
 See below for building the front-end Javascript and other static assets.
 
-With these servers running you can, e.g., query the data via `curl`:
+With these servers running you can access GLAM on http://localhost:8000 or query the data via `curl`:
 
 ```
 curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1/data/ -d '{"query": {"channel": "nightly", "versions": ["70"], "probe": "gc_ms", "aggregationLevel": "version"}}' | python -m json.tool
