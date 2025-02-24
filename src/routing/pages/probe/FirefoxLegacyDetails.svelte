@@ -240,7 +240,7 @@
     <div class="probe-details-download">
       <div class="drawer-section drawer-section--end">
         <SqlModal />
-        <button on:click={exportData} class="docs-button">
+        <button on:click={exportData} class="docs-button" data-glean-id="export-json">
           <Brackets size={16} />
           Export to JSON
         </button>
