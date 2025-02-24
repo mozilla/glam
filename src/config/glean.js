@@ -92,6 +92,7 @@ export const FIREFOX_ON_GLEAN = {
     quantity: 'linear',
     timespan: 'log',
     timing_distribution: 'log',
+    labeled_timing_distribution: 'log',
   },
   probeViewFromHistogramTypeMap: {
     exponential: 'log',
