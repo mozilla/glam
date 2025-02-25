@@ -22,4 +22,5 @@
   justify={'flex-end'}
   level="low"
   on:selection
+  componentName="KeySelectionControl"
 />

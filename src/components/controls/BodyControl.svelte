@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { Button, ButtonGroup } from '@graph-paper/button';
+  import { kebabCase } from 'change-case';
   import ColorSwatch from './ColorSwatch.svelte';
 
   export let level = 'medium';
@@ -11,6 +12,7 @@
   export let reverse = false;
   export let selected = multi ? [] : undefined;
   export let justify = 'flex-start';
+  export let componentName;
 
   const dispatch = createEventDispatcher();
 
@@ -48,25 +50,28 @@
 <ButtonGroup {justify}>
   {#each options as { label, value, labelColor, tooltip, enabled, component }, i (label)}
     {#if enabled}
-      <Button
-        {tooltip}
-        {level}
-        {compact}
-        toggled={multi ? selected.includes(value) : selected === value}
-        on:click={() => {
-          toggle(value);
-        }}
-      >
-        {#if labelColor}
-          <div class="body-control__color-swatch-wrapper">
-            <ColorSwatch color={labelColor} />
-          </div>
-        {/if}
-        {#if component}
-          <svelte:component this={component} size={14} />
-        {/if}
-        {label}
-      </Button>
+      {@const isSelected = multi ? selected.includes(value) : selected === value}
+      <div data-glean-id="toggle-{kebabCase(componentName)}-{kebabCase(label)}-{isSelected}">
+        <Button
+          {tooltip}
+          {level}
+          {compact}
+          toggled={isSelected}
+          on:click={() => {
+            toggle(value);
+          }}
+        >
+          {#if labelColor}
+            <div class="body-control__color-swatch-wrapper">
+              <ColorSwatch color={labelColor} />
+            </div>
+          {/if}
+          {#if component}
+            <svelte:component this={component} size={14} />
+          {/if}
+          {label}
+        </Button>
+      </div>
     {/if}
   {/each}
 </ButtonGroup>

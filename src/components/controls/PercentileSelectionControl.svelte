@@ -81,4 +81,5 @@
   multi={true}
   level="medium"
   on:selection
+  componentName="PercentileSelectionControl"
 />
