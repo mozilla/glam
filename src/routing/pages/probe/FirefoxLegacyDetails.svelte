@@ -22,7 +22,7 @@
 
   async function exportData() {
     const data = await $dataset;
-    downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
+    downloadString(JSON.stringify(data), `${$store.probe.name}.json`, 'text');
   }
   const isProbeActive = $store.probe.active;
 </script>

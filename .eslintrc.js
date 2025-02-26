@@ -41,6 +41,7 @@ module.exports = {
         'import/no-duplicates': 'off',
         'import/no-mutable-exports': 'off',
         'import/no-unresolved': 'off',
+        'import/no-unresolved': 'off',
 
         // Temporarily work around a bug in eslint-plugin-svelte3.
         //

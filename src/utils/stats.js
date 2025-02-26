@@ -57,8 +57,8 @@ export function nearestBelow(value, neighbors) {
 }
 
 export function weightedQuantile(
-  probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   values,
+  probs = [0.05, 0.25, 0.5, 0.75, 0.95],
   weights = values.map(() => 1)
 ) {
   // rough port of Hmisc's wtd.quantile function. https://github.com/harrelfe/Hmisc/blob/master/R/wtd.stats.s

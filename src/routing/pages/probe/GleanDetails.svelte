@@ -13,7 +13,7 @@
 
   async function exportData() {
     const data = await $dataset;
-    downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
+    downloadString(JSON.stringify(data), `${$store.probe.name}.json`, 'text');
   }
 
   const parseYMD = timeParse('%Y-%m-%d');
