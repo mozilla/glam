@@ -288,7 +288,7 @@
 
 <Modal>
   <div slot="trigger" let:open>
-    <button on:click={open} class="docs-button"  data-glean-id="view-sql-query">
+    <button on:click={open} class="docs-button" data-glean-id="view-sql-query">
       <Database size={16} />
       View SQL Query
     </button>
@@ -330,7 +330,11 @@
             >{tab.sql()}
           </code>
           <div class="buttons">
-            <button class="copy" on:click={copySql} title="Copy to clipboard" data-glean-id="copy-sql-query__{kebabCase(tab.label)}">
+            <button
+              class="copy"
+              on:click={copySql}
+              title="Copy to clipboard"
+              data-glean-id="copy-sql-query__{kebabCase(tab.label)}">
               <FileCopy size={24} />
             </button>
           </div>

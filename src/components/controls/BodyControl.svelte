@@ -50,8 +50,14 @@
 <ButtonGroup {justify}>
   {#each options as { label, value, labelColor, tooltip, enabled, component }, i (label)}
     {#if enabled}
-      {@const isSelected = multi ? selected.includes(value) : selected === value}
-      <div data-glean-id="toggle-{kebabCase(componentName)}-{kebabCase(label)}-{isSelected}">
+      {@const isSelected = multi
+        ? selected.includes(value)
+        : selected === value}
+      <div
+        data-glean-id="toggle-{kebabCase(componentName)}-{kebabCase(
+          label
+        )}-{isSelected}"
+      >
         <Button
           {tooltip}
           {level}

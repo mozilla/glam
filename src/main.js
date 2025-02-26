@@ -1,7 +1,7 @@
 import Router from './routing/Router.svelte';
 import Glean from '@mozilla/glean/web';
 
-Glean.initialize("glam", true, {
+Glean.initialize('glam', true, {
   enableAutoElementClickEvents: true,
   enableAutoPageLoadEvents: true,
 });

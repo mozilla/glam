@@ -38,4 +38,10 @@
   ];
 </script>
 
-<BodyControl {options} selected={horizon} level="medium" on:selection componentName="TimeHorizonControl"/>
+<BodyControl
+  {options}
+  selected={horizon}
+  level="medium"
+  on:selection
+  componentName="TimeHorizonControl"
+/>
