@@ -145,14 +145,14 @@ export const FIREFOX_ON_GLEAN = {
     const probeView = this.probeViewMap[metricType]
       ? this.probeViewMap[metricType]
       : this.probeViewFromHistogramTypeMap[histogramType];
-    noUnknownMetrics(SUPPORTED_METRICS, metricType);
+    noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(SUPPORTED_METRICS, metricType);
+        noUnknownMetrics(metricType, SUPPORTED_METRICS);
       });
       const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
 
@@ -331,14 +331,14 @@ export const FENIX = {
     const probeView = this.probeViewMap[metricType]
       ? this.probeViewMap[metricType]
       : this.probeViewFromHistogramTypeMap[histogramType];
-    noUnknownMetrics(SUPPORTED_METRICS, metricType);
+    noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
       validate(payload, (p) => {
         noResponse(p);
-        noUnknownMetrics(SUPPORTED_METRICS, metricType);
+        noUnknownMetrics(metricType, SUPPORTED_METRICS);
       });
       const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
       appStore.setField('viewType', viewType);

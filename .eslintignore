@@ -2,6 +2,7 @@
 !.prettierrc.js
 
 public/static/bundle.js
+src/main.js
 
 # eslint doesn't like numeric separators (e.g. `12_345`), and I'm stubbornly
 # refusing to remove them.

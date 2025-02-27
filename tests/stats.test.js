@@ -12,8 +12,8 @@ describe('weightedQuantile', () => {
   it('correctly computes the weighted quantiles', () => {
     expect(
       weightedQuantile(
-        [0.05, 0.25, 0.5, 0.75, 0.95],
         hist01.map((h) => h.value),
+        [0.05, 0.25, 0.5, 0.75, 0.95],
         hist01.map((h) => h.weight)
       )
     ).toEqual(weightedQuantiles01);

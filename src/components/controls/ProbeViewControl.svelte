@@ -39,6 +39,7 @@
           `/${$store.route.product}/${$store.route.section}/${$store.route.probeName}/${evt.detail.selection}${$currentQuery}`
         );
       }}
+      componentName="ProbeViewControl"
     />
   </div>
 {/if}

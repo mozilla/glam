@@ -1,4 +1,4 @@
-export const noUnknownMetrics = (supportedMetrics = [], metricType) => {
+export const noUnknownMetrics = (metricType, supportedMetrics = []) => {
   // Ensure the probe metric type is in our list of `probeView`s.
   if (!supportedMetrics.includes(metricType)) {
     const er = new Error('This metric type is currently unsupported.');

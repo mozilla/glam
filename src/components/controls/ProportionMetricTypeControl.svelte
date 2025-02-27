@@ -22,4 +22,5 @@
   selected={metricType}
   level="medium"
   on:selection
+  componentName="ProportionMetricTypeControl"
 />
