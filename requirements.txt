@@ -54,17 +54,17 @@ google-auth==2.28.2
     #   google-cloud-storage
 google-cloud-bigquery==3.25.0
     # via -r requirements.in
-google-cloud-core==2.4.1
+google-cloud-core==2.4.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==2.17.0
+google-cloud-storage==3.1.0
     # via -r requirements.in
 google-crc32c==1.1.2
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.7.0
+google-resumable-media==2.7.2
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
