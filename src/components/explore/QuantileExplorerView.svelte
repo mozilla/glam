@@ -1,6 +1,5 @@
 <script>
   import { setContext, createEventDispatcher } from 'svelte';
-
   import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
   import { Warning } from '@graph-paper/icons';
   import { percentileLineColorMap } from '../../utils/color-maps';
@@ -200,6 +199,7 @@
                     id="toggleSmooth"
                     type="checkbox"
                     bind:checked={interpolate}
+                    data-glean-id="interpolate-percentiles"
                   />
                   <h3 for="toggleSmooth" class="data-graphic__element-title">
                     Interpolated

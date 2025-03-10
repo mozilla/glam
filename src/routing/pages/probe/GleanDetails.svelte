@@ -13,7 +13,7 @@
 
   async function exportData() {
     const data = await $dataset;
-    downloadString(JSON.stringify(data), 'text', `${$store.probe.name}.json`);
+    downloadString(JSON.stringify(data), `${$store.probe.name}.json`, 'text');
   }
 
   const parseYMD = timeParse('%Y-%m-%d');
@@ -293,7 +293,11 @@
     <div class="probe-details-download">
       <div class="drawer-section drawer-section--end">
         <SqlModal />
-        <button on:click={exportData} class="docs-button">
+        <button
+          on:click={exportData}
+          class="docs-button"
+          data-glean-id="export-json"
+        >
           <Brackets size={16} />
           Export to JSON
         </button>
