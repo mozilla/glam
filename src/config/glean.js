@@ -1,4 +1,8 @@
-import { transformAPIResponse } from '../utils/transform-data';
+import produce from 'immer';
+import {
+  transformAPIResponse,
+  transformLabeledCounterToCategoricalHistogram,
+} from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
 import { getProbeData, getProbeInfo } from '../state/api';
@@ -87,7 +91,7 @@ export const FIREFOX_ON_GLEAN = {
     counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'linear',
-    labeled_counter: 'linear',
+    labeled_counter: (isStatic) => (isStatic ? 'categorical' : 'linear'),
     memory_distribution: 'log',
     quantity: 'linear',
     timespan: 'log',
@@ -98,6 +102,12 @@ export const FIREFOX_ON_GLEAN = {
     exponential: 'log',
     linear: 'linear',
   },
+
+  getViewFromMetricType(metricType, isStatic = false) {
+    const mode = this.probeViewMap[metricType];
+    return typeof mode === 'function' ? mode(isStatic) : mode;
+  },
+
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
     // which is used to convey the view state when the GLAM URL is shared with
@@ -142,9 +152,15 @@ export const FIREFOX_ON_GLEAN = {
 
     const metricType = appStore.getState().probe.type;
     const histogramType = appStore.getState().probe.histogram_type;
-    const probeView = this.probeViewMap[metricType]
-      ? this.probeViewMap[metricType]
+    let probeView = this.getViewFromMetricType(metricType)
+      ? this.getViewFromMetricType(metricType)
       : this.probeViewFromHistogramTypeMap[histogramType];
+    if (metricType === 'labeled_counter') {
+      const isStatic =
+        appStore.getState().probe.labels !== null &&
+        appStore.getState().probe.labels.length > 0;
+      probeView = this.getViewFromMetricType(metricType, isStatic);
+    }
     noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
     return getProbeData(params).then((payload) => {
@@ -155,15 +171,46 @@ export const FIREFOX_ON_GLEAN = {
         noUnknownMetrics(metricType, SUPPORTED_METRICS);
       });
       const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
+      let data = payload.response;
 
       appStore.setField('viewType', viewType);
-      appStore.setField('aggMethod', payload.response[0].client_agg_type);
+      appStore.setField('aggMethod', data[0].client_agg_type);
 
-      const data = transformAPIResponse[viewType](
-        payload.response,
-        aggregationLevel,
-        metricType
-      );
+      // Attach labels to histogram if appropriate type.
+      if (probeView === 'categorical') {
+        const labels = {
+          ...appStore.getState().probe.labels,
+        };
+        if (metricType === 'labeled_counter') {
+          data = transformLabeledCounterToCategoricalHistogram(data, labels);
+        }
+        data = produce(data, (draft) =>
+          draft.map((point) => ({
+            ...point,
+            histogram: Object.entries(point.histogram).reduce(
+              (acc, [bin, value]) => {
+                const intBin = Math.floor(bin);
+                if (intBin in labels) {
+                  acc[labels[intBin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+            non_norm_histogram: Object.entries(point.non_norm_histogram).reduce(
+              (acc, [bin, value]) => {
+                const intBin = Math.floor(bin);
+                if (intBin in labels) {
+                  acc[labels[intBin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+          }))
+        );
+      }
+      data = transformAPIResponse[viewType](data, aggregationLevel, metricType);
       return {
         data,
         probeType: probeView,
@@ -274,7 +321,7 @@ export const FENIX = {
     counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'linear',
-    labeled_counter: 'linear',
+    labeled_counter: (isStatic) => (isStatic ? 'categorical' : 'linear'),
     memory_distribution: 'log',
     quantity: 'linear',
     timespan: 'log',
@@ -284,6 +331,12 @@ export const FENIX = {
     exponential: 'log',
     linear: 'linear',
   },
+
+  getViewFromMetricType(metricType, isStatic = false) {
+    const mode = this.probeViewMap[metricType];
+    return typeof mode === 'function' ? mode(isStatic) : mode;
+  },
+
   getParamsForQueryString(storeValue) {
     // These parameters will map to a ${key}=${value}&... in the querystring,
     // which is used to convey the view state when the GLAM URL is shared with
@@ -328,9 +381,15 @@ export const FENIX = {
 
     const metricType = appStore.getState().probe.type;
     const histogramType = appStore.getState().probe.histogram_type;
-    const probeView = this.probeViewMap[metricType]
-      ? this.probeViewMap[metricType]
+    let probeView = this.getViewFromMetricType[metricType]
+      ? this.getViewFromMetricType[metricType]
       : this.probeViewFromHistogramTypeMap[histogramType];
+    if (metricType === 'labeled_counter') {
+      const isStatic =
+        appStore.getState().probe.labels !== null &&
+        appStore.getState().probe.labels.length > 0;
+      probeView = this.getViewFromMetricType(metricType, isStatic);
+    }
     noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
     return getProbeData(params).then((payload) => {
@@ -341,10 +400,45 @@ export const FENIX = {
         noUnknownMetrics(metricType, SUPPORTED_METRICS);
       });
       const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
+      let data = payload.response;
+
       appStore.setField('viewType', viewType);
       appStore.setField('aggMethod', payload.response[0].client_agg_type);
-
-      const data = transformAPIResponse[viewType](
+      // Attach labels to histogram if appropriate type.
+      if (probeView === 'categorical') {
+        const labels = {
+          ...appStore.getState().probe.labels,
+        };
+        if (metricType === 'labeled_counter') {
+          data = transformLabeledCounterToCategoricalHistogram(data, labels);
+        }
+        data = produce(data, (draft) =>
+          draft.map((point) => ({
+            ...point,
+            histogram: Object.entries(point.histogram).reduce(
+              (acc, [bin, value]) => {
+                const intBin = Math.floor(bin);
+                if (intBin in labels) {
+                  acc[labels[intBin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+            non_norm_histogram: Object.entries(point.non_norm_histogram).reduce(
+              (acc, [bin, value]) => {
+                const intBin = Math.floor(bin);
+                if (intBin in labels) {
+                  acc[labels[intBin]] = value;
+                }
+                return acc;
+              },
+              {}
+            ),
+          }))
+        );
+      }
+      data = transformAPIResponse[viewType](
         payload.response,
         aggregationLevel,
         metricType
