@@ -404,7 +404,7 @@ def _get_firefox_shas(channel, hourly=False):
 
 def get_glean_aggregations(source, request, **kwargs):
     if source == "BigQuery":
-        bqClient = bigquery.Client()
+        bqClient = get_bq_client()
         req_data = validate_request_glean(**kwargs)
         return get_glean_aggregations_from_bq(bqClient, request, req_data)
     else:

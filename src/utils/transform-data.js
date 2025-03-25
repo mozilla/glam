@@ -242,3 +242,76 @@ export const transformAPIResponse = {
     return transformed;
   },
 };
+
+/**
+ * Transforms labeled counter data into a categorical histogram format.
+ * This transformation would ideally be done on the ETL, but given the amount
+ * of work involved in changing the ETL, we are doing it here.
+ *
+ * @description
+ * 1. Calculates the total number of users per build (`clientsPerBuild`).
+ * 2. Reverses the `labels` object to map labels back to their metric keys (`revertedLabels`).
+ * 3. Initializes histograms for each label with zero values (`initHistograms`).
+ * 4. Constructs normalized and non-normalized histograms for each build (`histogramsPerBuild`).
+ * 5. Transforms the input data by adding histogram data, total users, and a constant metric key.
+ * 6. Filters the transformed data to include only points with `client_agg_type` equal to 'count'.
+ * 7. Ensures the returned array contains unique entries for each `build_id`.
+ */
+export const transformLabeledCounterToCategoricalHistogram = (data, labels) => {
+  /* eslint-disable camelcase */
+  const clientsPerBuild = data
+    .filter((point) => point.client_agg_type === 'count')
+    .reduce((acc, { build_id, total_users }) => {
+      if (!acc[build_id]) {
+        acc[build_id] = 0;
+      }
+      acc[build_id] += total_users;
+      return acc;
+    }, {});
+
+  const revertedLabels = Object.entries(labels).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {});
+
+  const initHistograms = Object.keys(labels).reduce(
+    (innerAcc, key) => ({
+      ...innerAcc,
+      [key]: 0,
+    }),
+    {}
+  );
+
+  const histogramsPerBuild = data.reduce(
+    (acc, { build_id, metric_key, total_users }) => {
+      if (!acc[build_id]) {
+        acc[build_id] = {
+          normalized: { ...initHistograms },
+          non_normalized: { ...initHistograms },
+        };
+      }
+      acc[build_id].normalized[revertedLabels[metric_key]] =
+        total_users / clientsPerBuild[build_id];
+      acc[build_id].non_normalized[revertedLabels[metric_key]] = total_users;
+      return acc;
+    },
+    {}
+  );
+
+  const transformed = produce(data, (draft) =>
+    draft.map((point) => ({
+      ...point,
+      histogram: histogramsPerBuild[point.build_id].normalized,
+      non_norm_histogram: histogramsPerBuild[point.build_id].non_normalized,
+      total_users: clientsPerBuild[point.build_id],
+      metric_key: 'single',
+    }))
+  ).filter((point) => point.client_agg_type === 'count');
+
+  const uniqueTransformed = transformed.filter(
+    (point, index, self) =>
+      index === self.findIndex((p) => p.build_id === point.build_id)
+  );
+
+  return uniqueTransformed;
+};
