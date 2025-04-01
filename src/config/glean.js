@@ -326,6 +326,7 @@ export const FENIX = {
     quantity: 'linear',
     timespan: 'log',
     timing_distribution: 'log',
+    labeled_timing_distribution: 'log',
   },
   probeViewFromHistogramTypeMap: {
     exponential: 'log',
@@ -381,8 +382,8 @@ export const FENIX = {
 
     const metricType = appStore.getState().probe.type;
     const histogramType = appStore.getState().probe.histogram_type;
-    let probeView = this.getViewFromMetricType[metricType]
-      ? this.getViewFromMetricType[metricType]
+    let probeView = this.getViewFromMetricType(metricType)
+      ? this.getViewFromMetricType(metricType)
       : this.probeViewFromHistogramTypeMap[histogramType];
     if (metricType === 'labeled_counter') {
       const isStatic =
