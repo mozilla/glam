@@ -69,7 +69,7 @@ jobs:
       - run:
           name: Deploy to Google Artifact Registry
           command: | #shell
-            
+
             # Exit w/ error if non-main branch is tagged with format 0.0.0
             # per discssion w/ dev team we expect non-main branches to have alpha, beta, rc (etc) tags for stage release
             [ ! "${CIRCLE_BRANCH}" == "main" ] && [[ "${CIRCLE_TAG}" =~ ^(?:[0-9]+\.?){1,3}$ ]] && echo "Non main branch tagged as prod release which is not allowed" && exit 1;
@@ -80,7 +80,7 @@ jobs:
             [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:branch-${CIRCLE_BRANCH}"
             [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
-          
+
             # push all tags associated with the image
             docker push -a "${DOCKER_IMAGE}"
 
@@ -111,7 +111,7 @@ jobs:
           command: docker load -i /tmp/cache/app.tar
       - run:
           name: Lint Python Code
-          command: 
+          command:
             docker-compose -f docker-compose.test.yml run --rm server make lint
       - run:
           name: Test Python Code
@@ -129,38 +129,6 @@ jobs:
           command: | # bind {PWD} because we use it in docker-compose.yml
             cp .env-dist .env
             make build -v ${PWD}:/app
-
-  legacy-deploy:
-    docker:
-      - image: cimg/base:stable
-        auth:
-          username: $DOCKER_USER
-          password: $DOCKER_PASSWORD
-    steps:
-      - setup_remote_docker
-      - restore_cache:
-          key: v1-{{.Environment.CIRCLE_SHA1}}
-      - run:
-          name: Restore Docker image cache
-          command: docker load -i /tmp/cache/app.tar
-      - run: # TODO: remove this step after migration
-          name: Login to Dockerhub
-          command: | #shell
-            echo "${DOCKER_PASSWORD}" | docker login -u="${DOCKER_USER}" --password-stdin
-      - run: # TODO: remove this step after migration
-          name: Deploy to Dockerhub
-          command: | #shell
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
-              # tag the CI-built docker image with latest & the latest git commit SHA
-              docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
-              docker tag app:build ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
-              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:latest
-              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_SHA1}
-            elif  [ ! -z "${CIRCLE_TAG}" ]; then
-              # tag the CI-built docker image with the Git Release or CircleCI Tag (they are the same thing)
-              docker tag app:build "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}"
-              docker push ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}:${CIRCLE_TAG}
-            fi
 
 
   proxy-build-and-publish: # TODO move this to shared openresty repo
@@ -272,16 +240,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - legacy-deploy:
-          requires:
-            - frontend-tests
-            - backend-tests
-            - test-environment
-          filters:
-            tags:
-              only: /^\d+\.\d+\.\d+$/
-            branches:
-              only: main
   proxy-build-and-publish:
     jobs:
       - proxy-build-and-publish:
