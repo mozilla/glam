@@ -1,15 +1,14 @@
-import FIREFOX_DESKTOP from './firefox-desktop';
-import { FIREFOX_ON_GLEAN, FENIX } from './glean';
-
-const products = {
-  firefox: FIREFOX_DESKTOP,
-  fog: FIREFOX_ON_GLEAN,
-  fenix: FENIX,
-};
+import fogConfig from './fog';
+import fenixConfig from './fenix';
+import firefoxConfig from './firefox-desktop';
 
 export const productKeys = [
+  { key: 'fenix', label: 'Firefox for Android' },
   { key: 'firefox', label: 'Firefox Desktop' },
-  { key: 'fenix', label: 'Firefox Android' },
 ];
 
-export default products;
+export default {
+  fog: fogConfig,
+  fenix: fenixConfig,
+  firefox: firefoxConfig,
+};
