@@ -59,8 +59,9 @@ To gather the probe data that populates the probe API, run the following:
 ```
 
 ## Starting the server
-This step requires read permissions in the prod GCP project, please
-reach out to someone on the <a
+
+This step requires read permissions in the prod GCP project, please reach out to
+someone on the <a
         href="https://mozilla.slack.com/archives/CB1EQ437S">#glam</a
       > channel on Mozilla's internal Slack, or
 <a href="https://matrix.to/#/#datatools:mozilla.org">#datatools</a> on Mozilla's
@@ -81,14 +82,15 @@ make up
 
 This will launch 2 servers:
 
-- http://localhost:3000 is an nginx server configured to authenticate select endpoints via
-  Mozilla's auth0 backend and will proxy GLAM.
+- http://localhost:3000 is an nginx server configured to authenticate select
+  endpoints via Mozilla's auth0 backend and will proxy GLAM.
 - http://localhost:8000 is the Django server that contains the API endpoints and
   serves up the front-end HTML and static assets.
 
 See below for building the front-end Javascript and other static assets.
 
-With these servers running you can access GLAM on http://localhost:8000 or query the data via `curl`:
+With these servers running you can access GLAM on http://localhost:8000 or query
+the data via `curl`:
 
 ```
 curl -s -X POST -H "Content-Type: application/json" http://localhost:8000/api/v1/data/ -d '{"query": {"channel": "nightly", "versions": ["70"], "probe": "gc_ms", "aggregationLevel": "version"}}' | python -m json.tool
