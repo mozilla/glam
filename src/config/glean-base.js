@@ -29,6 +29,15 @@ export const SUPPORTED_METRICS = [
 export default {
   // Common Glean configuration
   dimensions: {
+    normalizationType: {
+      title: 'Normalization',
+      key: 'normalizationType',
+      values: [
+        { key: 'normalized', label: 'By Client ID' },
+        { key: 'non_normalized', label: 'None' },
+      ],
+      defaultValue: 'normalized',
+    },
     app_id: {
       title: 'Channel',
       key: 'app_id',
@@ -38,18 +47,31 @@ export default {
         { key: 'release', label: 'Release' },
       ],
       defaultValue: 'nightly',
-      isValidKey(key, probe) {
-        return key in probe.versions;
-      },
     },
-    normalizationType: {
-      title: 'Normalization',
-      key: 'normalizationType',
+    os: {
+      title: 'OS',
+      key: 'os',
       values: [
-        { key: 'normalized', label: 'By Client ID' },
-        { key: 'non_normalized', label: 'None' },
+        { key: '*', label: 'All OSes' },
+        { key: 'Windows', label: 'Windows' },
+        { key: 'Mac', label: 'Mac' },
+        { key: 'Linux', label: 'Linux' },
+        { key: 'Android', label: 'Android' },
       ],
-      defaultValue: 'normalized',
+      defaultValue: '*',
+    },
+    ping_type: {
+      title: 'Ping Type',
+      key: 'ping_type',
+      values: [
+        { key: '*', label: 'All' },
+        { key: 'baseline', label: 'Baseline' },
+        { key: 'metrics', label: 'Metrics' },
+      ],
+      defaultValue: '*',
+      isValidKey(key, probe) {
+        return key === '*' ? true : probe.send_in_pings.includes(key);
+      },
     },
     aggregationLevel: {
       title: 'Aggregation Level',

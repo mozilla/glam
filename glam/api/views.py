@@ -5,20 +5,15 @@ import dateutil.parser
 import orjson
 from django.conf import settings
 from django.core.cache import caches
-from django.db.models import Max, Q, Count
+from django.db.models import Q, Count
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 from google.cloud import bigquery
-from glam.api.bigquery import build_glean_query, execute_glean_query
-
-
 from glam.api import constants
 from glam.api.models import (
     DesktopNightlyAggregationView,
-    FenixAggregationView,
-    FOGAggregationView,
     FirefoxBuildRevisions,
     LastUpdated,
     Probe,
@@ -30,7 +25,7 @@ GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
 
 
 def get_bq_client():
-    return bigquery.Client("efilho-sandbox")
+    return bigquery.Client()
 
 
 @api_view(["GET"])
@@ -316,6 +311,7 @@ def get_glean_aggregations_from_bq(request, req_data):
                 {build_id_filter}
                 AND version IN UNNEST(versions.selected_versions)
     """
+
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
             bigquery.ScalarQueryParameter("metric", "STRING", probe),
@@ -659,74 +655,3 @@ def usage(request):
         else:
             response = result.values("action_type", "timestamp", "probe_name")
         return Response(response, 200)
-
-
-def validate_glean_request(request):
-    """Validate request parameters for Glean-based products."""
-    required_params = {
-        'aggregationLevel': str,
-        'app_id': str,
-        'ping_type': str,
-        'metric': str,
-        'metric_type': str,
-        'os': str,
-        'timeHorizon': str,
-    }
-
-    for param, param_type in required_params.items():
-        if param not in request:
-            raise ValueError(f"Missing required parameter: {param}")
-        if not isinstance(request[param], param_type):
-            raise ValueError(f"Invalid type for {param}: expected {param_type}")
-
-    # Validate product-specific parameters
-    product = request.get('product')
-    if product not in ['fog', 'fenix']:
-        raise ValueError(f"Invalid product: {product}")
-
-    # Validate app_id based on product
-    valid_app_ids = {
-        'fog': ['nightly', 'beta', 'release'],
-        'fenix': ['nightly', 'beta', 'release']
-    }
-    if request['app_id'] not in valid_app_ids[product]:
-        raise ValueError(f"Invalid app_id for {product}: {request['app_id']}")
-
-    # Validate ping_type based on product
-    valid_ping_types = {
-        'fog': ['baseline', 'metrics'],
-        'fenix': ['baseline', 'metrics', 'events']
-    }
-    if request['ping_type'] not in valid_ping_types[product]:
-        raise ValueError(f"Invalid ping_type for {product}: {request['ping_type']}")
-
-    return True
-
-def get_glean_data(request):
-    """Get data for Glean-based products."""
-    validate_glean_request(request)
-
-    product = request['product']
-    metric = request['metric']
-    metric_type = request['metric_type']
-    app_id = request['app_id']
-    ping_type = request['ping_type']
-    os = request['os']
-    time_horizon = request['timeHorizon']
-
-    # Get product-specific configuration
-    product_config = get_product_config(product)
-
-    # Build query based on product configuration
-    query = build_glean_query(
-        product_config,
-        metric,
-        metric_type,
-        app_id,
-        ping_type,
-        os,
-        time_horizon
-    )
-
-    # Execute query and return results
-    return execute_glean_query(query)

@@ -27,15 +27,5 @@ export default {
       ],
       defaultValue: '*',
     },
-    ping_type: {
-      title: 'Ping Type',
-      key: 'ping_type',
-      values: [
-        { key: 'baseline', label: 'Baseline' },
-        { key: 'metrics', label: 'Metrics' },
-        { key: '*', label: 'All' },
-      ],
-      defaultValue: '*',
-    },
   },
 };

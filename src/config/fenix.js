@@ -22,15 +22,5 @@ export default {
       values: [{ key: 'Android', label: 'Android' }],
       defaultValue: 'Android',
     },
-    ping_type: {
-      title: 'Ping Type',
-      key: 'ping_type',
-      values: [
-        { key: 'baseline', label: 'Baseline' },
-        { key: 'metrics', label: 'Metrics' },
-        { key: '*', label: '*' },
-      ],
-      defaultValue: 'baseline',
-    },
   },
 };
