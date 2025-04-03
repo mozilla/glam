@@ -60,14 +60,14 @@ export function getHistogramName(type = 'normalized') {
   return dataNormalizationNameMap.histogram[type];
 }
 
-export function getProportionName(type = 'proportions') {
+export function getProportionName(type = 'normalized') {
   if (!Object.hasOwn(dataNormalizationNameMap.proportions, type)) {
     throw new Error(`Unknown normalization type: ${type}`);
   }
   return dataNormalizationNameMap.proportions[type];
 }
 
-export function getCountName(type = 'counts') {
+export function getCountName(type = 'normalized') {
   if (!Object.hasOwn(dataNormalizationNameMap.counts, type)) {
     throw new Error(`Unknown normalization type: ${type}`);
   }

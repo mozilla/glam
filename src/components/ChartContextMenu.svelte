@@ -5,7 +5,7 @@
   import ZoomIn from './icons/ZoomIn.svelte';
   import Graphs from './icons/Graphs.svelte';
   import BarGraph from './icons/BarGraph.svelte';
-  import { SUPPORTED_METRICS as GLEAN_METRICS } from '../config/glean';
+  import { SUPPORTED_METRICS as GLEAN_METRICS } from '../config/glean-base';
 
   export let data;
   export let x;
