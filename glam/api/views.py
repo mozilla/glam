@@ -35,7 +35,7 @@ GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
 
 
 def get_bq_client():
-    return bigquery.Client()
+    return bigquery.Client("efilho-sandbox")
 
 
 @api_view(["GET"])
