@@ -109,20 +109,21 @@
     --width: var(--space-72x);
 
     background-color: var(--blue-slate-700);
-    height: var(--increment);
+    height: var(--max-content);
     display: grid;
     align-items: center;
     justify-items: center;
   }
 
   .inner-container {
-    height: calc(var(--space-base) * 4);
+    height: calc(var(--space-base) * 6);
     box-shadow: var(--depth-medium);
     display: grid;
     grid-template-columns: [icon] 40px [input] auto;
     align-items: stretch;
     background-color: var(--input-background-color);
     border-radius: var(--space-1h);
+    width: 85%;
   }
 
   .icon-container {
