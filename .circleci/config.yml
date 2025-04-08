@@ -129,6 +129,8 @@ jobs:
           command: | # bind {PWD} because we use it in docker-compose.yml
             cp .env-dist .env
             make build -v ${PWD}:/app
+
+
   proxy-build-and-publish: # TODO move this to shared openresty repo
     executor: gcp-gcr/default
     environment:
@@ -172,6 +174,7 @@ jobs:
             echo "export OIDC_WIP_PROVIDER_ID=$GCPV2_CIRCLECI_WORKLOAD_IDENTITY_PROVIDER" >> "$BASH_ENV"
             echo "export GOOGLE_PROJECT_NUMBER=$GCPV2_WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER" >> "$BASH_ENV"
             echo "export OIDC_SERVICE_ACCOUNT_EMAIL=$GCP_SERVICE_ACCOUNT_EMAIL" >> "$BASH_ENV"
+
 
       - gcp-gcr/build-image:
           workspace-root: dockerfiles/proxy
