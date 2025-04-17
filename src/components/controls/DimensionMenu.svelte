@@ -58,7 +58,7 @@
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
   }
   .activating-button.dark {
-    background-color: transparent;
+    background-color: var(--blue-slate-500);
     border: 2px solid transparent;
     color: var(--digital-blue-200);
   }
@@ -75,7 +75,7 @@
     border-top: none;
     border-bottom: none;
     align-self: stretch;
-    padding-left: var(--space-2x);
+    padding-left: var(--space-3x);
     padding-right: var(--space-2x);
   }
 </style>
