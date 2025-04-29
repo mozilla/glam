@@ -1,6 +1,6 @@
-# Adding a Glean-based Product to GLAM
+# Adding a Product to GLAM
 
-To add a new Glean-based product to GLAM, you'll need to:
+To add a new product to GLAM, you'll need to:
 
 1. Configure the backend API
 2. Create a product configuration file in the front-end
