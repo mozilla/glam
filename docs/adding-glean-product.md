@@ -2,11 +2,19 @@
 
 To add a new product to GLAM, you'll need to:
 
-1. Configure the backend API
-2. Create a product configuration file in the front-end
-3. Update the product registry in the front-end
+1. Configire a new ETL DAG
+2. Configure new ETL queries
+3. Configure the backend API
+4. Create a product configuration file in the front-end
+5. Update the product registry in the front-end
 
-## 1. Backend Configuration
+## 1. New ETL Queries
+Follow [Adding a new product to GLAM ETL](https://github.com/mozilla/glam/blob/main/docs/adding-glean-product.md) to properly set up the queries needed for a new product.
+
+## 2. New ETL DAG
+Make a copy of an existing DAG in  (such as [glam_fog](https://github.com/mozilla/telemetry-airflow/blob/main/dags/glam_fog.py)) in the [telemetry-airflow project](https://github.com/mozilla/telemetry-airflow/tree/main/dags) and change the configurations for the new product.
+
+## 3. Backend Configuration
 
 ### Update API Constants
 
@@ -32,7 +40,7 @@ def validate_request_glean(**kwargs):
         raise ValidationError("Invalid product: {}".format(validated_data["product"]))
 ```
 
-## 2. Frontend Configuration
+## 4. Frontend Configuration
 
 ### Create Product Configuration File
 
@@ -88,7 +96,7 @@ export default {
 };
 ```
 
-## 3. Testing
+## 5. Testing
 
 After adding your product:
 
