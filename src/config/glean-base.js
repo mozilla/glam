@@ -181,7 +181,10 @@ export default {
           ...appStore.getState().probe.labels,
         };
         if (metricType === 'labeled_counter') {
-          data = transformLabeledCounterToCategoricalHistogramSampleCount(data, labels);
+          data = transformLabeledCounterToCategoricalHistogramSampleCount(
+            data,
+            labels
+          );
         }
         data = produce(data, (draft) =>
           draft.map((point) => ({

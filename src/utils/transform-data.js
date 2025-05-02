@@ -257,7 +257,10 @@ export const transformAPIResponse = {
  * 6. Transforms the input data by adding histogram data, sample counts, and a constant metric key.
  * 7. Ensures the returned array contains unique entries for each `build_id`.
  */
-export const transformLabeledCounterToCategoricalHistogramSampleCount = (data, labels) => {
+export const transformLabeledCounterToCategoricalHistogramSampleCount = (
+  data,
+  labels
+) => {
   /* eslint-disable camelcase */
   const filteredData = data.filter((point) => point.client_agg_type === 'sum');
   const samplesPerBuild = filteredData.reduce(

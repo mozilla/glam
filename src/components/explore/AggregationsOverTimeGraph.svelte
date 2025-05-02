@@ -165,7 +165,12 @@
     'counter',
   ];
 
-  const desktopLinearMetrics = ['histogram-linear', 'keyed-scalar', 'scalar', 'labeled_counter'];
+  const desktopLinearMetrics = [
+    'histogram-linear',
+    'keyed-scalar',
+    'scalar',
+    'labeled_counter',
+  ];
 
   const getYTicks = (ranges) => {
     // exponential and linear graphs
