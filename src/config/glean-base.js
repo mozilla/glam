@@ -1,7 +1,7 @@
 import produce from 'immer';
 import {
   transformAPIResponse,
-  transformLabeledCounterToCategoricalHistogram,
+  transformLabeledCounterToCategoricalHistogramSampleCount,
 } from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
@@ -181,7 +181,10 @@ export default {
           ...appStore.getState().probe.labels,
         };
         if (metricType === 'labeled_counter') {
-          data = transformLabeledCounterToCategoricalHistogram(data, labels);
+          data = transformLabeledCounterToCategoricalHistogramSampleCount(
+            data,
+            labels
+          );
         }
         data = produce(data, (draft) =>
           draft.map((point) => ({
