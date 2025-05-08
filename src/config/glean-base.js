@@ -54,7 +54,7 @@ export default {
       values: [
         { key: '*', label: 'All OSes' },
         { key: 'Windows', label: 'Windows' },
-        { key: 'Mac', label: 'Mac' },
+        { key: 'Darwin', label: 'Mac' },
         { key: 'Linux', label: 'Linux' },
         { key: 'Android', label: 'Android' },
       ],
