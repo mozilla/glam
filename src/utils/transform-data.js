@@ -108,6 +108,11 @@ export function changeBooleanHistogramResponse(draft) {
   delete draft.histogram['0'];
   delete draft.histogram['1'];
   delete draft.histogram['2'];
+  draft.non_norm_histogram.no = draft.non_norm_histogram['0'];
+  draft.non_norm_histogram.yes = draft.non_norm_histogram['1'];
+  delete draft.non_norm_histogram['0'];
+  delete draft.non_norm_histogram['1'];
+  delete draft.non_norm_histogram['2'];
 }
 
 export function proportionsToCounts(draft) {
