@@ -9,6 +9,7 @@ import svelte from 'rollup-plugin-svelte';
 import { terser } from 'rollup-plugin-terser';
 
 const production = process.env.NODE_ENV === 'production';
+const debug = process.env.DEBUG === 'true';
 
 export default {
   input: 'src/main.js',
@@ -31,6 +32,9 @@ export default {
         // enable run-time checks when not in production
         dev: !production,
       },
+      // Handle source maps at the plugin level instead
+      emitCss: true,
+      hot: !production,
     }),
     // we'll extract any component CSS out into
     // a separate file — better for performance
@@ -55,7 +59,7 @@ export default {
 
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser(),
+    production && !debug && terser(),
   ],
   watch: {
     clearScreen: false,

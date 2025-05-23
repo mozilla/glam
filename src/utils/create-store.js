@@ -58,6 +58,14 @@ export function createStore(initialStore) {
         draft.productDimensions[key] = value;
       })
     );
+
+    // Trigger page refresh when normalization type changes
+    if (key === 'normalizationType') {
+      // Use setTimeout to ensure the store update is processed first
+      setTimeout(() => {
+        window.location.reload();
+      }, 0);
+    }
   }
 
   function connect(func) {

@@ -108,9 +108,15 @@ describe('addProportion / proportionsToCounts', () => {
 
 describe('changeBooleanHistogramResponse', () => {
   it('changes the boolean-histogram response to match something usable in GLAM', () => {
-    const data = [{ histogram: { 0: 0.4, 1: 0.6, 2: 0 } }];
+    const data = [
+      {
+        histogram: { 0: 0.4, 1: 0.6, 2: 0 },
+        non_norm_histogram: { 0: 0.4, 1: 0.6, 2: 0 },
+      },
+    ];
     const transformed = transform(changeBooleanHistogramResponse)(data);
     expect(transformed[0].histogram).toEqual({ no: 0.4, yes: 0.6 });
+    expect(transformed[0].non_norm_histogram).toEqual({ no: 0.4, yes: 0.6 });
   });
 });
 
