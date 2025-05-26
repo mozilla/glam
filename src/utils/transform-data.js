@@ -279,6 +279,17 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
     {}
   );
 
+  const clientsPerBuild = filteredData.reduce(
+    (acc, { build_id, total_users }) => {
+      if (!acc[build_id]) {
+        acc[build_id] = 0;
+      }
+      acc[build_id] += total_users;
+      return acc;
+    },
+    {}
+  );
+
   const revertedLabels = Object.entries(labels).reduce((acc, [key, value]) => {
     acc[value] = key;
     return acc;
@@ -313,7 +324,8 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
       ...point,
       histogram: histogramsPerBuild[point.build_id].normalized,
       non_norm_histogram: histogramsPerBuild[point.build_id].non_normalized,
-      total_users: samplesPerBuild[point.build_id],
+      total_users: clientsPerBuild[point.build_id],
+      sample_count: samplesPerBuild[point.build_id],
       metric_key: 'single',
     }))
   );
