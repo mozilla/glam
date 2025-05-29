@@ -279,12 +279,24 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
     {}
   );
 
+  const maxSampleCountPerBuild = filteredData.reduce(
+    (acc, { build_id, sample_count }) => {
+      if (!acc[build_id]) {
+        acc[build_id] = 0;
+      }
+      acc[build_id] = Math.max(acc[build_id], sample_count);
+      return acc;
+    },
+    {}
+  );
+
   const clientsPerBuild = filteredData.reduce(
     (acc, { build_id, total_users }) => {
       if (!acc[build_id]) {
         acc[build_id] = 0;
       }
-      acc[build_id] += total_users;
+      // Gets the max total_users for each build
+      acc[build_id] = Math.max(acc[build_id], total_users);
       return acc;
     },
     {}
@@ -325,7 +337,7 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
       histogram: histogramsPerBuild[point.build_id].normalized,
       non_norm_histogram: histogramsPerBuild[point.build_id].non_normalized,
       total_users: clientsPerBuild[point.build_id],
-      sample_count: samplesPerBuild[point.build_id],
+      sample_count: maxSampleCountPerBuild[point.build_id],
       metric_key: 'single',
     }))
   );
