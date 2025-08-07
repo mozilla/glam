@@ -23,6 +23,11 @@ WITH sampled_pre_aggregates AS (
     `moz-fx-data-shared-prod.org_mozilla_fenix.metrics` -- Currently only supports Metrics ping
   WHERE
     DATE(submission_timestamp) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AND CURRENT_DATE
+    -- WARNING: Increasing the date interval above will increase costs and make
+    -- queries more likely to fail while still being charged.
+    -- Please enable sampling if you need more than 60 days of data by
+    -- adding the lines below
+    -- AND sample_id < 10
     AND client_info.os = "Android"
     AND client_info.client_id IS NOT NULL
     AND mozfun.norm.fenix_app_info('org_mozilla_fenix', client_info.app_build).channel = "${channel}"
