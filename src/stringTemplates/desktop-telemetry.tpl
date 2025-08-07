@@ -31,6 +31,11 @@ WITH per_build_client_day AS (
   WHERE
     normalized_channel = '${ channel }'
     ${ osFilter }
+    -- WARNING: Increasing the date interval will increase costs and make
+    -- queries more likely to fail while still being charged.
+    -- Please enable sampling if you need more than 60 days of data by
+    -- adding the lines below
+    -- AND sample_id < 10
     AND application.build_id > FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY))
     AND application.build_id <= FORMAT_DATE("%Y%m%d", CURRENT_DATE)
     AND DATE(submission_timestamp) >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)

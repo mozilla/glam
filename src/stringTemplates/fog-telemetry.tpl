@@ -28,6 +28,9 @@ FROM
 WHERE
   DATE(submission_timestamp) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AND CURRENT_DATE
   AND SUBSTR(client_info.app_build, 0, 10) >= FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY))
+  -- WARNING: Increasing the date interval above will increase costs and make
+  -- queries more likely to fail while still being charged.
+  -- Please make use of sampling if you need more than 60 days of data
   <% if (os == '*') { %> -- AND client_info.os = "Windows" -- Remove to filter by OS<% } else { %>AND client_info.os = "${os}"<% } %>
   AND client_info.client_id IS NOT NULL
   AND client_info.app_channel = "${channel}"

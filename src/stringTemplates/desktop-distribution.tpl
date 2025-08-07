@@ -29,6 +29,11 @@ WITH per_build_client_day AS (
     normalized_channel = '${ channel }'
     ${ osFilter }
     AND application.build_id = '${ buildId }' -- Select a Build ID
+    -- WARNING: Increasing the date interval will increase costs and make
+    -- queries more likely to fail while still being charged.
+    -- Please enable sampling if you need more than 60 days of data by
+    -- adding the lines below
+    -- AND sample_id < 10
     AND DATE(submission_timestamp) >= DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY)
     AND DATE(submission_timestamp) <= CURRENT_DATE
   GROUP BY
