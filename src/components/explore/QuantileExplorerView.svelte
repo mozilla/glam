@@ -64,12 +64,12 @@
     };
   }
 
-  function filterQuantileData(d, agg, key, currentSubKey) {
+  function filterQuantileData(d, agg, key, subKey) {
     return d.filter(
       (di) =>
         di.client_agg_type === agg &&
         di.metric_key === key &&
-        (!currentSubKey || di.nested_metric_key === currentSubKey)
+        (!subKey || di.nested_metric_key === subKey)
     );
   }
 
