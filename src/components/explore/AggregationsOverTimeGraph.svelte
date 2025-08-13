@@ -163,6 +163,7 @@
     'scalar',
     'quantity',
     'counter',
+    'dual_labeled_counter',
   ];
 
   const desktopLinearMetrics = [

@@ -17,6 +17,34 @@ export function gatherProbeKeys(d) {
   return uniques(d, 'metric_key');
 }
 
+export function transformDualLabeledData(d) {
+  // Only keep entries with metric_key that contains '[' and ']'
+  const validDualLabeledKeys = d.filter(
+    (di) => di.metric_key.includes('[') && di.metric_key.includes(']')
+  );
+  return validDualLabeledKeys.map((di) => {
+    const [outsideKey, insideKeyWithBracket] = di.metric_key.split('[');
+    const insideKey = insideKeyWithBracket.split(']')[0];
+    return { ...di, metric_key: outsideKey, nested_metric_key: insideKey };
+  });
+}
+
+export function gatherDualLabeledProbeKeyMap(d) {
+  const keyMap = {};
+  d.forEach((di) => {
+    if (
+      !keyMap[di.metric_key] ||
+      !keyMap[di.metric_key].includes(di.nested_metric_key)
+    ) {
+      keyMap[di.metric_key] = [
+        ...(keyMap[di.metric_key] || []),
+        di.nested_metric_key,
+      ];
+    }
+  });
+  return keyMap;
+}
+
 export function gatherAggregationTypes(d) {
   return uniques(d, 'client_agg_type');
 }

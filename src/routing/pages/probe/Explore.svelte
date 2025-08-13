@@ -54,6 +54,7 @@
         <ProbeTitle />
       </QuantileExplorerView>
     {:else}
+      probeType: {probeType}
       <div class="graphic-body__content">
         <div style="width: 100%">
           <Spinner size={48} color={'var(--cool-gray-400)'} />
