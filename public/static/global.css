@@ -625,6 +625,11 @@ main .details {
   background-color: var(--labeled_counter-bg);
 }
 
+.label--dual_labeled_counter {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
 .label--string {
   color: var(--string-color);
   background-color: var(--string-bg);
