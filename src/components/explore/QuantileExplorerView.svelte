@@ -44,7 +44,9 @@
   let probeKeys = gatherProbeKeys(transformedData);
 
   let currentKey = $store.aggKey || probeKeys[0];
-  $: currentSubKey = dualLabeledKeys[currentKey] ? dualLabeledKeys[currentKey][0] : null;
+  $: currentSubKey = dualLabeledKeys[currentKey]
+    ? dualLabeledKeys[currentKey][0]
+    : null;
 
   let currentAggregation = aggregationTypes.includes('summed_histogram')
     ? 'summed_histogram'
@@ -64,11 +66,19 @@
 
   function filterQuantileData(d, agg, key, currentSubKey) {
     return d.filter(
-      (di) => di.client_agg_type === agg && di.metric_key === key && (!currentSubKey || di.nested_metric_key === currentSubKey)
+      (di) =>
+        di.client_agg_type === agg &&
+        di.metric_key === key &&
+        (!currentSubKey || di.nested_metric_key === currentSubKey)
     );
   }
 
-  $: selectedData = filterQuantileData(transformedData, currentAggregation, currentKey, currentSubKey);
+  $: selectedData = filterQuantileData(
+    transformedData,
+    currentAggregation,
+    currentKey,
+    currentSubKey
+  );
 
   $: densityMetricType = getHistogramName(
     $store.productDimensions.normalizationType
@@ -80,7 +90,12 @@
       : getPercentileName($store.productDimensions.normalizationType);
 
   const getYDomain = (source, normType) => {
-    let range = filterQuantileData(source, currentAggregation, currentKey, currentSubKey);
+    let range = filterQuantileData(
+      source,
+      currentAggregation,
+      currentKey,
+      currentSubKey
+    );
     let histogramRange = range[range.length - 1][
       getHistogramName(normType)
     ].map((d) => d.bin);
@@ -95,7 +110,10 @@
     ];
     return probeType === 'log' ? histogramRange : percentileRange;
   };
-  $: yDomain = getYDomain(transformedData, $store.productDimensions.normalizationType);
+  $: yDomain = getYDomain(
+    transformedData,
+    $store.productDimensions.normalizationType
+  );
 </script>
 
 <style>
@@ -172,7 +190,11 @@
     {#if isDualLabeled}
       <div class="body-control-set">
         <label class="body-control-set--label">Sub Key</label>
-        <ProbeKeySelector options={dualLabeledKeys[currentKey]} tooltipText="this probe allows for multiple sub keys" bind:currentKey={currentSubKey} />
+        <ProbeKeySelector
+          options={dualLabeledKeys[currentKey]}
+          tooltipText="this probe allows for multiple sub keys"
+          bind:currentKey={currentSubKey}
+        />
       </div>
     {/if}
   </div>
