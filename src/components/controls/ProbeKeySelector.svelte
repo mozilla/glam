@@ -8,6 +8,7 @@
   export let options;
   export let currentKey;
   export let active;
+  export let tooltipText = 'this probe has multiple keys associated with it';
 
   let button;
   let width;
@@ -63,7 +64,7 @@
     on:click={toggle}
     class:active
     use:tooltipAction={{
-      text: 'this probe has multiple keys associated with it',
+      text: tooltipText,
     }}
   >
     <div>

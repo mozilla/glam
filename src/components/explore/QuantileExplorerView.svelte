@@ -22,6 +22,8 @@
   import {
     gatherProbeKeys,
     gatherAggregationTypes,
+    gatherDualLabeledProbeKeyMap,
+    transformDualLabeledData,
   } from '../../utils/probe-utils';
   import { store } from '../../state/store';
 
@@ -30,16 +32,20 @@
   export let data;
   export let probeType;
   export let aggregationLevel = 'build_id';
-
-  let totalAggs = Object.keys(Object.values(data)[0]).length;
-
   export let timeHorizon = 'MONTH';
   export let percentiles = [95, 75, 50, 25, 5];
 
-  let aggregationTypes = gatherAggregationTypes(data);
-  let probeKeys = gatherProbeKeys(data);
+  let isDualLabeled = $store.probe.type === 'dual_labeled_counter';
+  let transformedData = isDualLabeled ? transformDualLabeledData(data) : data;
+  let totalAggs = Object.keys(Object.values(transformedData)[0]).length;
+
+  let aggregationTypes = gatherAggregationTypes(transformedData);
+  const dualLabeledKeys = gatherDualLabeledProbeKeyMap(transformedData);
+  let probeKeys = gatherProbeKeys(transformedData);
 
   let currentKey = $store.aggKey || probeKeys[0];
+  $: currentSubKey = dualLabeledKeys[currentKey] ? dualLabeledKeys[currentKey][0] : null;
+
   let currentAggregation = aggregationTypes.includes('summed_histogram')
     ? 'summed_histogram'
     : $store.aggType;
@@ -56,13 +62,13 @@
     };
   }
 
-  function filterQuantileData(d, agg, key) {
+  function filterQuantileData(d, agg, key, currentSubKey) {
     return d.filter(
-      (di) => di.client_agg_type === agg && di.metric_key === key
+      (di) => di.client_agg_type === agg && di.metric_key === key && (!currentSubKey || di.nested_metric_key === currentSubKey)
     );
   }
 
-  $: selectedData = filterQuantileData(data, currentAggregation, currentKey);
+  $: selectedData = filterQuantileData(transformedData, currentAggregation, currentKey, currentSubKey);
 
   $: densityMetricType = getHistogramName(
     $store.productDimensions.normalizationType
@@ -74,7 +80,7 @@
       : getPercentileName($store.productDimensions.normalizationType);
 
   const getYDomain = (source, normType) => {
-    let range = filterQuantileData(source, currentAggregation, currentKey);
+    let range = filterQuantileData(source, currentAggregation, currentKey, currentSubKey);
     let histogramRange = range[range.length - 1][
       getHistogramName(normType)
     ].map((d) => d.bin);
@@ -89,7 +95,7 @@
     ];
     return probeType === 'log' ? histogramRange : percentileRange;
   };
-  $: yDomain = getYDomain(data, $store.productDimensions.normalizationType);
+  $: yDomain = getYDomain(transformedData, $store.productDimensions.normalizationType);
 </script>
 
 <style>
@@ -161,6 +167,12 @@
       <div class="body-control-set">
         <label class="body-control-set--label">Key</label>
         <ProbeKeySelector options={probeKeys} bind:currentKey />
+      </div>
+    {/if}
+    {#if isDualLabeled}
+      <div class="body-control-set">
+        <label class="body-control-set--label">Sub Key</label>
+        <ProbeKeySelector options={dualLabeledKeys[currentKey]} tooltipText="this probe allows for multiple sub keys" bind:currentKey={currentSubKey} />
       </div>
     {/if}
   </div>
