@@ -1,5 +1,6 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random?';
+const metricKeysURL = '__BASE_DOMAIN__/api/v1/metric-keys/';
 
 // We could eventually make a constants.js, this is low priority.
 const FETCH_ERROR_MESSAGES = {
@@ -49,6 +50,34 @@ export async function getProbeData(params) {
     return response.json();
   });
   return data;
+}
+
+export async function getMetricKeys(params) {
+  const queryParams = new URLSearchParams({
+    product: params.product,
+    channel: params.channel,
+    probe: params.probe,
+    os: params.os,
+  });
+
+  const response = await fetch(`${metricKeysURL}?${queryParams}`);
+
+  if (response.status >= 400 && response.status < 600) {
+    const errorCode = `code${response.status}`;
+    let msg = FETCH_ERROR_MESSAGES[errorCode] || '';
+    if (!msg) {
+      msg =
+        response.status < 500
+          ? FETCH_ERROR_MESSAGES.code4xx
+          : FETCH_ERROR_MESSAGES.code5xx;
+    }
+    const error = new Error(msg);
+    error.statusCode = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+  return data.metric_keys;
 }
 
 function getProbeSearchURL(productId, queryString, resultsLimit) {

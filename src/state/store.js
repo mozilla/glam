@@ -4,6 +4,12 @@ import { createStore } from '../utils/create-store';
 
 import sharedConfig from '../config/shared';
 import productConfig from '../config/products';
+import { getMetricKeys } from './api';
+import {
+  getDualLabeledMainKeys,
+  getDualLabeledSubKeys,
+  reconstructDualLabeledKey,
+} from '../utils/probe-utils';
 
 export function getFromQueryString(fieldKey, isMulti = false) {
   const params = new URLSearchParams(window.location.search);
@@ -43,7 +49,8 @@ function getDefaultState(
   state.route = {};
   state.searchProduct = searchProducts[state.product];
 
-  state.aggKey = getFromQueryString('aggKey') || '';
+  state.metricKey = getFromQueryString('metricKey') || '';
+  state.subMetricKey = getFromQueryString('subMetricKey') || '';
   state.aggType = getFromQueryString('aggType') || 'avg';
   state.currentPage = getFromQueryString('currentPage');
   state.countView = getFromQueryString('countView') || 'clients';
@@ -182,55 +189,250 @@ function paramsAreValid(params) {
 export const datasetResponse = (level, key, data) => ({ level, key, data });
 
 const cache = {};
+const metricKeysCache = {};
 let previousQuery;
 
-export const dataset = derived([store], ([$store], set) => {
+export const metricKeys = derived([store], ([$store], set) => {
   if (
     $store.probeName === '' ||
     $store.probeName === undefined ||
-    !$store.product
+    !$store.product ||
+    !$store.probe ||
+    !$store.probe.loaded
   ) {
+    return;
+  }
+
+  const isLabeledMetric =
+    $store.probe.type && $store.probe.type.includes('labeled');
+
+  if (!isLabeledMetric) {
+    // For non-labeled metrics, set empty array to indicate no keys needed
+    set([]);
     return;
   }
 
   const activeProductConfig = getActiveProductConfig();
   const params = activeProductConfig.getParamsForDataAPI($store);
-  const qs = toQueryString(params);
 
-  // invalid parameters, probe selected.
-  if (!paramsAreValid(params) && probeSelected($store.probeName)) {
-    const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
-    // eslint-disable-next-line consistent-return
-    return message;
+  // Only fetch metric keys if we have a valid probe and parameters
+  if (!paramsAreValid(params) || !probeSelected($store.probeName)) {
+    return;
   }
 
-  // no probe selected.
-  if (!probeSelected($store.probeName)) {
-    const message = datasetResponse('INFO', 'DEFAULT_VIEW');
-    // eslint-disable-next-line consistent-return
-    return message;
+  const keyParams = {
+    product: $store.product,
+    channel:
+      $store.productDimensions.app_id || $store.productDimensions.channel,
+    probe: $store.probeName,
+    os: $store.productDimensions.os,
+  };
+
+  const keyCacheKey = `${keyParams.product}-${keyParams.channel}-${keyParams.probe}`;
+
+  if (!(keyCacheKey in metricKeysCache)) {
+    metricKeysCache[keyCacheKey] = getMetricKeys(keyParams);
   }
 
-  if (!(qs in cache)) {
-    cache[qs] = activeProductConfig.fetchData(params, store);
-  }
-
-  // compare the previousQuery to the current one.
-  // if the actual query params have changed, let's update the
-  // data set.
-  if (previousQuery !== qs) {
-    previousQuery = qs;
-    set(
-      cache[qs].then(({ data, probeType }) =>
-        activeProductConfig.updateStoreAfterDataIsReceived(
-          data,
-          probeType,
-          store
-        )
-      )
-    );
-  }
+  // Resolve the promise and set the result
+  metricKeysCache[keyCacheKey]
+    .then((keys) => {
+      set(keys);
+    })
+    .catch((error) => {
+      // eslint-disable-next-line no-console
+      console.error('Failed to fetch metric keys:', error);
+      set([]);
+    });
 });
+
+// Processed metric keys for different metric types
+export const processedMetricKeys = derived(
+  [store, metricKeys],
+  ([$store, $metricKeys]) => {
+    if (!$metricKeys || $metricKeys.length === 0) {
+      return [];
+    }
+
+    const isDualLabeledCounter =
+      $store.probe && $store.probe.type === 'dual_labeled_counter';
+
+    if (isDualLabeledCounter) {
+      // For dual labeled counters, return only the main keys
+      return getDualLabeledMainKeys($metricKeys);
+    }
+    // For regular labeled metrics, return keys as-is
+    return $metricKeys;
+  }
+);
+
+// Sub-keys for dual labeled counters
+export const subMetricKeys = derived(
+  [store, metricKeys],
+  ([$store, $metricKeys]) => {
+    if (!$metricKeys || $metricKeys.length === 0 || !$store.metricKey) {
+      return [];
+    }
+
+    const isDualLabeledCounter =
+      $store.probe && $store.probe.type === 'dual_labeled_counter';
+
+    if (isDualLabeledCounter) {
+      return getDualLabeledSubKeys($metricKeys, $store.metricKey);
+    }
+    return [];
+  }
+);
+
+export const dataset = derived(
+  [store, metricKeys],
+  ([$store, $metricKeys], set) => {
+    // Must wait for info from Dictionary before doing anything
+    if (
+      $store.probeName === '' ||
+      $store.probeName === undefined ||
+      !$store.product ||
+      !$store.probe ||
+      !$store.probe.loaded
+    ) {
+      // Return a never-resolving promise to keep Probe.svelte in loading state
+      set(new Promise(() => {}));
+      return;
+    }
+
+    // Handle labeled metrics for Glean products
+    const isLabeledMetric =
+      $store.probe &&
+      $store.probe.loaded &&
+      $store.probe.type &&
+      $store.probe.type.includes('labeled');
+    const isDualLabeledCounter =
+      $store.probe && $store.probe.type === 'dual_labeled_counter';
+
+    const activeProductConfig = getActiveProductConfig();
+    let params = activeProductConfig.getParamsForDataAPI($store);
+
+    // For dual labeled counters, reconstruct the full metric key
+    if (isDualLabeledCounter && $store.metricKey && $store.subMetricKey) {
+      params = {
+        ...params,
+        metric_key: reconstructDualLabeledKey(
+          $store.metricKey,
+          $store.subMetricKey
+        ),
+      };
+    }
+
+    const qs = toQueryString(params);
+
+    // invalid parameters, probe selected.
+    if (!paramsAreValid(params) && probeSelected($store.probeName)) {
+      const message = datasetResponse('ERROR', 'INVALID_PARAMETERS');
+      // eslint-disable-next-line consistent-return
+      set(Promise.resolve(message));
+      return;
+    }
+
+    // no probe selected.
+    if (!probeSelected($store.probeName)) {
+      const message = datasetResponse('INFO', 'DEFAULT_VIEW');
+      // eslint-disable-next-line consistent-return
+      set(Promise.resolve(message));
+      return;
+    }
+
+    if (isLabeledMetric) {
+      // Check if this is a static labeled counter (has predefined labels)
+      const isStaticLabeledCounter =
+        $store.probe.labels !== undefined &&
+        $store.probe.labels !== null &&
+        $store.probe.labels.length > 0;
+
+      // For static labeled counters, skip key selection and go straight to data
+      if (!isStaticLabeledCounter) {
+        // For dynamic labeled counters, require key selection
+        // If we don't have metric keys yet, don't proceed with data fetching
+        if ($metricKeys === undefined) {
+          return; // Still loading keys, don't fetch data yet
+        }
+
+        // If metricKeys is empty array, it means this probe has no keys to fetch
+        if ($metricKeys && $metricKeys.length === 0) {
+          // This shouldn't happen for labeled metrics, but handle gracefully
+          return;
+        }
+
+        // Get processed keys for display
+        const displayKeys = isDualLabeledCounter
+          ? getDualLabeledMainKeys($metricKeys)
+          : $metricKeys;
+
+        // If we have keys but no selection, show message to select
+        if (displayKeys && displayKeys.length > 0 && !$store.metricKey) {
+          const message = datasetResponse('INFO', 'SELECT_LABEL', {
+            keys: displayKeys,
+            isDualLabeled: isDualLabeledCounter,
+          });
+          // eslint-disable-next-line consistent-return
+          set(Promise.resolve(message));
+          return;
+        }
+
+        // If we have a selection but it's not valid, show message to select again
+        if (
+          displayKeys &&
+          displayKeys.length > 0 &&
+          $store.metricKey &&
+          !displayKeys.includes($store.metricKey)
+        ) {
+          const message = datasetResponse('INFO', 'SELECT_LABEL', {
+            keys: displayKeys,
+            isDualLabeled: isDualLabeledCounter,
+          });
+          // eslint-disable-next-line consistent-return
+          set(Promise.resolve(message));
+          return;
+        }
+
+        // For dual labeled counters, we also need a sub-key selection
+        if (isDualLabeledCounter && $store.metricKey && !$store.subMetricKey) {
+          const message = datasetResponse('INFO', 'SELECT_SUB_LABEL', {
+            mainKey: $store.metricKey,
+          });
+          // eslint-disable-next-line consistent-return
+          set(Promise.resolve(message));
+          return;
+        }
+
+        // If we reach here for dynamic labeled metrics, we must have a valid metricKey
+        // Only proceed with data fetching if we have the required key selection
+        if (!$store.metricKey) {
+          return; // Don't fetch data without a selected key
+        }
+      }
+    }
+
+    if (!(qs in cache)) {
+      cache[qs] = activeProductConfig.fetchData(params, store);
+    }
+
+    // compare the previousQuery to the current one.
+    // if the actual query params have changed, let's update the
+    // data set.
+    if (previousQuery !== qs) {
+      previousQuery = qs;
+      set(
+        cache[qs].then(({ data, probeType }) =>
+          activeProductConfig.updateStoreAfterDataIsReceived(
+            data,
+            probeType,
+            store
+          )
+        )
+      );
+    }
+  }
+);
 
 export const currentQuery = derived(store, ($store) => {
   const activeProductConfig = getActiveProductConfig();

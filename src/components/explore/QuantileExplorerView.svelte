@@ -20,12 +20,10 @@
   } from '../../config/shared';
 
   import {
-    gatherProbeKeys,
     gatherAggregationTypes,
-    gatherDualLabeledProbeKeyMap,
-    transformDualLabeledData,
+    getDualLabeledSubKeys,
   } from '../../utils/probe-utils';
-  import { store } from '../../state/store';
+  import { store, processedMetricKeys, metricKeys } from '../../state/store';
 
   const dispatch = createEventDispatcher();
 
@@ -35,18 +33,59 @@
   export let timeHorizon = 'MONTH';
   export let percentiles = [95, 75, 50, 25, 5];
 
-  let isDualLabeled = $store.probe.type === 'dual_labeled_counter';
-  let transformedData = isDualLabeled ? transformDualLabeledData(data) : data;
-  let totalAggs = Object.keys(Object.values(transformedData)[0]).length;
+  let totalAggs = Object.keys(Object.values(data)[0]).length;
+  let aggregationTypes = gatherAggregationTypes(data);
 
-  let aggregationTypes = gatherAggregationTypes(transformedData);
-  const dualLabeledKeys = gatherDualLabeledProbeKeyMap(transformedData);
-  let probeKeys = gatherProbeKeys(transformedData);
+  $: currentKey = $store.metricKey;
+  $: isDualLabeled = $store.probe.type === 'dual_labeled_counter';
+  $: isLabeledMetric =
+    $store.probe && $store.probe.type && $store.probe.type.includes('labeled');
 
-  let currentKey = $store.aggKey || probeKeys[0];
-  $: currentSubKey = dualLabeledKeys[currentKey]
-    ? dualLabeledKeys[currentKey][0]
-    : null;
+  // Local, non-committing selections for label/sub-label to avoid
+  // triggering expensive data refetches on every change.
+  // These should sync with store values (from URL) but allow local changes
+  $: localMetricKey = $store.metricKey || '';
+  $: localSubMetricKey = $store.subMetricKey || '';
+
+  // Compute local sub-keys based on local metric key selection
+  $: localSubMetricKeys =
+    isDualLabeled && localMetricKey && $metricKeys
+      ? getDualLabeledSubKeys($metricKeys, localMetricKey)
+      : [];
+
+  // When main key changes, clear invalid sub key
+  $: {
+    if (isDualLabeled) {
+      const validSubs = localSubMetricKeys || [];
+      if (localSubMetricKey && !validSubs.includes(localSubMetricKey)) {
+        localSubMetricKey = '';
+      }
+    } else {
+      localSubMetricKey = '';
+    }
+  }
+
+  // Apply button enablement
+  $: canGo = !!(localMetricKey && (!isDualLabeled || localSubMetricKey));
+
+  function applyKeySelections() {
+    if (!canGo) return;
+    store.setField('metricKey', localMetricKey);
+    if (isDualLabeled) {
+      store.setField('subMetricKey', localSubMetricKey);
+    } else {
+      store.setField('subMetricKey', '');
+    }
+  }
+
+  // Use full key assembled from the store (applied selection)
+  $: currentFullKey = isDualLabeled
+    ? `${$store.metricKey}[${$store.subMetricKey}]`
+    : $store.metricKey;
+
+  // Local state for dropdown active states
+  let mainKeyActive = false;
+  let subKeyActive = false;
 
   let currentAggregation = aggregationTypes.includes('summed_histogram')
     ? 'summed_histogram'
@@ -64,20 +103,16 @@
     };
   }
 
-  function filterQuantileData(d, agg, key, subKey) {
+  function filterQuantileData(d, agg, key) {
     return d.filter(
-      (di) =>
-        di.client_agg_type === agg &&
-        di.metric_key === key &&
-        (!subKey || di.nested_metric_key === subKey)
+      (di) => di.client_agg_type === agg && di.metric_key === key
     );
   }
 
   $: selectedData = filterQuantileData(
-    transformedData,
+    data,
     currentAggregation,
-    currentKey,
-    currentSubKey
+    currentFullKey
   );
 
   $: densityMetricType = getHistogramName(
@@ -90,12 +125,7 @@
       : getPercentileName($store.productDimensions.normalizationType);
 
   const getYDomain = (source, normType) => {
-    let range = filterQuantileData(
-      source,
-      currentAggregation,
-      currentKey,
-      currentSubKey
-    );
+    let range = filterQuantileData(source, currentAggregation, currentFullKey);
     let histogramRange = range[range.length - 1][
       getHistogramName(normType)
     ].map((d) => d.bin);
@@ -110,10 +140,7 @@
     ];
     return probeType === 'log' ? histogramRange : percentileRange;
   };
-  $: yDomain = getYDomain(
-    transformedData,
-    $store.productDimensions.normalizationType
-  );
+  $: yDomain = getYDomain(data, $store.productDimensions.normalizationType);
 </script>
 
 <style>
@@ -144,6 +171,47 @@
   .interpolator h3 {
     padding-right: 5px;
   }
+
+  .go-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-top: auto;
+  }
+
+  .go-button {
+    --primary-color: var(--digital-blue-600);
+    --primary-color-dark: var(--digital-blue-800);
+    --primary-color-light: var(--digital-blue-400);
+    --primary-color-lightest: var(--digital-blue-300);
+    cursor: pointer;
+    font-size: var(--button-text-size);
+    text-transform: uppercase;
+    border-radius: var(--border-radius-1h);
+    padding: var(--space-base);
+    padding-left: var(--space-2x);
+    padding-right: var(--space-2x);
+    font-weight: 500;
+    margin: 0;
+    display: flex;
+    column-gap: var(--space-base);
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--cool-gray-200);
+  }
+
+  .go-button:hover:not(:disabled) {
+    background-color: var(--blue-600);
+  }
+
+  .go-button:disabled {
+    background-color: var(--cool-gray-300);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 </style>
 
 <div class="body-content">
@@ -155,8 +223,7 @@
         <label class="body-control-set--label">Time Horizon</label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')}
-        />
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
@@ -164,8 +231,7 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        on:selection={makeSelection('percentiles')}
-      />
+        on:selection={makeSelection('percentiles')} />
     </div>
   </div>
 
@@ -177,81 +243,105 @@
         <AggregationTypeSelector
           bind:aggregationInfo
           bind:currentAggregation
-          {aggregationTypes}
-        />
+          {aggregationTypes} />
       </div>
     {/if}
-    {#if probeKeys && probeKeys.length > 1}
+
+    {#if isLabeledMetric}
       <div class="body-control-set">
-        <label class="body-control-set--label">Key</label>
-        <ProbeKeySelector options={probeKeys} bind:currentKey />
-      </div>
-    {/if}
-    {#if isDualLabeled}
-      <div class="body-control-set">
-        <label class="body-control-set--label">Sub Key</label>
+        {#if isDualLabeled}
+          <label class="body-control-set--label">Key</label>
+        {:else}
+          <label class="body-control-set--label">Label</label>
+        {/if}
         <ProbeKeySelector
-          options={dualLabeledKeys[currentKey]}
-          tooltipText="this probe allows for multiple sub keys"
-          bind:currentKey={currentSubKey}
-        />
+          options={$processedMetricKeys || []}
+          currentKey={localMetricKey}
+          bind:active={mainKeyActive}
+          tooltipText="Select a label for this labeled metric"
+          disableStoreUpdate={true}
+          on:selection={(e) => {
+            localMetricKey = e.detail.key;
+          }} />
       </div>
     {/if}
+
+    {#if isDualLabeled && localMetricKey}
+      <div class="body-control-set">
+        <label class="body-control-set--label">Category</label>
+        <ProbeKeySelector
+          options={localSubMetricKeys || []}
+          currentKey={localSubMetricKey}
+          bind:active={subKeyActive}
+          tooltipText="Select a category for this dual labeled counter"
+          fieldName="subMetricKey"
+          disableStoreUpdate={true}
+          on:selection={(e) => {
+            localSubMetricKey = e.detail.key;
+          }} />
+      </div>
+    {/if}
+
+    {#if isLabeledMetric}
+      <div class="body-control-set go-button-container">
+        <button
+          class="go-button"
+          disabled={!canGo}
+          on:click={applyKeySelections}>Apply</button>
+      </div>
+    {/if}
+    <!-- Debug info: isLabeledMetric={isLabeledMetric}, canGo={canGo}, localMetricKey="{localMetricKey}", localSubMetricKey="{localSubMetricKey}" -->
   </div>
   <div class="data-graphics">
-    {#each probeKeys as key, i (key)}
-      {#each aggregationTypes as aggType, i (aggType + timeHorizon + key)}
-        {#if key === currentKey && aggType === currentAggregation}
-          {#key interpolate}
-            <div class="small-multiple">
-              <ProbeExplorer
-                aggregationsOverTimeTitle={overTimeTitle(
-                  'percentiles',
-                  aggregationLevel
-                )}
-                aggregationsOverTimeDescription={percentilesOverTimeDescription(
-                  aggregationLevel
-                )}
-                summaryLabel="perc."
-                normalizedData={selectedData}
-                activeBins={percentiles}
-                {timeHorizon}
-                markers={$firefoxVersionMarkers}
-                showViolins={true}
-                {aggregationLevel}
-                binColorMap={percentileLineColorMap}
-                {pointMetricType}
-                overTimePointMetricType={pointMetricType}
-                {densityMetricType}
-                comparisonKeyFormatter={(perc) => `${perc}%`}
-                yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
-                {yDomain}
-                {interpolate}
-              >
-                <div slot="smoother" class="interpolator">
-                  <input
-                    id="toggleSmooth"
-                    type="checkbox"
-                    bind:checked={interpolate}
-                    data-glean-id="interpolate-percentiles"
-                  />
-                  <h3 for="toggleSmooth" class="data-graphic__element-title">
-                    Interpolated
-                  </h3>
-                  <span
-                    use:tooltipAction={{
-                      text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. WARNING: ONLY USE THIS WHEN THE PROBE DISTRIBUTION IS CONTINUOUS AND THE DATA WITHIN BUCKETS IS UNIFORMLY DISTRIBUTED. OTHERWISE THIS CAN SHOW INACCURATE OR MISLEADING RESULTS.',
-                      location: 'top',
-                    }}
-                    class="data-graphic__element-title__icon"
-                    ><Warning size={14} />
-                  </span>
-                </div>
-              </ProbeExplorer>
-            </div>
-          {/key}
-        {/if}
-      {/each}
+    {#each aggregationTypes as aggType, i (aggType + timeHorizon + currentKey)}
+      {#if aggType === currentAggregation}
+        {#key interpolate}
+          <div class="small-multiple">
+            <ProbeExplorer
+              aggregationsOverTimeTitle={overTimeTitle(
+                'percentiles',
+                aggregationLevel
+              )}
+              aggregationsOverTimeDescription={percentilesOverTimeDescription(
+                aggregationLevel
+              )}
+              summaryLabel="perc."
+              normalizedData={selectedData}
+              activeBins={percentiles}
+              {timeHorizon}
+              markers={$firefoxVersionMarkers}
+              showViolins={true}
+              {aggregationLevel}
+              binColorMap={percentileLineColorMap}
+              {pointMetricType}
+              overTimePointMetricType={pointMetricType}
+              {densityMetricType}
+              comparisonKeyFormatter={(perc) => `${perc}%`}
+              yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
+              {yDomain}
+              {interpolate}>
+              <div slot="smoother" class="interpolator">
+                <input
+                  id="toggleSmooth"
+                  type="checkbox"
+                  bind:checked={interpolate}
+                  data-glean-id="interpolate-percentiles" />
+                <h3 for="toggleSmooth" class="data-graphic__element-title">
+                  Interpolated
+                </h3>
+                <span
+                  use:tooltipAction={{
+                    text: 'Generates percentiles using the Between Closest Ranks Linear Interpolation. WARNING: ONLY USE THIS WHEN THE PROBE DISTRIBUTION IS CONTINUOUS AND THE DATA WITHIN BUCKETS IS UNIFORMLY DISTRIBUTED. OTHERWISE THIS CAN SHOW INACCURATE OR MISLEADING RESULTS.',
+                    location: 'top',
+                  }}
+                  class="data-graphic__element-title__icon"
+                  ><Warning size={14} />
+                </span>
+              </div>
+            </ProbeExplorer>
+          </div>
+        {/key}
+      {/if}
     {/each}
   </div>
 </div>

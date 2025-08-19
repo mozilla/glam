@@ -8,7 +8,6 @@
   import ProbeExplorer from './ProbeExplorer.svelte';
   import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
   import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
-  import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
   import CategoricalMenu from './CategoricalMenu.svelte';
 
@@ -59,7 +58,8 @@
 
   function filterResponseData(d, agg, key) {
     return d.filter(
-      (di) => di.client_agg_type === agg && di.metric_key === key
+      (di) =>
+        di.client_agg_type === agg && (key === '' || di.metric_key === key)
     );
   }
 
@@ -176,71 +176,63 @@
         on:selection={makeSelection('metricType')}
       />
     </div>
-    {#if probeKeys && probeKeys.length > 1}
-      <div class="body-control-set">
-        <label class="body-control-set--label">Key</label>
-        <ProbeKeySelector options={probeKeys} bind:currentKey />
-      </div>
-    {/if}
   </div>
 
   <div class="data-graphics">
-    {#each probeKeys as key, i (key)}
-      {#each aggregationTypes as aggType, i (aggType + timeHorizon + probeType + metricType)}
-        {#if key === currentKey && (aggregationTypes.length === 1 || aggType === currentAggregation)}
-          <div class="small-multiple">
-            <ProbeExplorer
-              bind:ref
-              aggregationsOverTimeTitle={overTimeTitle(
-                metricType,
-                aggregationLevel
-              )}
-              aggregationsOverTimeDescription={proportionsOverTimeDescription(
-                metricType,
-                aggregationLevel
-              )}
-              summaryLabel="cat."
-              normalizedData={selectedData}
-              activeBins={activeBuckets}
-              {timeHorizon}
-              binColorMap={bucketColorMap}
-              showViolins={false}
-              {aggregationLevel}
-              pointMetricType={getProportionName(
-                $store.productDimensions.normalizationType
-              )}
-              {densityMetricType}
-              yTickFormatter={metricType === 'proportions'
-                ? formatPercent
-                : formatCount}
-              summaryNumberFormatter={metricType === 'proportions'
-                ? formatPercentDecimal
-                : formatCount}
-              yScaleType={'linear'}
-              yDomain={[
-                0,
-                Math.max(
-                  ...selectedData
-                    .map((d) =>
-                      Object.values(
-                        d[
-                          metricType === 'proportions'
-                            ? getProportionName(
-                                $store.productDimensions.normalizationType
-                              )
-                            : getCountName(
-                                $store.productDimensions.normalizationType
-                              )
-                        ]
-                      )
+    {#each aggregationTypes as aggType, i (aggType + timeHorizon + probeType + metricType)}
+      {#if aggregationTypes.length === 1 || aggType === currentAggregation}
+        <div class="small-multiple">
+          <ProbeExplorer
+            bind:ref
+            aggregationsOverTimeTitle={overTimeTitle(
+              metricType,
+              aggregationLevel
+            )}
+            aggregationsOverTimeDescription={proportionsOverTimeDescription(
+              metricType,
+              aggregationLevel
+            )}
+            summaryLabel="cat."
+            normalizedData={selectedData}
+            activeBins={activeBuckets}
+            {timeHorizon}
+            binColorMap={bucketColorMap}
+            showViolins={false}
+            {aggregationLevel}
+            pointMetricType={getProportionName(
+              $store.productDimensions.normalizationType
+            )}
+            {densityMetricType}
+            yTickFormatter={metricType === 'proportions'
+              ? formatPercent
+              : formatCount}
+            summaryNumberFormatter={metricType === 'proportions'
+              ? formatPercentDecimal
+              : formatCount}
+            yScaleType={'linear'}
+            yDomain={[
+              0,
+              Math.max(
+                ...selectedData
+                  .map((d) =>
+                    Object.values(
+                      d[
+                        metricType === 'proportions'
+                          ? getProportionName(
+                              $store.productDimensions.normalizationType
+                            )
+                          : getCountName(
+                              $store.productDimensions.normalizationType
+                            )
+                      ]
                     )
-                    .flat()
-                ),
-              ]}
-            />
-          </div>
-        {/if}
-      {/each}
+                  )
+                  .flat()
+              ),
+            ]}
+          />
+        </div>
+      {/if}
     {/each}
   </div>
 </div>

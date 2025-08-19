@@ -4,26 +4,22 @@
   import AggregationTypeSelector from '../controls/AggregationTypeSelector.svelte';
   import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
   import { formatCount, formatPercentDecimal } from '../../utils/formatters';
-  import {
-    gatherProbeKeys,
-    gatherAggregationTypes,
-  } from '../../utils/probe-utils';
+  import { gatherAggregationTypes } from '../../utils/probe-utils';
   import { PERCENTILES } from '../../utils/constants';
   import { getProportionName, getPercentileName } from '../../config/shared';
-  import { store } from '../../state/store';
+  import { store, metricKeys } from '../../state/store';
 
   export let data;
   export let probeType = 'categorical';
   export let aggregationLevel = 'build_id';
 
   export let aggregationTypes = gatherAggregationTypes(data);
-  export let probeKeys = gatherProbeKeys(data);
   export let colorMap;
   export let visibleBuckets;
   export let bucketOptions;
   export let densityMetricType;
 
-  let currentKey = probeKeys[0];
+  let currentKey = $store.metricKey;
   let currentAggregation = aggregationTypes[0];
 
   function filterResponseData(d, agg, key) {
@@ -44,7 +40,7 @@
 <div class="body-content">
   <slot />
 
-  {#if (aggregationTypes && aggregationTypes.length > 2) || (probeKeys && probeKeys.length > 1)}
+  {#if (aggregationTypes && aggregationTypes.length > 2) || ($metricKeys && $metricKeys.length > 1)}
     <div
       style="
       display:grid;
@@ -61,13 +57,6 @@
         <div class="body-control-set">
           <label class="body-control-set--label">Metric Type</label>
           <AggregationTypeSelector {aggregationTypes} bind:currentAggregation />
-        </div>
-      {/if}
-
-      {#if probeKeys && probeKeys.length > 1}
-        <div class="body-control-set">
-          <label class="body-control-set--label">Key</label>
-          <ProbeKeySelector options={probeKeys} bind:currentKey />
         </div>
       {/if}
     </div>

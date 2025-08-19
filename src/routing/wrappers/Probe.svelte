@@ -7,6 +7,9 @@
   import { isSelectedProcessValid } from '../../utils/probe-utils';
 </script>
 
+<style>
+</style>
+
 {#if $store.probe.loaded}
   {#await $dataset}
     <div class="graphic-body__content">
@@ -31,6 +34,10 @@
           />
         </div>
       </div>
+    {:else if data.level === 'INFO' && data.key === 'SELECT_LABEL'}
+      <slot {data} probeType={data.viewType} needsLabelSelection={true} />
+    {:else if data.level === 'INFO' && data.key === 'SELECT_SUB_LABEL'}
+      <slot {data} probeType={data.viewType} needsSubLabelSelection={true} />
     {:else}
       <slot {data} probeType={data.viewType} />
     {/if}
