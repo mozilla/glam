@@ -31,8 +31,7 @@ from glam.api.models import (
 )
 
 # Data will be read from tables in this project
-SHARED_PROD_PROJECT = "moz-fx-data-shared-prod"
-GLAM_PROD_PROJECT = "moz-fx-glam-prod"
+GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
 
 
 def get_bq_client():
@@ -302,14 +301,14 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
                 LIMIT
                 @num_versions) AS selected_versions
             FROM
-                `{SHARED_PROD_PROJECT}.glam_etl.{table}`
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `{SHARED_PROD_PROJECT}.glam_etl.{table}`,
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table}`,
                 versions
             WHERE
                 metric = @metric
@@ -539,14 +538,14 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 LIMIT
                 @num_versions) AS selected_versions
             FROM
-                `{GLAM_PROD_PROJECT}.glam_etl.{table_id}_v1`
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
             WHERE
                 metric = @metric
             )
             SELECT
             * EXCEPT(selected_versions)
             FROM
-                `{SHARED_PROD_PROJECT}.glam_etl.{table_id}`,
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`,
                 versions
             WHERE
                 metric = @metric
@@ -774,7 +773,7 @@ def _get_random_probes(data_source, random_percentage, limit):
 
     if data_source == "BigQuery":
         table_name = (
-            f"`{SHARED_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
+            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
         )
         with bigquery.Client() as client:
             aggs = client.query(
@@ -816,7 +815,7 @@ def _get_fx_most_used_probes(days=30, limit=9):
     probe_names = [f'{p["probe_name"]}' for p in most_used_probes]
 
     legacy_table_name = (
-        f"`{SHARED_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
+        f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
     )
 
     query = f"""
