@@ -73,6 +73,7 @@ def validate_request_legacy(**kwargs):
     validated_data["os"] = kwargs.get("os", "*")
     validated_data["num_versions"] = kwargs.get("versions", 3)
     validated_data["process"] = kwargs.get("process")
+    validated_data["metric_key"] = kwargs.get("metric_key")
 
     if validated_data["channel"] not in ["beta", "nightly", "release"]:
         raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
@@ -116,6 +117,7 @@ def validate_request_glean(**kwargs):
     validated_data["os"] = kwargs.get("os", "*")
     validated_data["num_versions"] = kwargs.get("versions", 3)
     validated_data["ping_type"] = kwargs.get("ping_type")
+    validated_data["metric_key"] = kwargs.get("metric_key")
 
     if validated_data["channel"] not in ["beta", "nightly", "release"]:
         raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
@@ -145,6 +147,30 @@ def validate_request_glean(**kwargs):
 
     return validated_data
 
+def validate_metric_keys_request(**kwargs):
+    REQUIRED_QUERY_PARAMETERS = ["probe", "channel", "product", ]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    validated_data = {}
+    validated_data["probe"] = kwargs.get("probe")[0]
+    validated_data["channel"] = kwargs.get("channel")[0]
+    validated_data["product"] = kwargs.get("product")[0]
+    validated_data["os"] = kwargs.get("os")[0]
+
+    if validated_data["channel"] not in ["beta", "nightly", "release"]:
+        raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
+
+    if validated_data["product"] not in ["fog", "fenix"]:
+        raise ValidationError("Invalid product: {}".format(validated_data["product"]))
+
+    if validated_data["os"] not in ["Windows", "Darwin", "Mac", "Linux", "*"]:
+        raise ValidationError("Invalid os: {}".format(validated_data["os"]))
+
+    return validated_data
 
 def get_firefox_aggregations(source, request, **kwargs):
     if source == "BigQuery":
@@ -218,6 +244,8 @@ def get_firefox_aggregations_from_pg(request, **kwargs):
 
     if "process" in kwargs:
         dimensions.append(Q(process=kwargs["process"]))
+    if "metric_key" in kwargs and kwargs["metric_key"]:
+        dimensions.append(Q(metric_key=kwargs["metric_key"]))
     result = model.objects.filter(*dimensions)
 
     response = []
@@ -291,6 +319,13 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
         )
         process_filter = "AND process = @process"
 
+    metric_key_filter = ""
+    if "metric_key" in req_data and req_data["metric_key"]:
+        query_parameters.append(
+            bigquery.ScalarQueryParameter("metric_key", "STRING", req_data["metric_key"])
+        )
+        metric_key_filter = "AND metric_key = @metric_key"
+
     table = f"glam_desktop_{channel}_aggregates"
     query = f"""
         WITH versions AS (
@@ -314,6 +349,7 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
                 metric = @metric
                 AND os = @os
                 {process_filter}
+                {metric_key_filter}
                 {build_id_filter}
                 AND version IN UNNEST(versions.selected_versions)
     """
@@ -461,6 +497,11 @@ def get_glean_aggregations_from_pg(request, **kwargs):
         Q(os=os),
     ]
 
+    # Add metric_key filtering if provided
+    metric_key = kwargs.get("metric_key")
+    if metric_key:
+        dimensions.append(Q(metric_key=metric_key))
+
     aggregation_level = kwargs["aggregationLevel"]
     # Whether to pull aggregations by version or build_id.
     if aggregation_level == "version":
@@ -519,6 +560,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     ping_type = req_data["ping_type"]
     os = req_data["os"]
     aggregation_level = req_data["aggregation_level"]
+    metric_key = req_data["metric_key"] or ""
 
     table_id = f"glam_{product}_{channel}_aggregates"
     shas = {}
@@ -528,6 +570,10 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
         if product == "fog":
             shas = _get_firefox_shas(channel, hourly=True)
         build_id_filter = 'AND build_id != "*"'
+    if metric_key:
+        metric_key_filter = f"AND metric_key = @metric_key"
+    else:
+        metric_key_filter = ""
     # Build the SQL query with parameters
     query = f"""
         WITH versions AS (
@@ -549,18 +595,22 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 versions
             WHERE
                 metric = @metric
+                {metric_key_filter}
                 AND ping_type = @ping_type
                 AND os = @os
                 {build_id_filter}
                 AND version IN UNNEST(versions.selected_versions)
     """
+    query_parameters=[
+        bigquery.ScalarQueryParameter("metric", "STRING", probe),
+        bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
+        bigquery.ScalarQueryParameter("os", "STRING", os),
+        bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
+    ]
+    if metric_key:
+        query_parameters.append(bigquery.ScalarQueryParameter("metric_key", "STRING", metric_key))
     job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("metric", "STRING", probe),
-            bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
-            bigquery.ScalarQueryParameter("os", "STRING", os),
-            bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
-        ]
+        query_parameters=query_parameters,
     )
     with bqClient as client:
         query_job = client.query(query, job_config=job_config)
@@ -665,6 +715,32 @@ def _get_fog_counts(app_id, versions, ping_type, os, by_build):
 
     return data
 
+@api_view(["GET"])
+def metric_keys(request):
+    """
+    Fetches metric keys from BigQuery for a given probe.
+    """
+    req_data = validate_metric_keys_request(**request.GET)
+    product = req_data["product"]
+    channel = req_data["channel"]
+    probe = req_data["probe"]
+    os = req_data["os"]
+
+    query = f"""
+        SELECT DISTINCT metric_key
+        FROM `{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_{product}_{channel}_aggregates`
+        WHERE metric = @probe
+        AND os = @os
+    """
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("probe", "STRING", probe),
+            bigquery.ScalarQueryParameter("os", "STRING", os),
+        ]
+    )
+    with get_bq_client() as client:
+        query_job = client.query(query, job_config=job_config)
+    return Response({"metric_keys": [row.metric_key for row in query_job]})
 
 @api_view(["POST"])
 def aggregations(request):
@@ -676,7 +752,8 @@ def aggregations(request):
         {
             "query": {
                 "channel": "nightly",
-                "probe": "gc_ms",
+                "probe": "<probe_name>",
+                "metric_key": "<metric_key>",
                 "process": "content"
                 "versions": 5,  # Defaults to 3 versions.
                 "aggregationLevel": "version"  # OR "build_id"

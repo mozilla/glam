@@ -2,13 +2,18 @@
   import { CaretDown } from '@graph-paper/icons';
   import { FloatingMenu, MenuList, MenuListItem } from '@graph-paper/menu';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions';
+  import { createEventDispatcher } from 'svelte';
 
   import { store } from '../../state/store';
+
+  const dispatch = createEventDispatcher();
 
   export let options;
   export let currentKey;
   export let active;
   export let tooltipText = 'this probe has multiple keys associated with it';
+  export let fieldName = 'metricKey';
+  export let disableStoreUpdate = false;
 
   let button;
   let width;
@@ -20,14 +25,16 @@
   }
 
   function setValue(event) {
-    currentKey = event.detail.key;
-    store.setField('aggKey', currentKey);
-    active = false;
-  }
+    const selectedKey = event.detail.key;
+    currentKey = selectedKey;
 
-  // initialize aggregation key if none has been selected yet
-  if (!$store.aggKey && options.length) {
-    store.setField('aggKey', options[0]);
+    // Dispatch selection event to parent
+    dispatch('selection', { key: selectedKey });
+    if (!disableStoreUpdate) {
+      store.setField(fieldName, selectedKey);
+    }
+
+    active = false;
   }
 </script>
 
@@ -41,12 +48,19 @@
     text-align: left;
     /* min-width: var(--space-16x); */
     background-color: white;
+    border: 1px solid var(--cool-gray-300);
     display: grid;
     grid-auto-flow: column;
     width: max-content;
     grid-column-gap: var(--space-base);
     color: var(--subhead-gray-02);
     border-radius: var(--space-1h);
+    cursor: pointer;
+  }
+
+  .activating-button:hover {
+    border-color: var(--cool-gray-400);
+    background-color: var(--cool-gray-50);
   }
   .menu-list-item__title {
     font-size: var(--text-01);
@@ -58,7 +72,11 @@
   }
 </style>
 
-<div class="menu-button" bind:this={button}>
+<div
+  class="menu-button"
+  bind:this={button}
+  style="position: relative; overflow: visible;"
+>
   <button
     class="activating-button"
     on:click={toggle}
@@ -68,16 +86,13 @@
     }}
   >
     <div>
-      {#each options as opt}
-        <div
-          style="
-            visibility: {opt === currentKey ? 'visible' : 'hidden'};
-            height: {opt === currentKey ? 'inherit' : 0};
-          "
-        >
-          {opt}
-        </div>
-      {/each}
+      {#if currentKey && options.includes(currentKey)}
+        {currentKey}
+      {:else}
+        <span style="color: var(--cool-gray-400); font-style: italic;">
+          Select an option...
+        </span>
+      {/if}
     </div>
     <CaretDown size="16" />
   </button>

@@ -108,6 +108,20 @@ export default {
       currentPage: storeValue.currentPage,
       normalizationType: storeValue.productDimensions.normalizationType,
     };
+
+    // Only include metric keys for labeled metrics
+    if (
+      storeValue.probe &&
+      storeValue.probe.type &&
+      storeValue.probe.type.includes('labeled')
+    ) {
+      if (storeValue.metricKey) {
+        params.metricKey = storeValue.metricKey;
+      }
+      if (storeValue.subMetricKey) {
+        params.subMetricKey = storeValue.subMetricKey;
+      }
+    }
     return stripDefaultValues(params, {
       ...sharedDefaults,
       ...this.dimensions,
@@ -123,6 +137,7 @@ export default {
       process: storeValue.productDimensions.process,
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       versions: 20,
+      metric_key: storeValue.metricKey,
     };
   },
   fetchData(params, appStore) {

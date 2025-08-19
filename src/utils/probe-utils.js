@@ -74,3 +74,43 @@ export function convertValueToProportions(obj) {
   });
   return newObj;
 }
+
+// Parse metric keys for dual labeled counters
+export function parseDualLabeledMetricKeys(metricKeys) {
+  // Filter to only keys that contain '[' and ']'
+  const validKeys = metricKeys.filter(
+    (key) => key.includes('[') && key.includes(']')
+  );
+
+  const keyMap = {};
+  validKeys.forEach((key) => {
+    const [mainKey, subKeyWithBracket] = key.split('[');
+    const subKey = subKeyWithBracket.split(']')[0];
+
+    if (!keyMap[mainKey]) {
+      keyMap[mainKey] = [];
+    }
+    if (!keyMap[mainKey].includes(subKey)) {
+      keyMap[mainKey].push(subKey);
+    }
+  });
+
+  return keyMap;
+}
+
+// Get main keys from dual labeled metric keys
+export function getDualLabeledMainKeys(metricKeys) {
+  const keyMap = parseDualLabeledMetricKeys(metricKeys);
+  return Object.keys(keyMap);
+}
+
+// Get sub keys for a specific main key
+export function getDualLabeledSubKeys(metricKeys, mainKey) {
+  const keyMap = parseDualLabeledMetricKeys(metricKeys);
+  return keyMap[mainKey] || [];
+}
+
+// Reconstruct the full metric key for API calls
+export function reconstructDualLabeledKey(mainKey, subKey) {
+  return `${mainKey}[${subKey}]`;
+}

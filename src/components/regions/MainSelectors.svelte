@@ -3,6 +3,7 @@
   import { CaretDown } from '@graph-paper/icons';
   import { MenuList, MenuListItem } from '@graph-paper/menu';
   import DimensionMenu from '../controls/DimensionMenu.svelte';
+
   import productConfig from '../../config/products';
   import { store, productConfigDimensions } from '../../state/store';
 

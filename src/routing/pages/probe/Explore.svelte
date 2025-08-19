@@ -4,6 +4,7 @@
   import Probe from '../../wrappers/Probe.svelte';
   import ProportionExplorerView from '../../../components/explore/ProportionExplorerView.svelte';
   import QuantileExplorerView from '../../../components/explore/QuantileExplorerView.svelte';
+  import KeySelectorView from '../../../components/explore/KeySelectorView.svelte';
   import ProbeTitle from '../../../components/regions/ProbeTitle.svelte';
   import Spinner from '../../../components/LineSegSpinner.svelte';
   import { store } from '../../../state/store';
@@ -16,19 +17,26 @@
     };
 
     const field = renames[type] || type;
-    // FIXME: use the productConfig from an upcoming PR.
     if (field === 'aggregationLevel') {
       store.setDimension(field, selection);
     } else {
       store.setField(field, selection);
     }
   }
-  // Here's a harmless comment that will tell me if stuff is going to prod just by merging onto main
 </script>
 
-<Probe let:data let:probeType>
+<Probe
+  let:data
+  let:probeType
+  let:needsLabelSelection
+  let:needsSubLabelSelection
+>
   <div in:fade class="graphic-body__content">
-    {#if probeType === 'categorical'}
+    {#if needsLabelSelection || needsSubLabelSelection}
+      <KeySelectorView {data}>
+        <ProbeTitle />
+      </KeySelectorView>
+    {:else if probeType === 'categorical'}
       <ProportionExplorerView
         data={data.data}
         metricType={$store.proportionMetricType}
@@ -54,7 +62,7 @@
         <ProbeTitle />
       </QuantileExplorerView>
     {:else}
-      probeType: {probeType}
+      Error: Unknown probe type ({probeType})
       <div class="graphic-body__content">
         <div style="width: 100%">
           <Spinner size={48} color={'var(--cool-gray-400)'} />

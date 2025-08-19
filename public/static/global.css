@@ -579,6 +579,7 @@ main .details {
   padding: var(--space-1h);
   padding-left: var(--space-2x);
   padding-right: var(--space-2x);
+  z-index: -1;
 }
 
 /* probe labels */
@@ -656,6 +657,16 @@ main .details {
 }
 
 .label--memory_distribution {
+  color: var(--memory_distribution-color);
+  background-color: var(--memory_distribution-bg);
+}
+
+.label--labeled_custom_distribution {
+  color: var(--memory_distribution-color);
+  background-color: var(--memory_distribution-bg);
+}
+
+.label--labeled_timing_distribution {
   color: var(--memory_distribution-color);
   background-color: var(--memory_distribution-bg);
 }
