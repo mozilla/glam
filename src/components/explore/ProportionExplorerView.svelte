@@ -8,7 +8,6 @@
   import ProbeExplorer from './ProbeExplorer.svelte';
   import TimeHorizonControl from '../controls/TimeHorizonControl.svelte';
   import ProportionMetricTypeControl from '../controls/ProportionMetricTypeControl.svelte';
-  import ProbeKeySelector from '../controls/ProbeKeySelector.svelte';
 
   import CategoricalMenu from './CategoricalMenu.svelte';
 

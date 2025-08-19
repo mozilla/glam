@@ -5,6 +5,10 @@
 
   export let data; // The SELECT_LABEL or SELECT_SUB_LABEL data from the store
 
+  // Local state for URL parameters (don't update store until Apply is clicked)
+  let selectedMetricKey = $store.metricKey || '';
+  let selectedSubMetricKey = $store.subMetricKey || '';
+
   $: isDualLabeled =
     $store.probe && $store.probe.type === 'dual_labeled_counter';
   $: isLabeledMetric =
@@ -27,10 +31,6 @@
   // Local state for dropdown active states
   let mainKeyActive = false;
   let subKeyActive = false;
-
-  // Local state for URL parameters (don't update store until GO is clicked)
-  let selectedMetricKey = $store.metricKey || '';
-  let selectedSubMetricKey = $store.subMetricKey || '';
 
   // Clear sub-key when main key changes
   $: if (selectedMetricKey) {

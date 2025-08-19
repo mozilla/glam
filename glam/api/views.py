@@ -147,8 +147,13 @@ def validate_request_glean(**kwargs):
 
     return validated_data
 
+
 def validate_metric_keys_request(**kwargs):
-    REQUIRED_QUERY_PARAMETERS = ["probe", "channel", "product", ]
+    REQUIRED_QUERY_PARAMETERS = [
+        "probe",
+        "channel",
+        "product",
+    ]
     if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
         missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
         raise ValidationError(
@@ -171,6 +176,7 @@ def validate_metric_keys_request(**kwargs):
         raise ValidationError("Invalid os: {}".format(validated_data["os"]))
 
     return validated_data
+
 
 def get_firefox_aggregations(source, request, **kwargs):
     if source == "BigQuery":
@@ -322,7 +328,9 @@ def get_firefox_aggregations_from_bq(bqClient, request, req_data):
     metric_key_filter = ""
     if "metric_key" in req_data and req_data["metric_key"]:
         query_parameters.append(
-            bigquery.ScalarQueryParameter("metric_key", "STRING", req_data["metric_key"])
+            bigquery.ScalarQueryParameter(
+                "metric_key", "STRING", req_data["metric_key"]
+            )
         )
         metric_key_filter = "AND metric_key = @metric_key"
 
@@ -571,7 +579,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             shas = _get_firefox_shas(channel, hourly=True)
         build_id_filter = 'AND build_id != "*"'
     if metric_key:
-        metric_key_filter = f"AND metric_key = @metric_key"
+        metric_key_filter = "AND metric_key = @metric_key"
     else:
         metric_key_filter = ""
     # Build the SQL query with parameters
@@ -601,14 +609,16 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 {build_id_filter}
                 AND version IN UNNEST(versions.selected_versions)
     """
-    query_parameters=[
+    query_parameters = [
         bigquery.ScalarQueryParameter("metric", "STRING", probe),
         bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
         bigquery.ScalarQueryParameter("os", "STRING", os),
         bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
     ]
     if metric_key:
-        query_parameters.append(bigquery.ScalarQueryParameter("metric_key", "STRING", metric_key))
+        query_parameters.append(
+            bigquery.ScalarQueryParameter("metric_key", "STRING", metric_key)
+        )
     job_config = bigquery.QueryJobConfig(
         query_parameters=query_parameters,
     )
@@ -715,6 +725,7 @@ def _get_fog_counts(app_id, versions, ping_type, os, by_build):
 
     return data
 
+
 @api_view(["GET"])
 def metric_keys(request):
     """
@@ -741,6 +752,7 @@ def metric_keys(request):
     with get_bq_client() as client:
         query_job = client.query(query, job_config=job_config)
     return Response({"metric_keys": [row.metric_key for row in query_job]})
+
 
 @api_view(["POST"])
 def aggregations(request):

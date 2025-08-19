@@ -23,12 +23,7 @@
     gatherAggregationTypes,
     getDualLabeledSubKeys,
   } from '../../utils/probe-utils';
-  import {
-    store,
-    processedMetricKeys,
-    subMetricKeys,
-    metricKeys,
-  } from '../../state/store';
+  import { store, processedMetricKeys, metricKeys } from '../../state/store';
 
   const dispatch = createEventDispatcher();
 
@@ -228,8 +223,7 @@
         <label class="body-control-set--label">Time Horizon</label>
         <TimeHorizonControl
           horizon={timeHorizon}
-          on:selection={makeSelection('timeHorizon')}
-        />
+          on:selection={makeSelection('timeHorizon')} />
       {/if}
     </div>
 
@@ -237,8 +231,7 @@
       <label class="body-control-set--label">Probe Value Percentiles</label>
       <PercentileSelectionControl
         {percentiles}
-        on:selection={makeSelection('percentiles')}
-      />
+        on:selection={makeSelection('percentiles')} />
     </div>
   </div>
 
@@ -250,8 +243,7 @@
         <AggregationTypeSelector
           bind:aggregationInfo
           bind:currentAggregation
-          {aggregationTypes}
-        />
+          {aggregationTypes} />
       </div>
     {/if}
 
@@ -270,8 +262,7 @@
           disableStoreUpdate={true}
           on:selection={(e) => {
             localMetricKey = e.detail.key;
-          }}
-        />
+          }} />
       </div>
     {/if}
 
@@ -287,8 +278,7 @@
           disableStoreUpdate={true}
           on:selection={(e) => {
             localSubMetricKey = e.detail.key;
-          }}
-        />
+          }} />
       </div>
     {/if}
 
@@ -297,8 +287,7 @@
         <button
           class="go-button"
           disabled={!canGo}
-          on:click={applyKeySelections}>Apply</button
-        >
+          on:click={applyKeySelections}>Apply</button>
       </div>
     {/if}
     <!-- Debug info: isLabeledMetric={isLabeledMetric}, canGo={canGo}, localMetricKey="{localMetricKey}", localSubMetricKey="{localSubMetricKey}" -->
@@ -330,15 +319,13 @@
               comparisonKeyFormatter={(perc) => `${perc}%`}
               yScaleType={probeType === 'log' ? 'scalePoint' : 'linear'}
               {yDomain}
-              {interpolate}
-            >
+              {interpolate}>
               <div slot="smoother" class="interpolator">
                 <input
                   id="toggleSmooth"
                   type="checkbox"
                   bind:checked={interpolate}
-                  data-glean-id="interpolate-percentiles"
-                />
+                  data-glean-id="interpolate-percentiles" />
                 <h3 for="toggleSmooth" class="data-graphic__element-title">
                   Interpolated
                 </h3>
