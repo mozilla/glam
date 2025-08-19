@@ -530,29 +530,18 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
         build_id_filter = 'AND build_id != "*"'
     # Build the SQL query with parameters
     query = f"""
-        WITH versions AS (
             SELECT
-                ARRAY_AGG(DISTINCT version
-                ORDER BY
-                version DESC
-                LIMIT
-                @num_versions) AS selected_versions
-            FROM
-                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
-            WHERE
-                metric = @metric
-            )
-            SELECT
-            * EXCEPT(selected_versions)
+            * EXCEPT(latest_version)
             FROM
                 `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`,
-                versions
+                `moz-fx-data-shared-prod.telemetry_derived.latest_versions` lv
             WHERE
                 metric = @metric
                 AND ping_type = @ping_type
                 AND os = @os
                 {build_id_filter}
-                AND version IN UNNEST(versions.selected_versions)
+                AND lv.channel = @channel
+                AND version BETWEEN latest_version - @num_versions AND latest_version
     """
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
@@ -560,6 +549,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
             bigquery.ScalarQueryParameter("os", "STRING", os),
             bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
+            bigquery.ScalarQueryParameter("channel", "STRING", channel),
         ]
     )
     with bqClient as client:
