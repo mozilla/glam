@@ -6,10 +6,14 @@
 CREATE TEMP FUNCTION hist_sum(entries ARRAY<STRUCT<key STRING, value INT64>>) AS (
   ARRAY(SELECT AS STRUCT key, CAST(SUM(value) AS FLOAT64) AS value FROM UNNEST(entries) GROUP BY key ORDER BY key)
 );
+CREATE TEMP FUNCTION hist_sum_float(entries ARRAY<STRUCT<key STRING, value FLOAT64>>) AS (
+  ARRAY(SELECT AS STRUCT key, CAST(SUM(value) AS FLOAT64) AS value FROM UNNEST(entries) GROUP BY key ORDER BY key)
+);
 <% } %>
-
-WITH pre_aggregates AS (
+CREATE TEMP TABLE daily_clients_aggregates AS (
   SELECT
+    DATE(submission_timestamp) AS submission_date,
+    client_info.client_id AS client_id,
     <% if (normalized) { %>mozfun.glam.histogram_normalized_sum(
       ARRAY_CONCAT_AGG(metrics.${metric_type}.${metric_name}.values),
       ${sample_mult}
@@ -22,44 +26,104 @@ WITH pre_aggregates AS (
       0
     ) AS app_version,
     SUBSTR(client_info.app_build, 0, 10)AS app_build_id,
-    COUNT(distinct client_info.client_id) AS client_count
-FROM
-  `moz-fx-data-shared-prod.firefox_desktop.metrics` -- Currently only supports Metrics ping
-WHERE
-  DATE(submission_timestamp) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AND CURRENT_DATE
-  AND SUBSTR(client_info.app_build, 0, 10) >= FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY))
-  -- WARNING: Increasing the date interval above will increase costs and make
-  -- queries more likely to fail while still being charged.
-  -- Please make use of sampling if you need more than 60 days of data
-  <% if (os == '*') { %> -- AND client_info.os = "Windows" -- Remove to filter by OS<% } else { %>AND client_info.os = "${os}"<% } %>
-  AND client_info.client_id IS NOT NULL
-  AND client_info.app_channel = "${channel}"
-  AND sample_id BETWEEN 0 AND ${sample_size}
-  AND metrics.${metric_type}.${metric_name}.values IS NOT NULL
-GROUP BY metric_type, app_version, app_build_id
+    sample_id
+  FROM `moz-fx-data-shared-prod.firefox_desktop.metrics`
+  WHERE
+      DATE(submission_timestamp) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY) AND CURRENT_DATE
+      AND SUBSTR(client_info.app_build, 0, 10) >= FORMAT_DATE("%Y%m%d", DATE_SUB(CURRENT_DATE, INTERVAL 14 DAY))
+      -- WARNING: Increasing the date interval above will increase costs and make
+      -- queries more likely to fail while still being charged.
+      -- Please make use of sampling if you need more than 60 days of data
+      <% if (os == '*') { %> -- AND client_info.os = "Windows" -- Remove to filter by OS<% } else { %>AND client_info.os = "${os}"<% } %>
+      AND client_info.client_id IS NOT NULL
+      AND client_info.app_channel = "${channel}"
+      AND sample_id BETWEEN 0 AND ${sample_size}
+      AND metrics.${metric_type}.${metric_name}.values IS NOT NULL
+      AND not is_bot_generated
+  GROUP BY submission_date, client_id, metric_type, app_version, app_build_id, sample_id
+);
+CREATE TEMP TABLE client_metric_aggregates AS (
+  SELECT
+    client_id,
+    <% if (normalized) { %>mozfun.glam.histogram_normalized_sum_f64(
+      ARRAY_CONCAT_AGG(aggregates),
+      ${sample_mult}
+    ) AS aggregates,<% } else { %>hist_sum_float(
+      ARRAY_CONCAT_AGG(aggregates)
+    ) AS aggregates,<% } %>
+    metric_type,
+    app_version,
+    app_build_id,
+    COUNT(DISTINCT(client_id)) AS client_count,
+  FROM daily_clients_aggregates
+  GROUP BY client_id, metric_type, app_version, app_build_id
+);
+-- Unnest every client's histogram entry and sum their values to avoid creating a large array
+WITH flattened AS (
+  SELECT
+    metric_type,
+    app_version,
+    app_build_id,
+    entry.key   AS key,
+    entry.value AS value,
+    client_id
+  FROM client_metric_aggregates AS t,
+  UNNEST(t.aggregates) AS entry
+),
+summed AS (
+  SELECT
+    metric_type,
+    app_version,
+    app_build_id,
+    key,
+    SUM(value)            AS total_value,
+    COUNT(DISTINCT client_id) AS client_count
+  FROM flattened
+  GROUP BY
+    metric_type,
+    app_version,
+    app_build_id,
+    key
+),
+-- Rebuild the histogram array to calculate percentiles
+metric_aggregates AS (
+  SELECT
+    metric_type,
+    app_version,
+    app_build_id AS build_id,
+    SUM(client_count) AS client_count,
+    ARRAY_AGG(STRUCT(key, CAST(total_value AS FLOAT64)) ORDER BY key) AS aggregates
+  FROM summed
+  GROUP BY
+    metric_type,
+    app_version,
+    app_build_id
 ),
 percentiles_agg AS (
   SELECT
     app_version,
-    app_build_id,
+    build_id,
     client_count,
+    metric_type,
     ARRAY<STRUCT<percentile STRING, value FLOAT64>>[
       ('0.1', mozfun.glam.percentile(0.1, aggregates, metric_type)),
-      ('1', mozfun.glam.percentile(1, aggregates, metric_type)),
-      ('5', mozfun.glam.percentile(5, aggregates, metric_type)),
-      ('25', mozfun.glam.percentile(25, aggregates, metric_type)),
-      ('50', mozfun.glam.percentile(50, aggregates, metric_type)),
-      ('75', mozfun.glam.percentile(75, aggregates, metric_type)),
-      ('95', mozfun.glam.percentile(95, aggregates, metric_type)),
-      ('99', mozfun.glam.percentile(99, aggregates, metric_type)),
-      ('99.9', mozfun.glam.percentile(99.9, aggregates, metric_type))
-      ] AS percentiles
-  FROM pre_aggregates
+      ('1',   mozfun.glam.percentile(1,   aggregates, metric_type)),
+      ('5',   mozfun.glam.percentile(5,   aggregates, metric_type)),
+      ('25',  mozfun.glam.percentile(25,  aggregates, metric_type)),
+      ('50',  mozfun.glam.percentile(50,  aggregates, metric_type)),
+      ('75',  mozfun.glam.percentile(75,  aggregates, metric_type)),
+      ('95',  mozfun.glam.percentile(95,  aggregates, metric_type)),
+      ('99',  mozfun.glam.percentile(99,  aggregates, metric_type)),
+      ('99.9',mozfun.glam.percentile(99.9,aggregates, metric_type))
+    ] AS percentiles
+  FROM metric_aggregates
 )
-  SELECT
-    app_build_id AS build_id,
-    client_count,
-    percentile,
-    value
-  FROM percentiles_agg, UNNEST(percentiles)
-  ORDER BY app_build_id ASC
+SELECT
+  metric_type,
+  app_version,
+  build_id,
+  client_count,
+  percentile,
+  value
+FROM percentiles_agg, UNNEST(percentiles)
+ORDER BY build_id;
