@@ -183,13 +183,17 @@
     {/if}
     {#if probeKeys && probeKeys.length > 1}
       <div class="body-control-set">
-        <label class="body-control-set--label">Key</label>
+        {#if isDualLabeled}
+          <label class="body-control-set--label">Key</label>
+        {:else}
+          <label class="body-control-set--label">Label</label>
+        {/if}
         <ProbeKeySelector options={probeKeys} bind:currentKey />
       </div>
     {/if}
     {#if isDualLabeled}
       <div class="body-control-set">
-        <label class="body-control-set--label">Sub Key</label>
+        <label class="body-control-set--label">Category</label>
         <ProbeKeySelector
           options={dualLabeledKeys[currentKey]}
           tooltipText="this probe allows for multiple sub keys"

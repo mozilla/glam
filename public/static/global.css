@@ -579,6 +579,7 @@ main .details {
   padding: var(--space-1h);
   padding-left: var(--space-2x);
   padding-right: var(--space-2x);
+  z-index: -1;
 }
 
 /* probe labels */
@@ -626,6 +627,26 @@ main .details {
 }
 
 .label--dual_labeled_counter {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
+.label--labeled_custom_distribution {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
+.label--labeled_timing_distribution {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
+.label--labeled_memory_distribution {
+  color: var(--labeled_counter-color);
+  background-color: var(--labeled_counter-bg);
+}
+
+.label--labeled_counter {
   color: var(--labeled_counter-color);
   background-color: var(--labeled_counter-bg);
 }
