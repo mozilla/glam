@@ -1,5 +1,6 @@
 from datetime import datetime, timezone, timedelta
-
+import requests
+import json
 import os
 import dateutil.parser
 import orjson
@@ -510,6 +511,18 @@ def get_glean_aggregations_from_pg(request, **kwargs):
     return response
 
 
+def __get_fx_latest_major_version(channel):
+
+    URL = "https://product-details.mozilla.org/1.0/firefox_versions.json"
+    channel_map = {
+        "release": "LATEST_FIREFOX_VERSION",
+        "beta": "FIREFOX_DEVEDITION",
+        "nightly": "FIREFOX_NIGHTLY",
+    }
+    versions_json = json.loads(requests.get(URL).text)
+    return versions_json[channel_map[channel]].split(".")[0]
+
+
 def get_glean_aggregations_from_bq(bqClient, request, req_data):
 
     channel = req_data["channel"]
@@ -519,6 +532,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     ping_type = req_data["ping_type"]
     os = req_data["os"]
     aggregation_level = req_data["aggregation_level"]
+    latest_version = __get_fx_latest_major_version(channel)
 
     table_id = f"glam_{product}_{channel}_aggregates"
     shas = {}
@@ -531,17 +545,16 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     # Build the SQL query with parameters
     query = f"""
             SELECT
-            * EXCEPT(latest_version)
+            *
             FROM
-                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`,
-                `{GLAM_BQ_PROD_PROJECT}.glam_etl.latest_versions` lv
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
             WHERE
                 metric = @metric
                 AND ping_type = @ping_type
                 AND os = @os
                 {build_id_filter}
-                AND lv.channel = @channel
-                AND version BETWEEN latest_version - @num_versions AND latest_version
+                AND version BETWEEN
+                {latest_version} - @num_versions AND {latest_version}
     """
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
