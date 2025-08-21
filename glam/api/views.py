@@ -534,7 +534,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             * EXCEPT(latest_version)
             FROM
                 `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`,
-                `moz-fx-data-shared-prod.glam_etl.latest_versions` lv
+                `{GLAM_BQ_PROD_PROJECT}.glam_etl.latest_versions` lv
             WHERE
                 metric = @metric
                 AND ping_type = @ping_type
