@@ -6,6 +6,7 @@ import dateutil.parser
 import orjson
 from django.conf import settings
 from django.core.cache import caches
+from django.core.exceptions import FieldError
 from django.db.models import Max, Q, Value, Count
 from django.db.models.functions import Concat
 from django.views.decorators.cache import cache_page
@@ -924,6 +925,7 @@ def usage(request):
             The only possible value now is: PROBE_SEARCH
     * agg: The "Aggregate" flag. The only possible value now is: count. Note that if
            "fields" is not supplied, this parameter is ignored.
+    * product: Filter by product name from the context JSON field.
     """
     if request.method == "GET":
         dimensions = []
@@ -936,12 +938,17 @@ def usage(request):
         if q_to := request.GET.get("toDate"):
             max_date = dateutil.parser.parse(q_to)
             dimensions.append(Q(timestamp__lte=max_date))
+        if q_product := request.GET.get("product"):
+            dimensions.append(Q(context__product=q_product))
 
         result = UsageInstrumentation.objects.filter(*dimensions)
 
         if q_fields := request.GET.get("fields"):
             fields = q_fields.split(",")
-            response = result.values(*fields)
+            try:
+                response = result.values(*fields)
+            except FieldError:
+                raise ValidationError("Invalid fields parameter")
             if request.GET.get("agg") == "count":
                 response = response.annotate(total=Count("*")).order_by("-total")
         else:
