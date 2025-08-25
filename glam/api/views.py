@@ -924,6 +924,7 @@ def usage(request):
             The only possible value now is: PROBE_SEARCH
     * agg: The "Aggregate" flag. The only possible value now is: count. Note that if
            "fields" is not supplied, this parameter is ignored.
+    * product: Filter by product name from the context JSON field.
     """
     if request.method == "GET":
         dimensions = []
@@ -936,10 +937,15 @@ def usage(request):
         if q_to := request.GET.get("toDate"):
             max_date = dateutil.parser.parse(q_to)
             dimensions.append(Q(timestamp__lte=max_date))
+        if q_product := request.GET.get("product"):
+            dimensions.append(Q(context__product=q_product))
 
         result = UsageInstrumentation.objects.filter(*dimensions)
 
         if q_fields := request.GET.get("fields"):
+            if q_fields not in ["action_type", "timestamp", "probe_name"]:
+                # return bad request if fields is not in the list
+                raise ValidationError("Invalid fields parameter")
             fields = q_fields.split(",")
             response = result.values(*fields)
             if request.GET.get("agg") == "count":
