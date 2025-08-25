@@ -6,6 +6,7 @@ import dateutil.parser
 import orjson
 from django.conf import settings
 from django.core.cache import caches
+from django.core.exceptions import FieldError
 from django.db.models import Max, Q, Value, Count
 from django.db.models.functions import Concat
 from django.views.decorators.cache import cache_page
@@ -943,11 +944,11 @@ def usage(request):
         result = UsageInstrumentation.objects.filter(*dimensions)
 
         if q_fields := request.GET.get("fields"):
-            if q_fields not in ["action_type", "timestamp", "probe_name"]:
-                # return bad request if fields is not in the list
-                raise ValidationError("Invalid fields parameter")
             fields = q_fields.split(",")
-            response = result.values(*fields)
+            try:
+                response = result.values(*fields)
+            except FieldError:
+                raise ValidationError("Invalid fields parameter")
             if request.GET.get("agg") == "count":
                 response = response.annotate(total=Count("*")).order_by("-total")
         else:
