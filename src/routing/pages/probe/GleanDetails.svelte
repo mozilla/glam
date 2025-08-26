@@ -9,6 +9,7 @@
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
   import Bucket from '../../../components/icons/Bucket.svelte';
+
   export let showLinks = true;
 
   async function exportData() {
@@ -51,13 +52,19 @@
       return;
     }
     // open the url in a new tab
-    const metricName = $store.probeName;
-    const os = $store.probe.os;
-    const histogram = $store.productDimensions.normalizationType === 'normalized' ? 'histogram' : 'non_norm_histogram';
-    const channel = $store.productDimensions.app_id;
-    const buildId = $store.ref;
-    const ping = $store.productDimensions.ping_type;
-    window.open(`https://sql.telemetry.mozilla.org/queries/110207/source?p_aggregates_type=${histogram}&p_build_id=${buildId}&p_channel=${channel}&p_metric_name=${metricName}&p_os=${os}&p_ping=${ping}#270493`, '_blank');
+    const { probeName: metricName, ref: buildId, productDimensions } = $store;
+    const { os } = $store.probe;
+    const {
+      normalizationType,
+      app_id: channel,
+      ping_type: ping,
+    } = productDimensions;
+    const histogram =
+      normalizationType === 'normalized' ? 'histogram' : 'non_norm_histogram';
+    window.open(
+      `https://sql.telemetry.mozilla.org/queries/110207/source?p_aggregates_type=${histogram}&p_build_id=${buildId}&p_channel=${channel}&p_metric_name=${metricName}&p_os=${os}&p_ping=${ping}#270493`,
+      '_blank'
+    );
   }
 </script>
 
@@ -323,9 +330,9 @@
           target="_blank"
           on:click={viewBucketCountsSTMO}
         >
-        <Bucket size={16} />
-        View Bucket Counts
-      </a>
+          <Bucket size={16} />
+          View Bucket Counts
+        </a>
       </div>
     </div>
   {/if}
