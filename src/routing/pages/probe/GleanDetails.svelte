@@ -8,7 +8,7 @@
   import ExternalLink from '../../../components/icons/ExternalLink.svelte';
   import StatusLabel from '../../../components/StatusLabel.svelte';
   import SqlModal from '../../../components/SqlModal.svelte';
-
+  import Bucket from '../../../components/icons/Bucket.svelte';
   export let showLinks = true;
 
   async function exportData() {
@@ -43,6 +43,22 @@
     fog: 'firefox_desktop',
     fenix: 'fenix',
   };
+
+  async function viewBucketCountsSTMO() {
+    // ensure there's a build_id selected
+    if (!$store.ref) {
+      alert('Please select a build id from the chart first.');
+      return;
+    }
+    // open the url in a new tab
+    const metricName = $store.probeName;
+    const os = $store.probe.os;
+    const histogram = $store.productDimensions.normalizationType === 'normalized' ? 'histogram' : 'non_norm_histogram';
+    const channel = $store.productDimensions.app_id;
+    const buildId = $store.ref;
+    const ping = $store.productDimensions.ping_type;
+    window.open(`https://sql.telemetry.mozilla.org/queries/110207/source?p_aggregates_type=${histogram}&p_build_id=${buildId}&p_channel=${channel}&p_metric_name=${metricName}&p_os=${os}&p_ping=${ping}#270493`, '_blank');
+  }
 </script>
 
 <style>
@@ -301,6 +317,15 @@
           <Brackets size={16} />
           Export to JSON
         </button>
+        <a
+          class="docs-button"
+          data-glean-id="view-bucket-counts"
+          target="_blank"
+          on:click={viewBucketCountsSTMO}
+        >
+        <Bucket size={16} />
+        View Bucket Counts
+      </a>
       </div>
     </div>
   {/if}
