@@ -1,5 +1,5 @@
 <script>
-  import { OptionMenu, Option, OptionDivider } from '@graph-paper/optionmenu';
+  import { OptionMenu, Option } from '@graph-paper/optionmenu';
 
   import { store } from '../../state/store';
 
@@ -28,8 +28,6 @@
     showOptionMenu = true;
   }
 
-  let selectAllCategories = false;
-
   // Simple function to sort all buckets
   function updateSortedBuckets() {
     if (showOptionMenu) {
@@ -40,26 +38,19 @@
   // Initial call to set up sorted buckets
   updateSortedBuckets();
 
-  function handleSelectAllCategories() {
-    store.setField('activeBuckets', bucketOptions);
+  function handleToggleAllCategories() {
+    // If all buckets are selected, deselect all; otherwise select all
+    if ($store.activeBuckets.length === bucketOptions.length) {
+      store.setField('activeBuckets', []);
+    } else {
+      store.setField('activeBuckets', bucketOptions);
+    }
   }
 
-  $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
+  $: allBucketsSelected = $store.activeBuckets.length === bucketOptions.length;
 </script>
 
 <style>
-  .body-content {
-    margin-top: var(--space-2x);
-  }
-
-  .data-graphics {
-    margin-top: var(--space-4x);
-  }
-
-  .small-multiple {
-    margin-bottom: var(--space-8x);
-  }
-
   .select-all-button {
     border: none;
     width: 100%;
@@ -68,10 +59,11 @@
     font-weight: 500;
     font-size: 0.8em;
     padding: 0.5em;
+    cursor: pointer;
   }
 
-  .inactive {
-    color: var(--cool-gray-350);
+  .select-all-button:hover {
+    background-color: var(--cool-gray-100);
   }
 </style>
 
@@ -82,19 +74,17 @@
       multi
       on:selection={(evt) => {
         store.setField('activeBuckets', evt.detail.keys);
-      }}>
-      <button
-        class="select-all-button {$store.activeBuckets.length ===
-          bucketOptions.length && 'inactive'}"
-        disabled={$store.activeBuckets.length === bucketOptions.length}
-        on:click={handleSelectAllCategories}>
-        SELECT ALL
+      }}
+    >
+      <button class="select-all-button" on:click={handleToggleAllCategories}>
+        SELECT ALL / NONE
       </button>
       {#each sortedAllBuckets as bucket, i (bucket)}
         <Option
           selected={activeBuckets.includes(bucket)}
           key={bucket}
-          label={bucket}>
+          label={bucket}
+        >
           <div slot="right">
             <ColorSwatch color={bucketColorMap(bucket)} />
           </div>
@@ -107,6 +97,7 @@
       options={bucketOptions}
       selections={activeBuckets}
       on:selection={makeSelection()}
-      colorMap={bucketColorMap} />
+      colorMap={bucketColorMap}
+    />
   {/if}
 </div>
