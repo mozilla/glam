@@ -1,5 +1,5 @@
 <script>
-  import { OptionMenu, Option, OptionDivider } from '@graph-paper/optionmenu';
+  import { OptionMenu, Option } from '@graph-paper/optionmenu';
 
   import { store } from '../../state/store';
 
@@ -9,7 +9,6 @@
   import { numericStringsSort } from '../../utils/sort';
   import { numHighlightedBuckets } from '../../config/shared';
 
-  export let data;
   export let activeBuckets;
   export let bucketColorMap;
   export let bucketOptions;
@@ -23,73 +22,35 @@
   }
 
   let showOptionMenu = false;
-  let coloredBuckets = [];
-  let everActiveBuckets = [];
-  let sortedImportantBuckets = [];
-  let sortedUnimportantBuckets = [];
+  let sortedAllBuckets = [];
 
   if (bucketOptions.length > numHighlightedBuckets) {
     showOptionMenu = true;
-    const lastDataset = data[data.length - 1];
-
-    coloredBuckets = Object.entries(lastDataset.counts)
-      .sort(([bucketAName, bucketAValue], [bucketBName, bucketBValue]) => {
-        const bucketValueDifference = bucketAValue - bucketBValue;
-        if (bucketValueDifference === 0) {
-          return bucketBName - bucketAName;
-        }
-        return bucketValueDifference;
-      })
-      .slice(-numHighlightedBuckets)
-      .map(([bucket]) => bucket);
   }
 
-  let selectAllCategories = false;
-
-  $: if (showOptionMenu) {
-    everActiveBuckets = [...new Set([...activeBuckets, ...everActiveBuckets])];
-
-    // An important bucket is any bucket that:
-    //
-    //   (a) is colored
-    //   (b) is currently active
-    //   (c) has been active at some point in the past
-    //
-    // Rule (c) improves usability: if the user goes out of their way to enable a
-    // bucket that we consider to be unimportant, we should consider it to be
-    // important for the rest of the interaction. If we did not do this, the bucket
-    // would switch between the important group and the unimportant group as it's
-    // toggled, which would be annoying.
-    sortedImportantBuckets = [
-      ...new Set([...everActiveBuckets, ...coloredBuckets]),
-    ].sort(numericStringsSort);
-
-    // An unimportant bucket is any other bucket
-    sortedUnimportantBuckets = bucketOptions
-      .filter((bucket) => !sortedImportantBuckets.includes(bucket))
-      .sort(numericStringsSort);
+  // Simple function to sort all buckets
+  function updateSortedBuckets() {
+    if (showOptionMenu) {
+      sortedAllBuckets = [...bucketOptions].sort(numericStringsSort);
+    }
   }
 
-  function handleSelectAllCategories() {
-    store.setField('activeBuckets', bucketOptions);
+  // Initial call to set up sorted buckets
+  updateSortedBuckets();
+
+  function handleToggleAllCategories() {
+    // If all buckets are selected, deselect all; otherwise select all
+    if ($store.activeBuckets.length === bucketOptions.length) {
+      store.setField('activeBuckets', []);
+    } else {
+      store.setField('activeBuckets', bucketOptions);
+    }
   }
 
-  $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
+  $: allBucketsSelected = $store.activeBuckets.length === bucketOptions.length;
 </script>
 
 <style>
-  .body-content {
-    margin-top: var(--space-2x);
-  }
-
-  .data-graphics {
-    margin-top: var(--space-4x);
-  }
-
-  .small-multiple {
-    margin-bottom: var(--space-8x);
-  }
-
   .select-all-button {
     border: none;
     width: 100%;
@@ -98,10 +59,11 @@
     font-weight: 500;
     font-size: 0.8em;
     padding: 0.5em;
+    cursor: pointer;
   }
 
-  .inactive {
-    color: var(--cool-gray-350);
+  .select-all-button:hover {
+    background-color: var(--cool-gray-100);
   }
 </style>
 
@@ -114,40 +76,17 @@
         store.setField('activeBuckets', evt.detail.keys);
       }}
     >
-      <button
-        class="select-all-button {$store.activeBuckets.length ===
-          bucketOptions.length && 'inactive'}"
-        disabled={$store.activeBuckets.length === bucketOptions.length}
-        on:click={handleSelectAllCategories}
-      >
-        SELECT ALL
+      <button class="select-all-button" on:click={handleToggleAllCategories}>
+        SELECT ALL / NONE
       </button>
-      {#each sortedImportantBuckets as importantBucket, i (importantBucket)}
+      {#each sortedAllBuckets as bucket, i (bucket)}
         <Option
-          selected={activeBuckets.includes(importantBucket)}
-          key={importantBucket}
-          label={importantBucket}
-        >
-          <div class="option-menu__list-item__slot-right" slot="right">
-            <ColorSwatch color={bucketColorMap(importantBucket)} />
-          </div>
-        </Option>
-      {/each}
-      {#if sortedImportantBuckets.length && sortedUnimportantBuckets.length}
-        <OptionDivider />
-      {/if}
-      {#each sortedUnimportantBuckets as unimportantBucket, i (unimportantBucket)}
-        <!--
-                By definition, an unimportantBucket is never a selected bucket,
-                hence selected={false}
-              -->
-        <Option
-          selected={false}
-          key={unimportantBucket}
-          label={unimportantBucket}
+          selected={activeBuckets.includes(bucket)}
+          key={bucket}
+          label={bucket}
         >
           <div slot="right">
-            <ColorSwatch color={bucketColorMap(unimportantBucket)} />
+            <ColorSwatch color={bucketColorMap(bucket)} />
           </div>
         </Option>
       {/each}
