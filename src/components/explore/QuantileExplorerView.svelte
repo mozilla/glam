@@ -43,7 +43,7 @@
   const dualLabeledKeys = gatherDualLabeledProbeKeyMap(transformedData);
   let probeKeys = gatherProbeKeys(transformedData);
 
-  let currentKey = $store.aggKey || probeKeys[0];
+  $: currentKey = $store.aggKey || probeKeys[0];
   $: currentSubKey = dualLabeledKeys[currentKey]
     ? dualLabeledKeys[currentKey][0]
     : null;
