@@ -46,25 +46,25 @@
   };
 
   async function viewBucketCountsSTMO() {
+    console.log('store', $store);
     // ensure there's a build_id selected
     if (!$store.ref) {
       alert('Please select a build id from the chart first.');
       return;
     }
     // open the url in a new tab
-    const { probeName: metricName, ref: buildId, productDimensions } = $store;
-    const { os } = $store.probe;
     const {
-      normalizationType,
-      app_id: channel,
-      ping_type: ping,
-    } = productDimensions;
-    const histogram =
-      normalizationType === 'normalized' ? 'histogram' : 'non_norm_histogram';
-    window.open(
-      `https://sql.telemetry.mozilla.org/queries/110207/source?p_aggregates_type=${histogram}&p_build_id=${buildId}&p_channel=${channel}&p_metric_name=${metricName}&p_os=${os}&p_ping=${ping}#270493`,
-      '_blank'
-    );
+      aggKey: key,
+      probeName: metricName,
+      ref: buildId,
+      productDimensions,
+    } = $store;
+    const { os } = $store.probe;
+    const { app_id: channel, ping_type: ping } = productDimensions;
+    const histogram = 'non_norm_histogram';
+    const keyFilter = `AND metric_key = "${key}"`;
+    const urlToOpen = `https://sql.telemetry.mozilla.org/queries/110207/source?p_aggregates_type=${histogram}&p_build_id=${buildId}&p_channel=${channel}&p_metric_name=${metricName}&p_os=${os}&p_ping=${ping}&p_key_filter=${keyFilter}#270493`;
+    window.open(urlToOpen, '_blank');
   }
 </script>
 
@@ -324,15 +324,17 @@
           <Brackets size={16} />
           Export to JSON
         </button>
-        <a
-          class="docs-button"
-          data-glean-id="view-bucket-counts"
-          target="_blank"
-          on:click={viewBucketCountsSTMO}
-        >
-          <Bucket size={16} />
-          View Bucket Counts
-        </a>
+        {#if $store.probe.type.includes('custom')}
+          <a
+            class="docs-button"
+            data-glean-id="view-bucket-counts"
+            target="_blank"
+            on:click={viewBucketCountsSTMO}
+          >
+            <Bucket size={16} />
+            View Bucket Counts
+          </a>
+        {/if}
       </div>
     </div>
   {/if}
