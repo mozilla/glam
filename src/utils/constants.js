@@ -2,6 +2,8 @@ import { cubicOut as easing } from 'svelte/easing';
 
 const top = 32;
 
+export const LOW_CLIENT_COUNT_NIGHTLY = 300;
+
 export const tween = {
   duration: 200,
   easing,

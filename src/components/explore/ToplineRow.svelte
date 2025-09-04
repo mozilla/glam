@@ -80,7 +80,7 @@
   }
 
   .big-label__count {
-    text-align: right;
+    text-align: left;
     font-family: var(--main-mono-font);
     min-width: var(--space-24x);
   }

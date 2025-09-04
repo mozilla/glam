@@ -1,7 +1,9 @@
 <script>
+  import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
+  import { Warning } from '@graph-paper/icons';
   import Tweenable from '../Tweenable.svelte';
   import ToplineRow from './ToplineRow.svelte';
-
+  import { LOW_CLIENT_COUNT_NIGHTLY } from '../../utils/constants';
   import { toplineRefLabel } from '../../utils/constants';
 
   import {
@@ -40,10 +42,19 @@
     font-weight: 550;
   }
 
+  .topline__client-count--highlighted-red {
+    font-weight: 550;
+    color: var(--pantone-red-500);
+  }
+
   .topline__client-count__comparison {
     font-weight: 300;
     white-space: pre;
     color: var(--cool-gray-700);
+  }
+
+  .topline__client-count--red-icon {
+    color: var(--pantone-red-500);
   }
 </style>
 
@@ -60,16 +71,31 @@
       <span slot="icon">⭑</span>
       <span slot="label"> Reference </span>
       <span slot="count">
-        <span data-value={ref.audienceSize}>
+        <span
+          data-value={ref.audienceSize}
+          class:topline__client-count--highlighted-red={ref &&
+            ref.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
+        >
           <span
             class="topline__client-count"
-            class:topline--client-count--highlighted={hovered &&
-              hovered.audienceSize < tweenValue}
+            class:topline--client-count--highlighted={ref &&
+              ref.audienceSize < tweenValue}
+            class:topline__client-count--highlighted-red={ref &&
+              ref.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
           >
             {formatCount(tweenValue)}
           </span>
           clients
         </span>
+        {#if ref && ref.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
+          <span
+            use:tooltipAction={{
+              text: 'Low-accuracy data for this build due to low client count.',
+            }}
+            class="topline__client-count--red-icon"><Warning size={14} /></span
+          >
+        {/if}
+
         <span data-value={ref.sample_count}>
           <span
             class="topline__client-count"
@@ -96,13 +122,30 @@
           <div>
             {#if hovered}
               <span
-                class="topline__client-count"
-                class:topline__client-count--highlighted={hovered &&
-                  hovered.audienceSize > tweenValue}
+                class:topline__client-count--highlighted-red={hovered &&
+                  hovered.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
               >
-                {formatCount(hovered.audienceSize)}
+                <span
+                  class="topline__client-count"
+                  class:topline__client-count--highlighted={hovered &&
+                    hovered.audienceSize > tweenValue}
+                  class:topline__client-count--highlighted-red={hovered &&
+                    hovered.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
+                >
+                  {formatCount(hovered.audienceSize)}
+                </span>
+                clients
               </span>
-              clients
+              {#if hovered && hovered.audienceSize < LOW_CLIENT_COUNT_NIGHTLY}
+                <span
+                  use:tooltipAction={{
+                    text: 'Low-accuracy data for this build due to low client count.',
+                  }}
+                  class="topline__client-count--red-icon"
+                >
+                  <Warning size={14} /></span
+                >
+              {/if}
               <span
                 class="topline__client-count"
                 class:topline__client-count--highlighted={hovered &&

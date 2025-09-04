@@ -1,3 +1,5 @@
+import { LOW_CLIENT_COUNT_NIGHTLY } from './constants';
+
 export function clientCounts(arr) {
   return arr.map((a) => ({ totalClients: a.audienceSize, label: a.label }));
 }
@@ -73,4 +75,28 @@ export function convertValueToProportions(obj) {
     newObj[key] /= total;
   });
   return newObj;
+}
+
+export function filterLowClientBuilds(data) {
+  function getBuildDate(buildId) {
+    return new Date(
+      `${buildId.substring(0, 4)}
+      -${buildId.substring(4, 6)}
+      -${buildId.substring(6, 8)}`
+    );
+  }
+  // Sums up the total_users for each build and filters out builds with low client counts
+
+  const totalUsersPerBuild = data.reduce((acc, d) => {
+    acc[d.build_id] = (acc[d.build_id] || 0) + d.total_users;
+    return acc;
+  }, {});
+  const latestBuildId = Object.keys(totalUsersPerBuild).sort().pop();
+  const latestBuildDate = getBuildDate(latestBuildId);
+  const threeDaysAgo = new Date(latestBuildDate - 3 * 24 * 60 * 60 * 1000);
+  return data.filter(
+    (d) =>
+      totalUsersPerBuild[d.build_id] >= LOW_CLIENT_COUNT_NIGHTLY ||
+      getBuildDate(d.build_id) >= threeDaysAgo
+  );
 }
