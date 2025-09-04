@@ -1,8 +1,8 @@
 <script>
-  import Tweenable from '../Tweenable.svelte';
-  import ToplineRow from './ToplineRow.svelte';
   import { tooltip as tooltipAction } from '@graph-paper/core/actions/tooltip';
   import { Warning } from '@graph-paper/icons';
+  import Tweenable from '../Tweenable.svelte';
+  import ToplineRow from './ToplineRow.svelte';
   import { LOW_CLIENT_COUNT_NIGHTLY } from '../../utils/constants';
   import { toplineRefLabel } from '../../utils/constants';
 
