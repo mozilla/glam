@@ -11,6 +11,7 @@ import {
   noResponse,
   noUnknownMetrics,
 } from '../utils/data-validation';
+import { filterLowClientBuilds } from '../utils/probe-utils';
 
 export const SUPPORTED_METRICS = [
   'categorical',
@@ -166,6 +167,7 @@ export default {
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
+      const channel = params.app_id;
 
       validate(payload, (p) => {
         noResponse(p);
@@ -173,6 +175,10 @@ export default {
       });
       const viewType = probeView === 'categorical' ? 'proportion' : 'quantile';
       let data = payload.response;
+
+      if (channel === 'nightly') {
+        data = filterLowClientBuilds(payload.response);
+      }
 
       appStore.setField('viewType', viewType);
       appStore.setField('aggMethod', data[0].client_agg_type);
