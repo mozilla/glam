@@ -526,7 +526,10 @@ def __get_fx_latest_major_version(channel):
 
 def __get_glean_info(probe_name):
     try:
-        URL = f"https://dictionary.telemetry.mozilla.org/data/firefox_desktop/metrics/data_{probe_name}.json"
+        URL = (
+            "https://dictionary.telemetry.mozilla.org/data/"
+            f"firefox_desktop/metrics/data_{probe_name}.json"
+        )
         probe_info_glean = json.loads(requests.get(URL).text)
     except Exception:
         return None
