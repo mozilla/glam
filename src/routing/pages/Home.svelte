@@ -136,7 +136,7 @@
               <a
                 class="probe-sm"
                 on:click={resetSearchProduct}
-                href={`/firefox/probe/${info.name}/explore?`}
+                href={`/fog/probe/${info.name}/explore?`}
               >
                 <div
                   class="probe-small-multiple"
@@ -163,10 +163,6 @@
                     <span>{info.kind || ''}</span>
                   </div>
                   <div class="probe-overview__title">{info.name}</div>
-                  <div class="probe-overview__etc">
-                    Nightly
-                    {info.versions.nightly[0]}-{info.versions.nightly[1]}
-                  </div>
                 </div>
               </a>
             </div>

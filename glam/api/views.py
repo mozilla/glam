@@ -524,6 +524,21 @@ def __get_fx_latest_major_version(channel):
     return versions_json[channel_map[channel]].split(".")[0]
 
 
+def __get_glean_info(probe_name):
+    try:
+        URL = f"https://dictionary.telemetry.mozilla.org/data/firefox_desktop/metrics/data_{probe_name}.json"
+        probe_info_glean = json.loads(requests.get(URL).text)
+    except Exception:
+        return None
+    result = {
+        "name": probe_info_glean["name"].replace(".", "_"),
+        "description": probe_info_glean["description"],
+        "type": probe_info_glean["type"],
+        "kind": probe_info_glean.get("histogram_type", "histogram-exponential"),
+    }
+    return result
+
+
 def get_glean_aggregations_from_bq(bqClient, request, req_data):
 
     channel = req_data["channel"]
@@ -776,9 +791,7 @@ def _get_random_probes(data_source, random_percentage, limit):
     """
 
     if data_source == "BigQuery":
-        table_name = (
-            f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
-        )
+        table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
         with bigquery.Client() as client:
             aggs = client.query(
                 query_template.format(
@@ -818,9 +831,9 @@ def _get_fx_most_used_probes(days=30, limit=9):
     )
     probe_names = [f'{p["probe_name"]}' for p in most_used_probes]
 
-    legacy_table_name = (
-        f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_desktop_nightly_aggregates`"
-    )
+    glean_table_name = f"`{GLAM_BQ_PROD_PROJECT}.glam_etl.glam_fog_nightly_aggregates`"
+
+    latest_version = int(__get_fx_latest_major_version("nightly"))
 
     query = f"""
         WITH fx_metrics AS (
@@ -833,32 +846,18 @@ def _get_fx_most_used_probes(days=30, limit=9):
                 build_id,
                 histogram
             FROM
-                {legacy_table_name}),
-        selected_version AS (
-            SELECT
-                ARRAY_AGG(DISTINCT version
-                    ORDER BY version DESC
-                    LIMIT 2)[SAFE_OFFSET(1)] # Second most recent version has more data
-                AS v
-            FROM
-                fx_metrics
-            WHERE
-                version < 1000) # Avoids the 1024 version
+                {glean_table_name})
         SELECT
             distinct metric,
             ARRAY_AGG(histogram)[SAFE_OFFSET(0)] AS histogram
         FROM
-            fx_metrics,
-            selected_version
+            fx_metrics
         WHERE
             build_id='*'
             AND os='*'
             AND metric_key=''
-            AND metric_type NOT IN ('boolean',
-                'histogram-boolean',
-                'scalar')
             AND metric IN UNNEST(@probe_names)
-            AND version = selected_version.v
+            AND version = {latest_version - 1}
         GROUP BY metric
         LIMIT {limit}"""
 
@@ -891,12 +890,10 @@ def random_probes(request):
 
     probes = []
     for agg in aggs:
-        try:
-            probe = Probe.objects.get(info__name=agg.metric)
-        except Probe.DoesNotExist:
+        probe_info = __get_glean_info(agg.metric)
+        if probe_info is None:
             continue
-
-        probes.append({"data": agg.histogram, "info": probe.info})
+        probes.append({"data": agg.histogram, "info": probe_info})
 
     return Response({"probes": probes})
 
