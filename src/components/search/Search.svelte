@@ -48,6 +48,16 @@
     });
     searchIsActive = true;
   }, SEARCH_DEBOUNCE_TIME);
+
+  // Re-trigger search when product changes and there's an active query
+  $: if (query && searchIsActive) {
+    searchWaiting = true;
+    results = []; // Clear results immediately to show spinner
+    getSearchResults($store.searchProduct, query).then((r) => {
+      results = r;
+      searchWaiting = false;
+    });
+  }
 </script>
 
 <style>
