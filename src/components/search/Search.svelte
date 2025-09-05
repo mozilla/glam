@@ -141,7 +141,8 @@
     bind:this={searchContainer}
     aria-expanded={searchIsActive && searchQuery.length}
     aria-haspopup="listbox"
-    aria-owns="telemetry-search-results">
+    aria-owns="telemetry-search-results"
+  >
     <div class="icon-container">
       {#if !searchWaiting}
         <div class="icon" in:fade>
@@ -164,7 +165,8 @@
       on:input={(evt) => {
         searchWaiting = true;
         handleSearchInput(evt.target.value);
-      }} />
+      }}
+    />
   </div>
 </div>
 
@@ -173,5 +175,6 @@
     {query}
     {results}
     bind:searchIsActive
-    parentElement={searchContainer} />
+    parentElement={searchContainer}
+  />
 {/if}
