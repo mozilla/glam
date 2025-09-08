@@ -91,9 +91,9 @@ export function filterLowClientBuilds(data) {
     acc[d.build_id] = (acc[d.build_id] || 0) + d.total_users;
     return acc;
   }, {});
-  const latestBuildId = Object.keys(totalUsersPerBuild).sort().pop();
-  const latestBuildDate = getBuildDate(latestBuildId);
-  const threeDaysAgo = new Date(latestBuildDate - 3 * 24 * 60 * 60 * 1000);
+
+  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
+  const threeDaysAgo = new Date(yesterday - 3 * 24 * 60 * 60 * 1000);
   return data.filter(
     (d) =>
       totalUsersPerBuild[d.build_id] >= LOW_CLIENT_COUNT_NIGHTLY ||
