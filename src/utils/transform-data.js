@@ -293,10 +293,10 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
   const clientsPerBuild = filteredData.reduce(
     (acc, { build_id, total_users }) => {
       if (!acc[build_id]) {
-        acc[build_id] = 0;
+        acc[build_id] = total_users;
       }
-      // Gets the max total_users for each build
-      acc[build_id] = Math.max(acc[build_id], total_users);
+      // Gets the sum of total_users for each build
+      acc[build_id] += total_users;
       return acc;
     },
     {}

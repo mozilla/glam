@@ -193,6 +193,9 @@ export default {
             data,
             labels
           );
+          if (channel === 'nightly') {
+            data = filterLowClientBuilds(data);
+          }
         }
         data = produce(data, (draft) =>
           draft.map((point) => ({
