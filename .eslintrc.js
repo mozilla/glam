@@ -1,7 +1,12 @@
 module.exports = {
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-env'],
+    },
   },
   env: {
     browser: true,
@@ -11,7 +16,7 @@ module.exports = {
   globals: {
     gtag: 'readonly',
   },
-  plugins: ['jest', 'svelte3'],
+  plugins: ['jest', 'svelte'],
   rules: {
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
@@ -31,20 +36,22 @@ module.exports = {
     },
     {
       files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3',
-      extends: ['prettier'],
+      extends: ['plugin:svelte/recommended', 'prettier'],
+      parser: 'svelte-eslint-parser',
+      parserOptions: {
+        parser: '@babel/eslint-parser',
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-env'],
+        },
+      },
       rules: {
         'prefer-const': 'off',
         // Disable rules that don't work correctly with Svelte
-        // https://github.com/sveltejs/eslint-plugin-svelte3/blob/master/OTHER_PLUGINS.md
         'import/first': 'off',
         'import/no-duplicates': 'off',
         'import/no-mutable-exports': 'off',
         'import/no-unresolved': 'off',
-
-        // Temporarily work around a bug in eslint-plugin-svelte3.
-        //
-        // https://github.com/sveltejs/eslint-plugin-svelte3/issues/41#issuecomment-572503966
         'no-multiple-empty-lines': ['error', { max: 2, maxBOF: 2, maxEOF: 0 }],
       },
     },
