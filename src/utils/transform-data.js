@@ -14,7 +14,7 @@ be falsy or a function. If the value is falsy, transform skips it.
 Some transform functions are checks that, if they fail, throw an error.
 */
 
-import produce from 'immer';
+import { produce } from 'immer';
 import { fullBuildIDToDate, buildDateStringToDate } from './build-id-utils';
 import { nearestBelow } from './stats';
 import { convertValueToProportions } from './probe-utils';
