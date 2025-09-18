@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import sharedDefaults, { extractBucketMetadata } from './shared';
 import { stripDefaultValues } from '../utils/urls';
 import { transformAPIResponse } from '../utils/transform-data';

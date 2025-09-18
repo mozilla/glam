@@ -1,4 +1,4 @@
-import produce from 'immer';
+import { produce } from 'immer';
 import { writable, get } from 'svelte/store';
 
 // Workaround to use immer > v.8.x
