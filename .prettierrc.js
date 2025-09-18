@@ -4,5 +4,4 @@ module.exports = {
   // Hard-wrap Markdown
   proseWrap: 'always',
   svelteSortOrder: 'options-scripts-styles-markup',
-  svelteBracketNewLine: false,
 };

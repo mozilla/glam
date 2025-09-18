@@ -5,3 +5,23 @@ CODE_OF_CONDUCT.md
 .github/ISSUE_TEMPLATE/bug_report.md
 .github/ISSUE_TEMPLATE/add_to_glam.md
 version.json
+
+# Virtual environments
+venv/
+.venv/
+__pycache__/
+
+# CircleCI config (YAML formatting issues)
+.circleci/
+
+# Django templates and packages (parsing issues)
+**/site-packages/
+**/templates/
+
+# Node modules
+node_modules/
+
+# Python-related markdown files
+docs/adding-glean-product-etl.md
+docs/adding-glean-product.md
+README.md
