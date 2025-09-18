@@ -80,7 +80,7 @@
   }
 </style>
 
-<div class="menu-button  {size || ''}" bind:this={button}>
+<div class="menu-button {size || ''}" bind:this={button}>
   <button
     use:tooltipAction={{ text: !active ? tooltip : undefined }}
     class="activating-button {variant || ''} {size || ''}"

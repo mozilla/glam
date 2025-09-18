@@ -133,7 +133,8 @@
         searchIsActive = false;
       }
     }
-  }} />
+  }}
+/>
 
 <div class="search-container">
   <div
