@@ -17,6 +17,14 @@ module.exports = {
     gtag: 'readonly',
   },
   plugins: ['jest', 'svelte'],
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['svelte', 'svelte']],
+        extensions: ['.js', '.svelte'],
+      },
+    },
+  },
   rules: {
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
@@ -24,10 +32,21 @@ module.exports = {
       'error',
       { props: true, ignorePropertyModificationsFor: ['draft', 'acc'] },
     ],
+    // Disable problematic rules for Svelte imports
+    'import/no-unresolved': ['error', { ignore: ['^svelte/'] }],
   },
   overrides: [
     {
       files: ['**/*.js'],
+      parser: '@babel/eslint-parser',
+      parserOptions: {
+        ecmaVersion: 2018,
+        sourceType: 'module',
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-env'],
+        },
+      },
       extends: ['prettier'],
       plugins: ['prettier'],
       rules: {
