@@ -25,6 +25,9 @@ export default {
       __BASE_DOMAIN__: production ? '' : 'http://localhost:8000',
       __GA_TRACKING_ID__: process.env.GA_TRACKING_ID,
       __GLEAN_DICTIONARY_DOMAIN__: 'https://dictionary.telemetry.mozilla.org',
+      'process.env.NODE_ENV': JSON.stringify(
+        production ? 'production' : 'development'
+      ),
     }),
     string({ include: 'src/**/*.tpl' }),
     svelte({
