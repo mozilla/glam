@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import {
+  transformBooleanHistogramToCategoricalHistogram,
   transformAPIResponse,
   transformLabeledCounterToCategoricalHistogramSampleCount,
 } from '../utils/transform-data';
@@ -26,6 +27,7 @@ export const SUPPORTED_METRICS = [
   'timing_distribution',
   'labeled_custom_distribution',
   'labeled_timing_distribution',
+  'boolean',
 ];
 
 export default {
@@ -185,9 +187,15 @@ export default {
 
       // Attach labels to histogram if appropriate type.
       if (probeView === 'categorical') {
-        const labels = {
+        let labels = {
           ...appStore.getState().probe.labels,
         };
+        if (metricType === 'boolean') {
+          const dataAndLabels =
+            transformBooleanHistogramToCategoricalHistogram(data);
+          data = dataAndLabels.data;
+          labels = dataAndLabels.labels;
+        }
         if (metricType === 'labeled_counter') {
           data = transformLabeledCounterToCategoricalHistogramSampleCount(
             data,
