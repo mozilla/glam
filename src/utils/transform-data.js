@@ -349,3 +349,35 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
 
   return uniqueTransformed;
 };
+
+export const transformBooleanHistogramToCategoricalHistogram = (data) => {
+  // Boolean histograms have "always", "never", and "sometimes" values. We need to replace these with numeric values and
+  // create a map of the labels to the numeric values into the labels object.
+  const numericLabels = {
+    0: 'always',
+    1: 'never',
+    2: 'sometimes',
+  };
+
+  const transformedData = produce(data, (draft) => {
+    draft.forEach((point) => {
+      // eslint-disable-next-line no-param-reassign
+      point.histogram = {
+        0: point.histogram.always,
+        1: point.histogram.never,
+        2: point.histogram.sometimes,
+      };
+      // eslint-disable-next-line no-param-reassign
+      point.non_norm_histogram = {
+        0: point.non_norm_histogram.always,
+        1: point.non_norm_histogram.never,
+        2: point.non_norm_histogram.sometimes,
+      };
+    });
+  });
+
+  return {
+    data: transformedData,
+    labels: numericLabels,
+  };
+};
