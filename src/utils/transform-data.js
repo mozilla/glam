@@ -361,15 +361,17 @@ export const transformBooleanHistogramToCategoricalHistogram = (data) => {
 
   const transformedData = produce(data, (draft) => {
     draft.forEach((point) => {
+      // eslint-disable-next-line no-param-reassign
       point.histogram = {
-        0: point.histogram['always'],
-        1: point.histogram['never'],
-        2: point.histogram['sometimes'],
+        0: point.histogram.always,
+        1: point.histogram.never,
+        2: point.histogram.sometimes,
       };
+      // eslint-disable-next-line no-param-reassign
       point.non_norm_histogram = {
-        0: point.non_norm_histogram['always'],
-        1: point.non_norm_histogram['never'],
-        2: point.non_norm_histogram['sometimes'],
+        0: point.non_norm_histogram.always,
+        1: point.non_norm_histogram.never,
+        2: point.non_norm_histogram.sometimes,
       };
     });
   });
