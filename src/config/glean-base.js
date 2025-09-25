@@ -11,6 +11,7 @@ import {
   validate,
   noResponse,
   noUnknownMetrics,
+  noMeaningfulData,
 } from '../utils/data-validation';
 import { filterLowClientBuilds } from '../utils/probe-utils';
 
@@ -180,6 +181,9 @@ export default {
 
       if (channel === 'nightly') {
         data = filterLowClientBuilds(payload.response);
+        validate(data, (d) => {
+          noMeaningfulData(d);
+        });
       }
 
       appStore.setField('viewType', viewType);
@@ -246,10 +250,11 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const viewType = probeType;
+    const metricType = appStore.getState().probe.type;
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
-    if (data[0].metric_type === 'boolean') {
+    if (metricType === 'boolean') {
       // eslint-disable-next-line no-param-reassign
       data = data.filter((di) => di.client_agg_type === '');
     }
