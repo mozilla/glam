@@ -25,3 +25,12 @@ export function validate(data, ...validators) {
     check(data);
   });
 }
+
+export const noMeaningfulData = (data) => {
+  if (data.length === 0) {
+    const er = new Error('There is no meaningful data for this probe.');
+    er.moreInformation =
+      'This probe has not accumulated a significant amount of data for a reliable aggregation.';
+    throw er;
+  }
+};
