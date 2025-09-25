@@ -132,7 +132,7 @@ pytest-blockage==0.2.2
     # via -r requirements.in
 pytest-cov==5.0.0
     # via -r requirements.in
-pytest-django==4.8.0
+pytest-django==4.11.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
