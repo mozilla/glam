@@ -44,7 +44,7 @@
       <a href="https://www.mozilla.org/privacy/websites/#cookies">Cookies</a>
     </li>
     <li>
-      <a href="https://matrix.to/#/#datatools:mozilla.org">Matrix</a>
+      <a href="https://matrix.to/#/#datatools:mozilla.org">Matrix🔒</a>
     </li>
     <li>
       <a href="https://app.slack.com/client/T027LFU12/CB1EQ437S">Slack🔒</a>
