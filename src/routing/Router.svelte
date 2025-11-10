@@ -42,7 +42,8 @@
     return function handle({ params: { product, section, probeName } }) {
       const storeValue = get(store);
       const productIsValid =
-        !product || Object.prototype.hasOwnProperty.call(productConfig, product);
+        !product ||
+        Object.prototype.hasOwnProperty.call(productConfig, product);
 
       if (!productIsValid) {
         component = NotFound;
