@@ -168,7 +168,7 @@
     />
   </div>
 
-  <div class="body-control-row  body-control-row--stretch">
+  <div class="body-control-row body-control-row--stretch">
     <div class="body-control-set">
       <label class="body-control-set--label">Metric Type</label>
       <ProportionMetricTypeControl

@@ -149,7 +149,7 @@
 <div class="body-content">
   <slot />
 
-  <div class="body-control-row  body-control-row--stretch">
+  <div class="body-control-row body-control-row--stretch">
     <div class="body-control-set">
       {#if aggregationLevel === 'build_id'}
         <label class="body-control-set--label">Time Horizon</label>
