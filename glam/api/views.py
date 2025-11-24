@@ -688,6 +688,30 @@ def _get_fog_counts(app_id, versions, ping_type, os, by_build):
     return data
 
 
+@api_view(["GET"])
+def legacy_telemetry_mirror_metric(request):
+    probe = request.GET.get("probe")
+    if not probe:
+        raise ValidationError("Probe is required")
+    legacy_probe_info_search_url = (
+        "https://probeinfo.telemetry.mozilla.org/glean/gecko/metrics"
+    )
+    legacy_probe_info_search_response_json = requests.get(legacy_probe_info_search_url).json()
+    # Search within the json the item that has the legacy probe name and get the key value of the item
+    mirror = next(
+        (
+            key
+            for key, value in legacy_probe_info_search_response_json.items()
+            if value.get("history")[0].get("telemetry_mirror", "").lower()
+            == probe.lower()
+        ),
+        None,
+    )
+    if not mirror:
+        raise NotFound("Mirror not found")
+    return Response({"mirror": mirror.replace(".", "_")})
+
+
 @api_view(["POST"])
 def aggregations(request):
     """
