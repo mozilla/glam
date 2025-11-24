@@ -696,8 +696,9 @@ def legacy_telemetry_mirror_metric(request):
     legacy_probe_info_search_url = (
         "https://probeinfo.telemetry.mozilla.org/glean/gecko/metrics"
     )
-    legacy_probe_info_search_response_json = requests.get(legacy_probe_info_search_url).json()
-    # Search within the json the item that has the legacy probe name and get the key value of the item
+    legacy_probe_info_search_response_json = requests.get(
+        legacy_probe_info_search_url
+    ).json()
     mirror = next(
         (
             key

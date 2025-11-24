@@ -1,11 +1,11 @@
 <script>
   import { store } from '../state/store';
-  // Get the probe name from the url path
+
   let mirrorMetric = '';
   $: if ($store.probe.name) {
     fetch(`/api/v1/legacy-mirror-metric/?probe=${$store.probe.name}`)
-      .then(r => r.json())
-      .then(data => {
+      .then((r) => r.json())
+      .then((data) => {
         mirrorMetric = data.mirror;
       });
   }
@@ -52,12 +52,18 @@
 <div class="legacy-banner">
   <div class="legacy-banner__label">Legacy Telemetry</div>
   {#if mirrorMetric}
-    <p class="legacy-banner__copy">Legacy Telemetry is deprecated and data for this probe will be stale soon. Consider using
-        <a href={`https://glam.telemetry.mozilla.org/fog/probe/${mirrorMetric}/explore`} target="_blank">the Glean version of this probe</a>
-        instead.
+    <p class="legacy-banner__copy">
+      Legacy Telemetry is deprecated and data for this probe will be stale soon.
+      Consider using
+      <a
+        href={`https://glam.telemetry.mozilla.org/fog/probe/${mirrorMetric}/explore`}
+        target="_blank">the Glean version of this probe</a
+      >
+      instead.
     </p>
   {:else}
-    <p class="legacy-banner__copy">Legacy Telemetry is deprecated and data for this probe will be stale soon.
+    <p class="legacy-banner__copy">
+      Legacy Telemetry is deprecated and data for this probe will be stale soon.
     </p>
   {/if}
 </div>
