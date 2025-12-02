@@ -54,7 +54,7 @@
   {#if mirrorMetric}
     <p class="legacy-banner__copy">
       Desktop Firefox Legacy Telemetry is deprecated, new GLAM data will stop
-      being aggregated for this probe on January 2026. Consider using
+      being aggregated for this probe in January 2026. Consider using
       <a
         href={`https://glam.telemetry.mozilla.org/fog/probe/${mirrorMetric}/explore`}
         target="_blank">the Glean version of this probe</a
@@ -64,7 +64,7 @@
   {:else}
     <p class="legacy-banner__copy">
       Desktop Firefox Legacy Telemetry is deprecated, new GLAM data will stop
-      being aggregated for this probe on January 2026.
+      being aggregated for this probe in January 2026.
     </p>
   {/if}
 </div>
