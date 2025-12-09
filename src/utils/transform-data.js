@@ -324,7 +324,7 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
         };
       }
       acc[build_id].normalized[revertedLabels[metric_key]] =
-        sample_count / samplesPerBuild[build_id];
+        sample_count / Math.max(samplesPerBuild[build_id], 1);
       acc[build_id].non_normalized[revertedLabels[metric_key]] = sample_count;
       return acc;
     },
