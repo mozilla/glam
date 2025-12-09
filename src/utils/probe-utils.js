@@ -69,7 +69,8 @@ export function convertValueToProportions(obj) {
   const newObj = { ...obj };
 
   // Calculate the total of all values
-  const total = Object.values(newObj).reduce((a, b) => a + b, 0);
+  let total = Object.values(newObj).reduce((a, b) => a + b, 0);
+  total = total === 0 ? 1 : total;
   // Convert each value to a proportion of the total
   Object.keys(newObj).forEach((key) => {
     newObj[key] /= total;
