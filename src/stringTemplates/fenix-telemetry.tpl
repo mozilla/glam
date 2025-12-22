@@ -2,16 +2,25 @@
 -- For more info on tables referenced in this query see:
 -- https://dictionary.telemetry.mozilla.org/apps/fenix/pings/metrics
 
-CREATE TEMP FUNCTION hist_sum(entries ANY TYPE) AS (
+
+<% if (!normalized) { %>
+CREATE TEMP FUNCTION hist_sum(entries ARRAY<STRUCT<key STRING, value INT64>>) AS (
   ARRAY(SELECT AS STRUCT key, CAST(SUM(value) AS FLOAT64) AS value FROM UNNEST(entries) GROUP BY key ORDER BY key)
 );
+CREATE TEMP FUNCTION hist_sum_float(entries ARRAY<STRUCT<key STRING, value FLOAT64>>) AS (
+  ARRAY(SELECT AS STRUCT key, CAST(SUM(value) AS FLOAT64) AS value FROM UNNEST(entries) GROUP BY key ORDER BY key)
+);
+<% } %>
 
 WITH sampled_pre_aggregates AS (
   SELECT
     MOD(sample_id, 10) AS sample_group,
-    hist_sum(
+    <% if (normalized) { %>mozfun.glam.histogram_normalized_sum(
+      ARRAY_CONCAT_AGG(metrics.${metric_type}.${metric_name}.values),
+      ${sample_mult}
+    ) AS summed_aggregates,<% } else { %>hist_sum(
       ARRAY_CONCAT_AGG(metrics.${metric_type}.${metric_name}.values)
-    ) AS summed_aggregates,
+    ) AS summed_aggregates,<% } %>
     "${metric_type}" AS metric_type,
     COALESCE(
       SAFE_CAST(SPLIT(client_info.app_display_version, '.')[OFFSET(0)] AS INT64),
@@ -38,10 +47,10 @@ WITH sampled_pre_aggregates AS (
 
 combined_pre_aggregates AS (
   SELECT
-    <% if (normalized) { %>mozfun.glam.histogram_normalized_sum(
+    <% if (normalized) { %>mozfun.glam.histogram_normalized_sum_f64(
       ARRAY_CONCAT_AGG(summed_aggregates),
       ${sample_mult}
-    ) AS aggregates,<% } else { %>hist_sum(
+    ) AS aggregates,<% } else { %>hist_sum_float(
       ARRAY_CONCAT_AGG(summed_aggregates)
     ) AS aggregates,<% } %>
         metric_type,
