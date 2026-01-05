@@ -131,6 +131,7 @@
     $store.productDimensions.normalizationType
   );
   $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
+  $: showKeySelector = probeKeys && probeKeys.length > 1;
 </script>
 
 <style>
@@ -168,7 +169,7 @@
     />
   </div>
 
-  <div class="body-control-row  body-control-row--stretch">
+  <div class="body-control-row">
     <div class="body-control-set">
       <label class="body-control-set--label">Metric Type</label>
       <ProportionMetricTypeControl
@@ -176,7 +177,7 @@
         on:selection={makeSelection('metricType')}
       />
     </div>
-    {#if probeKeys && probeKeys.length > 1}
+    {#if showKeySelector}
       <div class="body-control-set">
         <label class="body-control-set--label">Key</label>
         <ProbeKeySelector options={probeKeys} bind:currentKey />

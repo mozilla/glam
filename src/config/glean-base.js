@@ -29,6 +29,7 @@ export const SUPPORTED_METRICS = [
   'labeled_custom_distribution',
   'labeled_timing_distribution',
   'boolean',
+  'labeled_boolean',
 ];
 
 export default {
@@ -92,6 +93,7 @@ export default {
   // Common probe view mappings for Glean metrics
   probeView: {
     boolean: 'categorical',
+    labeled_boolean: 'categorical',
     counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'linear',
@@ -194,7 +196,7 @@ export default {
         let labels = {
           ...appStore.getState().probe.labels,
         };
-        if (metricType === 'boolean') {
+        if (metricType === 'boolean' || metricType === 'labeled_boolean') {
           const dataAndLabels =
             transformBooleanHistogramToCategoricalHistogram(data);
           data = dataAndLabels.data;
@@ -254,7 +256,7 @@ export default {
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
-    if (metricType === 'boolean') {
+    if (metricType === 'boolean' || metricType === 'labeled_boolean') {
       // eslint-disable-next-line no-param-reassign
       data = data.filter((di) => di.client_agg_type === '');
     }
