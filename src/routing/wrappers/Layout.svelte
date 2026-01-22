@@ -60,7 +60,7 @@
         href="https://matrix.to/#/#datatools:mozilla.org"
       >
         <img src="/static/logo.svg" width="18" height="18" alt="Mozilla logo" />
-        feedback
+        feedback🔒
       </a>
     </div>
   </header>
