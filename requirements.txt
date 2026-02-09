@@ -39,7 +39,7 @@ drf-orjson-renderer==1.1.5
     # via -r requirements.in
 exceptiongroup==1.2.0
     # via pytest
-flake8==7.1.0
+flake8==7.3.0
     # via -r requirements.in
 google-api-core[grpc]==2.17.1
     # via
@@ -114,11 +114,11 @@ pyasn1==0.4.8
     #   rsa
 pyasn1-modules==0.2.8
     # via google-auth
-pycodestyle==2.12.0
+pycodestyle==2.14.0
     # via flake8
 pycparser==2.20
     # via cffi
-pyflakes==3.2.0
+pyflakes==3.4.0
     # via flake8
 pyparsing==2.4.7
     # via packaging
