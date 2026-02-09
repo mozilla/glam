@@ -8,7 +8,7 @@ google-cloud-bigquery==3.25.0
 google-cloud-storage==2.16.0
 gunicorn==23.0.0
 psycopg2-binary==2.9.1
-whitenoise==6.7.0
+whitenoise==6.11.0
 python-dateutil==2.9.0.post0
 
 # For linting and testing.
