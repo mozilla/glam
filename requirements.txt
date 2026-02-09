@@ -160,7 +160,7 @@ tomli==2.0.1
     #   pytest
 typing-extensions==4.2.0
     # via black
-urllib3==1.26.19
+urllib3==2.6.3
     # via requests
 whitenoise==6.11.0
     # via -r requirements.in
