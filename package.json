@@ -32,7 +32,7 @@
     "@mozilla/glean": "5.0.3",
     "@rollup/plugin-commonjs": "26.0.1",
     "@rollup/plugin-json": "6.1.0",
-    "@rollup/plugin-node-resolve": "15.1.0",
+    "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-replace": "5.0.7",
     "@storybook/svelte": "7.6.16",
     "babel-jest": "29.6.2",
