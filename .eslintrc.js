@@ -11,7 +11,7 @@ module.exports = {
   globals: {
     gtag: 'readonly',
   },
-  plugins: ['jest', 'svelte3'],
+  plugins: ['jest', 'svelte'],
   rules: {
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
@@ -19,10 +19,21 @@ module.exports = {
       'error',
       { props: true, ignorePropertyModificationsFor: ['draft', 'acc'] },
     ],
+    // Allow Svelte virtual imports to resolve
+    'import/no-unresolved': ['error', { ignore: ['^svelte/'] }],
   },
   overrides: [
     {
       files: ['**/*.js'],
+      parser: '@babel/eslint-parser',
+      parserOptions: {
+        ecmaVersion: 2018,
+        sourceType: 'module',
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-env'],
+        },
+      },
       extends: ['prettier'],
       plugins: ['prettier'],
       rules: {
@@ -31,20 +42,35 @@ module.exports = {
     },
     {
       files: ['**/*.svelte'],
-      processor: 'svelte3/svelte3',
-      extends: ['prettier'],
+      parser: 'svelte-eslint-parser',
+      parserOptions: {
+        parser: '@babel/eslint-parser',
+        extraFileExtensions: ['.svelte'],
+        sourceType: 'module',
+        ecmaVersion: 2018,
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-env'],
+        },
+      },
+      extends: ['plugin:svelte/recommended', 'prettier'],
       rules: {
         'prefer-const': 'off',
+        'no-unused-vars': 'warn',
+        'no-shadow': 'warn',
+        'no-use-before-define': 'off',
+        'no-console': 'warn',
+        'no-alert': 'warn',
+        'svelte/valid-compile': 'warn',
+        'svelte/no-at-html-tags': 'warn',
         // Disable rules that don't work correctly with Svelte
-        // https://github.com/sveltejs/eslint-plugin-svelte3/blob/master/OTHER_PLUGINS.md
         'import/first': 'off',
         'import/no-duplicates': 'off',
         'import/no-mutable-exports': 'off',
         'import/no-unresolved': 'off',
-
-        // Temporarily work around a bug in eslint-plugin-svelte3.
-        //
-        // https://github.com/sveltejs/eslint-plugin-svelte3/issues/41#issuecomment-572503966
+        'import/no-named-as-default': 'off',
+        'import/no-named-as-default-member': 'off',
+        'import/extensions': 'off',
         'no-multiple-empty-lines': ['error', { max: 2, maxBOF: 2, maxEOF: 0 }],
       },
     },
@@ -55,4 +81,13 @@ module.exports = {
       },
     },
   ],
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [['svelte', 'svelte']],
+        extensions: ['.js', '.svelte'],
+      },
+    },
+  },
+  ignorePatterns: ['venv/**', '.venv/**', '**/site-packages/**'],
 };

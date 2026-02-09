@@ -74,7 +74,11 @@ jobs:
             gcloud auth configure-docker us-docker.pkg.dev --quiet;
             DOCKER_IMAGE="us-docker.pkg.dev/moz-fx-glam-prod/glam-prod/glam";
             [ ! -z "${CIRCLE_SHA1}" ] && docker tag app:build "${DOCKER_IMAGE}:commit-${CIRCLE_SHA1}"
-            [ ! -z "${CIRCLE_BRANCH}" ] && docker tag app:build "${DOCKER_IMAGE}:branch-${CIRCLE_BRANCH}"
+            # CircleCI branch names can contain characters (e.g. '/') that are invalid in Docker tags.
+            if [ ! -z "${CIRCLE_BRANCH}" ]; then
+              SAFE_BRANCH=$(echo "${CIRCLE_BRANCH}" | tr '[:upper:]' '[:lower:]' | sed 's@[^a-z0-9_.-]@-@g')
+              docker tag app:build "${DOCKER_IMAGE}:branch-${SAFE_BRANCH}"
+            fi
             [ ! -z "${CIRCLE_TAG}" ] &&  docker tag app:build "${DOCKER_IMAGE}:${CIRCLE_TAG}"
             [ "${CIRCLE_BRANCH}" == "main" ] && docker tag app:build "${DOCKER_IMAGE}:latest"
 

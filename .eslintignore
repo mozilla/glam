@@ -7,3 +7,12 @@ src/main.js
 # eslint doesn't like numeric separators (e.g. `12_345`), and I'm stubbornly
 # refusing to remove them.
 tests/formatters.test.js
+
+# Virtual environments and packages
+venv/
+.venv/
+node_modules/
+__pycache__/
+
+# Django and Python packages
+**/site-packages/
