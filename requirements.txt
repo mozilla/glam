@@ -12,13 +12,11 @@ cachetools==4.2.2
     # via google-auth
 certifi==2024.7.4
     # via requests
-cffi==1.14.6
-    # via google-crc32c
 charset-normalizer==2.0.4
     # via requests
 click==8.1.2
     # via black
-coverage[toml]==5.5
+coverage[toml]==7.10.7
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
@@ -39,9 +37,9 @@ drf-orjson-renderer==1.1.5
     # via -r requirements.in
 exceptiongroup==1.2.0
     # via pytest
-flake8==7.1.0
+flake8==7.3.0
     # via -r requirements.in
-google-api-core[grpc]==2.17.1
+google-api-core[grpc]==2.29.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-core
@@ -54,17 +52,17 @@ google-auth==2.28.2
     #   google-cloud-storage
 google-cloud-bigquery==3.25.0
     # via -r requirements.in
-google-cloud-core==2.4.1
+google-cloud-core==2.5.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-google-cloud-storage==2.16.0
+google-cloud-storage==3.9.0
     # via -r requirements.in
-google-crc32c==1.1.2
+google-crc32c==1.8.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.7.0
+google-resumable-media==2.8.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
@@ -100,13 +98,18 @@ pathspec==0.9.0
 platformdirs==2.5.2
     # via black
 pluggy==1.5.0
+    # via
+    #   pytest
+    #   pytest-cov
     # via pytest
+proto-plus==1.27.1
+    # via google-api-core
 protobuf==4.25.3
     # via
     #   google-api-core
     #   googleapis-common-protos
     #   grpcio-status
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.11
     # via -r requirements.in
 pyasn1==0.4.8
     # via
@@ -114,11 +117,11 @@ pyasn1==0.4.8
     #   rsa
 pyasn1-modules==0.2.8
     # via google-auth
-pycodestyle==2.12.0
+pycodestyle==2.14.0
     # via flake8
 pycparser==2.20
     # via cffi
-pyflakes==3.2.0
+pyflakes==3.4.0
     # via flake8
 pyparsing==2.4.7
     # via packaging
@@ -130,9 +133,9 @@ pytest==8.2.2
     #   pytest-django
 pytest-blockage==0.2.2
     # via -r requirements.in
-pytest-cov==5.0.0
+pytest-cov==7.0.0
     # via -r requirements.in
-pytest-django==4.8.0
+pytest-django==4.11.1
     # via -r requirements.in
 python-dateutil==2.9.0.post0
     # via
@@ -140,7 +143,7 @@ python-dateutil==2.9.0.post0
     #   google-cloud-bigquery
 pytz==2021.1
     # via django
-requests==2.32.0
+requests==2.32.4
     # via
     #   google-api-core
     #   google-cloud-bigquery
@@ -153,11 +156,10 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.5.0
     # via django
-toml==0.10.2
-    # via coverage
 tomli==2.0.1
     # via
     #   black
+    #   coverage
     #   pytest
 typing-extensions==4.2.0
     # via black
