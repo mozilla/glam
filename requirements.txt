@@ -23,9 +23,10 @@ dj-database-url==0.5.0
 django==3.1.13
     # via
     #   -r requirements.in
+    #   django-configurations
     #   djangorestframework
     #   drf-orjson-renderer
-django-configurations==2.2
+django-configurations==2.3.2
     # via -r requirements.in
 djangorestframework==3.15.1
     # via
@@ -153,9 +154,7 @@ requests==2.32.4
 rsa==4.7.2
     # via google-auth
 six==1.16.0
-    # via
-    #   django-configurations
-    #   python-dateutil
+    # via python-dateutil
 sqlparse==0.5.0
     # via django
 tomli==2.0.1
