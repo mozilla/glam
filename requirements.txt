@@ -123,9 +123,11 @@ pycparser==2.20
     # via cffi
 pyflakes==3.4.0
     # via flake8
+pygments==2.19.2
+    # via pytest
 pyparsing==2.4.7
     # via packaging
-pytest==8.2.2
+pytest==8.4.2
     # via
     #   -r requirements.in
     #   pytest-blockage
