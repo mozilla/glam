@@ -5,7 +5,7 @@ and creates a list of adrs + links in index.md.
 
 const fs = require('fs');
 
-const adrPattern = new RegExp(/\d{4}-[\S]*.md/);
+const adrPattern = /\d{4}-\S*\.md/;
 const adrs = fs
   .readdirSync('../docs/adr/')
   .filter((file) => adrPattern.test(file))
