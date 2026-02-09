@@ -29,7 +29,7 @@
     "@graph-paper/menu": "0.0.0-alpha.15",
     "@graph-paper/optionmenu": "0.0.0-alpha.16",
     "@graph-paper/portal": "0.0.0-alpha.15",
-    "@mozilla/glean": "5.0.3",
+    "@mozilla/glean": "5.0.7",
     "@rollup/plugin-commonjs": "29.0.0",
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "16.0.3",
