@@ -1,5 +1,6 @@
 import { produce } from 'immer';
 import {
+  transformBooleanHistogramToCategoricalHistogram,
   transformAPIResponse,
   transformLabeledCounterToCategoricalHistogramSampleCount,
 } from '../utils/transform-data';
@@ -10,6 +11,7 @@ import {
   validate,
   noResponse,
   noUnknownMetrics,
+  noMeaningfulData,
 } from '../utils/data-validation';
 import { filterLowClientBuilds } from '../utils/probe-utils';
 
@@ -26,6 +28,8 @@ export const SUPPORTED_METRICS = [
   'timing_distribution',
   'labeled_custom_distribution',
   'labeled_timing_distribution',
+  'boolean',
+  'labeled_boolean',
 ];
 
 export default {
@@ -89,6 +93,7 @@ export default {
   // Common probe view mappings for Glean metrics
   probeView: {
     boolean: 'categorical',
+    labeled_boolean: 'categorical',
     counter: 'linear',
     custom_distribution_exponential: 'log',
     custom_distribution_linear: 'linear',
@@ -178,6 +183,9 @@ export default {
 
       if (channel === 'nightly') {
         data = filterLowClientBuilds(payload.response);
+        validate(data, (d) => {
+          noMeaningfulData(d);
+        });
       }
 
       appStore.setField('viewType', viewType);
@@ -185,9 +193,15 @@ export default {
 
       // Attach labels to histogram if appropriate type.
       if (probeView === 'categorical') {
-        const labels = {
+        let labels = {
           ...appStore.getState().probe.labels,
         };
+        if (metricType === 'boolean' || metricType === 'labeled_boolean') {
+          const dataAndLabels =
+            transformBooleanHistogramToCategoricalHistogram(data);
+          data = dataAndLabels.data;
+          labels = dataAndLabels.labels;
+        }
         if (metricType === 'labeled_counter') {
           data = transformLabeledCounterToCategoricalHistogramSampleCount(
             data,
@@ -238,10 +252,11 @@ export default {
     // the frontend. It will always run, even against cached data, as a way of
     // resetting the necessary state.
     const viewType = probeType;
+    const metricType = appStore.getState().probe.type;
     let etc = {};
 
     // filter out true/false aggregate results in boolean metrics. See: https://github.com/mozilla/glam/pull/1525#discussion_r694135079
-    if (data[0].metric_type === 'boolean') {
+    if (metricType === 'boolean' || metricType === 'labeled_boolean') {
       // eslint-disable-next-line no-param-reassign
       data = data.filter((di) => di.client_agg_type === '');
     }

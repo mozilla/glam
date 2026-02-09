@@ -61,7 +61,8 @@ export function isSelectedProcessValid(processes, selectedProcess) {
 }
 
 export function convertValueToPercentage(data) {
-  const sum = data.reduce((a, b) => a + b.value, 0);
+  let sum = data.reduce((a, b) => a + b.value, 0);
+  sum = sum === 0 ? 1 : sum;
   return data.map((a) => ({ bin: a.bin, value: a.value / sum }));
 }
 
@@ -69,7 +70,8 @@ export function convertValueToProportions(obj) {
   const newObj = { ...obj };
 
   // Calculate the total of all values
-  const total = Object.values(newObj).reduce((a, b) => a + b, 0);
+  let total = Object.values(newObj).reduce((a, b) => a + b, 0);
+  total = total === 0 ? 1 : total;
   // Convert each value to a proportion of the total
   Object.keys(newObj).forEach((key) => {
     newObj[key] /= total;

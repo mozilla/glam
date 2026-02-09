@@ -6,11 +6,14 @@
   import ProbeViewControl from '../../components/controls/ProbeViewControl.svelte';
   import ProbeDetails from '../../components/regions/ProbeDetails.svelte';
   import ProductSelector from '../../components/controls/ProductSelector.svelte';
+  import LegacyTelemetryBanner from '../../components/LegacyTelemetryBanner.svelte';
 
   import { store } from '../../state/store';
   import routes from '../../config/routes';
 
   $: isProbeDetailsView = $store.route.section === 'probe';
+  $: showLegacyTelemetryBanner =
+    $store.route.product === 'firefox' && $store.route.section === 'probe';
 
   const defaultTitle = 'GLAM: Glean Aggregated Metrics Explorer';
   // Use the proper probe name if available (for Glean applications),
@@ -67,6 +70,9 @@
       <MainSelectors />
     </header>
     <main class="content--body">
+      {#if showLegacyTelemetryBanner}
+        <LegacyTelemetryBanner />
+      {/if}
       <div class="graphic-body" class:graphic-body-home={!isProbeDetailsView}>
         <slot />
         {#if isProbeDetailsView}
