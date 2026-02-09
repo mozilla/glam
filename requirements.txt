@@ -167,5 +167,5 @@ typing-extensions==4.2.0
     # via black
 urllib3==1.26.19
     # via requests
-whitenoise==6.7.0
+whitenoise==6.11.0
     # via -r requirements.in
