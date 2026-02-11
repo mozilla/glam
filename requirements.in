@@ -6,8 +6,15 @@ dockerflow==2024.4.2
 drf-orjson-renderer==1.1.5
 google-cloud-bigquery==3.25.0
 google-cloud-storage==2.16.0
+google-api-core[grpc]==2.25.1
+googleapis-common-protos==1.72.0
+grpcio==1.78.0
+grpcio-status==1.78.0
+protobuf==6.33.4
+typing-extensions==4.12.2
+cffi==1.17.1
 gunicorn==23.0.0
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.10
 whitenoise==6.7.0
 python-dateutil==2.9.0.post0
 
