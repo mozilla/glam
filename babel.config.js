@@ -2,7 +2,8 @@ module.exports = {
   presets: [['@babel/preset-env', { targets: { node: 'current' } }]],
   env: {
     test: {
-      plugins: ['@babel/plugin-transform-runtime'],
+      // Keep test transforms simple to avoid requiring @babel/runtime for transpiled deps
+      plugins: [],
     },
   },
 };
