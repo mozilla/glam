@@ -102,7 +102,9 @@ class Core(Configuration):
     # Django REST Framework
     REST_FRAMEWORK = {
         "DEFAULT_PARSER_CLASSES": ["drf_orjson_renderer.parsers.ORJSONParser"],
-        "DEFAULT_RENDERER_CLASSES": ["drf_orjson_renderer.renderers.ORJSONRenderer"],
+        # Wrap upstream renderer so ``None`` payloads return ``b""`` (upstream
+        # 1.4.0 started returning None, which Django can't join).
+        "DEFAULT_RENDERER_CLASSES": ["glam.renderers.ORJSONRenderer"],
         "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S",
     }
 
