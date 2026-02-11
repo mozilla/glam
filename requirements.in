@@ -2,8 +2,8 @@ dj-database-url==0.5.0
 django==3.1.13
 django-configurations==2.3.2
 djangorestframework==3.15.1
+drf-orjson-renderer==1.4.0
 dockerflow==2026.1.26
-drf-orjson-renderer==1.1.5
 google-cloud-bigquery==3.40.0
 google-cloud-storage==3.9.0
 gunicorn==23.0.0
