@@ -20,7 +20,7 @@ coverage[toml]==7.10.7
     # via pytest-cov
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.1.13
+django==4.0.10
     # via
     #   -r requirements.in
     #   django-configurations
@@ -140,8 +140,6 @@ python-dateutil==2.9.0.post0
     # via
     #   -r requirements.in
     #   google-cloud-bigquery
-pytz==2021.1
-    # via django
 requests==2.32.4
     # via
     #   google-api-core
