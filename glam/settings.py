@@ -7,6 +7,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
+
 import os
 from datetime import datetime, timedelta, timezone
 
@@ -101,7 +102,9 @@ class Core(Configuration):
     # Django REST Framework
     REST_FRAMEWORK = {
         "DEFAULT_PARSER_CLASSES": ["drf_orjson_renderer.parsers.ORJSONParser"],
-        "DEFAULT_RENDERER_CLASSES": ["drf_orjson_renderer.renderers.ORJSONRenderer"],
+        # Wrap upstream renderer so ``None`` payloads return ``b""`` (upstream
+        # 1.4.0 started returning None, which Django can't join).
+        "DEFAULT_RENDERER_CLASSES": ["glam.renderers.ORJSONRenderer"],
         "DATETIME_FORMAT": "%Y-%m-%dT%H:%M:%S",
     }
 
@@ -194,6 +197,7 @@ class Dev(Base):
 
 class Test(Dev):
     "Configuration to be used during testing"
+
     DEBUG = False
 
     SECRET_KEY = values.Value("not-so-secret-after-all")
@@ -239,4 +243,5 @@ class Stage(Base):
 
 class Prod(Stage):
     "Configuration to be used in prod environment"
+
     pass

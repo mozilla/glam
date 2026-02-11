@@ -1,5 +1,5 @@
 # BACKEND IMAGE
-FROM python:3.9-slim AS backend
+FROM python:3.14-slim AS backend
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -34,7 +34,7 @@ COPY . /app/
 
 
 # FRONTEND BUILDER IMAGE
-FROM node:23 AS frontend
+FROM node:25 AS frontend
 
 RUN apt-get update || : && apt-get install python3 -y
 RUN apt-get -y install make
@@ -51,7 +51,7 @@ CMD [ "test" ]
 # END FRONTEND BUILDER IMAGE
 
 
-FROM python:3.9-slim AS final
+FROM python:3.14-slim AS final
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
