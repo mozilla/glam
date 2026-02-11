@@ -25,9 +25,15 @@ class ORJSONRenderer(_ORJSONRenderer):
     implementation.
     """
 
+    # Explicitly set these in case the upstream defaults change.
+    media_type = "application/json"
+    format = "json"
+    charset = "utf-8"
+
     def render(self, data, media_type=None, renderer_context=None):
         if data is None:
             return b""
-        return super().render(
+        rendered = super().render(
             data, media_type=media_type, renderer_context=renderer_context
         )
+        return b"" if rendered is None else rendered
