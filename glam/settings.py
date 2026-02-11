@@ -7,6 +7,7 @@ https://docs.djangoproject.com/en/1.9/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
+
 import os
 from datetime import datetime, timedelta, timezone
 
@@ -196,6 +197,7 @@ class Dev(Base):
 
 class Test(Dev):
     "Configuration to be used during testing"
+
     DEBUG = False
 
     SECRET_KEY = values.Value("not-so-secret-after-all")
@@ -241,4 +243,5 @@ class Stage(Base):
 
 class Prod(Stage):
     "Configuration to be used in prod environment"
+
     pass
