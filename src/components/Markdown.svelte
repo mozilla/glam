@@ -1,12 +1,12 @@
 <script>
-  import { use, parse, parseInline } from 'marked';
+  import { marked } from 'marked';
 
   const renderer = {
     html(html) {
       return `<code>${html.replace('<', '&lt;')}</code>`;
     },
   };
-  use({ renderer });
+  marked.use({ renderer });
 
   // if inline is set, do not wrap the markdown in a paragraph -- useful for short snippets
   export let inline = true;
@@ -14,7 +14,7 @@
 </script>
 
 {#if inline}
-  {@html parseInline(text)}
+  {@html marked.parseInline(text)}
 {:else}
-  {@html parse(text)}
+  {@html marked.parse(text)}
 {/if}

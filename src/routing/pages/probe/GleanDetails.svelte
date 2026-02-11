@@ -1,6 +1,6 @@
 <script>
   import { timeParse, timeFormat } from 'd3-time-format';
-  import marked from 'marked';
+  import { marked } from 'marked';
   import Brackets from '../../../components/icons/Brackets.svelte';
   import { store, dataset } from '../../../state/store';
   import { downloadString } from '../../../utils/download';
@@ -225,7 +225,7 @@
       {#if $store.probe.description}
         <h2 class="detail-title">description</h2>
         <div class="probe-description helper-text--01">
-          {@html marked($store.probe.description)}
+          {@html marked.parse($store.probe.description)}
           <a
             class="more-info-link"
             href={`https://dictionary.telemetry.mozilla.org/apps/${
