@@ -28,4 +28,6 @@ class ORJSONRenderer(_ORJSONRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         if data is None:
             return b""
-        return super().render(data, media_type=media_type, renderer_context=renderer_context)
+        return super().render(
+            data, media_type=media_type, renderer_context=renderer_context
+        )
