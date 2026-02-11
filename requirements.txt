@@ -110,7 +110,7 @@ protobuf==4.25.3
     #   googleapis-common-protos
     #   grpcio-status
     #   proto-plus
-psycopg2-binary==2.9.1
+psycopg2-binary==2.9.11
     # via -r requirements.in
 pyasn1==0.4.8
     # via
