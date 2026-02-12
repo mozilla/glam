@@ -10,7 +10,7 @@ black==25.11.0
     # via -r requirements.in
 certifi==2026.1.4
     # via requests
-cffi==1.17.1
+cffi==2.0.0
     # via
     #   -r requirements.in
     #   cryptography
