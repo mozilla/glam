@@ -174,7 +174,7 @@ tomli==2.4.0
     #   black
     #   coverage
     #   pytest
-typing-extensions==4.12.2
+typing-extensions==4.15.0
     # via
     #   -r requirements.in
     #   asgiref

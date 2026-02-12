@@ -13,7 +13,7 @@ grpcio==1.78.0
 grpcio-status==1.78.0
 legacy-cgi==2.6.4
 protobuf==6.33.5
-typing-extensions==4.12.2
+typing-extensions==4.15.0
 gunicorn==23.0.0
 psycopg2-binary==2.9.11
 whitenoise==6.11.0
