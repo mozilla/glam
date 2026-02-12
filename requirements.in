@@ -18,7 +18,7 @@ gunicorn==23.0.0
 psycopg2-binary==2.9.11
 whitenoise==6.11.0
 python-dateutil==2.9.0.post0
-setuptools==69.5.1
+setuptools==82.0.0
 
 # For linting and testing.
 black
