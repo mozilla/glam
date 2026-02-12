@@ -32,7 +32,7 @@ django==4.2.28
     #   drf-orjson-renderer
 django-configurations==2.5.1
     # via -r requirements.in
-djangorestframework==3.15.2
+djangorestframework==3.16.1
     # via
     #   -r requirements.in
     #   drf-orjson-renderer
