@@ -22,11 +22,12 @@ coverage[toml]==7.10.7
     # via pytest-cov
 cryptography==45.0.7
     # via google-auth
-dj-database-url==0.5.0
+dj-database-url==3.0.1
     # via -r requirements.in
 django==4.2.28
     # via
     #   -r requirements.in
+    #   dj-database-url
     #   django-configurations
     #   djangorestframework
     #   drf-orjson-renderer
