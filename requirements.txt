@@ -117,7 +117,7 @@ pluggy==1.6.0
     #   pytest-cov
 proto-plus==1.27.1
     # via google-api-core
-protobuf==6.33.5
+protobuf==6.33.6
     # via
     #   -r requirements.in
     #   google-api-core
