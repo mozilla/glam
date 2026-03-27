@@ -8,7 +8,7 @@ cffi==2.0.0
 google-api-core[grpc]==2.29.0
 google-cloud-bigquery==3.40.0
 google-cloud-storage==3.9.0
-googleapis-common-protos==1.72.0
+googleapis-common-protos==1.73.1
 grpcio==1.78.0
 grpcio-status==1.78.0
 legacy-cgi==2.6.4
