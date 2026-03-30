@@ -138,7 +138,7 @@ pycparser==2.23
     # via cffi
 pyflakes==3.4.0
     # via flake8
-pygments==2.19.2
+pygments==2.20.0
     # via pytest
 pytest==8.4.2
     # via
