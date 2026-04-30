@@ -169,6 +169,7 @@ export default {
       hov: storeValue.hov,
       currentPage: storeValue.currentPage,
       normalizationType: storeValue.productDimensions.normalizationType,
+      aggKey: storeValue.aggKey,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,
