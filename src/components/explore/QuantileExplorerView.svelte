@@ -41,7 +41,10 @@
 
   let aggregationTypes = gatherAggregationTypes(transformedData);
   const dualLabeledKeys = gatherDualLabeledProbeKeyMap(transformedData);
-  let probeKeys = gatherProbeKeys(transformedData);
+  $: probeKeys =
+    $store.probeKeys && $store.probeKeys.length
+      ? [...$store.probeKeys]
+      : gatherProbeKeys(transformedData);
 
   $: currentKey = $store.aggKey || probeKeys[0];
   $: currentSubKey = dualLabeledKeys[currentKey]
@@ -96,6 +99,7 @@
       currentKey,
       currentSubKey
     );
+    if (!range.length) return [];
     let histogramRange = range[range.length - 1][
       getHistogramName(normType)
     ].map((d) => d.bin);
@@ -205,7 +209,7 @@
   <div class="data-graphics">
     {#each probeKeys as key, i (key)}
       {#each aggregationTypes as aggType, i (aggType + timeHorizon + key)}
-        {#if key === currentKey && aggType === currentAggregation}
+        {#if key === currentKey && aggType === currentAggregation && selectedData.length > 0}
           {#key interpolate}
             <div class="small-multiple">
               <ProbeExplorer

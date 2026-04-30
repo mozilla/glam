@@ -48,6 +48,12 @@ function getDefaultState(
   state.currentPage = getFromQueryString('currentPage');
   state.countView = getFromQueryString('countView') || 'clients';
 
+  // Cached metric_keys returned by the labels preflight for non-categorical
+  // labeled metrics. probeKeysFor records which probe the cached keys belong
+  // to so we can detect probe switches and refetch.
+  state.probeKeys = [];
+  state.probeKeysFor = '';
+
   state.probe = {
     name: '',
     loaded: false,

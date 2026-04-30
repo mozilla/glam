@@ -118,6 +118,7 @@ def validate_request_glean(**kwargs):
     validated_data["os"] = kwargs.get("os", "*")
     validated_data["num_versions"] = kwargs.get("versions", 3)
     validated_data["ping_type"] = kwargs.get("ping_type")
+    validated_data["metric_key"] = kwargs.get("metric_key")
 
     if validated_data["channel"] not in ["beta", "nightly", "release"]:
         raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
@@ -144,6 +145,41 @@ def validate_request_glean(**kwargs):
         raise ValidationError(
             "Invalid versions: {}".format(validated_data["num_versions"])
         )
+
+    return validated_data
+
+
+def validate_request_glean_labels(**kwargs):
+    REQUIRED_QUERY_PARAMETERS = ["app_id", "probe", "product"]
+    if any([k not in kwargs.keys() for k in REQUIRED_QUERY_PARAMETERS]):
+        missing = set(REQUIRED_QUERY_PARAMETERS) - set(kwargs.keys())
+        raise ValidationError(
+            "Missing required query parameters: {}".format(", ".join(sorted(missing)))
+        )
+
+    validated_data = {
+        "channel": kwargs.get("app_id"),
+        "product": kwargs.get("product"),
+        "probe": kwargs.get("probe"),
+        "ping_type": kwargs.get("ping_type"),
+        "os": kwargs.get("os", "*"),
+    }
+
+    if validated_data["channel"] not in ["beta", "nightly", "release"]:
+        raise ValidationError("Invalid channel: {}".format(validated_data["channel"]))
+
+    if validated_data["product"] not in ["fog", "fenix"]:
+        raise ValidationError("Invalid product: {}".format(validated_data["product"]))
+
+    if validated_data["os"] not in [
+        "Windows",
+        "Darwin",
+        "Mac",
+        "Linux",
+        "*",
+        "Android",
+    ]:
+        raise ValidationError("Invalid os: {}".format(validated_data["os"]))
 
     return validated_data
 
@@ -561,6 +597,10 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
         if product == "fog":
             shas = _get_firefox_shas(channel, hourly=True)
         build_id_filter = 'AND build_id != "*"'
+
+    metric_key = req_data.get("metric_key")
+    metric_key_filter = "AND metric_key = @metric_key" if metric_key else ""
+
     # Build the SQL query with parameters
     query = f"""
             SELECT
@@ -572,18 +612,22 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 AND ping_type = @ping_type
                 AND os = @os
                 {build_id_filter}
+                {metric_key_filter}
                 AND version BETWEEN
                 {latest_version} - @num_versions AND {latest_version}
     """
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("metric", "STRING", probe),
-            bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
-            bigquery.ScalarQueryParameter("os", "STRING", os),
-            bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
-            bigquery.ScalarQueryParameter("channel", "STRING", channel),
-        ]
-    )
+    query_parameters = [
+        bigquery.ScalarQueryParameter("metric", "STRING", probe),
+        bigquery.ScalarQueryParameter("ping_type", "STRING", ping_type),
+        bigquery.ScalarQueryParameter("os", "STRING", os),
+        bigquery.ScalarQueryParameter("num_versions", "INT64", num_versions),
+        bigquery.ScalarQueryParameter("channel", "STRING", channel),
+    ]
+    if metric_key:
+        query_parameters.append(
+            bigquery.ScalarQueryParameter("metric_key", "STRING", metric_key)
+        )
+    job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
     with bqClient as client:
         query_job = client.query(query, job_config=job_config)
 
@@ -640,6 +684,40 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     if response:
         _log_probe_query(request)
     return response
+
+
+def get_glean_metric_labels_from_bq(bqClient, req_data):
+    channel = req_data["channel"]
+    product = req_data["product"]
+    table_id = f"glam_{product}_{channel}_aggregates"
+
+    where_clauses = ["metric = @metric", "metric_key != ''"]
+    parameters = [
+        bigquery.ScalarQueryParameter("metric", "STRING", req_data["probe"]),
+    ]
+    if req_data.get("ping_type"):
+        where_clauses.append("ping_type = @ping_type")
+        parameters.append(
+            bigquery.ScalarQueryParameter(
+                "ping_type", "STRING", req_data["ping_type"]
+            )
+        )
+    if req_data.get("os"):
+        where_clauses.append("os = @os")
+        parameters.append(
+            bigquery.ScalarQueryParameter("os", "STRING", req_data["os"])
+        )
+
+    query = f"""
+        SELECT DISTINCT metric_key
+        FROM `{GLAM_BQ_PROD_PROJECT}.glam_etl.{table_id}`
+        WHERE {' AND '.join(where_clauses)}
+        ORDER BY metric_key
+    """
+    job_config = bigquery.QueryJobConfig(query_parameters=parameters)
+    with bqClient as client:
+        query_job = client.query(query, job_config=job_config)
+    return [row.metric_key for row in query_job]
 
 
 def _get_fenix_counts(app_id, versions, ping_type, os, by_build):
@@ -795,6 +873,47 @@ def aggregations(request):
         raise NotFound("No documents found for the given parameters")
 
     return Response({"response": response})
+
+
+@api_view(["POST"])
+def metric_labels(request):
+    """
+    Returns the distinct metric_keys (labels) for a Glean labeled metric.
+
+    Used to populate a label picker for non-categorical labeled metrics so
+    that the data endpoint can be called with a `metric_key` filter and
+    avoid scanning every label's histogram in a single request.
+
+    Expects::
+
+        {
+            "query": {
+                "product": "fog",
+                "app_id": "nightly",
+                "probe": "metric.name",
+                "ping_type": "metrics",  # optional
+                "os": "Windows"           # optional
+            }
+        }
+
+    Returns::
+
+        {"labels": ["foo", "bar", "baz"]}
+    """
+    body = request.data
+    if body is None or body.get("query") is None:
+        raise ValidationError("Unexpected JSON body")
+
+    query = body["query"]
+    if query.get("product") not in ("fog", "fenix"):
+        raise ValidationError(
+            "metric_labels endpoint is only available for Glean products (fog, fenix)"
+        )
+
+    req_data = validate_request_glean_labels(**query)
+    bqClient = get_bq_client()
+    labels = get_glean_metric_labels_from_bq(bqClient, req_data)
+    return Response({"labels": labels})
 
 
 @api_view(["GET"])

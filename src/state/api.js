@@ -1,4 +1,5 @@
 const dataURL = '__BASE_DOMAIN__/api/v1/data/';
+const labelsURL = '__BASE_DOMAIN__/api/v1/labels/';
 const randomProbeURL = '__BASE_DOMAIN__/api/v1/probes/random?';
 
 // We could eventually make a constants.js, this is low priority.
@@ -49,6 +50,30 @@ export async function getProbeData(params) {
     return response.json();
   });
   return data;
+}
+
+export async function getProbeLabels(params) {
+  const response = await fetch(labelsURL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query: params }),
+  });
+  if (response.status >= 400 && response.status < 600) {
+    const errorCode = `code${response.status}`;
+    let msg = FETCH_ERROR_MESSAGES[errorCode] || '';
+    if (!msg) {
+      msg =
+        response.status < 500
+          ? FETCH_ERROR_MESSAGES.code4xx
+          : FETCH_ERROR_MESSAGES.code5xx;
+    }
+    const error = new Error(msg);
+    error.statusCode = response.status;
+    throw error;
+  }
+  return response.json();
 }
 
 function getProbeSearchURL(productId, queryString, resultsLimit) {

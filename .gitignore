@@ -76,3 +76,9 @@ tests/data
 
 # virtual env
 venv/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/

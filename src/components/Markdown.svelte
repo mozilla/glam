@@ -2,8 +2,8 @@
   import { marked } from 'marked';
 
   const renderer = {
-    html(html) {
-      return `<code>${html.replace('<', '&lt;')}</code>`;
+    html({ text }) {
+      return `<code>${text.replace('<', '&lt;')}</code>`;
     },
   };
   marked.use({ renderer });
