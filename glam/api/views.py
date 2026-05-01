@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 import requests
 import json
 import os
+import threading
 import dateutil.parser
 import orjson
 from django.conf import settings
@@ -14,6 +15,7 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 from google.cloud import bigquery
+from google.cloud import bigquery_storage
 
 
 from glam.api import constants
@@ -38,6 +40,24 @@ GLAM_BQ_PROD_PROJECT = "moz-fx-data-shared-prod"
 
 def get_bq_client():
     return bigquery.Client()
+
+
+_bq_storage_client = None
+_bq_storage_client_lock = threading.Lock()
+
+
+def get_bq_storage_client():
+    """Single shared BigQuery Storage Read client.
+
+    The first call pays gRPC channel + auth setup (~10-20s). Subsequent calls
+    are cheap, so we cache the instance for the lifetime of the process.
+    """
+    global _bq_storage_client
+    if _bq_storage_client is None:
+        with _bq_storage_client_lock:
+            if _bq_storage_client is None:
+                _bq_storage_client = bigquery_storage.BigQueryReadClient()
+    return _bq_storage_client
 
 
 @api_view(["GET"])
@@ -628,59 +648,60 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
             bigquery.ScalarQueryParameter("metric_key", "STRING", metric_key)
         )
     job_config = bigquery.QueryJobConfig(query_parameters=query_parameters)
+    bqstorage_client = get_bq_storage_client()
+    response = []
     with bqClient as client:
         query_job = client.query(query, job_config=job_config)
-
-    response = []
-
-    for row in query_job:
-        if aggregation_level != "version" and not row.build_date:
-            continue
-        else:
-            # Remove extra +00
-            build_date = (
-                None
-                if aggregation_level == "version"
-                else datetime.fromisoformat(row.build_date[:-3]).replace(
-                    tzinfo=timezone.utc
+        for batch in query_job.result().to_arrow_iterable(
+            bqstorage_client=bqstorage_client
+        ):
+            for row in batch.to_pylist():
+                if aggregation_level != "version" and not row["build_date"]:
+                    continue
+                # Remove extra +00
+                build_date = (
+                    None
+                    if aggregation_level == "version"
+                    else datetime.fromisoformat(
+                        row["build_date"][:-3]
+                    ).replace(tzinfo=timezone.utc)
                 )
-            )
-        data = {
-            "version": row.version,
-            "ping_type": row.ping_type,
-            "os": row.os,
-            "build_id": row.build_id,
-            "revision": shas.get(row.build_id, ""),
-            "build_date": build_date,
-            "metric": row.metric,
-            "metric_type": row.metric_type,
-            "metric_key": row.metric_key,
-            "client_agg_type": row.client_agg_type,
-            "total_users": int(
-                row.total_users
-            ),  # Casting, otherwise this BIGNUMERIC column is read as a string
-            "sample_count": (
-                # Casting, otherwise this BIGNUMERIC column is read as a string.
-                # Fallback to zero as temp workaround for missing total_sample
-                # on labeled_distributions.
-                int(row.total_sample)
-                if row.total_sample
-                else 0
-            ),
-            "histogram": row.histogram and orjson.loads(row.histogram) or "",
-            "non_norm_histogram": row.non_norm_histogram
-            and orjson.loads(row.non_norm_histogram)
-            or "",
-            "percentiles": row.percentiles and orjson.loads(row.percentiles) or "",
-            "non_norm_percentiles": row.non_norm_percentiles
-            and orjson.loads(row.non_norm_percentiles)
-            or "",
-        }
+                data = {
+                    "version": row["version"],
+                    "ping_type": row["ping_type"],
+                    "os": row["os"],
+                    "build_id": row["build_id"],
+                    "revision": shas.get(row["build_id"], ""),
+                    "build_date": build_date,
+                    "metric": row["metric"],
+                    "metric_type": row["metric_type"],
+                    "metric_key": row["metric_key"],
+                    "client_agg_type": row["client_agg_type"],
+                    "total_users": int(row["total_users"]),
+                    "sample_count": (
+                        int(row["total_sample"]) if row["total_sample"] else 0
+                    ),
+                    "histogram": (
+                        orjson.loads(row["histogram"]) if row["histogram"] else ""
+                    ),
+                    "non_norm_histogram": (
+                        orjson.loads(row["non_norm_histogram"])
+                        if row["non_norm_histogram"]
+                        else ""
+                    ),
+                    "percentiles": (
+                        orjson.loads(row["percentiles"])
+                        if row["percentiles"]
+                        else ""
+                    ),
+                    "non_norm_percentiles": (
+                        orjson.loads(row["non_norm_percentiles"])
+                        if row["non_norm_percentiles"]
+                        else ""
+                    ),
+                }
+                response.append(data)
 
-        # Get the total distinct client IDs for this set of dimensions.
-        # data["total_addressable_market"] = counts.get(f"{row.version}-{row.build_id}")
-
-        response.append(data)
     if response:
         _log_probe_query(request)
     return response
