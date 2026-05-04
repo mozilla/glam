@@ -14,7 +14,9 @@ except (OSError, AttributeError):
     # Trimming becomes a no-op there; the middleware stays installed but
     # only the gc.collect() runs.
     _malloc_trim = None
-    logger.info("malloc_trim unavailable; release middleware will only run gc.collect()")
+    logger.info(
+        "malloc_trim unavailable; release middleware will only run gc.collect()"
+    )
 
 
 def release_memory_middleware(get_response):
