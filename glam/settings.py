@@ -50,6 +50,7 @@ class Core(Configuration):
         "dockerflow.django.middleware.DockerflowMiddleware",
         "django.middleware.common.CommonMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
+        "glam.middleware.release_memory_middleware",
     ]
 
     ROOT_URLCONF = "glam.urls"
