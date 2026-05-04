@@ -192,7 +192,7 @@ export default {
     const { probe } = appStore.getState();
     const metricType = probe.type;
     const histogramType = probe.histogram_type;
-    const isStatic = probe.labels !== null && probe.labels.length > 0;
+    const isStatic = Array.isArray(probe.labels) && probe.labels.length > 0;
     let probeView = this.getViewFromMetricType(metricType)
       ? this.getViewFromMetricType(metricType)
       : this.probeViewFromHistogramTypeMap[histogramType];
