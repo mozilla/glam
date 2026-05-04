@@ -53,8 +53,11 @@
   }
 
   let aggregationTypes = gatherAggregationTypes(data);
-  let probeKeys = gatherProbeKeys(data);
-  let currentKey = probeKeys[0];
+  $: probeKeys =
+    $store.probeKeys && $store.probeKeys.length
+      ? [...$store.probeKeys]
+      : gatherProbeKeys(data);
+  $: currentKey = $store.aggKey || (probeKeys && probeKeys[0]);
   let currentAggregation = aggregationTypes[0];
 
   function filterResponseData(d, agg, key) {

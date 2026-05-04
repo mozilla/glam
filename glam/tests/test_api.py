@@ -504,6 +504,113 @@ class TestGleanAggregationsApi:
         assert versions == sorted([6, 5, 4, 3])
 
 
+class TestMetricLabelsApi:
+    @classmethod
+    def setup_class(cls):
+        cls.url = reverse("v1-labels")
+
+    def test_method_not_allowed(self, client):
+        assert client.get(self.url).status_code == 405
+
+    def test_empty_body(self, client):
+        resp = client.post(self.url, data={}, content_type="application/json")
+        assert resp.status_code == 400
+        assert resp.json()[0] == "Unexpected JSON body"
+
+    def test_rejects_legacy_firefox(self, client):
+        resp = client.post(
+            self.url,
+            data={
+                "query": {
+                    "product": "firefox",
+                    "app_id": "nightly",
+                    "probe": "gc_ms",
+                }
+            },
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("metric_labels endpoint is only available")
+
+    def test_rejects_unknown_product(self, client):
+        resp = client.post(
+            self.url,
+            data={
+                "query": {
+                    "product": "feenicks",
+                    "app_id": "nightly",
+                    "probe": "gc_ms",
+                }
+            },
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("metric_labels endpoint is only available")
+
+    @pytest.mark.parametrize(
+        "query, missing",
+        [
+            ({"product": "fog"}, "app_id, probe"),
+            ({"product": "fog", "app_id": "nightly"}, "probe"),
+            ({"product": "fog", "probe": "p"}, "app_id"),
+        ],
+    )
+    def test_required_params(self, client, query, missing):
+        resp = client.post(
+            self.url,
+            data={"query": query},
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0] == f"Missing required query parameters: {missing}"
+
+    def test_invalid_channel(self, client):
+        resp = client.post(
+            self.url,
+            data={
+                "query": {
+                    "product": "fog",
+                    "app_id": "ohrora",
+                    "probe": "gc_ms",
+                }
+            },
+            content_type="application/json",
+        )
+        assert resp.status_code == 400
+        assert resp.json()[0].startswith("Invalid channel")
+
+    def test_returns_distinct_labels_from_bq(self, client):
+        # Mock the BigQuery client and the helper so we can exercise the
+        # request/response shape without a real BigQuery dependency.
+        with mock.patch("glam.api.views.get_bq_client") as mock_get_client, mock.patch(
+            "glam.api.views.get_glean_metric_labels_from_bq",
+            return_value=["a", "b", "c"],
+        ) as mock_helper:
+            resp = client.post(
+                self.url,
+                data={
+                    "query": {
+                        "product": "fog",
+                        "app_id": "nightly",
+                        "probe": "metric.foo",
+                        "ping_type": "metrics",
+                        "os": "Windows",
+                    }
+                },
+                content_type="application/json",
+            )
+        assert resp.status_code == 200
+        assert resp.json() == {"labels": ["a", "b", "c"]}
+        mock_get_client.assert_called_once()
+        # Validator-normalized payload reaches the helper.
+        passed_req_data = mock_helper.call_args.args[1]
+        assert passed_req_data["channel"] == "nightly"
+        assert passed_req_data["product"] == "fog"
+        assert passed_req_data["probe"] == "metric.foo"
+        assert passed_req_data["ping_type"] == "metrics"
+        assert passed_req_data["os"] == "Windows"
+
+
 class TestUpdatesApi:
     @classmethod
     def setup_class(cls):

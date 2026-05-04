@@ -14,6 +14,7 @@ spa_view = TemplateView.as_view(
 
 urlpatterns = [
     path("api/v1/data/", api_views.aggregations, name="v1-data"),
+    path("api/v1/labels/", api_views.metric_labels, name="v1-labels"),
     path(
         "api/v1/legacy-mirror-metric/",
         api_views.legacy_telemetry_mirror_metric,

@@ -6,7 +6,7 @@ import {
 } from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
-import { getProbeData, getProbeInfo } from '../state/api';
+import { getProbeData, getProbeInfo, getProbeLabels } from '../state/api';
 import {
   validate,
   noResponse,
@@ -14,6 +14,18 @@ import {
   noMeaningfulData,
 } from '../utils/data-validation';
 import { filterLowClientBuilds } from '../utils/probe-utils';
+
+// Returns true when probe info indicates a labeled metric whose label set is
+// dynamic (i.e. not enumerated in metrics.yaml). These metrics can have
+// thousands of metric_keys; the data endpoint must be filtered by metric_key
+// to avoid timeouts. Categorical labeled metrics (with a static labels list)
+// keep their existing behavior — labels arrive with the data.
+export function isNonCategoricalLabeled(probe) {
+  if (!probe || !probe.loaded || !probe.type) return false;
+  const t = probe.type;
+  if (!t.startsWith('labeled_') || t === 'dual_labeled_counter') return false;
+  return !probe.labels || probe.labels.length === 0;
+}
 
 export const SUPPORTED_METRICS = [
   'categorical',
@@ -113,7 +125,7 @@ export default {
 
   // Common data fetching and transformation methods
   getParamsForDataAPI(storeValue) {
-    return {
+    const params = {
       product: storeValue.product,
       app_id: storeValue.productDimensions.app_id,
       os: storeValue.productDimensions.os,
@@ -122,6 +134,25 @@ export default {
       aggregationLevel: storeValue.productDimensions.aggregationLevel,
       versions: 20,
     };
+    // For non-categorical labeled metrics, scope the data fetch to one
+    // metric_key so the BigQuery scan doesn't pull every label's histogram
+    // in a single (timeout-prone) request. Including metric_key in the
+    // params also makes it part of the dataset cache key, so changing the
+    // dropdown selection triggers a fresh fetch.
+    //
+    // Only add metric_key once the preflight result for the current probe is
+    // settled and the chosen aggKey is among the available keys. This avoids
+    // creating a cache entry for a stale metric_key during probe switches.
+    if (
+      isNonCategoricalLabeled(storeValue.probe) &&
+      storeValue.aggKey &&
+      storeValue.probeKeysFor === storeValue.probeName &&
+      storeValue.probeKeys &&
+      storeValue.probeKeys.includes(storeValue.aggKey)
+    ) {
+      params.metric_key = storeValue.aggKey;
+    }
+    return params;
   },
 
   getParamsForQueryString(storeValue) {
@@ -138,6 +169,7 @@ export default {
       hov: storeValue.hov,
       currentPage: storeValue.currentPage,
       normalizationType: storeValue.productDimensions.normalizationType,
+      aggKey: storeValue.aggKey,
     };
     return stripDefaultValues(params, {
       ...sharedDefaults,
@@ -157,18 +189,60 @@ export default {
       appStore.setField('probe', newProbe);
     });
 
-    const metricType = appStore.getState().probe.type;
-    const histogramType = appStore.getState().probe.histogram_type;
+    const { probe } = appStore.getState();
+    const metricType = probe.type;
+    const histogramType = probe.histogram_type;
+    const isStatic = probe.labels !== null && probe.labels.length > 0;
     let probeView = this.getViewFromMetricType(metricType)
       ? this.getViewFromMetricType(metricType)
       : this.probeViewFromHistogramTypeMap[histogramType];
     if (metricType === 'labeled_counter') {
-      const isStatic =
-        appStore.getState().probe.labels !== null &&
-        appStore.getState().probe.labels.length > 0;
       probeView = this.getViewFromMetricType(metricType, isStatic);
     }
     noUnknownMetrics(metricType, SUPPORTED_METRICS);
+
+    if (isNonCategoricalLabeled(probe)) {
+      // Preflight the available metric_keys for this probe (cached per probe)
+      // so the user can pick one before we fetch histogram data.
+      if (appStore.getState().probeKeysFor !== params.probe) {
+        const labelsResponse = await getProbeLabels({
+          product: params.product,
+          app_id: params.app_id,
+          probe: params.probe,
+          ping_type: params.ping_type,
+          os: params.os,
+        });
+        appStore.setField(
+          'probeKeys',
+          (labelsResponse && labelsResponse.labels) || []
+        );
+        appStore.setField('probeKeysFor', params.probe);
+      }
+
+      const { probeKeys } = appStore.getState();
+      if (!probeKeys.length) {
+        const er = new Error('There is no meaningful data for this probe.');
+        er.moreInformation =
+          'No labels were found for this metric in the aggregate tables. ' +
+          'It may not have accumulated data yet.';
+        throw er;
+      }
+
+      const { aggKey: currentAggKey } = appStore.getState();
+      let aggKey = currentAggKey;
+      if (!aggKey || !probeKeys.includes(aggKey)) {
+        [aggKey] = probeKeys;
+        appStore.setField('aggKey', aggKey);
+      }
+
+      // Always fetch with the current aggKey, overriding any value the params
+      // were built with. The dataset cache key (qs) only includes metric_key
+      // once preflight state is settled (see getParamsForDataAPI), so if the
+      // store re-derives mid-flight a second fetch will run with the proper
+      // qs; both calls fetch the same data, so the duplicate is harmless.
+      // eslint-disable-next-line no-param-reassign
+      params = { ...params, metric_key: aggKey };
+    }
 
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
