@@ -582,9 +582,7 @@ class TestMetricLabelsApi:
     def test_returns_distinct_labels_from_bq(self, client):
         # Mock the BigQuery client and the helper so we can exercise the
         # request/response shape without a real BigQuery dependency.
-        with mock.patch(
-            "glam.api.views.get_bq_client"
-        ) as mock_get_client, mock.patch(
+        with mock.patch("glam.api.views.get_bq_client") as mock_get_client, mock.patch(
             "glam.api.views.get_glean_metric_labels_from_bq",
             return_value=["a", "b", "c"],
         ) as mock_helper:

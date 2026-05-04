@@ -662,9 +662,9 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 build_date = (
                     None
                     if aggregation_level == "version"
-                    else datetime.fromisoformat(
-                        row["build_date"][:-3]
-                    ).replace(tzinfo=timezone.utc)
+                    else datetime.fromisoformat(row["build_date"][:-3]).replace(
+                        tzinfo=timezone.utc
+                    )
                 )
                 data = {
                     "version": row["version"],
@@ -690,9 +690,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                         else ""
                     ),
                     "percentiles": (
-                        orjson.loads(row["percentiles"])
-                        if row["percentiles"]
-                        else ""
+                        orjson.loads(row["percentiles"]) if row["percentiles"] else ""
                     ),
                     "non_norm_percentiles": (
                         orjson.loads(row["non_norm_percentiles"])
@@ -719,15 +717,11 @@ def get_glean_metric_labels_from_bq(bqClient, req_data):
     if req_data.get("ping_type"):
         where_clauses.append("ping_type = @ping_type")
         parameters.append(
-            bigquery.ScalarQueryParameter(
-                "ping_type", "STRING", req_data["ping_type"]
-            )
+            bigquery.ScalarQueryParameter("ping_type", "STRING", req_data["ping_type"])
         )
     if req_data.get("os"):
         where_clauses.append("os = @os")
-        parameters.append(
-            bigquery.ScalarQueryParameter("os", "STRING", req_data["os"])
-        )
+        parameters.append(bigquery.ScalarQueryParameter("os", "STRING", req_data["os"]))
 
     query = f"""
         SELECT DISTINCT metric_key

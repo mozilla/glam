@@ -20,6 +20,7 @@ class ApiConfig(AppConfig):
     def _prewarm_bq():
         try:
             from glam.api.views import get_bq_client, get_bq_storage_client
+
             client = get_bq_client()
             bqstorage = get_bq_storage_client()
             row_iter = client.query("SELECT 1 AS x").result()
