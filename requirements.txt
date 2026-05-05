@@ -148,7 +148,7 @@ pyflakes==3.4.0
     # via flake8
 pygments==2.19.2
     # via pytest
-pytest==8.4.2
+pytest==9.0.3
     # via
     #   -r requirements.in
     #   pytest-blockage
