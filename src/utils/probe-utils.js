@@ -91,9 +91,15 @@ export function filterLowClientBuilds(data) {
       parseInt(buildId.substring(6, 8), 10)
     );
   }
-  // Sums up the total_users for each build and filters out builds with low client counts
-
+  // Counter / labeled_counter rows are repeated once per client_agg_type
+  // (sum/avg/count/min/max) with the same total_users in each — they're all
+  // aggregations over the same user set. Restrict the sum to a single
+  // client_agg_type so the threshold compares against an honest per-build
+  // user count instead of a 5×-inflated one. All metric_keys still count
+  // toward that single number.
+  const aggTypeForCounting = data[0]?.client_agg_type;
   const totalUsersPerBuild = data.reduce((acc, d) => {
+    if (d.client_agg_type !== aggTypeForCounting) return acc;
     acc[d.build_id] = (acc[d.build_id] || 0) + d.total_users;
     return acc;
   }, {});
