@@ -82,6 +82,7 @@ USER app
 CMD exec gunicorn \
     --workers 2 \
     --threads 8 \
+    --timeout 120 \
     --worker-tmp-dir /dev/shm \
     --log-file - \
     --access-logfile - \

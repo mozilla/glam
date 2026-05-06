@@ -60,6 +60,59 @@ def get_bq_storage_client():
     return _bq_storage_client
 
 
+_glean_probe_meta_cache = {}
+_glean_probe_meta_cache_lock = threading.Lock()
+_GLEAN_DICTIONARY_PRODUCT_MAP = {
+    "fog": "firefox_desktop",
+    "fenix": "fenix",
+}
+
+
+def _get_glean_probe_metadata(product, probe_name):
+    """Return Glean Dictionary metadata for a probe, or None if unavailable.
+
+    Cached per-process; the result shape is ``{"type": str, "labels": list}``.
+    A failed lookup is cached as a sentinel so we don't keep hammering the
+    dictionary for unknown probes.
+    """
+    cache_key = (product, probe_name)
+    cached = _glean_probe_meta_cache.get(cache_key)
+    if cached is not None:
+        return None if cached == "__MISS__" else cached
+
+    dict_product = _GLEAN_DICTIONARY_PRODUCT_MAP.get(product)
+    meta = None
+    if dict_product is not None:
+        try:
+            url = (
+                "https://dictionary.telemetry.mozilla.org/data/"
+                f"{dict_product}/metrics/data_{probe_name}.json"
+            )
+            resp = requests.get(url, timeout=5)
+            resp.raise_for_status()
+            info = resp.json()
+            meta = {
+                "type": info.get("type"),
+                "labels": info.get("labels") or [],
+            }
+        except Exception:
+            meta = None
+
+    with _glean_probe_meta_cache_lock:
+        _glean_probe_meta_cache[cache_key] = meta if meta is not None else "__MISS__"
+    return meta
+
+
+def _is_categorical_labeled_counter(product, probe_name):
+    """A labeled_counter with a static (non-empty) labels list. Frontend only
+    keeps client_agg_type='sum' rows for these, so we can filter at the SQL
+    level."""
+    meta = _get_glean_probe_metadata(product, probe_name)
+    if not meta:
+        return False
+    return meta.get("type") == "labeled_counter" and bool(meta.get("labels"))
+
+
 @api_view(["GET"])
 def updates(request):
     product = request.GET.get("product")
@@ -599,7 +652,6 @@ def __get_glean_info(probe_name):
 
 
 def get_glean_aggregations_from_bq(bqClient, request, req_data):
-
     channel = req_data["channel"]
     product = req_data["product"]
     probe = req_data["probe"]
@@ -621,7 +673,15 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     metric_key = req_data.get("metric_key")
     metric_key_filter = "AND metric_key = @metric_key" if metric_key else ""
 
-    # Build the SQL query with parameters
+    # Categorical labeled_counter probes have a static labels list; the
+    # frontend only consumes client_agg_type='sum' rows for them, so filter
+    # at the SQL level to avoid scanning/serializing 5x the data.
+    client_agg_type_filter = (
+        'AND client_agg_type = "sum"'
+        if _is_categorical_labeled_counter(product, probe)
+        else ""
+    )
+
     query = f"""
             SELECT
             *
@@ -633,6 +693,7 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
                 AND os = @os
                 {build_id_filter}
                 {metric_key_filter}
+                {client_agg_type_filter}
                 AND version BETWEEN
                 {latest_version} - @num_versions AND {latest_version}
     """
