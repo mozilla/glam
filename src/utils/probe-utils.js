@@ -80,11 +80,15 @@ export function convertValueToProportions(obj) {
 }
 
 export function filterLowClientBuilds(data) {
+  // Parse the YYYYMMDD prefix as a local-midnight Date. Using the multi-arg
+  // Date constructor avoids the ISO-string codepath, which would otherwise
+  // interpret "YYYY-MM-DD" as UTC and shift the day in negative-offset
+  // timezones (e.g. a build from May 2 would land on May 1 20:00 in EDT).
   function getBuildDate(buildId) {
     return new Date(
-      `${buildId.substring(0, 4)}
-      -${buildId.substring(4, 6)}
-      -${buildId.substring(6, 8)}`
+      parseInt(buildId.substring(0, 4), 10),
+      parseInt(buildId.substring(4, 6), 10) - 1,
+      parseInt(buildId.substring(6, 8), 10)
     );
   }
   // Sums up the total_users for each build and filters out builds with low client counts
@@ -94,11 +98,14 @@ export function filterLowClientBuilds(data) {
     return acc;
   }, {});
 
-  const yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
-  const threeDaysAgo = new Date(yesterday - 3 * 24 * 60 * 60 * 1000);
+  // Floor the cutoff to local midnight so the comparison with getBuildDate
+  // (also at local midnight) is a day-level check, not a sliding window.
+  const cutoff = new Date();
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - 4);
   return data.filter(
     (d) =>
       totalUsersPerBuild[d.build_id] >= LOW_CLIENT_COUNT_NIGHTLY ||
-      getBuildDate(d.build_id) >= threeDaysAgo
+      getBuildDate(d.build_id) >= cutoff
   );
 }
