@@ -201,6 +201,18 @@ export default {
     }
     noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
+    if (!isNonCategoricalLabeled(probe)) {
+      // Other probe types (categorical labeled_counter, dual_labeled_counter,
+      // non-labeled metrics) don't use the preflight; clear any keys cached
+      // from a previously-viewed non-categorical labeled probe so the
+      // explorer view falls back to gatherProbeKeys(data) instead of using
+      // stale labels that won't match the current data's metric_keys.
+      if (appStore.getState().probeKeysFor) {
+        appStore.setField('probeKeys', []);
+        appStore.setField('probeKeysFor', '');
+      }
+    }
+
     if (isNonCategoricalLabeled(probe)) {
       // Preflight the available metric_keys for this probe (cached per probe)
       // so the user can pick one before we fetch histogram data.

@@ -46,7 +46,13 @@
       ? [...$store.probeKeys]
       : gatherProbeKeys(transformedData);
 
-  $: currentKey = $store.aggKey || probeKeys[0];
+  // Fall back to probeKeys[0] when the URL/store aggKey isn't a valid key for
+  // the current probe (e.g. carried over from a previously-viewed labeled
+  // metric). Without this guard the data filter returns empty and the chart
+  // silently doesn't render.
+  $: currentKey = probeKeys.includes($store.aggKey)
+    ? $store.aggKey
+    : probeKeys[0];
   $: currentSubKey = dualLabeledKeys[currentKey]
     ? dualLabeledKeys[currentKey][0]
     : null;
