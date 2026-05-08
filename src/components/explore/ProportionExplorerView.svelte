@@ -57,7 +57,14 @@
     $store.probeKeys && $store.probeKeys.length
       ? [...$store.probeKeys]
       : gatherProbeKeys(data);
-  $: currentKey = $store.aggKey || (probeKeys && probeKeys[0]);
+  // Fall back to probeKeys[0] when the URL/store aggKey isn't a valid key for
+  // the current probe (e.g. carried over from a previously-viewed labeled
+  // metric). Without this guard the data filter returns empty and the chart
+  // silently doesn't render.
+  $: currentKey =
+    $store.aggKey && probeKeys && probeKeys.includes($store.aggKey)
+      ? $store.aggKey
+      : probeKeys && probeKeys[0];
   let currentAggregation = aggregationTypes[0];
 
   function filterResponseData(d, agg, key) {
