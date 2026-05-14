@@ -155,9 +155,15 @@
   export let yScaleType;
   export let yDomain;
   export let densityMetricType;
+  const NANOSECOND_METRIC_TYPES = [
+    'timing_distribution',
+    'labeled_timing_distribution',
+    'timespan',
+  ];
   export let yTickFormatter = formatCompact;
-  if (data[0].metric_type === 'timing_distribution') {
-    yTickFormatter = formatFromNanoseconds;
+  if (NANOSECOND_METRIC_TYPES.includes(data[0].metric_type)) {
+    const probeTimeUnit = $store.probe.time_unit;
+    yTickFormatter = (v) => formatFromNanoseconds(v, probeTimeUnit);
   }
   export let summaryNumberFormatter = yTickFormatter;
   export let comparisonKeyFormatter = (v) => v;
