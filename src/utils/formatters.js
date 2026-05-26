@@ -26,7 +26,24 @@ export const timecode = timeFormat('%H:%M:%S');
 export const formatBuildIDToOnlyDate = (b) => ymd(b);
 export const formatToBuildID = timeFormat('%Y%m%d%H%M%S');
 
-export const formatFromNanoseconds = (v) => {
+// Glean's supported time_units for timing_distribution / labeled_timing_distribution
+// / timespan. Values are always recorded in nanoseconds; time_unit is the unit
+// the metric author asked the value to be reported in.
+const TIME_UNITS_FROM_NS = {
+  nanosecond: { divisor: 1, suffix: 'ns' },
+  microsecond: { divisor: 1e3, suffix: 'μs' },
+  millisecond: { divisor: 1e6, suffix: 'ms' },
+  second: { divisor: 1e9, suffix: 's' },
+  minute: { divisor: 6e10, suffix: 'min' },
+  hour: { divisor: 3.6e12, suffix: 'h' },
+  day: { divisor: 8.64e13, suffix: 'd' },
+};
+
+export const formatFromNanoseconds = (v, timeUnit) => {
+  const unit = TIME_UNITS_FROM_NS[timeUnit];
+  if (unit) {
+    return `${formatCompact(v / unit.divisor)} ${unit.suffix}`;
+  }
   if (v < 1e3) {
     return `${format(',d')(v)} ns`;
   }
