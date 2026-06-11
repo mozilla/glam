@@ -3,6 +3,7 @@ import { timeFormat } from 'd3-time-format';
 
 export const formatValue = format(',.2f');
 export const formatPercent = format('.3%');
+export const formatPercentNoDecimal = format('.0%');
 export const formatPercentDecimal = format('.2%');
 export const formatCount = format(',d');
 export const formatMetric = format(',.2s');
