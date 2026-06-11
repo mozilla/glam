@@ -253,31 +253,32 @@ export const transformAPIResponse = {
  * This transformation would ideally be done on the ETL, but given the amount
  * of work involved in changing the ETL, we are doing it here.
  *
+ * Normalized path: each bar is the share of distinct clients reporting that
+ * label (`total_users(key) / Σ_key total_users`), not the share of submitted
+ * samples. Client-weighting is robust to highly active clients and keeps bars
+ * summing to 1 (a client touching multiple labels still contributes to each).
+ *
+ * Non-normalized path: each bar is the approximate total occurrences (Σ counter
+ * values) for that label, reconstructed from the per-client sum distribution by
+ * weighting each log bucket's client count by the geometric mean of its edges.
+ * This is lossy — bucket centers only approximate the underlying values, coarsest
+ * in the heavy tail — and outlier-sensitive.
+ *
  * @description
  * 1. Filters the transformed data to include only points with `client_agg_type` equal to 'sum'.
- * 2. Calculates the total number of samples per build (`samplesPerBuild`).
+ * 2. Calculates the total clients per build across categories (`clientsPerBuild`), the proportion denominator.
  * 3. Reverses the `labels` object to map labels back to their metric keys (`revertedLabels`).
  * 4. Initializes histograms for each label with zero values (`initHistograms`).
  * 5. Constructs normalized and non-normalized histograms for each build (`histogramsPerBuild`).
  * 6. Transforms the input data by adding histogram data, sample counts, and a constant metric key.
  * 7. Ensures the returned array contains unique entries for each `build_id`.
  */
-export const transformLabeledCounterToCategoricalHistogramSampleCount = (
+export const transformLabeledCounterToCategoricalHistogramClientCount = (
   data,
   labels
 ) => {
   /* eslint-disable camelcase */
   const filteredData = data.filter((point) => point.client_agg_type === 'sum');
-  const samplesPerBuild = filteredData.reduce(
-    (acc, { build_id, sample_count }) => {
-      if (!acc[build_id]) {
-        acc[build_id] = 0;
-      }
-      acc[build_id] += sample_count;
-      return acc;
-    },
-    {}
-  );
 
   const maxSampleCountPerBuild = filteredData.reduce(
     (acc, { build_id, sample_count }) => {
@@ -311,17 +312,43 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
     {}
   );
 
+  // Approximate total occurrences for a label from its per-client sum
+  // distribution: Σ (representative bucket value × clients in bucket). Each log
+  // bucket is represented by the geometric mean of its edges (its center on the
+  // log scale the buckets were built on) rather than the lower edge, which would
+  // systematically under-count. Still lossy in the tail.
+  const occurrencesFromHistogram = (histogram) => {
+    const buckets = Object.entries(histogram || {})
+      .map(([edge, count]) => [Number(edge), count])
+      .sort((a, b) => a[0] - b[0]);
+    return buckets.reduce((total, [edge, count], i) => {
+      const next = buckets[i + 1]?.[0];
+      let representative;
+      if (next === undefined) {
+        // Top bucket: its edge ~= the observed max, so use the edge itself.
+        representative = edge;
+      } else if (edge <= 0) {
+        representative = next / 2;
+      } else {
+        representative = Math.sqrt(edge * next);
+      }
+      return total + representative * count;
+    }, 0);
+  };
+
   const histogramsPerBuild = filteredData.reduce(
-    (acc, { build_id, metric_key, sample_count }) => {
+    (acc, { build_id, metric_key, total_users, non_norm_histogram }) => {
       if (!acc[build_id]) {
         acc[build_id] = {
           normalized: { ...initHistograms },
           non_normalized: { ...initHistograms },
         };
       }
-      acc[build_id].normalized[revertedLabels[metric_key]] =
-        sample_count / Math.max(samplesPerBuild[build_id], 1);
-      acc[build_id].non_normalized[revertedLabels[metric_key]] = sample_count;
+      const label = revertedLabels[metric_key];
+      acc[build_id].normalized[label] =
+        total_users / Math.max(clientsPerBuild[build_id], 1);
+      acc[build_id].non_normalized[label] =
+        occurrencesFromHistogram(non_norm_histogram);
       return acc;
     },
     {}

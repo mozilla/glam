@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import {
   transformBooleanHistogramToCategoricalHistogram,
   transformAPIResponse,
-  transformLabeledCounterToCategoricalHistogramSampleCount,
+  transformLabeledCounterToCategoricalHistogramClientCount,
 } from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
@@ -289,7 +289,7 @@ export default {
           labels = dataAndLabels.labels;
         }
         if (metricType === 'labeled_counter') {
-          data = transformLabeledCounterToCategoricalHistogramSampleCount(
+          data = transformLabeledCounterToCategoricalHistogramClientCount(
             data,
             labels
           );
