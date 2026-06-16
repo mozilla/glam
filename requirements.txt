@@ -59,7 +59,7 @@ google-auth==2.48.0
     #   google-cloud-storage
 google-cloud-bigquery==3.40.0
     # via -r requirements.in
-google-cloud-bigquery-storage==2.37.0
+google-cloud-bigquery-storage==2.38.0
     # via -r requirements.in
 google-cloud-core==2.5.0
     # via
