@@ -130,7 +130,7 @@ protobuf==6.33.5
     #   googleapis-common-protos
     #   grpcio-status
     #   proto-plus
-psycopg2-binary==2.9.11
+psycopg2-binary==2.9.12
     # via -r requirements.in
 pyarrow==24.0.0
     # via -r requirements.in
