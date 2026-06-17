@@ -40,6 +40,7 @@ export const SUPPORTED_METRICS = [
   'timing_distribution',
   'labeled_custom_distribution',
   'labeled_timing_distribution',
+  'labeled_memory_distribution',
   'boolean',
   'labeled_boolean',
 ];
@@ -116,6 +117,7 @@ export default {
     timespan: 'log',
     timing_distribution: 'log',
     labeled_timing_distribution: 'log',
+    labeled_memory_distribution: 'log',
   },
 
   probeViewFromHistogramTypeMap: {
