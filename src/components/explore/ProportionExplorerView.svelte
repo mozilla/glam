@@ -14,6 +14,7 @@
 
   import {
     formatPercent,
+    formatPercentNoDecimal,
     formatCount,
     formatPercentDecimal,
   } from '../../utils/formatters';
@@ -142,6 +143,36 @@
   );
   $: selectAllCategories = $store.activeBuckets.length === bucketOptions.length;
   $: showKeySelector = probeKeys && probeKeys.length > 1;
+
+  // Within the proportion view a labeled_counter is always static (non-static
+  // ones render as quantile). For these, lock the proportion axis to 0–100% and
+  // drop the fractional percent ticks.
+  $: isStaticLabeledCounter =
+    $store.probe && $store.probe.type === 'labeled_counter';
+  $: proportionTickFormatter = isStaticLabeledCounter
+    ? formatPercentNoDecimal
+    : formatPercent;
+  $: yDomain =
+    metricType === 'proportions' && isStaticLabeledCounter
+      ? [0, 1]
+      : [
+          0,
+          Math.max(
+            ...selectedData
+              .map((d) =>
+                Object.values(
+                  d[
+                    metricType === 'proportions'
+                      ? getProportionName(
+                          $store.productDimensions.normalizationType
+                        )
+                      : getCountName($store.productDimensions.normalizationType)
+                  ]
+                )
+              )
+              .flat()
+          ),
+        ];
 </script>
 
 <style>
@@ -222,32 +253,13 @@
               )}
               {densityMetricType}
               yTickFormatter={metricType === 'proportions'
-                ? formatPercent
+                ? proportionTickFormatter
                 : formatCount}
               summaryNumberFormatter={metricType === 'proportions'
                 ? formatPercentDecimal
                 : formatCount}
               yScaleType={'linear'}
-              yDomain={[
-                0,
-                Math.max(
-                  ...selectedData
-                    .map((d) =>
-                      Object.values(
-                        d[
-                          metricType === 'proportions'
-                            ? getProportionName(
-                                $store.productDimensions.normalizationType
-                              )
-                            : getCountName(
-                                $store.productDimensions.normalizationType
-                              )
-                        ]
-                      )
-                    )
-                    .flat()
-                ),
-              ]}
+              {yDomain}
             />
           </div>
         {/if}
