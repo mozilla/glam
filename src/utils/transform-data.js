@@ -249,18 +249,15 @@ export const transformAPIResponse = {
 };
 
 /**
- * Transforms labeled counter data into a categorical histogram format.
- * This transformation would ideally be done on the ETL, but given the amount
- * of work involved in changing the ETL, we are doing it here.
+ * Pivots LEGACY (pre-ETL-migration) scalar-shaped labeled_counter rows into a
+ * categorical histogram, one point per build. Each bar is the label's share of
+ * submitted samples (`sample_count(label) / Σ sample_count`). Output is keyed by
+ * the declared labels (extra/`__other__` keys dropped) so it lines up with the
+ * new histogram-shaped rows on a single category axis.
  *
- * @description
- * 1. Filters the transformed data to include only points with `client_agg_type` equal to 'sum'.
- * 2. Calculates the total number of samples per build (`samplesPerBuild`).
- * 3. Reverses the `labels` object to map labels back to their metric keys (`revertedLabels`).
- * 4. Initializes histograms for each label with zero values (`initHistograms`).
- * 5. Constructs normalized and non-normalized histograms for each build (`histogramsPerBuild`).
- * 6. Transforms the input data by adding histogram data, sample counts, and a constant metric key.
- * 7. Ensures the returned array contains unique entries for each `build_id`.
+ * This only handles old aggregates produced before static labeled_counters moved
+ * to the histogram pipeline; new rows are served pre-aggregated and skip this.
+ * It can be removed once all in-window versions have been recomputed.
  */
 export const transformLabeledCounterToCategoricalHistogramSampleCount = (
   data,
@@ -270,26 +267,18 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
   const filteredData = data.filter((point) => point.client_agg_type === 'sum');
   const samplesPerBuild = filteredData.reduce(
     (acc, { build_id, sample_count }) => {
-      if (!acc[build_id]) {
-        acc[build_id] = 0;
-      }
-      acc[build_id] += sample_count;
+      acc[build_id] = (acc[build_id] || 0) + sample_count;
       return acc;
     },
     {}
   );
-
   const maxSampleCountPerBuild = filteredData.reduce(
     (acc, { build_id, sample_count }) => {
-      if (!acc[build_id]) {
-        acc[build_id] = 0;
-      }
-      acc[build_id] = Math.max(acc[build_id], sample_count);
+      acc[build_id] = Math.max(acc[build_id] || 0, sample_count);
       return acc;
     },
     {}
   );
-
   const clientsPerBuild = filteredData.reduce(
     (acc, { build_id, total_users }) => {
       acc[build_id] = (acc[build_id] || 0) + total_users;
@@ -297,20 +286,10 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
     },
     {}
   );
-
-  const revertedLabels = Object.entries(labels).reduce((acc, [key, value]) => {
-    acc[value] = key;
-    return acc;
-  }, {});
-
-  const initHistograms = Object.keys(labels).reduce(
-    (innerAcc, key) => ({
-      ...innerAcc,
-      [key]: 0,
-    }),
+  const initHistograms = labels.reduce(
+    (acc, label) => ({ ...acc, [label]: 0 }),
     {}
   );
-
   const histogramsPerBuild = filteredData.reduce(
     (acc, { build_id, metric_key, sample_count }) => {
       if (!acc[build_id]) {
@@ -319,14 +298,15 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
           non_normalized: { ...initHistograms },
         };
       }
-      acc[build_id].normalized[revertedLabels[metric_key]] =
-        sample_count / Math.max(samplesPerBuild[build_id], 1);
-      acc[build_id].non_normalized[revertedLabels[metric_key]] = sample_count;
+      if (metric_key in acc[build_id].normalized) {
+        acc[build_id].normalized[metric_key] =
+          sample_count / Math.max(samplesPerBuild[build_id], 1);
+        acc[build_id].non_normalized[metric_key] = sample_count;
+      }
       return acc;
     },
     {}
   );
-
   const transformed = produce(filteredData, (draft) =>
     draft.map((point) => ({
       ...point,
@@ -334,16 +314,61 @@ export const transformLabeledCounterToCategoricalHistogramSampleCount = (
       non_norm_histogram: histogramsPerBuild[point.build_id].non_normalized,
       total_users: clientsPerBuild[point.build_id],
       sample_count: maxSampleCountPerBuild[point.build_id],
-      metric_key: 'single',
     }))
   );
-
-  const uniqueTransformed = transformed.filter(
+  return transformed.filter(
     (point, index, self) =>
       index === self.findIndex((p) => p.build_id === point.build_id)
   );
+};
 
-  return uniqueTransformed;
+/**
+ * Routes static labeled_counter rows to the correct categorical transform and
+ * merges them into a single series, rendering against the declared `labels`.
+ *
+ * - New rows are served pre-aggregated as label-keyed histograms
+ *   (`client_agg_type === 'summed_histogram'`) and are reconciled against the
+ *   declared labels (missing labels filled with 0, non-declared keys dropped).
+ * - Legacy scalar-shaped rows are pivoted via
+ *   transformLabeledCounterToCategoricalHistogramSampleCount.
+ *
+ * Both are emitted with one metric_key/client_agg_type so the chart renders a
+ * continuous category axis. During the post-migration transition both shapes can
+ * be present at once (refresh recomputes only the latest few versions; no
+ * backfill), so this routes per row rather than assuming a single shape.
+ */
+export const transformLabeledCounterToCategorical = (data, labels) => {
+  const toDeclaredLabels = (histogram) => {
+    const hist = histogram || {};
+    return labels.reduce((acc, label) => {
+      acc[label] = label in hist ? hist[label] : 0;
+      return acc;
+    }, {});
+  };
+
+  const newPoints = data
+    .filter((point) => point.client_agg_type === 'summed_histogram')
+    .map((point) => ({
+      ...point,
+      histogram: toDeclaredLabels(point.histogram),
+      non_norm_histogram: toDeclaredLabels(point.non_norm_histogram),
+    }));
+
+  const legacyRows = data.filter(
+    (point) => point.client_agg_type !== 'summed_histogram'
+  );
+  const legacyPoints = legacyRows.length
+    ? transformLabeledCounterToCategoricalHistogramSampleCount(
+        legacyRows,
+        labels
+      )
+    : [];
+
+  return [...legacyPoints, ...newPoints].map((point) => ({
+    ...point,
+    metric_key: '',
+    client_agg_type: 'summed_histogram',
+  }));
 };
 
 export const transformBooleanHistogramToCategoricalHistogram = (data) => {
