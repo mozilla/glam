@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import {
   transformBooleanHistogramToCategoricalHistogram,
   transformAPIResponse,
-  transformLabeledCounterToCategoricalHistogramSampleCount,
+  transformLabeledCounterToCategorical,
 } from '../utils/transform-data';
 import { stripDefaultValues } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
@@ -281,46 +281,48 @@ export default {
 
       // Attach labels to histogram if appropriate type.
       if (probeView === 'categorical') {
-        let labels = {
-          ...appStore.getState().probe.labels,
-        };
+        // boolean/labeled_boolean arrive with integer bins (0/1/2) that must be
+        // mapped to category names. labeled_counter is served by the ETL as a
+        // categorical histogram already keyed by label, so it needs no mapping.
         if (metricType === 'boolean' || metricType === 'labeled_boolean') {
           const dataAndLabels =
             transformBooleanHistogramToCategoricalHistogram(data);
           data = dataAndLabels.data;
-          labels = dataAndLabels.labels;
-        }
-        if (metricType === 'labeled_counter') {
-          data = transformLabeledCounterToCategoricalHistogramSampleCount(
-            data,
-            labels
+          const { labels } = dataAndLabels;
+          data = produce(data, (draft) =>
+            draft.map((point) => ({
+              ...point,
+              histogram: Object.entries(point.histogram).reduce(
+                (acc, [bin, value]) => {
+                  const intBin = Math.floor(bin);
+                  if (intBin in labels) {
+                    acc[labels[intBin]] = value;
+                  }
+                  return acc;
+                },
+                {}
+              ),
+              non_norm_histogram: Object.entries(
+                point.non_norm_histogram
+              ).reduce((acc, [bin, value]) => {
+                const intBin = Math.floor(bin);
+                if (intBin in labels) {
+                  acc[labels[intBin]] = value;
+                }
+                return acc;
+              }, {}),
+            }))
           );
+        } else if (metricType === 'labeled_counter') {
+          // Static labeled_counter: render against the declared labels. During
+          // the post-migration transition the response can mix new histogram-
+          // shaped rows with legacy scalar-shaped rows; transformLabeledCounter-
+          // ToCategorical routes each and merges them into one continuous series.
+          const { labels } = appStore.getState().probe;
+          if (Array.isArray(labels) && labels.length) {
+            data = transformLabeledCounterToCategorical(data, labels);
+          }
         }
-        data = produce(data, (draft) =>
-          draft.map((point) => ({
-            ...point,
-            histogram: Object.entries(point.histogram).reduce(
-              (acc, [bin, value]) => {
-                const intBin = Math.floor(bin);
-                if (intBin in labels) {
-                  acc[labels[intBin]] = value;
-                }
-                return acc;
-              },
-              {}
-            ),
-            non_norm_histogram: Object.entries(point.non_norm_histogram).reduce(
-              (acc, [bin, value]) => {
-                const intBin = Math.floor(bin);
-                if (intBin in labels) {
-                  acc[labels[intBin]] = value;
-                }
-                return acc;
-              },
-              {}
-            ),
-          }))
-        );
       }
       data = transformAPIResponse[viewType](data, aggregationLevel, metricType);
       return {

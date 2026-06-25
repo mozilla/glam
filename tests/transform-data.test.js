@@ -8,6 +8,7 @@ import {
   checkForHistogram,
   checkForPercentiles,
   checkForTotalUsers,
+  transformLabeledCounterToCategorical,
 } from '../src/utils/transform-data';
 
 describe('transform parameters must be either a function or falsy', () => {
@@ -149,5 +150,129 @@ describe('makeLabel', () => {
   it('uses build_date as label for build_id if present', () => {
     const t = transform(makeLabel.build_id)(data);
     expect(t[0].label).toEqual(new Date(2020, 6 - 1, 18, 17, 6, 0));
+  });
+});
+
+describe('transformLabeledCounterToCategorical', () => {
+  const LABELS = ['success', 'fail', 'timeout'];
+
+  // A new-style row: served pre-aggregated as a label-keyed histogram.
+  const newRow = (buildId, histogram, nonNormHistogram, totalUsers) => ({
+    build_id: buildId,
+    version: buildId,
+    metric_key: '',
+    client_agg_type: 'summed_histogram',
+    total_users: totalUsers,
+    histogram,
+    non_norm_histogram: nonNormHistogram,
+  });
+
+  // A legacy scalar-shaped row: one per (build, label), with sample counts.
+  const legacyRow = (buildId, metricKey, sampleCount, totalUsers, agg) => ({
+    build_id: buildId,
+    version: buildId,
+    metric_key: metricKey,
+    client_agg_type: agg || 'sum',
+    sample_count: sampleCount,
+    total_users: totalUsers,
+  });
+
+  it('returns [] for empty input', () => {
+    expect(transformLabeledCounterToCategorical([], LABELS)).toEqual([]);
+  });
+
+  it('reconciles new rows to the declared labels (fill missing, drop extras)', () => {
+    // success present, fail/timeout missing, __other__ is not a declared label.
+    const data = [
+      newRow(
+        'B1',
+        { success: 0.6, __other__: 0.3 },
+        { success: 6000, __other__: 3000 },
+        1000
+      ),
+    ];
+    const [point] = transformLabeledCounterToCategorical(data, LABELS);
+    expect(point.histogram).toEqual({ success: 0.6, fail: 0, timeout: 0 });
+    expect(point.non_norm_histogram).toEqual({
+      success: 6000,
+      fail: 0,
+      timeout: 0,
+    });
+    expect(point.metric_key).toBe('');
+    expect(point.client_agg_type).toBe('summed_histogram');
+  });
+
+  it('handles a new row whose histogram is an empty string', () => {
+    const data = [newRow('B1', '', '', 0)];
+    const [point] = transformLabeledCounterToCategorical(data, LABELS);
+    expect(point.histogram).toEqual({ success: 0, fail: 0, timeout: 0 });
+  });
+
+  it('pivots legacy scalar rows to sample-count proportions, one point per build', () => {
+    const data = [
+      legacyRow('B2', 'success', 600, 500),
+      legacyRow('B2', 'fail', 300, 300),
+      legacyRow('B2', 'timeout', 100, 200),
+    ];
+    const out = transformLabeledCounterToCategorical(data, LABELS);
+    expect(out).toHaveLength(1);
+    expect(out[0].histogram).toEqual({
+      success: 0.6,
+      fail: 0.3,
+      timeout: 0.1,
+    });
+    expect(out[0].non_norm_histogram).toEqual({
+      success: 600,
+      fail: 300,
+      timeout: 100,
+    });
+    expect(out[0].total_users).toBe(1000); // sum of per-label total_users
+    expect(out[0].metric_key).toBe('');
+    expect(out[0].client_agg_type).toBe('summed_histogram');
+  });
+
+  it('routes a mix of new and legacy rows, each through its own path', () => {
+    const data = [
+      newRow(
+        'B1',
+        { success: 0.7, fail: 0.2, timeout: 0.1 },
+        { success: 7000, fail: 2000, timeout: 1000 },
+        1000
+      ),
+      legacyRow('B2', 'success', 600, 500),
+      legacyRow('B2', 'fail', 400, 400), // timeout absent -> 0
+    ];
+    const out = transformLabeledCounterToCategorical(data, LABELS);
+    expect(out).toHaveLength(2);
+    const byBuild = Object.fromEntries(out.map((p) => [p.build_id, p]));
+    // new row: values taken straight from the served histogram
+    expect(byBuild.B1.histogram).toEqual({
+      success: 0.7,
+      fail: 0.2,
+      timeout: 0.1,
+    });
+    // legacy row: values computed from sample_count, missing label zero-filled
+    expect(byBuild.B2.histogram).toEqual({
+      success: 0.6,
+      fail: 0.4,
+      timeout: 0,
+    });
+    // both unified into one series
+    out.forEach((p) => {
+      expect(p.metric_key).toBe('');
+      expect(p.client_agg_type).toBe('summed_histogram');
+    });
+  });
+
+  it('ignores legacy non-sum agg rows when pivoting', () => {
+    const data = [
+      legacyRow('B3', 'success', 800, 700),
+      legacyRow('B3', 'fail', 200, 300),
+      // a 'count' row that must not affect the categorical output
+      legacyRow('B3', 'success', 999, 700, 'count'),
+    ];
+    const out = transformLabeledCounterToCategorical(data, LABELS);
+    expect(out).toHaveLength(1);
+    expect(out[0].histogram).toEqual({ success: 0.8, fail: 0.2, timeout: 0 });
   });
 });
