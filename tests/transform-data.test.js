@@ -275,4 +275,26 @@ describe('transformLabeledCounterToCategorical', () => {
     expect(out).toHaveLength(1);
     expect(out[0].histogram).toEqual({ success: 0.8, fail: 0.2, timeout: 0 });
   });
+
+  it('takes only the summed_histogram row when a build has both shapes', () => {
+    // A transition build (B1) carries both a new histogram row and legacy
+    // scalar rows. It must render once, from the summed_histogram row.
+    const data = [
+      newRow(
+        'B1',
+        { success: 0.7, fail: 0.2, timeout: 0.1 },
+        { success: 7000, fail: 2000, timeout: 1000 },
+        1000
+      ),
+      legacyRow('B1', 'success', 600, 500),
+      legacyRow('B1', 'fail', 400, 400),
+    ];
+    const out = transformLabeledCounterToCategorical(data, LABELS);
+    expect(out).toHaveLength(1);
+    expect(out[0].histogram).toEqual({
+      success: 0.7,
+      fail: 0.2,
+      timeout: 0.1,
+    });
+  });
 });
