@@ -354,8 +354,15 @@ export const transformLabeledCounterToCategorical = (data, labels) => {
       non_norm_histogram: toDeclaredLabels(point.non_norm_histogram),
     }));
 
+  // During the transition a build can carry both shapes at once. The
+  // summed_histogram row is authoritative, so whenever a build has one we take
+  // only that and drop its legacy scalar rows — otherwise the build would
+  // render twice (once from each path).
+  const buildsWithHistogram = new Set(newPoints.map((point) => point.build_id));
   const legacyRows = data.filter(
-    (point) => point.client_agg_type !== 'summed_histogram'
+    (point) =>
+      point.client_agg_type !== 'summed_histogram' &&
+      !buildsWithHistogram.has(point.build_id)
   );
   const legacyPoints = legacyRows.length
     ? transformLabeledCounterToCategoricalHistogramSampleCount(

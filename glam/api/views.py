@@ -104,9 +104,10 @@ def _get_glean_probe_metadata(product, probe_name):
 
 
 def _is_categorical_labeled_counter(product, probe_name):
-    """A labeled_counter with a static (non-empty) labels list. Frontend only
-    keeps client_agg_type='sum' rows for these, so we can filter at the SQL
-    level."""
+    """A labeled_counter with a static (non-empty) labels list. The frontend
+    only consumes client_agg_type in ('sum', 'summed_histogram') for these, so
+    we can filter at the SQL level to avoid scanning/serializing the unused
+    avg/count/min/max aggregations."""
     meta = _get_glean_probe_metadata(product, probe_name)
     if not meta:
         return False
@@ -673,11 +674,13 @@ def get_glean_aggregations_from_bq(bqClient, request, req_data):
     metric_key = req_data.get("metric_key")
     metric_key_filter = "AND metric_key = @metric_key" if metric_key else ""
 
-    # Categorical labeled_counter probes have a static labels list; the
-    # frontend only consumes client_agg_type='sum' rows for them, so filter
-    # at the SQL level to avoid scanning/serializing 5x the data.
+    # Static (categorical) labeled_counter probes have a declared labels list.
+    # The frontend renders them from the new 'summed_histogram' rows and, during
+    # the post-migration transition, the legacy scalar 'sum' rows; the other
+    # legacy aggregations (avg/count/min/max) are never used. Filter them out at
+    # the SQL level to avoid scanning/serializing ~5x the data.
     client_agg_type_filter = (
-        'AND client_agg_type = "sum"'
+        "AND client_agg_type IN ('sum', 'summed_histogram')"
         if _is_categorical_labeled_counter(product, probe)
         else ""
     )

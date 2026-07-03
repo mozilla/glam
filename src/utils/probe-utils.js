@@ -91,16 +91,43 @@ export function filterLowClientBuilds(data) {
       parseInt(buildId.substring(6, 8), 10)
     );
   }
-  // Counter / labeled_counter rows are repeated once per client_agg_type
+  // Static labeled_counter data mixes two row shapes during the post-migration
+  // transition (see transformLabeledCounterToCategorical):
+  //   * new rows: one 'summed_histogram' row per build whose total_users is the
+  //     client count the chart actually renders.
+  //   * legacy scalar rows: one per (metric_key, client_agg_type) whose
+  //     total_users reflects the OLD pipeline's (much larger) client set.
+  // A transition build carries both, so counting its legacy rows would compare
+  // the threshold against thousands of old-pipeline clients and let a build
+  // with only a handful of charted clients slip in. Prefer the summed_histogram
+  // count for any build that has one, and fall back to legacy counting only for
+  // builds without a summed_histogram row.
+  const buildsWithHistogram = new Set(
+    data
+      .filter((d) => d.client_agg_type === 'summed_histogram')
+      .map((d) => d.build_id)
+  );
+
+  // Legacy counter / labeled_counter rows are repeated once per client_agg_type
   // (sum/avg/count/min/max) with the same total_users in each — they're all
   // aggregations over the same user set. Restrict the sum to a single
-  // client_agg_type so the threshold compares against an honest per-build
-  // user count instead of a 5×-inflated one. All metric_keys still count
-  // toward that single number.
-  const aggTypeForCounting = data[0]?.client_agg_type;
+  // client_agg_type so the threshold compares against an honest per-build user
+  // count instead of a 5×-inflated one. All metric_keys still count toward that
+  // single number. For probes without summed_histogram rows (histograms,
+  // scalars, dynamic labeled_counters) this is every row, matching the previous
+  // behavior.
+  const legacyAggType = data.find(
+    (d) => d.client_agg_type !== 'summed_histogram'
+  )?.client_agg_type;
+
   const totalUsersPerBuild = data.reduce((acc, d) => {
-    if (d.client_agg_type !== aggTypeForCounting) return acc;
-    acc[d.build_id] = (acc[d.build_id] || 0) + d.total_users;
+    const useHistogram = buildsWithHistogram.has(d.build_id);
+    const countsToward = useHistogram
+      ? d.client_agg_type === 'summed_histogram'
+      : d.client_agg_type === legacyAggType;
+    if (countsToward) {
+      acc[d.build_id] = (acc[d.build_id] || 0) + d.total_users;
+    }
     return acc;
   }, {});
 
