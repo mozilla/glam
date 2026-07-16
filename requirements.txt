@@ -156,7 +156,7 @@ pytest==8.4.2
     #   pytest-django
 pytest-blockage==0.2.4
     # via -r requirements.in
-pytest-cov==7.0.0
+pytest-cov==7.1.0
     # via -r requirements.in
 pytest-django==4.11.1
     # via -r requirements.in
