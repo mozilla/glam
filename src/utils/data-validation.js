@@ -10,6 +10,19 @@ export const noUnknownMetrics = (metricType, supportedMetrics = []) => {
   }
 };
 
+export const noUseCounters = (probeName = '') => {
+  if (/^use[._]?counter/i.test(probeName)) {
+    const er = new Error('Use counters are not supported here.');
+    er.moreInformation =
+      'Due to the way it aggregates data, GLAM is not the best place to view use counters.';
+    er.link = {
+      url: 'https://mozilla.github.io/use-counters/',
+      text: 'Use the Use Counters Dashboard instead.',
+    };
+    throw er;
+  }
+};
+
 export const noResponse = (payload, probeIsActive) => {
   if (!('response' in payload)) {
     const er = new Error('The data for this probe is unavailable.');

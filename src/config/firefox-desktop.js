@@ -8,6 +8,7 @@ import {
   validate,
   noResponse,
   noUnknownMetrics,
+  noUseCounters,
 } from '../utils/data-validation';
 
 export default {
@@ -126,7 +127,8 @@ export default {
       versions: 20,
     };
   },
-  fetchData(params, appStore) {
+  async fetchData(params, appStore) {
+    noUseCounters(params.probe);
     return getProbeData(params).then((payload) => {
       const { aggregationLevel } = appStore.getState().productDimensions;
 
