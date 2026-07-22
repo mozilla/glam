@@ -11,6 +11,7 @@ import {
   validate,
   noResponse,
   noUnknownMetrics,
+  noUseCounters,
   noMeaningfulData,
 } from '../utils/data-validation';
 import { filterLowClientBuilds } from '../utils/probe-utils';
@@ -201,6 +202,7 @@ export default {
     if (metricType === 'labeled_counter') {
       probeView = this.getViewFromMetricType(metricType, isStatic);
     }
+    noUseCounters(params.probe);
     noUnknownMetrics(metricType, SUPPORTED_METRICS);
 
     if (!isNonCategoricalLabeled(probe)) {

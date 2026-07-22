@@ -3,6 +3,7 @@
 
   export let reason;
   export let moreInformation;
+  export let link = null;
 </script>
 
-<DataErrorGeneric {reason} {moreInformation} />
+<DataErrorGeneric {reason} {moreInformation} {link} />

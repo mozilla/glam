@@ -4,6 +4,7 @@
 
   export let reason;
   export let moreInformation;
+  export let link = null;
 
   const DICTIONARY_LINKS = {
     firefox: `https://probes.telemetry.mozilla.org/?view=detail&probeId=${$store.probe.id}`,
@@ -70,6 +71,11 @@
     <GlamErrorShapes />
   </div>
   <div class="data-error-msg__reason">{reason}</div>
+  {#if link}
+    <div class="data-error-msg__more-information">
+      <a href={link.url}>{link.text}</a>
+    </div>
+  {/if}
   {#if moreInformation}
     <div class="data-error-msg__more-information">{moreInformation}</div>
     <div class="data-error-msg__more-information">
