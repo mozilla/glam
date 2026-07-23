@@ -1,4 +1,4 @@
-import { getBugLinkTitle } from '../src/utils/urls';
+import { getBugLinkTitle, stripIrrelevantViewParams } from '../src/utils/urls';
 
 describe('Titles for bugzilla URLs', () => {
   it('works as expected', () => {
@@ -31,5 +31,33 @@ describe('Titles for github URLs', () => {
 describe('Titles for other issue tracker URLs', () => {
   it('correctly defaults to returning the url without https://', () => {
     expect(getBugLinkTitle('https://jira.com/1234')).toEqual('jira.com/1234');
+  });
+});
+
+describe('stripIrrelevantViewParams', () => {
+  const params = {
+    activeBuckets: ['miss', 'hit'],
+    proportionMetricType: 'proportions',
+    visiblePercentiles: [95, 50],
+    ref: '123',
+  };
+
+  it('drops categorical params on quantile views', () => {
+    expect(stripIrrelevantViewParams(params, 'quantile')).toEqual({
+      visiblePercentiles: [95, 50],
+      ref: '123',
+    });
+  });
+
+  it('drops percentile params on proportion views', () => {
+    expect(stripIrrelevantViewParams(params, 'proportion')).toEqual({
+      activeBuckets: ['miss', 'hit'],
+      proportionMetricType: 'proportions',
+      ref: '123',
+    });
+  });
+
+  it('leaves params untouched when viewType is unknown', () => {
+    expect(stripIrrelevantViewParams(params, undefined)).toEqual(params);
   });
 });

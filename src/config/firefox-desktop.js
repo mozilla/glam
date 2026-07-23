@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import sharedDefaults, { extractBucketMetadata } from './shared';
-import { stripDefaultValues } from '../utils/urls';
+import { stripDefaultValues, stripIrrelevantViewParams } from '../utils/urls';
 import { transformAPIResponse } from '../utils/transform-data';
 import { isSelectedProcessValid } from '../utils/probe-utils';
 import { getProbeData } from '../state/api';
@@ -110,10 +110,13 @@ export default {
       normalizationType: storeValue.productDimensions.normalizationType,
       aggKey: storeValue.aggKey,
     };
-    return stripDefaultValues(params, {
-      ...sharedDefaults,
-      ...this.dimensions,
-    });
+    return stripIrrelevantViewParams(
+      stripDefaultValues(params, {
+        ...sharedDefaults,
+        ...this.dimensions,
+      }),
+      storeValue.viewType
+    );
   },
   getParamsForDataAPI(storeValue) {
     // These parameters are needed to request the data from the API itself
