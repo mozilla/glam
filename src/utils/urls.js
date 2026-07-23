@@ -30,6 +30,17 @@ export function getBugLinkTitle(ref) {
   return url.replace(/^http(s?):\/\//, '');
 }
 
+export function stripIrrelevantViewParams(params, viewType) {
+  const irrelevant = {
+    quantile: ['activeBuckets', 'proportionMetricType'],
+    proportion: ['visiblePercentiles'],
+  }[viewType];
+  if (!irrelevant) return params;
+  return Object.fromEntries(
+    Object.entries(params).filter(([k]) => !irrelevant.includes(k))
+  );
+}
+
 // Given an object of query params, return the object stripped of query
 // parameters that are set to their default values.
 export function stripDefaultValues(params, defaults) {

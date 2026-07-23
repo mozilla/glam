@@ -4,7 +4,7 @@ import {
   transformAPIResponse,
   transformLabeledCounterToCategorical,
 } from '../utils/transform-data';
-import { stripDefaultValues } from '../utils/urls';
+import { stripDefaultValues, stripIrrelevantViewParams } from '../utils/urls';
 import sharedDefaults, { extractBucketMetadata } from './shared';
 import { getProbeData, getProbeInfo, getProbeLabels } from '../state/api';
 import {
@@ -174,10 +174,13 @@ export default {
       normalizationType: storeValue.productDimensions.normalizationType,
       aggKey: storeValue.aggKey,
     };
-    return stripDefaultValues(params, {
-      ...sharedDefaults,
-      ...this.dimensions,
-    });
+    return stripIrrelevantViewParams(
+      stripDefaultValues(params, {
+        ...sharedDefaults,
+        ...this.dimensions,
+      }),
+      storeValue.viewType
+    );
   },
 
   // Common data transformation methods

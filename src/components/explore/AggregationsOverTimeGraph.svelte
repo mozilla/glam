@@ -233,6 +233,7 @@
     // get proportion and count data of categorical graphs
     if (
       buckets.length &&
+      $store.viewType === 'proportion' &&
       !desktopLinearMetrics.includes(data[0].metric_type) &&
       yScaleType !== 'scalePoint'
     ) {
@@ -277,7 +278,8 @@
     if (
       !desktopLinearMetrics.includes(data[0].metric_type) &&
       yScaleType !== 'scalePoint' &&
-      buckets.length
+      buckets.length &&
+      $store.viewType === 'proportion'
     ) {
       if ($store.proportionMetricType === 'proportions') {
         yDomainValues = yDomainValues.filter((a) => a < 1);
