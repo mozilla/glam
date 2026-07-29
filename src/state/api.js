@@ -45,6 +45,7 @@ export async function getProbeData(params) {
       }
       const error = new Error(msg);
       error.statusCode = response.status;
+      error.noData = response.status === 404;
       throw error;
     }
     return response.json();
