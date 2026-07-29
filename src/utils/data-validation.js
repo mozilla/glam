@@ -26,6 +26,7 @@ export const noUseCounters = (probeName = '') => {
 export const noResponse = (payload, probeIsActive) => {
   if (!('response' in payload)) {
     const er = new Error('The data for this probe is unavailable.');
+    er.noData = true;
     if (!probeIsActive)
       er.moreInformation =
         "This probe appears to be inactive, so it's possible we don't have data for it.";
@@ -39,11 +40,19 @@ export function validate(data, ...validators) {
   });
 }
 
-export const noMeaningfulData = (data) => {
+// isLabeled scopes the message to the selected label, since only that label's
+// data was fetched.
+export const noMeaningfulData = (data, isLabeled = false) => {
   if (data.length === 0) {
-    const er = new Error('There is no meaningful data for this probe.');
-    er.moreInformation =
-      'This probe has not accumulated a significant amount of data for a reliable aggregation.';
+    const er = new Error(
+      isLabeled
+        ? 'There is no meaningful data for this label in this probe.'
+        : 'There is no meaningful data for this probe.'
+    );
+    er.noData = true;
+    er.moreInformation = isLabeled
+      ? 'This label has not accumulated a significant amount of data for a reliable aggregation.'
+      : 'This probe has not accumulated a significant amount of data for a reliable aggregation.';
     throw er;
   }
 };

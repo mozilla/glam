@@ -241,6 +241,7 @@ export default {
       const { probeKeys } = appStore.getState();
       if (!probeKeys.length) {
         const er = new Error('There is no meaningful data for this probe.');
+        er.noData = true;
         er.moreInformation =
           'No labels were found for this metric in the aggregate tables. ' +
           'It may not have accumulated data yet.';
@@ -277,7 +278,7 @@ export default {
       if (channel === 'nightly') {
         data = filterLowClientBuilds(payload.response);
         validate(data, (d) => {
-          noMeaningfulData(d);
+          noMeaningfulData(d, isNonCategoricalLabeled(probe));
         });
       }
 
