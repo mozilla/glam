@@ -90,7 +90,7 @@ grpcio-status==1.78.0
     # via
     #   -r requirements.in
     #   google-api-core
-gunicorn==23.0.0
+gunicorn==26.0.0
     # via -r requirements.in
 idna==3.11
     # via requests
