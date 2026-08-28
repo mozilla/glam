@@ -181,7 +181,7 @@ typing-extensions==4.15.0
     # via
     #   -r requirements.in
     #   grpcio
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests
 whitenoise==6.11.0
     # via -r requirements.in
