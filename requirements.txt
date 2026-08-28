@@ -6,7 +6,7 @@
 #
 asgiref==3.11.1
     # via django
-black==25.11.0
+black==26.3.1
     # via -r requirements.in
 certifi==2026.1.4
     # via requests
